@@ -1,0 +1,100 @@
+<div class="card">
+    <div class="mb-4">
+        <p class="text-xl font-bold mb-0"><i class="pi pi-inbox mr-2"></i>Paso 1 - Tipo de solicitud</p>
+        <p>Escoja el tipo de solicitud que va a presentar</p>
+    </div>
+
+    <div class="grid">
+        <div class="col-12 lg:col-3">
+            <p-listbox
+                [options]="tiposDeSolicitud"
+                optionLabel="nombreSolicitud"
+                (onChange)="obtenerRequisitosDeSolicitud(); radicar.restrablecerValores()"
+                [(ngModel)]="tipoSolicitudEscogida"
+                [listStyle]="{ 'max-height': '385px' }"
+                styleClass="bg-bluegray-50 "
+            >
+                <ng-template let-solicitud pTemplate="item">
+                    <div><i class="pi pi pi-info-circle mr-2"></i></div>
+                    <div class="font-semibold">
+                        {{ solicitud.nombreSolicitud }}
+                    </div>
+                </ng-template>
+            </p-listbox>
+        </div>
+        <div class="col-12 lg:col-9">
+            <p-panel header="Información y requisitos" *ngIf="requisitosSolicitudEscogida">
+                <p-scrollPanel [style]="{ width: '100%', height: '300px' }">
+                    <section *ngIf="requisitosSolicitudEscogida.descripcion" class="mb-3">
+                        <p class="text-justify">
+                            {{ requisitosSolicitudEscogida.descripcion }}
+                        </p>
+                    </section>
+                    <section class="mb-3" *ngIf="requisitosSolicitudEscogida.articulo">
+                        <p class="text-justify">
+                            {{ requisitosSolicitudEscogida.articulo }}
+                        </p>
+                    </section>
+
+                    <section class="mb-3" *ngIf="requisitosSolicitudEscogida.documentosRequeridos.length > 0">
+                        <h2 class="font-semibold text-base text-justify">Documentos requeridos</h2>
+
+                        <ul *ngFor="let documento of requisitosSolicitudEscogida.documentosRequeridos">
+                            <li *ngIf="documento.adjuntarDocumento">
+                                {{ documento.nombre }}
+                            </li>
+                        </ul>
+
+                        <ng-container *ngIf="requisitosSolicitudEscogida.enlacesRequeridos">
+                            <ul *ngFor="let enlace of requisitosSolicitudEscogida.enlacesRequeridos">
+                                <li>
+                                    {{ enlace }}
+                                </li>
+                            </ul>
+                        </ng-container>
+                    </section>
+
+                    <section class="mb-3" *ngIf="requisitosSolicitudEscogida.tenerEnCuenta">
+                        <h2 class="font-semibold text-base text-justify">Tener en cuenta:</h2>
+                        <p class="text-justify">
+                            {{ requisitosSolicitudEscogida.tenerEnCuenta }}
+                        </p>
+                    </section>
+
+                    <section class="mb-3" *ngIf="requisitosSolicitudEscogida.notas.length > 0">
+                        <h2 class="font-semibold text-base text-justify">Nota:</h2>
+                        <p class="text-justify">
+                            {{ requisitosSolicitudEscogida.notas }}
+                        </p>
+                    </section>
+
+                    <section class="mb-3" *ngIf="requisitosSolicitudEscogida.enlaces.length > 0">
+                        <h2 class="font-semibold text-base text-justify">
+                            Enlaces a normativa y formatos relacionados
+                        </h2>
+                        <ul *ngFor="let enlace of requisitosSolicitudEscogida.enlaces">
+                            <li>
+                                <a [href]="enlace.urlAcortada" target="_blank">{{ enlace.nombre }}</a>
+                            </li>
+                        </ul>
+                    </section>
+                </p-scrollPanel>
+            </p-panel>
+        </div>
+    </div>
+    <div class="flex justify-content-end mt-4">
+        <p-button label="Siguiente" icon="pi pi-angle-right" iconPos="right" (click)="navigateToNext()"></p-button>
+    </div>
+</div>
+
+<div class="block sm:flex">
+    <div class="mb-5 sm:mr-5"></div>
+
+    <div class="w-full"></div>
+</div>
+
+<p-dialog header="Cargando..." [(visible)]="carga" [modal]="true" [closable]="false">
+    <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+    </div>
+</p-dialog>

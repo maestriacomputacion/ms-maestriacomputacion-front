@@ -1,0 +1,47 @@
+<div class="p-4">
+    <form [formGroup]="formInfoCertificadoVotacion">
+        <div class="grid custom-container">
+            <div class="col-12">
+                <label class="label-custom">Tipo de Solicitud</label>
+                <input 
+                    type="text"
+                    formControlName="nombreCompleto"
+                    class="w-full custom-input"
+                    readonly
+                />
+            </div>
+
+            <div class="col-12 fechas-container">
+                <div class="col-md-6">
+                    <label class="label-custom">Fecha de apertura</label>
+                    <p-calendar 
+                        formControlName="titulo" 
+                        class="w-full calendar-custom"
+                        inputId="tituloCoordinador"
+                        [showIcon]="true"
+                        [appendTo]="'body'">
+                    </p-calendar>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label-custom">Fecha de cierre</label>
+                    <p-calendar 
+                        formControlName="pronombre" 
+                        class="w-full calendar-custom"
+                        inputId="pronombre"
+                        [showIcon]="true"
+                        [appendTo]="'body'">
+                    </p-calendar>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="grid mt-4 justify-content-end gap-2">
+        <p *ngIf="showWarning" class="warning-text">Por favor, llene todos los campos.</p>
+        <button type="button" pButton label="Guardar" icon="pi pi-check" (click)="guardarInfo()"></button>
+        <button type="button" pButton label="Cancelar" icon="pi pi-times" (click)="cancelar()"></button>
+    </div>
+    <p-messages></p-messages>
+    <p-confirmDialog header="Confirmación" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+</div>

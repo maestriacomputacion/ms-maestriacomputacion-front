@@ -1,0 +1,978 @@
+<p-card
+    class="flex justify-content-center"
+    [style]="{ width: '100rem', 'margin-bottom': '2em' }"
+>
+    <p-breadcrumb [model]="items" [home]="home"></p-breadcrumb>
+    <h4 class="text-center">
+        {{ isEditMode ? "Editar Asignatura" : "Registrar Asignaturas" }}
+    </h4>
+
+    <form [formGroup]="asignaturaForm">
+        <div class="form-container">
+            <div class="form-group">
+                <div class="form-group form-section">
+                    <label
+                        class="form-label"
+                        for="codigoAsignatura"
+                        [style]="{ 'margin-right': '1em' }"
+                        >Código *</label
+                    >
+
+                    <input
+                        type="text"
+                        id="codigoAsignatura"
+                        pInputText
+                        formControlName="codigoAsignatura"
+                        (blur)="onBlurCodigoAsignatura()"
+                    />
+
+                    <div
+                        class="p-error form-label-error"
+                        *ngIf="
+                    asignaturaForm.get('codigoAsignatura').touched &&
+                    asignaturaForm.get('codigoAsignatura')?.errors?.['required']
+                "
+                    >
+                        Código requerido
+                    </div>
+                </div>
+                <div class="form-group form-section">
+                    <label
+                        class="form-label"
+                        for="nombreAsignatura"
+                        [style]="{ 'margin-right': '1em' }"
+                        >Nombre *</label
+                    >
+
+                    <input
+                        type="text"
+                        id="nombreAsignatura"
+                        pInputText
+                        formControlName="nombreAsignatura"
+                        (blur)="onBlurNombreAsignatura()"
+                    />
+                </div>
+
+                <div class="form-group form-section">
+                    <label class="form-label">Está activa *</label>
+
+                    <p-radioButton
+                        name="estadoAsignatura"
+                        value="activo"
+                        formControlName="estadoAsignatura"
+                        inputId="idActivo"
+                        label="Activa"
+                    ></p-radioButton>
+
+                    <p-radioButton
+                        [style]="{ 'margin-left': '1em' }"
+                        name="estadoAsignatura"
+                        value="inactiva"
+                        formControlName="estadoAsignatura"
+                        inputId="ideInactivo"
+                        label="Inactiva"
+                    ></p-radioButton>
+                </div>
+
+                <div class="form-group form-section">
+                    <div class="p-field p-col-12 p-md-4">
+                        <label
+                            class="form-label"
+                            for="fechaAprobacion"
+                            [style]="{ 'margin-right': '1em' }"
+                            >Fecha Aprobación *</label
+                        >
+                        <p-calendar
+                            formControlName="fechaAprobacion"
+                            [showIcon]="true"
+                            inputId="idFechaAprobacion"
+                            dateFormat="dd/mm/yy"
+                            [appendTo]="'body'"
+                        ></p-calendar>
+                    </div>
+                </div>
+
+                <div class="form-group form-section" style="position: relative;">
+                    <label class="form-label" for="oficioConsejoFacultadLbl" [style]="{ 'margin-right': '1em' }">Oficio de Consejo de Facultad (.pdf) *</label>
+                    <p-button
+                        [label]="isEditMode ? 'Cambiar Oficio' : 'Cargar Oficio'"
+                        icon="pi pi-cloud-upload"
+                        iconPos="right"
+                        class="p-button-rounded p-button-warning"
+                        (click)="openNewOficio()"
+                        (mouseenter)="showDocumentInfo = true"
+                        (mouseleave)="showDocumentInfo = false"
+                    >
+                    </p-button>
+
+                    <div *ngIf="isEditMode && showDocumentInfo" style="position: absolute; top: -30px; left: 150px; background-color: #c2d6d6; padding: 5px; border: 1px solid #ccc;">
+                        <label>Documento cargado actualmente:</label>
+                        <label style="font-weight: bold;">{{ oficioRecuperado.numeroOficio }}</label>
+                    </div>
+                </div>
+                <div class="form-group form-section">
+                    <label
+                        class="form-label"
+                        for="areaFormacion"
+                        [style]="{ 'margin-right': '1em' }"
+                        >Area de Formación a la que pertenece *</label
+                    >
+                    <p-dropdown
+                        [options]="areasDeFormacion"
+                        formControlName="areaFormacion"
+                        placeholder="Seleccion el área"
+                        optionLabel="nombre"
+                        onChange="resetLineasInvestigacion()"
+                    ></p-dropdown>
+                </div>
+
+                <div class="form-group form-section">
+                    <label
+                        class="form-label"
+                        for="selectedLineaInvestigacion"
+                        [style]="{ 'margin-right': '1em' }"
+                        >Linea de Investigación *</label
+                    >
+                    <p-dropdown
+                        [options]="lineasInvestigacion"
+                        formControlName="lineaInvestigacionAsignatura"
+                        placeholder="Seleccione el tipo"
+                        optionLabel="nombre"
+                        [disabled]="!isLineasInvestigacionEnabled()"
+                    ></p-dropdown>
+                </div>
+
+                <div class="form-group form-section">
+                    <label
+                        class="form-label"
+                        [style]="{ 'margin-right': '1em' }"
+                        >Tipo *</label
+                    >
+
+                    <p-radioButton
+                        name="tipo"
+                        value="Opcional"
+                        formControlName="tipo"
+                        inputId="idOpcional"
+                        label="Opcional"
+                    ></p-radioButton>
+
+                    <p-radioButton
+                        [style]="{ 'margin-left': '1em' }"
+                        name="tipo"
+                        value="Obligatoria"
+                        formControlName="tipo"
+                        inputId="idObligatoria"
+                        label="Obligatoria"
+                    ></p-radioButton>
+                </div>
+
+                <div class="form-group form-section">
+                    <div class="p-field p-col-12 p-md-3">
+                        <label
+                            class="form-label"
+                            for="minmax-buttons"
+                            [style]="{ 'margin-right': '1em' }"
+                            >Número de Creditos *</label
+                        >
+                        <p-inputNumber
+                            formControlName="creditos"
+                            mode="decimal"
+                            [showButtons]="true"
+                            inputId="minmax-buttons"
+                            [min]="0"
+                            [max]="9"
+                        >
+                        </p-inputNumber>
+                    </div>
+                </div>
+
+                <div class="form-group form-section">
+                    <div class="p-field p-col-12 p-md-3">
+                        <label
+                            class="form-label"
+                            for="minmax-buttons"
+                            [style]="{ 'margin-right': '1em' }"
+                            >Objetivo *</label
+                        >
+                        <textarea
+                            [rows]="5"
+                            [cols]="30"
+                            pInputTextarea
+                            autoResize="autoResize"
+                            formControlName="objetivo"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group form-section">
+                    <div class="p-field p-col-12 p-md-3">
+                        <label
+                            class="form-label"
+                            for="minmax-buttons"
+                            [style]="{ 'margin-right': '1em' }"
+                            >Contenido *</label
+                        >
+                        <textarea
+                            [rows]="5"
+                            [cols]="30"
+                            pInputTextarea
+                            autoResize="autoResize"
+                            formControlName="contenido"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group form-section" style="position: relative;">
+                    <label
+                        class="form-label"
+                        for="contenidoProgramaticoLbl"
+                        [style]="{ 'margin-right': '1em' }"
+                        >Contenido Programatico (.pdf) *</label
+                    >
+
+                    <p-button
+                        [label]="isEditMode ? 'Cambiar Contenido Programático' : 'Cargar Contenido Programático'"
+                        icon="pi pi-cloud-upload"
+                        iconPos="right"
+                        class="p-button-rounded p-button-warning"
+                        (click)="openNewContenidoProgramatico()"
+                        (mouseenter)="showContenidoProgramaticoInfo = true"
+                        (mouseleave)="showContenidoProgramaticoInfo = false"
+                    ></p-button>
+                    <div *ngIf="isEditMode && showContenidoProgramaticoInfo" style="position: absolute; top: -30px; left: 150px; background-color: #c2d6d6; padding: 5px; border: 1px solid #ccc;">
+                        <label>Contenido programático cargado actualmente:</label>
+                        <label style="font-weight: bold;">{{ nombreContenidoProgramaticoRecuperado }}</label>
+                    </div>
+                </div>
+
+                <div class="form-group form-section" style="position: relative;">
+                    <label
+                        class="form-label"
+                        for="microcurriculoLbl"
+                        [style]="{ 'margin-right': '1em' }"
+                        >Microcurriculo (.pdf) *</label
+                    >
+
+                    <p-button
+                        [label]="isEditMode ? 'Cambiar Microcurriculo' : 'Cargar Microcurriculo'"
+                        icon="pi pi-cloud-upload"
+                        iconPos="right"
+                        class="p-button-rounded p-button-warning"
+                        (click)="openNewMicrocurriculo()"
+                        (mouseenter)="showMicrocurriculoInfo = true"
+                        (mouseleave)="showMicrocurriculoInfo = false"
+                    ></p-button>
+                    <div *ngIf="isEditMode && showMicrocurriculoInfo" style="position: absolute; top: -30px; left: 150px; background-color: #c2d6d6; padding: 5px; border: 1px solid #ccc;">
+                        <label>Microcurriculo cargado actualmente:</label>
+                        <label style="font-weight: bold;">{{ nombreMicrocurriculoRecuperado }}</label>
+                    </div>
+                </div>
+
+                <div class="form-group form-section">
+                    <div class="p-field p-col-12 p-md-3">
+                        <label
+                            class="form-label"
+                            for="minmax-buttons"
+                            [style]="{ 'margin-right': '1em' }"
+                            >Horas Presenciales *</label
+                        >
+                        <p-inputNumber
+                            formControlName="horasPresenciales"
+                            mode="decimal"
+                            [showButtons]="true"
+                            inputId="minmax-buttons"
+                            [step]="opcionesNumericas"
+                            [min]="0"
+                            [max]="9"
+                        >
+                        </p-inputNumber>
+                    </div>
+                </div>
+
+                <div class="form-group form-section">
+                    <div class="p-field p-col-12 p-md-3">
+                        <label
+                            class="form-label"
+                            for="minmax-buttons"
+                            [style]="{ 'margin-right': '1em' }"
+                            >Horas No Presenciales *</label
+                        >
+                        <p-inputNumber
+                            formControlName="horasNoPresenciales"
+                            [step]="opcionesNumericas"
+                            mode="decimal"
+                            [showButtons]="true"
+                            inputId="minmax-buttons"
+                            [min]="0"
+                            [max]="9"
+                        >
+                        </p-inputNumber>
+                    </div>
+                </div>
+
+                <div class="form-group form-section">
+                    <div class="p-field p-col-12 p-md-3">
+                        <label
+                            class="form-label"
+                            for="minmax-buttons"
+                            [style]="{ 'margin-right': '1em' }"
+                            >Horas Totales</label
+                        >
+                        <p-inputNumber
+                            formControlName="horasTotal"
+                            mode="decimal"
+                            [disabled]="true"
+                            inputId="minmax-buttons"
+                            [min]="1"
+                            [max]="99"
+                        >
+                        </p-inputNumber>
+                    </div>
+                </div>
+
+                <div class="field grid flex justify-content-center">
+                    <div class="p-field p-col-12 p-md-3">
+                        <h5
+                            for="modificacionesLbl"
+                            [style]="{ 'margin-right': '1em' }"
+                        >
+                            Modificaciones
+                        </h5>
+                    </div>
+                </div>
+
+                <!--DESDE ACA-->
+
+                <div class="card">
+                    <p-toolbar styleClass="p-mb-4">
+                        <ng-template pTemplate="left">
+                            <button
+                                pButton
+                                label="Seleccionar Actas"
+                                icon="pi pi-plus"
+                                class="p-button-success p-mr-2"
+                                (click)="openNewActa()"
+                            ></button>
+                        </ng-template>
+                    </p-toolbar>
+
+                    <p-card>
+                        <p-table
+                            [value]="actasSeleccionadas"
+                            responsiveLayout="scroll"
+                            [rowHover]="true"
+                        >
+                            <ng-template pTemplate="caption">
+                                <div
+                                    class="table-header"
+                                    style="text-align: center"
+                                >
+                                    Listado de actas Asociadas
+                                </div>
+                                <div
+                                    class="p-d-flex p-ai-center p-jc-between"
+                                ></div>
+                            </ng-template>
+                            <ng-template pTemplate="headergrouped">
+                                <tr>
+                                    <th scope="col">Número de Acta</th>
+                                    <th scope="col">Link</th>
+                                    <th scope="col">Acción</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="body"
+                                let-acta
+                                let-rowIndex="rowIndex"
+                            >
+                                <tr>
+                                    <td>{{ acta.numeroActa }}</td>
+
+                                    <td>
+                                        {{ acta.idDocMaestria.linkDocumento }}
+                                    </td>
+
+                                    <td>
+                                        <p-button
+                                            icon="pi pi-trash"
+                                            class="p-button-rounded p-button-warning"
+                                            (click)="deleteActa(rowIndex)"
+                                        ></p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                <div class="p-d-flex p-ai-center p-jc-between">
+                                    Total de actas asociadas
+                                    {{
+                                        actasSeleccionadas
+                                            ? actasSeleccionadas.length
+                                            : 0
+                                    }}.
+                                </div>
+                            </ng-template>
+                            <ng-template
+                                pTemplate="emptymessage"
+                                let-actasSeleccionadas
+                            >
+                                <tr>
+                                    <td
+                                        [attr.colspan]="
+                                            actasSeleccionadas?.length
+                                        "
+                                    >
+                                        No ha seleccionado actas para esta
+                                        asignatura.
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-card>
+                </div>
+
+                <p-dialog
+                    [(visible)]="actaDialog"
+                    [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+                    [style]="{ width: '60vw' }"
+                    header="Actas"
+                    [modal]="true"
+                    styleClass="p-fluid"
+                >
+                    <ng-template pTemplate="content">
+                        <p-card>
+                            <p-table
+                                [(value)]="actas"
+                                [paginator]="true"
+                                [rows]="5"
+                                [showCurrentPageReport]="true"
+                                responsiveLayout="scroll"
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                [rowsPerPageOptions]="[5, 25, 50]"
+                                [rowHover]="true"
+                            >
+                                <ng-template pTemplate="caption">
+                                    <div
+                                        class="p-d-flex p-ai-center p-jc-between"
+                                    ></div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th id="numeroActa">Número de Acta</th>
+                                        <th
+                                            id="documento"
+                                            style="text-align: center"
+                                        >
+                                            Link del acta
+                                        </th>
+                                        <th
+                                            id="accion"
+                                            style="text-align: center"
+                                        >
+                                            Acción
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-acta>
+                                    <tr>
+                                        <td style="width: 20%">
+                                            {{ acta.numeroActa }}
+                                        </td>
+
+                                        <td style="width: 55%">
+                                            {{
+                                                acta.idDocMaestria.linkDocumento
+                                            }}
+                                        </td>
+
+                                        <td style="width: 25%">
+                                            <p-button
+                                                label="Seleccionar "
+                                                styleClass="p-button-link"
+                                                (click)="seleccionActa(acta)"
+                                                type="button"
+                                            ></p-button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary">
+                                    <div
+                                        class="p-d-flex p-ai-center p-jc-between"
+                                    >
+                                        Total de actas asociadas
+                                        {{ actas ? actas.length : 0 }}.
+                                    </div>
+                                </ng-template>
+                            </p-table>
+                        </p-card>
+                    </ng-template>
+                </p-dialog>
+
+                <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+                <!--HASTA ACA ACTAS-->
+
+                <!--MODAL OFICIO INICIO-->
+                <p-dialog
+                    [(visible)]="oficioDialog"
+                    [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+                    [style]="{ width: '45vw' }"
+                    header="Registrando oficio"
+                    [modal]="true"
+                    styleClass="p-fluid"
+                    [position]="'top'"
+                    [draggable]="false"
+                >
+                    <ng-template pTemplate="content">
+                        <div class="form-group form-section">
+                            <label for="minmax-buttons"
+                                >Número de Oficio *</label
+                            >
+                            <p-inputNumber
+                                formControlName="numeroOficio"
+                                name="numeroOficio"
+                                [min]="0"
+                                [max]="99999"
+                                aria-describedby="numeroOficio-help"
+                                mode="decimal"
+                                inputId="withoutgrouping"
+                                [useGrouping]="false"
+                            >
+                            </p-inputNumber>
+                        </div>
+
+                        <div class="form-group form-section">
+                            <label for="fechaAprobacionOficio"
+                                >Fecha Aprobación *</label
+                            >
+                            <p-calendar
+                                [showIcon]="true"
+                                formControlName="fechaAprobacionOficio"
+                                inputId="fechaAprobacionOficio"
+                                dateFormat="mm-dd-yy"
+                                [appendTo]="'body'"
+                            ></p-calendar>
+                        </div>
+                        <div class="form-group form-section">
+                            <label for="adjuntarOficio"
+                                >Adjuntar Oficio *</label
+                            >
+                            <br />
+                            <div class="container-upload">
+                                <p-fileUpload
+                                    #fubauto
+                                    mode="basic"
+                                    name="base64File[]"
+                                    accept=".pdf"
+                                    (onSelect)="onFileSelectOficio($event)"
+                                    chooseLabel="Cargar"
+                                ></p-fileUpload>
+
+                                <button
+                                    pButton
+                                    type="button"
+                                    icon="pi pi-times"
+                                    class="p-button-rounded p-button-secondary p-button-outlined"
+                                    (click)="limpiarBase64Oficio()"
+                                ></button>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-section">
+                            <label for="asuntoOfi">Asunto *</label>
+                            <input
+                                id="float-input"
+                                type="text"
+                                pInputText
+                                formControlName="asuntoOfi"
+                            />
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="footer">
+                        <p-button
+                            label="Cancelar"
+                            icon="pi pi-times"
+                            class="p-button-text"
+                            (click)="cancelarOficio()"
+                        ></p-button>
+                        <p-button
+                            label="Guardar"
+                            icon="pi pi-check"
+                            class="p-button-text"
+                            (click)="guardarOficio()"
+                        ></p-button>
+                    </ng-template>
+                </p-dialog>
+
+                <!--MODAL OFICIO FIN-->
+
+                <!--DESDE ACA DOCENTES A SELECCIONAR-->
+
+                <p-toast position="bottom-center" key="bc"></p-toast>
+                <div class="card">
+                    <p-table
+                        [value]="docentes"
+                        [paginator]="true"
+                        [rows]="5"
+                        [showCurrentPageReport]="true"
+                        responsiveLayout="scroll"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [rowsPerPageOptions]="[5, 25, 50]"
+                        [rowHover]="true"
+                    >
+                        <ng-template pTemplate="caption">
+                            <div
+                                class="table-header"
+                                style="text-align: center"
+                            >
+                                Listado de docentes
+                            </div>
+                            <div
+                                class="p-d-flex p-ai-center p-jc-between"
+                            ></div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th id="identificacion">Identificacion</th>
+                                <th id="nombres">Nombres</th>
+                                <th id="apellidos">Apellidos</th>
+                                <th id="opciones">Opciones</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-docente>
+                            <tr>
+                                <td>{{ docente.identificacion }}</td>
+                                <td>{{ docente.nombre }}</td>
+                                <td>{{ docente.apellido }}</td>
+
+                                <td>
+                                    <p-button
+                                        label="Seleccionar"
+                                        styleClass="p-button-link"
+                                        (click)="seleccionDocente(docente)"
+                                        [disabled]="
+                                            docente === docenteSeleccionado
+                                        "
+                                    ></p-button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <div class="p-d-flex p-ai-center p-jc-between">
+                                Total de docentes asociadas
+                                {{ docentes ? docentes.length : 0 }}.
+                            </div>
+                        </ng-template>
+                    </p-table>
+                </div>
+
+                <!--HASTA ACA DOCENTES A SELECCIONAR-->
+
+                <!--DESDE ACA DOCENTES SELECCIONADOS-->
+
+                <p-toast></p-toast>
+
+                <div class="card">
+                    <p-table
+                        [value]="docentesSeleccionados"
+                        [rowHover]="true"
+                        dataKey="idSeleccionados"
+                    >
+                        <ng-template pTemplate="caption">
+                            <div
+                                class="table-header"
+                                style="text-align: center"
+                            >
+                                Docentes seleccionados
+                            </div>
+                            <div
+                                class="p-d-flex p-ai-center p-jc-between"
+                            ></div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th id="identificacion">Identificacion</th>
+                                <th id="Nombre">Nombre</th>
+                                <th id="Apellidos">Apellidos</th>
+                                <th id="accion">Acción</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template
+                            pTemplate="body"
+                            let-docenteSeleccionado
+                            let-rowIndex="rowIndex"
+                        >
+                            <tr>
+                                <td>
+                                    {{ docenteSeleccionado.identificacion }}
+                                </td>
+                                <td>{{ docenteSeleccionado.nombre }}</td>
+                                <td>{{ docenteSeleccionado.apellido }}</td>
+                                <td>
+                                    <p-button
+                                        icon="pi pi-trash"
+                                        class="p-button-rounded p-button-warning"
+                                        (click)="deleteDocente(rowIndex)"
+                                        [disabled]="
+                                            docente === docenteSeleccionado
+                                        "
+                                    ></p-button>
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="summary">
+                            <div class="p-d-flex p-ai-center p-jc-between">
+                                Total de docentes asociados
+                                {{
+                                    docentesSeleccionados
+                                        ? docentesSeleccionados.length
+                                        : 0
+                                }}.
+                            </div>
+                        </ng-template>
+                        <ng-template
+                            pTemplate="emptymessage"
+                            let-docentesSeleccionados
+                        >
+                            <tr>
+                                <td
+                                    [attr.colspan]="
+                                        docentesSeleccionados?.length
+                                    "
+                                >
+                                    No ha seleccionado docentes para esta
+                                    asignatura.
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+            <!--HASTA ACA DOCENTES A SELECCIONAR-->
+
+            <!--MODAL CONTENIDO PROGRAMATICO-->
+            <p-dialog
+                [(visible)]="contenidoProgramaticoDialog"
+                [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+                [style]="{ width: '45vw' }"
+                header="Registrando contenido programático"
+                [modal]="true"
+                styleClass="p-fluid"
+                [position]="'top'"
+                [draggable]="false"
+            >
+                <ng-template pTemplate="content">
+                    <div class="form-group form-section">
+                        <label for="nombreDocumentoContenidoProgrmatico"
+                            >Nombre del Documento *</label
+                        >
+                        <input
+                            id="float-input"
+                            type="text"
+                            pInputText
+                            formControlName="nombreDocumentoContenidoProgrmatico"
+                        />
+                    </div>
+                    <div class="form-group form-section">
+                        <label for="versionDocContenidoProgramatico"
+                            >Versión *</label
+                        >
+                        <p-inputNumber
+                            formControlName="versionDocContenidoProgramatico"
+                            name="versionDocContenidoProgramatico"
+                            [min]="0"
+                            [max]="99999"
+                            aria-describedby="versionDocContenidoProgramatico-help"
+                            mode="decimal"
+                            inputId="withoutgrouping"
+                        >
+                        </p-inputNumber>
+                    </div>
+
+                    <div class="form-group form-section">
+                        <label for="descripcionDocumentoContenidoProgramatico"
+                            >Descripción *</label
+                        >
+                        <textarea
+                            id="descripcionDocumentoContenidoProgramatico"
+                            rows="4"
+                            formControlName="descripcionDocumentoContenidoProgramatico"
+                            rows="5"
+                            cols="30"
+                            pInputTextarea
+                            autoResize="autoResize"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group form-section">
+                        <label for="adjuntarOtro">Adjuntar archivo *</label>
+                        <br />
+                        <div class="container-upload">
+                            <p-fileUpload
+                                #fubauto
+                                mode="basic"
+                                name="base64FileContenidoProgramatico[]"
+                                accept=".pdf"
+                                (onSelect)="
+                                    onFileSelectContenidoProgramatico($event)
+                                "
+                                chooseLabel="Cargar"
+                            ></p-fileUpload>
+
+                            <button
+                                pButton
+                                type="button"
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-secondary p-button-outlined"
+                                (click)="
+                                    limpiarBase64FileContenidoProgramatico()
+                                "
+                            ></button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <p-button
+                        label="Cancelar"
+                        icon="pi pi-times"
+                        class="p-button-text"
+                        (click)="cancelarContenidoProgramatico()"
+                    ></p-button>
+                    <p-button
+                        label="Guardar"
+                        icon="pi pi-check"
+                        class="p-button-text"
+                        (click)="guardarContenidoProgramatico()"
+                    ></p-button>
+                </ng-template>
+            </p-dialog>
+
+            <!--FIN MODAL CONTENIDO PROGRAMATICO-->
+
+            <!--MODAL CONTENIDO MICROCURRICULO-->
+            <p-dialog
+                [(visible)]="microcurriculoDialog"
+                [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+                [style]="{ width: '45vw' }"
+                header="Registrando microcurrículo"
+                [modal]="true"
+                styleClass="p-fluid"
+                [position]="'top'"
+                [draggable]="false"
+            >
+                <ng-template pTemplate="content">
+                    <div class="form-group form-section">
+                        <label for="nombreDocumentoMicrocurriculo"
+                            >Nombre del Documento *</label
+                        >
+                        <input
+                            id="float-input"
+                            type="text"
+                            pInputText
+                            formControlName="nombreDocumentoMicrocurriculo"
+                        />
+                    </div>
+                    <div class="form-group form-section">
+                        <label for="versionDoc">Versión *</label>
+                        <p-inputNumber
+                            formControlName="versionDoc"
+                            name="versionDoc"
+                            [min]="0"
+                            [max]="99999"
+                            aria-describedby="versionDoc-help"
+                            mode="decimal"
+                            inputId="withoutgrouping"
+                        >
+                        </p-inputNumber>
+                    </div>
+
+                    <div class="form-group form-section">
+                        <label for="descripcionDocumentoMicrocurriculo"
+                            >Descripción *</label
+                        >
+                        <textarea
+                            id="descripcionDocumentoMicrocurriculo"
+                            rows="4"
+                            formControlName="descripcionDocumentoMicrocurriculo"
+                            rows="5"
+                            cols="30"
+                            pInputTextarea
+                            autoResize="autoResize"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group form-section">
+                        <label for="adjuntarOtro">Adjuntar archivo *</label>
+                        <br />
+                        <div class="container-upload">
+                            <p-fileUpload
+                                #fubauto
+                                mode="basic"
+                                name="base64FileMicrocurriculo[]"
+                                accept=".pdf"
+                                (onSelect)="onFileSelectMicrocurriculo($event)"
+                                chooseLabel="Cargar"
+                            ></p-fileUpload>
+
+                            <button
+                                pButton
+                                type="button"
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-secondary p-button-outlined"
+                                (click)="limpiarBase64FileMicrocurriculo()"
+                            ></button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <p-button
+                        label="Cancelar"
+                        icon="pi pi-times"
+                        class="p-button-text"
+                        (click)="cancelarMicrocurriculo()"
+                    ></p-button>
+                    <p-button
+                        label="Guardar"
+                        icon="pi pi-check"
+                        class="p-button-text"
+                        (click)="guardarMicrocurriculo()"
+                    ></p-button>
+                </ng-template>
+            </p-dialog>
+
+            <!--FIN MODAL MICROCURRICULO-->
+
+            <div
+                style="display: flex; justify-content: center"
+                class="form-group form-buttons"
+            >
+                <button
+                    type="submit"
+                    pButton
+                    [label]="
+                        isEditMode ? 'Guardar Cambios' : 'Registrar Asignatura'
+                    "
+                    (click)="guardarAsignatura()"
+                    class="flex justify-content-center"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    [label]="
+                        isEditMode ? 'Cancelar Edición' : 'Cancelar Registro'
+                    "
+                    label="Cancelar"
+                    class="p-button-outlined p-button-secondary"
+                    (click)="limpiarFormulario()"
+                ></button>
+            </div>
+        </div>
+    </form>
+</p-card>
+<pre
+    >{{ asignaturaForm.value | json }}
+</pre>

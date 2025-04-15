@@ -1,0 +1,1221 @@
+<p-panel
+    class="panel-resolucion"
+    *ngIf="!isLoading && !isSending; else spinner"
+>
+    <ng-template pTemplate="header">
+        <div
+            class="flex flex-column align-items-center justify-content-center w-full row-gap-4"
+        >
+            <p-card
+                class="m-2 w-full max-w-30rem"
+                header="Datos del Estudiante"
+                *ngIf="estudianteSeleccionado"
+            >
+                <div class="mt-2 card-data flex justify-content-between">
+                    <span>Código</span>
+                    <span>{{ estudianteSeleccionado.codigo }}</span>
+                </div>
+                <div class="mt-2 card-data flex justify-content-between">
+                    <span>Numero de Identificación</span>
+                    <span>{{ estudianteSeleccionado.identificacion }}</span>
+                </div>
+                <div class="mt-2 card-data flex justify-content-between">
+                    <span>Nombres y Apellidos</span>
+                    <span
+                        >{{ estudianteSeleccionado.nombre }}
+                        {{ estudianteSeleccionado.apellido }}</span
+                    >
+                </div>
+            </p-card>
+            <span class="font-bold w-full text-center" style="font-size: 20px"
+                >Generación de resolución</span
+            >
+        </div>
+    </ng-template>
+    <div class="flex align-items-center justify-content-center">
+        <p-dialog
+            *ngIf="role.includes('ROLE_DOCENTE') && this.directorSeleccionado"
+            header="Solicitud al comité para resolución de aprobación de trabajo de grado"
+            class="dialog-responsive"
+            [(visible)]="displayFormatoResolucionComite"
+            [style]="{ width: '70vw' }"
+            [modal]="true"
+            [maximizable]="true"
+            [baseZIndex]="10000"
+            [draggable]="false"
+            [resizable]="false"
+        >
+            <ng-container>
+                <documento-formatoResolucionComite
+                    [directorSeleccionado]="directorSeleccionado"
+                    (formatoResolucionComitePdfGenerated)="
+                        handleFormatoResolucionComitePdfGenerated($event)
+                    "
+                ></documento-formatoResolucionComite>
+            </ng-container>
+        </p-dialog>
+        <p-dialog
+            *ngIf="role.includes('ROLE_COORDINADOR') && this.isDocenteCreated"
+            header="Solicitud al consejo de facultad para resolución de aprobación de trabajo de grado"
+            class="dialog-responsive"
+            [(visible)]="displayFormatoResolucionConsejo"
+            [style]="{ width: '70vw' }"
+            [modal]="true"
+            [maximizable]="true"
+            [baseZIndex]="10000"
+            [draggable]="false"
+            [resizable]="false"
+        >
+            <ng-container>
+                <documento-formatoResolucionConsejo
+                    [trabajoDeGradoId]="trabajoDeGradoId"
+                    (formatoResolucionConsejoPdfGenerated)="
+                        handleFormatoResolucionConsejoPdfGenerated($event)
+                    "
+                ></documento-formatoResolucionConsejo>
+            </ng-container>
+        </p-dialog>
+        <p-dialog
+            header="PDF Viewer"
+            [(visible)]="displayModal"
+            [style]="{
+                width: '80vw',
+                height: '80vh'
+            }"
+            class="dialog-responsive"
+            (onHide)="closeModal()"
+        >
+            <ng-template pTemplate="header">
+                <div
+                    style="
+                        display: flex;
+                        flex: 1;
+                        flex-direction: column;
+                        align-items: center;
+                        padding: 1rem;
+                        border-bottom: 1px solid #ccc;
+                        width: 20rem;
+                    "
+                >
+                    <div
+                        style="
+                            font-size: 1.5rem;
+                            font-weight: bold;
+                            margin-bottom: 0.5rem;
+                            width: 100%;
+                            text-align: center;
+                            word-break: break-all;
+                        "
+                    >
+                        {{ pdfUrls[currentPdfIndex]?.name }}
+                    </div>
+                    <div
+                        style="
+                            display: flex;
+                            justify-content: flex-start;
+                            align-items: center;
+                            width: 100%;
+                        "
+                    >
+                        <span style="font-size: 1rem; margin-right: 1rem"
+                            >Página {{ currentPdfIndex + 1 }} de
+                            {{ pdfUrls?.length }}</span
+                        >
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                column-gap: 10px;
+                            "
+                        >
+                            <button
+                                pButton
+                                icon="pi pi-arrow-left"
+                                (click)="previousPdf()"
+                                [disabled]="currentPdfIndex === 0"
+                            ></button>
+                            <button
+                                pButton
+                                icon="pi pi-arrow-right"
+                                (click)="nextPdf()"
+                                [disabled]="
+                                    currentPdfIndex === pdfUrls?.length - 1
+                                "
+                            ></button>
+                        </div>
+                    </div>
+                    <div
+                        style="
+                            margin-top: 1rem;
+                            display: flex;
+                            align-items: center;
+                            column-gap: 0.5rem;
+                        "
+                    >
+                        <div class="field-checkbox">
+                            <p-checkbox
+                                [(ngModel)]="isReviewed"
+                                [binary]="true"
+                                inputId="isReviewed"
+                                (ngModelChange)="onCheckboxChange($event)"
+                            ></p-checkbox>
+                            <label for="isReviewed"
+                                >Revisé todos los documentos</label
+                            >
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+            <div class="pdf-container">
+                <pdf-viewer
+                    [render-text]="true"
+                    *ngIf="pdfUrls?.length > 0"
+                    [src]="pdfUrls[currentPdfIndex]?.url"
+                    class="pdf-viewer"
+                    (after-load-complete)="onPdfLoad($event)"
+                ></pdf-viewer>
+            </div>
+        </p-dialog>
+    </div>
+    <div class="flex mt-4 justify-content-between">
+        <div class="flex align-items-center column-gap-4 resolucion-wrap">
+            <div class="flex align-items-center">
+                <button
+                    pButton
+                    icon="pi pi-chevron-left"
+                    label="Salir"
+                    (click)="redirectToBandeja()"
+                ></button>
+            </div>
+            <button
+                pButton
+                type="button"
+                icon="pi pi-book"
+                class="w-15rem p-button-secondary"
+                label="Solicitud examen de valoración"
+                [disabled]="role == 'ROLE_ESTUDIANTE'"
+                (click)="redirectToSolicitud(trabajoDeGradoId)"
+            ></button>
+            <button
+                pButton
+                type="button"
+                icon="pi pi-envelope"
+                class="w-15rem p-button-secondary"
+                label="Respuesta al examen de valoración"
+                [disabled]="role == 'ROLE_ESTUDIANTE' || role == 'ROLE_DOCENTE'"
+                (click)="redirectToRespuesta()"
+            ></button>
+            <button
+                pButton
+                type="button"
+                icon="pi pi-paperclip"
+                class="w-15rem p-button-info"
+                label="Generación de resolución"
+                [disabled]="role == 'ROLE_ESTUDIANTE' || isActiveIndex()"
+            ></button>
+            <button
+                pButton
+                type="button"
+                icon="pi pi-paperclip"
+                class="w-20rem p-button-secondary"
+                label="Sustentación del proyecto de investigación"
+                [disabled]="!isResolucionValid"
+                (click)="redirectToSustentacion(sustentacionId)"
+            ></button>
+        </div>
+    </div>
+    <ng-template class="w-full" pTemplate="footer">
+        <form [formGroup]="resolucionForm" enctype="multipart/form-data">
+            <div class="resolucion flex flex-column gap-2">
+                <div class="text-center font-medium mb-4">
+                    <p>
+                        <b
+                            >Generar resolución de aprobación de trabajo de
+                            grado</b
+                        >
+                    </p>
+                </div>
+                <div
+                    class="card"
+                    *ngIf="
+                        role.includes('ROLE_COORDINADOR') ||
+                        role.includes('ROLE_DOCENTE')
+                    "
+                >
+                    <div class="mb-4">
+                        <p class="text-xl font-bold mb-0">
+                            <i class="pi pi-check-square mr-2"></i>Paso 1 -
+                            Cargue de documentos
+                        </p>
+                        <p>
+                            Complete los datos requeridos para realizar la
+                            solicitud
+                        </p>
+                    </div>
+                    <p-fieldset
+                        legend="Docente"
+                        styleClass="bg-bluegray-50"
+                        [toggleable]="
+                            role.includes('ROLE_COORDINADOR') ? true : false
+                        "
+                        [collapsed]="
+                            role.includes('ROLE_COORDINADOR') ? true : false
+                        "
+                    >
+                        <div class="field grid justify-content-center">
+                            <div class="col-12 lg:col-6 xl:col-8">
+                                <label class="label-required"
+                                    >Título del Trabajo de Investigación</label
+                                >
+                                <input
+                                    pInputText
+                                    [maxLength]="250"
+                                    class="p-inputtext-md mt-2 w-full"
+                                    [value]="tituloSeleccionado"
+                                    [disabled]="true"
+                                />
+                            </div>
+                        </div>
+                        <div class="field grid justify-content-center">
+                            <div class="col-12 lg:col-6 xl:col-8 mt-4">
+                                <label class="label-required">Director</label>
+                                <div class="mt-2" *ngIf="directorSeleccionado">
+                                    <p-card class="w-full m-0">
+                                        <div
+                                            class="flex justify-content-between align-items-center"
+                                        >
+                                            <span
+                                                *ngIf="
+                                                    directorSeleccionado.nombre;
+                                                    else director
+                                                "
+                                                >{{
+                                                    directorSeleccionado.nombre
+                                                }}
+                                                {{
+                                                    directorSeleccionado.apellido
+                                                }}</span
+                                            >
+                                            <ng-template #director>
+                                                {{
+                                                    directorSeleccionado.nombres
+                                                }}
+                                            </ng-template>
+                                            <button
+                                                pButton
+                                                class="p-button-secondary"
+                                                icon="pi pi-times"
+                                                (click)="limpiarDirector()"
+                                                [disabled]="
+                                                    !role.includes(
+                                                        'ROLE_DOCENTE'
+                                                    )
+                                                "
+                                            ></button>
+                                        </div>
+                                    </p-card>
+                                </div>
+                                <div class="mt-2" *ngIf="!directorSeleccionado">
+                                    <button
+                                        pButton
+                                        icon="pi pi-plus"
+                                        label="Seleccionar"
+                                        (click)="onSeleccionarDirector()"
+                                    ></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field grid justify-content-center">
+                            <div class="col-12 lg:col-6 xl:col-8 mt-4">
+                                <label class="label-required"
+                                    >Co-Director</label
+                                >
+                                <div
+                                    class="mt-2"
+                                    *ngIf="codirectorSeleccionado"
+                                >
+                                    <p-card class="w-full m-0">
+                                        <div
+                                            class="flex justify-content-between"
+                                        >
+                                            <span
+                                                *ngIf="
+                                                    codirectorSeleccionado.nombre;
+                                                    else coodirector
+                                                "
+                                                >{{
+                                                    codirectorSeleccionado.nombre
+                                                }}
+                                                {{
+                                                    codirectorSeleccionado.apellido
+                                                }}</span
+                                            >
+                                            <ng-template #coodirector>
+                                                {{
+                                                    codirectorSeleccionado.nombres
+                                                }}
+                                            </ng-template>
+                                            <button
+                                                pButton
+                                                class="p-button-secondary"
+                                                icon="pi pi-times"
+                                                (click)="limpiarCodirector()"
+                                                [disabled]="
+                                                    !role.includes(
+                                                        'ROLE_DOCENTE'
+                                                    )
+                                                "
+                                            ></button>
+                                        </div>
+                                    </p-card>
+                                </div>
+                                <div
+                                    class="mt-2"
+                                    *ngIf="!codirectorSeleccionado"
+                                >
+                                    <button
+                                        pButton
+                                        icon="pi pi-plus"
+                                        label="Seleccionar"
+                                        (click)="onSeleccionarCodirector()"
+                                    ></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field grid justify-content-center">
+                            <div class="col-12 lg:col-6 xl:col-8 mt-4">
+                                <label class="label-required"
+                                    >Anteproyecto final (.pdf)
+                                </label>
+                                <div
+                                    class="flex flex-wrap gap-2 mt-2 align-items-start"
+                                >
+                                    <div
+                                        class="flex flex-column row-gap-2 align-items-start justify-content-start flex-1"
+                                    >
+                                        <div
+                                            class="flex flex-row w-full align-items-start justify-content-between column-gap-1"
+                                        >
+                                            <p-fileUpload
+                                                #AnteproyectoFinal
+                                                name="linkAnteproyectoFinal"
+                                                mode="basic"
+                                                [auto]="true"
+                                                accept=".pdf"
+                                                chooseIcon="pi pi-file"
+                                                class="w-full flex-1"
+                                                maxFileSize="20000000"
+                                                (onSelect)="
+                                                    onFileSelectAnteproyectoFinal(
+                                                        $event
+                                                    )
+                                                "
+                                                chooseLabel="Buscar documento"
+                                                [disabled]="
+                                                    resolucionForm.get(
+                                                        'linkAnteproyectoFinal'
+                                                    ).value
+                                                "
+                                            >
+                                            </p-fileUpload>
+                                            <button
+                                                *ngIf="FileAnteproyectoFinal"
+                                                pButton
+                                                class="p-button-secondary"
+                                                icon="pi pi-times"
+                                                type="button"
+                                                (click)="
+                                                    onFileClear(
+                                                        'linkAnteproyectoFinal'
+                                                    )
+                                                "
+                                                [disabled]="
+                                                    !role.includes(
+                                                        'ROLE_DOCENTE'
+                                                    )
+                                                "
+                                            ></button>
+                                        </div>
+                                        <div
+                                            class="text-description mt-2"
+                                            style="
+                                                width: '200px';
+                                                word-break: break-word;
+                                            "
+                                            *ngIf="FileAnteproyectoFinal"
+                                        >
+                                            {{ FileAnteproyectoFinal.name }} -
+                                            {{
+                                                FileAnteproyectoFinal.size
+                                                    | bytesToKb
+                                            }}
+                                            KB
+                                        </div>
+                                    </div>
+                                    <button
+                                        *ngIf="
+                                            editMode && FileAnteproyectoFinal
+                                        "
+                                        pButton
+                                        class="p-button-secondary"
+                                        type="button"
+                                        icon="pi pi-download"
+                                        (click)="
+                                            getFileAndSetValue(
+                                                'linkAnteproyectoFinal'
+                                            )
+                                        "
+                                    ></button>
+                                </div>
+                                <div
+                                    class="text-description mt-2"
+                                    *ngIf="!FileAnteproyectoFinal"
+                                >
+                                    <p>No has seleccionado ningún documento.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field grid justify-content-center">
+                            <div class="col-12 lg:col-6 xl:col-8 mt-4">
+                                <label class="label-required"
+                                    >Solicitud al comité para resolución de
+                                    aprobación de trabajo de grado (.pdf)
+                                </label>
+                                <div
+                                    class="flex flex-wrap gap-2 mt-2 align-items-start"
+                                >
+                                    <div
+                                        class="flex flex-column row-gap-2 align-items-start justify-content-start flex-1"
+                                    >
+                                        <div
+                                            class="flex flex-row w-full align-items-start justify-content-between column-gap-1"
+                                        >
+                                            <p-fileUpload
+                                                #SolicitudComite
+                                                name="linkSolicitudComite"
+                                                mode="basic"
+                                                [auto]="true"
+                                                accept=".pdf"
+                                                chooseIcon="pi pi-file"
+                                                class="w-full flex-1"
+                                                maxFileSize="20000000"
+                                                (onSelect)="
+                                                    onFileSelectSolicitudComite(
+                                                        $event
+                                                    )
+                                                "
+                                                chooseLabel="Buscar documento"
+                                                [disabled]="
+                                                    resolucionForm.get(
+                                                        'linkSolicitudComite'
+                                                    ).value
+                                                "
+                                            >
+                                            </p-fileUpload>
+                                            <button
+                                                *ngIf="FileSolicitudComite"
+                                                pButton
+                                                class="p-button-secondary"
+                                                icon="pi pi-times"
+                                                type="button"
+                                                (click)="
+                                                    onFileClear(
+                                                        'linkSolicitudComite'
+                                                    )
+                                                "
+                                                [disabled]="
+                                                    !role.includes(
+                                                        'ROLE_DOCENTE'
+                                                    )
+                                                "
+                                            ></button>
+                                        </div>
+                                        <div
+                                            class="text-description mt-2"
+                                            style="
+                                                width: '200px';
+                                                word-break: break-word;
+                                            "
+                                            *ngIf="FileSolicitudComite"
+                                        >
+                                            {{ FileSolicitudComite.name }} -
+                                            {{
+                                                FileSolicitudComite.size
+                                                    | bytesToKb
+                                            }}
+                                            KB
+                                        </div>
+                                    </div>
+                                    <button
+                                        *ngIf="editMode && FileSolicitudComite"
+                                        pButton
+                                        class="p-button-secondary"
+                                        type="button"
+                                        icon="pi pi-download"
+                                        (click)="
+                                            getFileAndSetValue(
+                                                'linkSolicitudComite'
+                                            )
+                                        "
+                                    ></button>
+                                    <button
+                                        *ngIf="!FileSolicitudComite"
+                                        pButton
+                                        icon="pi pi-plus"
+                                        class="align-self-center"
+                                        label="Crear Documento"
+                                        pTooltip="Para solicitar la presentación del examen de valoración al Comité de Maestría en Computación. Completa el documento para continuar."
+                                        tooltipPosition="top"
+                                        (click)="showFormatoResolucionComite()"
+                                        [loading]="loading"
+                                        [disabled]="!directorSeleccionado"
+                                    ></button>
+                                </div>
+                                <div
+                                    class="text-description mt-2"
+                                    *ngIf="!FileSolicitudComite"
+                                >
+                                    <p>No has seleccionado ningún documento.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex flex-1 justify-content-end align-items-center"
+                            *ngIf="role.includes('ROLE_DOCENTE')"
+                        >
+                            <button
+                                pButton
+                                icon="pi pi-eye"
+                                label="Revisar documentos"
+                                (click)="openModal()"
+                                [disabled]="displayModal"
+                            ></button>
+                        </div>
+                    </p-fieldset>
+                </div>
+                <div
+                    class="card"
+                    *ngIf="role.includes('ROLE_COORDINADOR') && isDocente"
+                >
+                    <div class="mb-4">
+                        <p class="text-xl font-bold mb-0">
+                            <i class="pi pi-check-square mr-2"></i>Paso 2 -
+                            Respuesta Concepto Coordinador
+                        </p>
+                        <p>
+                            Complete los datos requeridos para realizar la
+                            solicitud
+                        </p>
+                    </div>
+                    <p-fieldset
+                        legend="Coordinador"
+                        styleClass="bg-bluegray-50"
+                        [toggleable]="
+                            role.includes('ROLE_COORDINADOR') &&
+                            isCoordinadorFase1
+                                ? true
+                                : false
+                        "
+                        [collapsed]="
+                            role.includes('ROLE_COORDINADOR') &&
+                            isCoordinadorFase1
+                                ? true
+                                : false
+                        "
+                    >
+                        <div class="field grid">
+                            <div
+                                class="flex flex-1 justify-content-end align-items-center mb-4 lg:mb-0"
+                                *ngIf="isCoordinadorFase1"
+                            >
+                                <button
+                                    *ngIf="
+                                        editMode &&
+                                        resolucionForm.get('conceptoComite')
+                                            .value != 'Aprobado'
+                                    "
+                                    pButton
+                                    class="p-button p-button-warning"
+                                    icon="pi pi-pencil"
+                                    pTooltip="Modificar"
+                                    tooltipPosition="top"
+                                    (click)="
+                                        editFase($event, 'coordinadorFase1')
+                                    "
+                                ></button>
+                                <p-confirmPopup></p-confirmPopup>
+                            </div>
+                            <div
+                                class="flex flex-1 justify-content-end align-items-center mb-4 lg:mb-0"
+                                *ngIf="isDocente && !isCoordinadorFase1"
+                            >
+                                <button
+                                    *ngIf="editMode"
+                                    pButton
+                                    icon="pi pi-eye"
+                                    label="Revisar documentos"
+                                    (click)="openModal()"
+                                    [disabled]="displayModal"
+                                ></button>
+                            </div>
+                            <div
+                                class="flex flex-column w-full justify-content-center align-items-center row-gap-4"
+                            >
+                                <strong
+                                    >Concepto Verificación Documentos</strong
+                                >
+                                <div
+                                    class="flex w-full justify-content-center align-items-center column-gap-4"
+                                >
+                                    <div
+                                        *ngFor="
+                                            let estado of estadosVerificacion
+                                        "
+                                        class="field-checkbox"
+                                    >
+                                        <p-radioButton
+                                            [inputId]="estado + 'coordinador'"
+                                            [value]="estado"
+                                            formControlName="conceptoDocumentosCoordinador"
+                                        ></p-radioButton>
+                                        <label
+                                            [for]="estado + 'coordinador'"
+                                            class="ml-2"
+                                            >{{ estado }}</label
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            *ngIf="
+                                resolucionForm.get(
+                                    'conceptoDocumentosCoordinador'
+                                ).value == 'Rechazado'
+                            "
+                            class="field grid justify-content-center"
+                        >
+                            <div class="col-12 lg:col-6 xl:col-8">
+                                <div>
+                                    <label class="label-required">Asunto</label>
+                                    <input
+                                        class="p-inputtext-md w-full mt-2"
+                                        pInputText
+                                        [maxLength]="250"
+                                        formControlName="asuntoCoordinador"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <label class="label-required"
+                                        >Observación</label
+                                    >
+                                    <textarea
+                                        class="w-full mt-2"
+                                        rows="5"
+                                        cols="30"
+                                        pInputTextarea
+                                        [autoResize]="true"
+                                        formControlName="mensajeCoordinador"
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </p-fieldset>
+                </div>
+                <div
+                    class="card"
+                    *ngIf="
+                        role.includes('ROLE_COORDINADOR') && isCoordinadorFase1
+                    "
+                >
+                    <div class="mb-4">
+                        <p class="text-xl font-bold mb-0">
+                            <i class="pi pi-check-square mr-2"></i>Paso 3 -
+                            Respuesta Concepto Comite
+                        </p>
+                        <p>
+                            Complete los datos requeridos para realizar la
+                            solicitud
+                        </p>
+                    </div>
+                    <p-fieldset
+                        legend="Comite"
+                        styleClass="bg-bluegray-50"
+                        [toggleable]="
+                            role.includes('ROLE_COORDINADOR') &&
+                            isCoordinadorFase2
+                                ? true
+                                : false
+                        "
+                        [collapsed]="
+                            role.includes('ROLE_COORDINADOR') &&
+                            isCoordinadorFase2
+                                ? true
+                                : false
+                        "
+                    >
+                        <div class="field grid">
+                            <div
+                                class="flex flex-1 justify-content-end align-items-center mb-4 lg:mb-0"
+                                *ngIf="isCoordinadorFase2"
+                            >
+                                <button
+                                    *ngIf="editMode && !isResolucionValid"
+                                    pButton
+                                    class="p-button p-button-warning"
+                                    icon="pi pi-pencil"
+                                    pTooltip="Modificar"
+                                    tooltipPosition="top"
+                                    (click)="
+                                        editFase($event, 'coordinadorFase2')
+                                    "
+                                ></button>
+                                <p-confirmPopup></p-confirmPopup>
+                            </div>
+                            <div
+                                class="flex flex-column w-full justify-content-center align-items-center row-gap-4"
+                            >
+                                <strong
+                                    >Concepto para Generar Resolución</strong
+                                >
+                                <div
+                                    class="flex w-full justify-content-center align-items-center column-gap-4"
+                                >
+                                    <div
+                                        *ngFor="let estado of estadosRespuesta"
+                                        class="field-checkbox"
+                                    >
+                                        <p-radioButton
+                                            [inputId]="estado + 'comite'"
+                                            [value]="estado"
+                                            formControlName="conceptoComite"
+                                        ></p-radioButton>
+                                        <label
+                                            [for]="estado + 'comite'"
+                                            class="ml-2"
+                                            >{{ estado }}</label
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            *ngIf="resolucionForm.get('conceptoComite').value"
+                            class="field grid justify-content-center"
+                        >
+                            <div class="col-12 lg:col-6 xl:col-8">
+                                <div>
+                                    <label class="label-required">Asunto</label>
+                                    <input
+                                        class="p-inputtext-md w-full mt-2"
+                                        pInputText
+                                        [maxLength]="250"
+                                        formControlName="asuntoComite"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <label class="label-required"
+                                        >Observación</label
+                                    >
+                                    <textarea
+                                        class="w-full mt-2"
+                                        rows="5"
+                                        cols="30"
+                                        pInputTextarea
+                                        [autoResize]="true"
+                                        formControlName="mensajeComite"
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            *ngIf="resolucionForm.get('conceptoComite').value"
+                            class="field grid justify-content-center"
+                        >
+                            <div class="col-12 lg:col-6 xl:col-8">
+                                <div
+                                    class="p-field flex flex-column xl:flex-row xl:align-items-center xl:column-gap-2 justify-content-between"
+                                >
+                                    <label
+                                        class="label-required text-left"
+                                        for="numeroActa"
+                                    >
+                                        No de resolución
+                                    </label>
+                                    <input
+                                        id="numeroActa"
+                                        class="mt-2 w-full xl:w-10rem"
+                                        pInputText
+                                        formControlName="numeroActa"
+                                    />
+                                    <label
+                                        class="label-required text-left mt-2 xl:mt-0"
+                                        for="fechaActa"
+                                        >Fecha resolución</label
+                                    >
+                                    <p-calendar
+                                        id="fechaActa"
+                                        class="mt-2 w-full xl:w-15rem"
+                                        formControlName="fechaActa"
+                                        [showIcon]="true"
+                                        dateFormat="dd.mm.yy"
+                                        [maxDate]="maxDate"
+                                    ></p-calendar>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            *ngIf="
+                                resolucionForm.get('conceptoComite').value ==
+                                'Aprobado'
+                            "
+                            class="field grid justify-content-center"
+                        >
+                            <div class="col-12 lg:col-6 xl:col-8 mt-4">
+                                <label class="label-required"
+                                    >Solicitud al consejo de facultad para
+                                    resolución de aprobación de trabajo de grado
+                                    (.pdf)
+                                </label>
+                                <div
+                                    class="flex flex-wrap gap-2 mt-2 align-items-start"
+                                >
+                                    <div
+                                        class="flex flex-column row-gap-2 align-items-start justify-content-start flex-1"
+                                    >
+                                        <div
+                                            class="flex flex-row w-full align-items-start justify-content-between column-gap-1"
+                                        >
+                                            <p-fileUpload
+                                                #SolicitudConsejo
+                                                name="linkSolicitudConsejo"
+                                                mode="basic"
+                                                [auto]="true"
+                                                accept=".pdf"
+                                                chooseIcon="pi pi-file"
+                                                class="w-full flex-1"
+                                                maxFileSize="20000000"
+                                                (onSelect)="
+                                                    onFileSelectSolicitudConsejo(
+                                                        $event
+                                                    )
+                                                "
+                                                chooseLabel="Buscar documento"
+                                                [disabled]="
+                                                    resolucionForm.get(
+                                                        'linkSolicitudConsejo'
+                                                    ).value
+                                                "
+                                            >
+                                            </p-fileUpload>
+                                            <button
+                                                *ngIf="FileSolicitudConsejo"
+                                                pButton
+                                                class="p-button-secondary"
+                                                icon="pi pi-times"
+                                                type="button"
+                                                (click)="
+                                                    onFileClear(
+                                                        'linkSolicitudConsejo'
+                                                    )
+                                                "
+                                                [disabled]="
+                                                    isSustentacionCreated
+                                                "
+                                            ></button>
+                                        </div>
+                                        <div
+                                            class="text-description mt-2"
+                                            style="
+                                                width: '200px';
+                                                word-break: break-word;
+                                            "
+                                            *ngIf="FileSolicitudConsejo"
+                                        >
+                                            {{ FileSolicitudConsejo.name }} -
+                                            {{
+                                                FileSolicitudConsejo.size
+                                                    | bytesToKb
+                                            }}
+                                            KB
+                                        </div>
+                                    </div>
+                                    <button
+                                        *ngIf="editMode && FileSolicitudConsejo"
+                                        pButton
+                                        class="p-button-secondary"
+                                        type="button"
+                                        icon="pi pi-download"
+                                        (click)="
+                                            getFileAndSetValue(
+                                                'linkSolicitudConsejo'
+                                            )
+                                        "
+                                    ></button>
+                                    <button
+                                        *ngIf="!FileSolicitudConsejo"
+                                        pButton
+                                        icon="pi pi-plus"
+                                        class="align-self-center"
+                                        label="Crear Documento"
+                                        pTooltip="Para solicitar la resolución de aprobación del trabajo de grado al Consejo de Facultad. Completa el documento para proceder."
+                                        tooltipPosition="top"
+                                        (click)="showFormatoResolucionConsejo()"
+                                        [loading]="loading"
+                                    ></button>
+                                </div>
+                                <div
+                                    class="text-description mt-2"
+                                    *ngIf="!FileSolicitudConsejo"
+                                >
+                                    <p>No has seleccionado ningún documento.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex flex-1 justify-content-end align-items-center"
+                            *ngIf="
+                                isCoordinadorFase1 &&
+                                !isCoordinadorFase2 &&
+                                resolucionForm.get('conceptoComite').value ==
+                                    'Aprobado'
+                            "
+                        >
+                            <button
+                                *ngIf="editMode"
+                                pButton
+                                icon="pi pi-eye"
+                                label="Revisar documentos"
+                                (click)="openModal()"
+                                [disabled]="displayModal"
+                            ></button>
+                        </div>
+                    </p-fieldset>
+                </div>
+                <div
+                    class="card"
+                    *ngIf="
+                        role.includes('ROLE_COORDINADOR') && isCoordinadorFase2
+                    "
+                >
+                    <div class="mb-4">
+                        <p class="text-xl font-bold mb-0">
+                            <i class="pi pi-check-square mr-2"></i>Paso 4 -
+                            Respuesta Consejo
+                        </p>
+                        <p>
+                            Complete los datos requeridos para realizar la
+                            solicitud
+                        </p>
+                    </div>
+                    <p-fieldset
+                        legend="Consejo"
+                        styleClass="bg-bluegray-50"
+                        [toggleable]="
+                            role.includes('ROLE_COORDINADOR') &&
+                            isCoordinadorFase3 &&
+                            isSustentacionCreated
+                                ? true
+                                : false
+                        "
+                        [collapsed]="
+                            role.includes('ROLE_COORDINADOR') &&
+                            isCoordinadorFase3 &&
+                            isSustentacionCreated
+                                ? true
+                                : false
+                        "
+                    >
+                        <div class="field grid justify-content-center">
+                            <div class="col-12 lg:col-6 xl:col-8">
+                                <div
+                                    class="p-field flex flex-column xl:flex-row xl:align-items-center xl:column-gap-2 justify-content-between"
+                                >
+                                    <label
+                                        class="label-required text-left"
+                                        for="numeroActaConsejo"
+                                    >
+                                        No de resolución generada por el consejo
+                                        de facultad
+                                    </label>
+                                    <input
+                                        id="numeroActaConsejo"
+                                        class="mt-2 w-full xl:w-10rem"
+                                        pInputText
+                                        formControlName="numeroActaConsejo"
+                                    />
+                                    <label
+                                        class="label-required text-left mt-2 xl:mt-0"
+                                        for="fechaActaConsejo"
+                                        >Fecha resolución</label
+                                    >
+                                    <p-calendar
+                                        id="fechaActaConsejo"
+                                        class="mt-2 w-full xl:w-15rem"
+                                        formControlName="fechaActaConsejo"
+                                        [showIcon]="true"
+                                        dateFormat="dd.mm.yy"
+                                        [maxDate]="maxDate"
+                                    ></p-calendar>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field grid justify-content-center">
+                            <div class="col-12 lg:col-6 xl:col-8 mt-4">
+                                <label class="label-required"
+                                    >Oficio Consejo (.pdf)
+                                </label>
+                                <div
+                                    class="flex flex-wrap gap-2 mt-2 align-items-start"
+                                >
+                                    <div
+                                        class="flex flex-column row-gap-2 align-items-start justify-content-start flex-1"
+                                    >
+                                        <div
+                                            class="flex flex-row w-full align-items-start justify-content-between column-gap-1"
+                                        >
+                                            <p-fileUpload
+                                                #OficioConsejo
+                                                name="linkOficioConsejo"
+                                                mode="basic"
+                                                [auto]="true"
+                                                accept=".pdf"
+                                                chooseIcon="pi pi-file"
+                                                class="w-full flex-1"
+                                                maxFileSize="20000000"
+                                                (onSelect)="
+                                                    onFileSelectOficioConsejo(
+                                                        $event
+                                                    )
+                                                "
+                                                chooseLabel="Buscar documento"
+                                                [disabled]="
+                                                    resolucionForm.get(
+                                                        'linkOficioConsejo'
+                                                    ).value
+                                                "
+                                            >
+                                            </p-fileUpload>
+                                            <button
+                                                *ngIf="FileOficioConsejo"
+                                                pButton
+                                                class="p-button-secondary"
+                                                icon="pi pi-times"
+                                                type="button"
+                                                (click)="
+                                                    onFileClear(
+                                                        'linkOficioConsejo'
+                                                    )
+                                                "
+                                                [disabled]="
+                                                    isSustentacionCreated
+                                                "
+                                            ></button>
+                                        </div>
+                                        <div
+                                            class="text-description mt-2"
+                                            style="
+                                                width: '200px';
+                                                word-break: break-word;
+                                            "
+                                            *ngIf="FileOficioConsejo"
+                                        >
+                                            {{ FileOficioConsejo.name }} -
+                                            {{
+                                                FileOficioConsejo.size
+                                                    | bytesToKb
+                                            }}
+                                            KB
+                                        </div>
+                                    </div>
+                                    <button
+                                        *ngIf="editMode && FileOficioConsejo"
+                                        pButton
+                                        class="p-button-secondary"
+                                        type="button"
+                                        icon="pi pi-download"
+                                        (click)="
+                                            getFileAndSetValue(
+                                                'linkOficioConsejo'
+                                            )
+                                        "
+                                    ></button>
+                                </div>
+                                <div
+                                    class="text-description mt-2"
+                                    *ngIf="!FileOficioConsejo"
+                                >
+                                    <p>No has seleccionado ningún documento.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex flex-1 justify-content-end align-items-center"
+                            *ngIf="isCoordinadorFase2 && !isCoordinadorFase3"
+                        >
+                            <button
+                                *ngIf="editMode"
+                                pButton
+                                icon="pi pi-eye"
+                                label="Revisar documentos"
+                                (click)="openModal()"
+                                [disabled]="displayModal"
+                            ></button>
+                        </div>
+                    </p-fieldset>
+                </div>
+            </div>
+            <div
+                class="w-full flex align-items-center justify-content-end column-gap-2"
+            >
+                <button
+                    *ngIf="!editMode"
+                    pButton
+                    icon="pi pi-save"
+                    label="Guardar"
+                    (click)="createOrUpdateResolucion()"
+                    [disabled]="!isReviewed"
+                ></button>
+                <button
+                    *ngIf="
+                        editMode &&
+                        role.includes('ROLE_COORDINADOR') &&
+                        isCoordinadorFase3
+                    "
+                    pButton
+                    icon="pi pi-eye"
+                    label="Revisar documentos"
+                    (click)="openModal()"
+                    [disabled]="!displayModal && isSustentacionCreated"
+                ></button>
+                <button
+                    *ngIf="editMode"
+                    pButton
+                    [icon]="
+                        getButtonLabel() == 'Guardar'
+                            ? 'pi pi-save'
+                            : 'pi pi-pencil'
+                    "
+                    [label]="getButtonLabel()"
+                    (click)="createOrUpdateResolucion()"
+                    [disabled]="!isReviewed"
+                ></button>
+            </div>
+        </form>
+    </ng-template>
+</p-panel>
+<ng-template #spinner>
+    <div *ngIf="isLoading" class="spinner-container">
+        <p-progressSpinner
+            ariaLabel="loading"
+            styleClass="custom-spinner"
+        ></p-progressSpinner>
+    </div>
+    <div *ngIf="isSending" class="spinner-container">
+        <p-progressSpinner
+            ariaLabel="loading"
+            styleClass="custom-spinner"
+        ></p-progressSpinner>
+        <p class="spinner-text">Enviando información...</p>
+    </div>
+</ng-template>

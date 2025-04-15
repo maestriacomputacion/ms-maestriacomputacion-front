@@ -1,0 +1,48 @@
+<div class="text-2xl font-bold text-center">Historial de seguimiento</div>
+<div class="text-center mb-4">Solicitud con código: {{ seguimiento.radicado }}</div>
+
+<div class="flex justify-content-center flex-wrap">
+    <div class="w-10">
+        <p-timeline [value]="eventos" align="alternate" styleClass="customized-timeline">
+            <ng-template pTemplate="marker" let-event>
+                <span class="marker-circle" [style.backgroundColor]="personalizacion[event.estadoSolicitud].color">
+                    <i [ngClass]="personalizacion[event.estadoSolicitud].icon"></i>
+                </span>
+            </ng-template>
+            <ng-template pTemplate="content" let-event>
+                <p-card
+                    [header]="event.estadoSolicitud"
+                    [subheader]="cambiarFormatoFecha(event.fechaHora)"
+                    styleClass="bg-bluegray-50"
+                >
+                    <img
+                        *ngIf="event.image"
+                        [src]="'assets/showcase/images/demo/product/' + event.image"
+                        [alt]="event.name"
+                        width="200"
+                        class="shadow-2"
+                    />
+                    <p>
+                        {{ event.descripcion }}
+                    </p>
+
+                    <ng-container *ngIf="event.comentarios">
+                        <p class="font-italic">"{{ event.comentarios }}"</p>
+                    </ng-container>
+
+                    <ng-container *ngIf="event.pdfBase64">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-file-pdf"
+                            label="{{ retornarNombreArchivo(event.pdfBase64) }}"
+                            (click)="descargarArchivo(event.pdfBase64)"
+                            class="p-button-rounded p-button-secondary mr-2 text-sm"
+                        ></button>
+                    </ng-container>
+                </p-card>
+            </ng-template>
+        </p-timeline>
+    </div>
+</div>

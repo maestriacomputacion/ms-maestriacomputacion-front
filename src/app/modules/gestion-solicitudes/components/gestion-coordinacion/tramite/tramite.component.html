@@ -1,0 +1,573 @@
+<p-toast></p-toast>
+<p-confirmDialog
+    [style]="{ width: '50vw' }"
+    [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
+
+<div class="grid mt-3">
+    <div class="col-12">
+        <ng-container *ngIf="mostrarBtnRechazar">
+            <button
+                class="p-button p-button-danger"
+                pButton
+                pRipple
+                label="Rechazar solicitud"
+                (click)="rechazarSolicitud()"
+                [loading]="rechazoEnProceso"
+                icon="pi pi-times"
+            ></button>
+        </ng-container>
+        <ng-container *ngIf="gestor.estadoSolicitud === 'RECHAZADA'">
+            <button pButton pRipple label="Eliminar" icon="pi pi-trash"></button
+        ></ng-container>
+        <ng-container *ngIf="mostrarBtnAprobar">
+            <ng-container *ngIf="gestor.estadoSolicitud !== 'Aprobado' && isSolicitudTipoCerVoto()">
+                <div style="margin-top: 10px;">
+                    <button
+                        pButton
+                        pRipple
+                        label="Aprobar solicitud"
+                        class="p-button-success"
+                        icon="pi pi-check"
+                        (click)="aprobarSolicitudCerVoto()"
+                    ></button>
+                </div>
+            </ng-container>   
+        </ng-container>      
+    </div>
+
+    <div class="col-12" *ngIf="!isSolicitudTipoCerVoto()">
+        <p-accordion>
+            <p-accordionTab header="Comité del Programa" *ngIf="habilitarComite">
+                <div style="margin-top: -15px">
+                    <p-divider align="left">
+                        <div class="inline-flex align-items-center">
+                            <i class="pi pi-send mr-2"></i>
+                            <b>Envio al comité</b>
+                        </div>
+                    </p-divider>
+                </div>
+                <div class="flex justify-content-center flex-wrap">
+                    <div class="flex gap-1 mt-1 mb-4" style="width: 96%">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Descargar documentos adjuntos"
+                            class="p-button-outlined p-button-secondary"
+                            icon="pi pi-download"
+                            iconPos="right"
+                            (click)="onDescargarArchivos()"
+                        ></button>
+                        <div class="flex align-items-center ml-4">
+                            <p-inputSwitch
+                                [(ngModel)]="avalComite.enComite"
+                                (onChange)="validarCambioEstadoComite()"
+                                [disabled]="deshabilitarEnvioAComite || avalComite.enComite"
+                            ></p-inputSwitch>
+                        </div>
+                        <div class="flex align-items-center justify-content-center ml-2" style="padding-bottom: 3px">
+                            Solicitud enviada al comité de programa
+                        </div>
+                    </div>
+                </div>
+
+                <p-divider align="left" *ngIf="deshabilitarEnvioAComite">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-envelope mr-2"></i>
+                        <b>Respuesta del comité</b>
+                    </div>
+                </p-divider>
+
+                <div class="flex justify-content-center flex-wrap">
+                    <div class="grid mt-1 mb-4" *ngIf="deshabilitarEnvioAComite" style="width: 96%">
+                        <div class="col-4 md:col-2">
+                            <p class="font-semibold">¿El comité avaló?</p>
+                            <div class="field-radiobutton">
+                                <p-radioButton
+                                    name="conceptoSi"
+                                    value="Si"
+                                    [(ngModel)]="avalComite.avaladoComite"
+                                    inputId="conceptoComite1"
+                                    [disabled]="bloquearConceptoComite"
+                                ></p-radioButton>
+                                <label for="conceptoComite1">Si</label>
+                            </div>
+                            <div class="field-radiobutton">
+                                <p-radioButton
+                                    name="conceptoNo"
+                                    value="No"
+                                    [(ngModel)]="avalComite.avaladoComite"
+                                    inputId="conceptoComite2"
+                                    [disabled]="bloquearConceptoComite"
+                                ></p-radioButton>
+                                <label for="conceptoComite2">No</label>
+                            </div>
+                        </div>
+                        <div class="col-8: md:col-7">
+                            <p class="font-semibold">Concepto del comité</p>
+                            <textarea
+                                rows="4"
+                                pInputTextarea
+                                [(ngModel)]="avalComite.conceptoComite"
+                                [disabled]="bloquearConceptoComite"
+                                style="width: 100%; box-sizing: border-box"
+                            ></textarea>
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p class="font-semibold">Acta</p>
+                            <input
+                                class="mb-2"
+                                type="text"
+                                placeholder="Número"
+                                pInputText
+                                [disabled]="bloquearConceptoComite"
+                                [(ngModel)]="avalComite.numeroActa"
+                            />
+                            <p-calendar
+                                inputId="basic"
+                                [(ngModel)]="fechaSeleccionada"
+                                placeholder="Fecha"
+                                [disabled]="bloquearConceptoComite"
+                                appendTo="body"
+                                dateFormat="dd/mm/yy"
+                            ></p-calendar>
+                        </div>
+                        <!--
+                        <div
+                            class="mt-2"
+                            *ngIf="
+                                avalComite.avaladoComite === 'Si' &&
+                                ['AD_ASIG', 'CA_ASIG', 'HO_ASIG_POS', 'HO_ASIG_ESP', 'CU_ASIG'].includes(
+                                    gestor.solicitudSeleccionada.codigoSolicitud
+                                )
+                            "
+                        >
+                            <p class="font-semibold">
+                                {{
+                                    gestor.solicitudSeleccionada.codigoSolicitud === "AD_ASIG"
+                                        ? "Asignaturas aprobadas por el comité para su adición"
+                                        : "Asignaturas aprobadas por el comité para su cancelación"
+                                }}
+                            </p>
+
+                            <div *ngFor="let asignatura of avalComite.asignaturasAprobadas" class="field-checkbox">
+                                <p-checkbox
+                                    [(ngModel)]="asignatura.aprobado"
+                                    [disabled]="bloquearConceptoComite"
+                                    (onChange)="onCheckboxChange()"
+                                    binary="true"
+                                ></p-checkbox>
+                                <label>{{
+                                    asignatura.nombre + " GRUPO " + asignatura.grupo + " - " + asignatura.nombreDocente
+                                }}</label>
+                            </div>
+                        </div>
+
+                        -->
+
+                        <div
+                            class="mt-2"
+                            *ngIf="
+                                avalComite.avaladoComite === 'Si' &&
+                                [
+                                    'AD_ASIG',
+                                    'CA_ASIG',
+                                    'HO_ASIG_POS',
+                                    'HO_ASIG_ESP',
+                                    'CU_ASIG',
+                                    'AV_COMI_PR',
+                                    'RE_CRED_PR_DOC'
+                                ].includes(gestor.solicitudSeleccionada.codigoSolicitud)
+                            "
+                        >
+                            <p class="font-semibold">
+                                {{ getTituloPorSolicitud(gestor.solicitudSeleccionada.codigoSolicitud, "COMITE") }}
+                            </p>
+
+                            <div
+                                *ngFor="
+                                    let asignatura of getAsignaturasPorSolicitud(
+                                        avalComite,
+                                        gestor.solicitudSeleccionada.codigoSolicitud
+                                    )
+                                "
+                                class="field-checkbox"
+                            >
+                                <p-checkbox
+                                    [(ngModel)]="asignatura.aprobado"
+                                    [disabled]="bloquearConceptoComite"
+                                    (onChange)="onCheckboxChange()"
+                                    binary="true"
+                                ></p-checkbox>
+                                <label>{{
+                                    getDetalleAsignatura(asignatura, gestor.solicitudSeleccionada.codigoSolicitud)
+                                }}</label>
+                            </div>
+                        </div>
+
+                        <div
+                            *ngIf="gestor.estadoSolicitud != 'Resuelta'"
+                            class="grid grid-nogutter justify-content-end w-full"
+                        >
+                            <p-button
+                                [label]="conceptoComiteGuardado ? 'Editar respuesta' : 'Guardar respuesta'"
+                                [icon]="conceptoComiteGuardado ? 'pi pi-pencil' : 'pi pi-save'"
+                                iconPos="left"
+                                (click)="guardarRespuestaComite()"
+                            ></p-button>
+                        </div>
+                    </div>
+                </div>
+            </p-accordionTab>
+            <p-accordionTab header="Consejo de Facultad" *ngIf="habilitarConcejo">
+                <p-divider align="left">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-envelope mr-2"></i>
+                        <b>Envio al consejo de facultad</b>
+                    </div>
+                </p-divider>
+
+                <div class="flex justify-content-center flex-wrap">
+                    <div class="flex gap-2 mt-1 mb-4" style="width: 96%">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Oficio para consejo"
+                            class="p-button-outlined p-button-secondary"
+                            icon="pi pi-file-pdf"
+                            iconPos="left"
+                            (click)="
+                                previsualizarDocuementoPDF(
+                                    gestor.solicitudSeleccionada.codigoSolicitud,
+                                    'oficio-consejo',
+                                    false
+                                )
+                            "
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Enviar oficio por correo"
+                            icon="pi pi-send"
+                            iconPos="right"
+                            [disabled]="gestor.estadoSolicitud === 'Resuelta'"
+                            (click)="enviarCorreo('concejo', 'oficio-consejo')"
+                            [disabled]="deshabilitarEnvioAConsejo"
+                        ></button>
+                        <div class="flex align-items-center justify-content-center ml-3">
+                            <p-inputSwitch
+                                [(ngModel)]="respuestaConsejo.enConcejo"
+                                (onChange)="validarCambioEstadoConcejo()"
+                                [disabled]="deshabilitarEnvioAConsejo || respuestaConsejo.enConcejo"
+                            ></p-inputSwitch>
+                            <div
+                                class="flex align-items-center justify-content-center ml-2"
+                                style="padding-bottom: 3px"
+                            >
+                                Solicitud enviada al consejo de facultad
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full mt-2" *ngIf="urlOficioConcejoPdf">
+                        <embed
+                            id="embedElement"
+                            [src]="urlOficioConcejoPdf"
+                            type="application/pdf"
+                            width="100%"
+                            height="600px"
+                        />
+                    </div>
+                </div>
+
+                <p-divider align="left" *ngIf="deshabilitarEnvioAConsejo">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-envelope mr-2"></i>
+                        <b>Respuesta del consejo de facultad</b>
+                    </div>
+                </p-divider>
+
+                <div class="flex justify-content-center flex-wrap" *ngIf="deshabilitarEnvioAConsejo">
+                    <div class="grid mt-1 mb-4" style="width: 96%">
+                        <div class="col-4 md:col-2">
+                            <p class="font-semibold">¿El consejo aprobó?</p>
+                            <div class="field-radiobutton">
+                                <p-radioButton
+                                    name="conceptoSi"
+                                    value="Si"
+                                    [(ngModel)]="respuestaConsejo.avaladoConcejo"
+                                    inputId="conceptoConsejo1"
+                                    [disabled]="bloquearConceptoConsejo"
+                                ></p-radioButton>
+                                <label for="conceptoConsejo1">Si</label>
+                            </div>
+                            <div class="field-radiobutton">
+                                <p-radioButton
+                                    name="conceptoNo"
+                                    value="No"
+                                    [(ngModel)]="respuestaConsejo.avaladoConcejo"
+                                    inputId="conceptoConsejo2"
+                                    [disabled]="bloquearConceptoConsejo"
+                                ></p-radioButton>
+                                <label for="conceptoConsejo2">No</label>
+                            </div>
+                        </div>
+                        <div class="col-8: md:col-7">
+                            <p class="font-semibold">Concepto del consejo</p>
+                            <textarea
+                                rows="4"
+                                pInputTextarea
+                                [(ngModel)]="respuestaConsejo.conceptoConcejo"
+                                [disabled]="bloquearConceptoConsejo"
+                                style="width: 100%; box-sizing: border-box"
+                            ></textarea>
+                        </div>
+                        <div class="col-12 md:col-3">
+                            <p class="font-semibold">Fecha de Respuesta</p>
+                            <p-calendar
+                                inputId="basic"
+                                [(ngModel)]="fechaConsejo"
+                                placeholder="Fecha"
+                                [disabled]="bloquearConceptoConsejo"
+                                appendTo="body"
+                                dateFormat="dd/mm/yy"
+                            ></p-calendar>
+
+                            <div class="mt-2" *ngIf="deshabilitarEnvioAConsejo">
+                                <p-fileUpload
+                                    #fubauto
+                                    mode="basic"
+                                    name="file[]"
+                                    [auto]="true"
+                                    [customUpload]="true"
+                                    (uploadHandler)="onUpload($event, fubauto)"
+                                    [disabled]="bloquearConceptoConsejo"
+                                    accept=".pdf"
+                                    multiple="true"
+                                    chooseIcon="pi pi-upload"
+                                    maxFileSize="10000000"
+                                    chooseLabel="Cargar Documentos"
+                                    [style]="{ width: '100%' }"
+                                    invalidFileSizeMessageDetail="Maximo 10MB"
+                                ></p-fileUpload>
+                            </div>
+                        </div>
+
+                        <div
+                            class="mt-2"
+                            *ngIf="
+                                respuestaConsejo.avaladoConcejo === 'Si' &&
+                                [
+                                    'AD_ASIG',
+                                    'CA_ASIG',
+                                    'HO_ASIG_POS',
+                                    'HO_ASIG_ESP',
+                                    'CU_ASIG',
+                                    'AV_COMI_PR',
+                                    'RE_CRED_PR_DOC'
+                                ].includes(gestor.solicitudSeleccionada.codigoSolicitud)
+                            "
+                        >
+                            <p class="font-semibold">
+                                {{ getTituloPorSolicitud(gestor.solicitudSeleccionada.codigoSolicitud, "CONSEJO") }}
+                            </p>
+
+                            <div
+                                *ngFor="
+                                    let asignatura of getAsignaturasPorSolicitud(
+                                        respuestaConsejo,
+                                        gestor.solicitudSeleccionada.codigoSolicitud
+                                    )
+                                "
+                                class="field-checkbox"
+                            >
+                                <p-checkbox
+                                    [(ngModel)]="asignatura.aprobado"
+                                    [disabled]="bloquearConceptoConsejo"
+                                    (onChange)="onCheckboxChange()"
+                                    binary="true"
+                                ></p-checkbox>
+                                <label>{{
+                                    getDetalleAsignatura(asignatura, gestor.solicitudSeleccionada.codigoSolicitud)
+                                }}</label>
+                            </div>
+                        </div>
+
+                        <div class="w-full mt-3 mb-3" *ngIf="archivosCargados.length > 0">
+                            <p class="font-semibold">Docuementos de respuesta enviados por el Consejo</p>
+                        </div>
+                        <ng-container *ngIf="archivosCargados.length > 0">
+                            <div *ngFor="let archivo of archivosCargados; let i = index">
+                                <button
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    [icon]="bloquearConceptoConsejo ? 'pi pi-file-pdf' : 'pi pi-trash'"
+                                    label="{{ archivo.name }}"
+                                    (click)="
+                                        bloquearConceptoConsejo
+                                            ? visualizarDocumentoConsejo(i)
+                                            : eliminarDocuementoConcejo(i)
+                                    "
+                                    class="p-button-rounded p-button-secondary mr-2 mb-2 text-sm"
+                                ></button>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="urlDocumentoCargaConsejoPdf">
+                            <div class="col-12 mt-2">
+                                <embed
+                                    id="embedElement"
+                                    [src]="urlDocumentoCargaConsejoPdf"
+                                    type="application/pdf"
+                                    width="100%"
+                                    height="600px"
+                                />
+                            </div>
+                        </ng-container>
+
+                        <div
+                            *ngIf="gestor.estadoSolicitud != 'Resuelta'"
+                            class="grid grid-nogutter justify-content-end w-full"
+                        >
+                            <p-button
+                                [label]="conceptoConsejoGuardado ? 'Editar respuesta' : 'Guardar respuesta'"
+                                [icon]="conceptoConsejoGuardado ? 'pi pi-pencil' : 'pi pi-save'"
+                                iconPos="left"
+                                (click)="guardarRespuestaConsejo()"
+                            ></p-button>
+                        </div>
+                    </div>
+                </div>
+            </p-accordionTab>
+            <p-accordionTab
+                header="Respuesta a Solicitantes"
+                *ngIf="habilitarRespuestaSolicitantes || habilitarRespuestaSolicitantesConsejo"
+            >
+                <p-divider align="left">
+                    <div class="inline-flex align-items-center">
+                        <i class="pi pi-envelope mr-2"></i>
+                        <b>Respuesta para solicitante y su tutor/director</b>
+                    </div>
+                </p-divider>
+
+                <div class="flex justify-content-center flex-wrap">
+                    <div class="flex gap-2 mt-1 mb-4" *ngIf="habilitarRespuestaSolicitantes" style="width: 96%">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Documento de respuesta"
+                            class="p-button-outlined p-button-secondary"
+                            icon="pi pi-file-pdf"
+                            iconPos="left"
+                            (click)="
+                                previsualizarDocuementoPDF(
+                                    gestor.solicitudSeleccionada.codigoSolicitud,
+                                    'respuesta-comite',
+                                    false
+                                )
+                            "
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Enviar respuesta por correo"
+                            icon="pi pi-send"
+                            iconPos="right"
+                            [disabled]="gestor.estadoSolicitud === 'Resuelta'"
+                            (click)="enviarCorreo('solicitante', 'respuesta-comite')"
+                        ></button>
+                    </div>
+
+                    <div class="w-full mt-2" *ngIf="urlRespuestaComitePdf && habilitarRespuestaSolicitantes">
+                        <embed
+                            id="embedElement"
+                            [src]="urlRespuestaComitePdf"
+                            type="application/pdf"
+                            width="100%"
+                            height="600px"
+                        />
+                    </div>
+                </div>
+
+                <div class="flex justify-content-center flex-wrap">
+                    <div class="flex gap-2 mt-1 mb-4" *ngIf="habilitarRespuestaSolicitantesConsejo" style="width: 96%">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Documento de respuesta"
+                            class="p-button-outlined p-button-secondary"
+                            icon="pi pi-file-pdf"
+                            iconPos="left"
+                            (click)="
+                                previsualizarDocuementoPDF(
+                                    gestor.solicitudSeleccionada.codigoSolicitud,
+                                    'respuesta-consejo',
+                                    false
+                                )
+                            "
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Enviar respuesta por correo"
+                            icon="pi pi-send"
+                            iconPos="right"
+                            [disabled]="gestor.estadoSolicitud === 'Resuelta'"
+                            (click)="enviarCorreo('solicitante', 'respuesta-consejo')"
+                        ></button>
+                    </div>
+                    <div class="w-full mt-2" *ngIf="urlRespuestaConcejoPdf">
+                        <embed
+                            id="embedElement"
+                            [src]="urlRespuestaConcejoPdf"
+                            type="application/pdf"
+                            width="100%"
+                            height="600px"
+                        />
+                    </div>
+                </div>
+            </p-accordionTab>
+
+            <p-accordionTab header="Tramite para solicitudes no contempladas" *ngIf="habilitarTramiteGenerico">
+                <div style="margin-top: -15px">
+                    <p-divider align="left">
+                        <div class="inline-flex align-items-center">
+                            <i class="pi pi-send mr-2"></i>
+                            <b>Vitacora del poceso de tramite</b>
+                        </div>
+                    </p-divider>
+                </div>
+                <div class="flex justify-content-center flex-wrap">
+                    <div class="flex gap-1 mt-1 mb-4" style="width: 96%">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Descargar documentos adjuntos"
+                            class="p-button-outlined p-button-secondary"
+                            icon="pi pi-download"
+                            iconPos="right"
+                            (click)="onDescargarArchivos()"
+                        ></button>
+                    </div>
+                </div>
+                <div style="margin-top: -15px">
+                    <p-divider align="left">
+                        <div class="inline-flex align-items-center">
+                            <i class="pi pi-send mr-2"></i>
+                            <b>Respuesta para solicitante</b>
+                        </div>
+                    </p-divider>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+</div>

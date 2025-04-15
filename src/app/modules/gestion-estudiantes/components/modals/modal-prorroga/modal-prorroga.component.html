@@ -1,0 +1,83 @@
+<br />
+<!-- Informacion Personal -->
+<form [formGroup]="form">
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Tipo de prórroga/suspención</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                appendTo="body"
+                [options]="tiposProrrogaSuspencion"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="tipoProrroga"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('tipoProrroga').invalid && getFormControl('tipoProrroga').touched }"
+            ></p-dropdown>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Resolución</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="resolucion"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('resolucion').invalid && getFormControl('resolucion').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Link Documento</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="linkDocumento"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('linkDocumento').invalid && getFormControl('linkDocumento').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Fecha prórroga o suspención</label>
+        </div>
+        <div class="col-8">
+            <p-calendar
+                    appendTo="body"
+                    [showIcon]="true"
+                    formControlName="fecha"
+                    placeholder="Seleccione"
+                    styleClass="w-25rem"
+                    dateFormat="dd/mm/yy"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('fecha').invalid && getFormControl('fecha').touched }"
+            ></p-calendar>
+        </div>
+    </div>
+</form>
+
+<br />
+
+<div class="sticky footer-modal">
+    <button
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-outlined mx-1"
+        (click)="onClose()"
+    ></button>
+    <button
+        pButton
+        label="Guardar"
+        (click)="onSave()"
+        [loading]="loading"
+        icon="pi pi-save"
+        class="mx-1"
+    ></button>
+</div>

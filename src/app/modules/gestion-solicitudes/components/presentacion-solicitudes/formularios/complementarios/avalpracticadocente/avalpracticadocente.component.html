@@ -1,0 +1,155 @@
+<p-fieldset legend="Actividades a realizar" styleClass="bg-bluegray-50">
+    <div class="grid">
+        <p-overlayPanel #op>
+            <ng-template pTemplate>
+                <p-listbox
+                    [options]="radicar.actividadesReCreditos"
+                    (onChange)="agregarActividad($event); op.hide()"
+                    optionLabel="nombre"
+                    [style]="{
+                        width: '400px',
+                        'max-height': '250px',
+                        'overflow-y': 'auto'
+                    }"
+                ></p-listbox>
+            </ng-template>
+        </p-overlayPanel>
+
+        <div class="col-12">
+            <button
+                pButton
+                type="button"
+                (click)="op.toggle($event)"
+                label="Agregar actividad"
+                icon="pi pi-plus"
+                class="p-button-outlined"
+            ></button>
+        </div>
+
+        <div class="col-12" *ngFor="let actividad of radicar.actividadesSeleccionadas; let i = index">
+            <p-panel
+                ><ng-template pTemplate="header">
+                    <div class="grid p-0 m-0 w-full" style="height: 20px" *ngIf="actividad">
+                        <div class="col-11 flex align-items-center font-bold" style="margin-top: -17px">
+                            {{ i + 1 }}. {{ actividad.nombre }}
+                        </div>
+
+                        <div class="col-1 flex justify-content-end" style="margin-top: -17px">
+                            <button
+                                pButton
+                                type="button"
+                                (click)="eliminarActividad(i)"
+                                icon="pi pi-times"
+                                class="p-button-outlined p-button-danger"
+                            ></button>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-container *ngIf="actividad">
+                    <ng-container *ngIf="!actividad.peso">
+                        <div class="mb-4">
+                            &nbsp;Horas a reconocer:
+                            {{ actividad.horasAsignadas }}
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="actividad.peso">
+                        <div class="field col-12 md:col-6 mb-4" style="margin-left: 0px">
+                            <label for="intensidadCred" class="font-semibold" style="display: block">
+                                <ng-container *ngIf="actividad.codigo === 'CUR_COR_SEM'; else defaultLabel">
+                                    Total horas curso
+                                </ng-container>
+                                <ng-template #defaultLabel> Intensidad horaria semanal de la asignatura </ng-template>
+                            </label>
+                            <p-inputNumber
+                                [showButtons]="true"
+                                [min]="1"
+                                [(ngModel)]="radicar.horasIngresadas[i]"
+                                (onInput)="onValueChange($event.value, i, actividad.peso)"
+                                buttonLayout="horizontal"
+                                spinnerMode="horizontal"
+                                inputId="intensidadCred"
+                                decrementButtonClass="p-button-primary"
+                                incrementButtonClass="p-button-primary"
+                                incrementButtonIcon="pi pi-plus"
+                                decrementButtonIcon="pi pi-minus"
+                            >
+                            </p-inputNumber>
+
+                            <ng-container *ngIf="radicar.horasIngresadas[i]">
+                                &nbsp;Horas a reconocer:
+                                {{ radicar.horasIngresadas[i] * actividad.peso }}
+                            </ng-container>
+                        </div>
+                    </ng-container>
+
+                    <div class="col-12">
+                        <span class="p-float-label mt-2">
+                            <textarea
+                                id="descipcion"
+                                [rows]="5"
+                                pInputTextarea
+                                spellcheck="true"
+                                class="w-full"
+                                [(ngModel)]="radicar.descripcionesActividades[i]"
+                                (onInput)="actualizarDescripcion($event.value, i)"
+                            ></textarea>
+                            <label for="descipcion"
+                                >Descripcion del trabajo a realizar y entregables (si aplica)
+                            </label>
+                        </span>
+                    </div>
+
+                    <div
+                        *ngIf="actividad.codigo === 'CUR_COR_SEM'"
+                        style="
+                            border: 1px solid rgb(221, 221, 221);
+                            border-radius: 9px;
+                            background-color: rgb(248, 248, 248);
+                            padding: 10px;
+                            margin-left: 6px;
+                            margin-right: 6px;
+                        "
+                    >
+                        <div class="font-semibold mb-1">
+                            <p>
+                                &bull; Contenido Programático del curso que incluya (temática a orientar, intensidad,
+                                población objetivo, profesor, costos, recursos, etc)
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="col-12 md:col-2 mb-1">
+                                <p-fileUpload
+                                    #fubauto
+                                    mode="basic"
+                                    name="file[]"
+                                    [auto]="true"
+                                    [customUpload]="true"
+                                    (uploadHandler)="
+                                        guardarContenidoCursoCorto(
+                                            $event,
+                                            fubauto,
+                                            'Contenido Programático del seminario - Actividad ' + (i + 1),
+                                            i
+                                        )
+                                    "
+                                    accept=".pdf"
+                                    chooseIcon="pi pi-upload"
+                                    maxFileSize="5000000"
+                                    chooseLabel="Cargar Archivo"
+                                    [style]="{ width: '100%' }"
+                                    invalidFileSizeMessageDetail="Maximo 5MB"
+                                ></p-fileUpload>
+                            </div>
+
+                            <div *ngIf="radicar.documentosAdjuntos[i]" class="align-content-center">
+                                <i class="pi pi-paperclip mr-1"></i>
+                                {{ radicar.documentosAdjuntos[i].name }}
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </p-panel>
+        </div>
+    </div>
+</p-fieldset>

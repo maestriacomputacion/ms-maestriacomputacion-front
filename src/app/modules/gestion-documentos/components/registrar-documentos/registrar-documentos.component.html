@@ -1,0 +1,329 @@
+<header>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</header>
+<p-panel header="REGISTRAR DOCUMENTO DE LA MAESTRÍA">
+    <p-breadcrumb [model]="items" [home]="home"></p-breadcrumb>
+    <form [formGroup]="documentoForm" (ngSubmit)="registrarDocumento()">
+        <p-toast></p-toast>
+        <div class="form-container">
+            <div class="form-group">
+                <label class="form-label">* Indica Obligatorio</label>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="tipoDocumento"
+                    >Tipo de documento</label
+                >
+                <p-dropdown
+                    id="tipoDocumento"
+                    formControlName="selectedOption"
+                    [options]="tipoDocumentos"
+                    (onChange)="onTipoDocumentoChange()"
+                ></p-dropdown>
+
+                <div
+                    *ngIf="documentoForm.get('selectedOption').value === 'acta'"
+                    class="acta-section"
+                >
+                    <!-- Contenido para la opción 1 -->
+                    <div class="form-group acta-section">
+                        <label for="minmax-buttons" class="form-label"
+                            >No Acta *</label
+                        >
+                        <p-inputNumber
+                            formControlName="numeroActa"
+                            inputId="minmax-buttons"
+                            [min]="0"
+                            [max]="99999999"
+                            aria-describedby="numeroActa-help"
+                            mode="decimal"
+                            inputId="withoutgrouping"
+                            [useGrouping]="false"
+                        ></p-inputNumber>
+                        <!-- Agregar la validación al campo "numeroActa" -->
+                        <small
+                            id="numeroActa-help"
+                            class="p-error"
+                            *ngIf="
+                                documentoForm.get('numeroActa').invalid &&
+                                documentoForm.get('numeroActa').dirty
+                            "
+                            >Campo requerido.</small
+                        >
+                    </div>
+                    <div class="form-group acta-section">
+                        <label for="fechaAprobacion" class="form-label"
+                            >Fecha Aprobación *</label
+                        >
+                        <p-calendar
+                            [showIcon]="true"
+                            formControlName="fechaAprobacion"
+                            inputId="fechaAprobacion"
+                            dateFormat="mm-dd-yy"
+                        ></p-calendar>
+                        <!-- Agregar la validación al campo "fechaAprobacion" -->
+                        <small
+                            class="p-error flex"
+                            *ngIf="
+                                documentoForm.get('fechaAprobacion').invalid &&
+                                documentoForm.get('fechaAprobacion').dirty
+                            "
+                        >
+                            Fecha Aprobación es requerida
+                        </small>
+                    </div>
+                    <div class="form-group acta-section">
+                        <label class="form-label" for="adjuntarActa"
+                            >Adjuntar acta *</label
+                        >
+                        <div class="container-upload">
+                            <p-fileUpload
+                                #fubauto
+                                mode="basic"
+                                name="base64File[]"
+                                accept=".pdf"
+                                maxFileSize="1000000"
+                                (onSelect)="onFileSelect($event)"
+                                chooseLabel="Cargar"
+                                invalidFileSizeMessageDetail="El tamaño máximo de carga es {0}"
+                                invalidFileSizeMessageSummary=" {0}: tamaño de archivo no válido "
+                            ></p-fileUpload>
+
+                            <button
+                                pButton
+                                type="button"
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-secondary p-button-outlined"
+                                (click)="limpiarBase64()"
+                            ></button>
+
+                            <small
+                                class="p-error flex"
+                                *ngIf="
+                                    documentoForm.get('base64File').invalid &&
+                                    documentoForm.get('base64File').dirty
+                                "
+                            >
+                                Base64 del archivo es requerido</small
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    *ngIf="
+                        documentoForm.get('selectedOption').value === 'oficio'
+                    "
+                    class="acta-section"
+                >
+                    <!-- Contenido para la opción 2 -->
+                    <div class="form-group acta-section">
+                        <label for="minmax-buttons" class="form-label"
+                            >No Oficio</label
+                        >
+                        <p-inputNumber
+                            formControlName="numeroOficio"
+                            name="numeroOficio"
+                            [min]="0"
+                            [max]="99999"
+                            aria-describedby="numeroOficio-help"
+                            mode="decimal"
+                            inputId="withoutgrouping"
+                        >
+                        </p-inputNumber>
+                        <small
+                            id="numeroOficio-help"
+                            class="p-error"
+                            *ngIf="
+                                documentoForm.get('numeroOficio').invalid &&
+                                documentoForm.get('numeroOficio').dirty
+                            "
+                            >Campo requerido.</small
+                        >
+                    </div>
+                    <div class="form-group acta-section">
+                        <label for="fechaAprobacion" class="form-label"
+                            >Fecha Aprobación *</label
+                        >
+                        <p-calendar
+                            [showIcon]="true"
+                            formControlName="fechaAprobacion"
+                            inputId="fechaAprobacion"
+                            dateFormat="mm-dd-yy"
+                        ></p-calendar>
+                    </div>
+                    <div class="form-group acta-section">
+                        <label class="form-label" for="adjuntarOficio"
+                            >Adjuntar Oficio</label
+                        >
+                        <div class="container-upload">
+                            <p-fileUpload
+                                #fubauto
+                                mode="basic"
+                                name="base64File[]"
+                                accept=".pdf"
+                                (onSelect)="onFileSelect($event)"
+                                chooseLabel="Cargar"
+                                invalidFileSizeMessageDetail="El tamaño máximo de carga es {0}"
+                                invalidFileSizeMessageSummary=" {0}: tamaño de archivo no válido "
+                            ></p-fileUpload>
+
+                            <button
+                                pButton
+                                type="button"
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-secondary p-button-outlined"
+                                (click)="limpiarBase64()"
+                            ></button>
+
+                            <small
+                                class="p-error flex"
+                                *ngIf="
+                                    documentoForm.get('base64File').invalid &&
+                                    documentoForm.get('base64File').dirty
+                                "
+                            >
+                                Base64 del archivo es requerido</small
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group acta-section">
+                        <label class="form-label" for="asuntoOfi">Asunto</label>
+                        <input
+                            id="float-input"
+                            type="text"
+                            pInputText
+                            formControlName="asuntoOfi"
+                        />
+                    </div>
+                </div>
+
+                <div
+                    *ngIf="
+                        documentoForm.get('selectedOption').value ===
+                            'formato' ||
+                        documentoForm.get('selectedOption').value ===
+                            'reglamento' ||
+                        documentoForm.get('selectedOption').value ===
+                            'docAcreditacion' ||
+                        documentoForm.get('selectedOption').value ===
+                            'docSoporteMaestria' ||
+                        documentoForm.get('selectedOption').value === 'otro'
+                    "
+                    class="acta-section"
+                >
+                    <!-- Contenido para la opción 3 -->
+
+                    <div class="form-group acta-section">
+                        <label class="form-label" for="nombreDocumento"
+                            >Nombre del Documento</label
+                        >
+                        <input
+                            id="float-input"
+                            type="text"
+                            pInputText
+                            formControlName="nombreDocumento"
+                        />
+                    </div>
+                    <div class="form-group acta-section">
+                        <label class="form-label" for="versionDoc"
+                            >Versión</label
+                        >
+                        <p-inputNumber
+                            formControlName="versionDoc"
+                            name="versionDoc"
+                            [min]="0"
+                            [max]="99999"
+                            aria-describedby="versionDoc-help"
+                            mode="decimal"
+                            inputId="withoutgrouping"
+                        >
+                        </p-inputNumber>
+                        <small
+                            id="versionDoc-help"
+                            class="p-error"
+                            *ngIf="
+                                documentoForm.get('versionDoc').invalid &&
+                                documentoForm.get('versionDoc').dirty
+                            "
+                            >Campo requerido.</small
+                        >
+                    </div>
+
+                    <div class="form-group acta-section">
+                        <label class="form-label" for="descripcionDocumento"
+                            >Descripción</label
+                        >
+                        <textarea
+                            id="descripcion"
+                            [(ngModel)]="descripcion"
+                            rows="4"
+                            formControlName="descripcionDocumento"
+                            rows="5"
+                            cols="30"
+                            pInputTextarea
+                            autoResize="autoResize"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group acta-section">
+                        <label class="form-label" for="adjuntarOtro"
+                            >Adjuntar Otro *</label
+                        >
+                        <div class="container-upload">
+                            <p-fileUpload
+                                #fubauto
+                                mode="basic"
+                                name="base64File[]"
+                                accept=".pdf"
+                                maxFileSize="1000000"
+                                (onSelect)="onFileSelect($event)"
+                                chooseLabel="Cargar"
+                                invalidFileSizeMessageDetail="El tamaño máximo de carga es {0}"
+                                invalidFileSizeMessageSummary=" {0}: tamaño de archivo no válido "
+                            ></p-fileUpload>
+
+                            <button
+                                pButton
+                                type="button"
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-secondary p-button-outlined"
+                                (click)="limpiarBase64()"
+                            ></button>
+
+                            <small
+                                class="p-error flex"
+                                *ngIf="
+                                    documentoForm.get('base64File').invalid &&
+                                    documentoForm.get('base64File').dirty
+                                "
+                            >
+                                Base64 del archivo es requerido</small
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group form-buttons">
+                <button
+                    type="submit"
+                    pButton
+                    label="Registrar documento"
+                    class="flex justify-content-center"
+                ></button>
+
+                <button
+                    pButton
+                    type="button"
+                    (click)="limpiarFormulario()"
+                    label="Cancelar"
+                ></button>
+            </div>
+        </div>
+    </form>
+</p-panel>
+
+<!-- <pre
+    >{{ documentoForm.value | json }}
+</pre> -->

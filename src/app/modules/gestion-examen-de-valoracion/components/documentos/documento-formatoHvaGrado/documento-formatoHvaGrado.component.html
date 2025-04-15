@@ -1,0 +1,302 @@
+<p-panel>
+    <div id="formatoHvaGrado">
+        <div class="header px-0 md:px-8">
+            <table class="p-datatable p-component header-table">
+                <tr class="header-title">
+                    <td>
+                        <img
+                            alt="Logo Unicauca"
+                            height="140px"
+                            src="assets/layout/images/logoUnicauca.png"
+                            width="80px"
+                        />
+                    </td>
+                    <td colspan="2">
+                        <h1 class="text-lg">
+                            Gestión Académica Gestión de Facultades y Programas
+                            Académicos Estudio Hoja de Vida Académica para Grado
+                        </h1>
+                    </td>
+                </tr>
+                <tr class="header-desc">
+                    <td>
+                        <span>Código: PM-FO-4-FOR-27</span>
+                    </td>
+                    <td>
+                        <span>Versión: 1</span>
+                    </td>
+                    <td>
+                        <span>Fecha Vigencia: 30-04-2019</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="mt-4 px-1 lg:px-8">
+            <form [formGroup]="formatoHvaGradoForm">
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="font-semibold"
+                        style="text-wrap: nowrap"
+                        for="facultad"
+                        >Facultad:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="facultad"
+                        formControlName="facultad"
+                        readonly
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="font-semibold"
+                        style="text-wrap: nowrap"
+                        for="programa"
+                        >Programa:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="programa"
+                        formControlName="programa"
+                        readonly
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="font-semibold"
+                        style="text-wrap: nowrap"
+                        for="estudiante"
+                        >Nombre del Estudiante:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="estudiante"
+                        formControlName="estudiante"
+                        readonly
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="cedula"
+                        >Cédula de Ciudadanía:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="cedula"
+                        formControlName="cedula"
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="lugar-expedicion"
+                        >Lugar de Expedición:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="lugar-expedicion"
+                        formControlName="lugarExpedicion"
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="codigo"
+                        >Código:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="codigo"
+                        formControlName="codigo"
+                    />
+                </div>
+
+                <div
+                    class="flex flex-column lg:flex-row align-items-start lg:align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="telefono-fijo"
+                        >Teléfono Fijo:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml:0 lg:ml-2"
+                        type="text"
+                        id="telefono-fijo"
+                        formControlName="telefonoFijo"
+                    />
+                    <label
+                        style="text-wrap: nowrap"
+                        class="label-required font-semibold ml-0 lg:ml-4"
+                        for="telefono-celular"
+                        >Teléfono Celular:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="telefono-celular"
+                        formControlName="telefonoCelular"
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="codigo-saber-pro"
+                        >Código Pruebas SABER PRO:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="codigo-saber-pro"
+                        formControlName="codigoSaberPro"
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="residencia"
+                        >Residencia Actual:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="residencia"
+                        formControlName="residenciaActual"
+                    />
+                </div>
+
+                <div
+                    class="flex flex-wrap lg:flex-nowrap align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="departamento"
+                        >Departamento:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="departamento"
+                        formControlName="departamento"
+                    />
+                </div>
+                <div
+                    class="flex flex-column lg:flex-row align-items-start lg:align-items-center justify-content-start mt-2"
+                >
+                    <label
+                        class="label-required font-semibold"
+                        style="text-wrap: nowrap"
+                        for="municipio"
+                        >Municipio:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="text"
+                        id="municipio"
+                        formControlName="municipio"
+                    />
+                    <label
+                        class="label-required font-semibold ml-0 lg:ml-4"
+                        style="text-wrap: nowrap"
+                        for="email"
+                        >Email:</label
+                    >
+                    <input
+                        pInputText
+                        class="w-full ml-0 lg:ml-2"
+                        type="email"
+                        id="email"
+                        formControlName="email"
+                    />
+                </div>
+                <div class="footer-logo mt-8">
+                    <img
+                        alt="Asset Calidad"
+                        height="100px"
+                        src="assets/layout/images/asset-calidad.png"
+                        width="140px"
+                    />
+                    <div
+                        class="flex flex-column align-items-center justify-content-center"
+                    >
+                        <span>
+                            Carrera 2 No. 15N esquina-Sector Tulcán
+                            Popayán-Cauca-Colombia Teléfono: 6028209800 ext.
+                            2100 ó 2101. decafiet&#64;unicauca.edu.co |
+                            <strong>www.unicauca.edu.co</strong>
+                        </span>
+                    </div>
+                    <img
+                        alt="Logo Icontec"
+                        height="80px"
+                        src="assets/layout/images/logosIcontec.png"
+                        width="120px"
+                    />
+                </div>
+                <div
+                    class="flex align-items-center justify-content-end mt-4 column-gap-2"
+                >
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-download"
+                        label="Descargar"
+                        (click)="onDownload()"
+                        [loading]="loading"
+                        pTooltip="El estudiante debe descargar el documento y adjuntar su firma en el espacio correspondiente."
+                        tooltipPosition="top"
+                    ></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</p-panel>

@@ -1,0 +1,62 @@
+.bandeja-examen-de-valoracion ::ng-deep .p-multiselect {
+    width: 35rem;
+}
+
+.bandeja-examen-de-valoracion ::ng-deep .multiselect-custom {
+    .p-multiselect-label {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+}
+
+.bandeja-examen-de-valoracion ::ng-deep {
+    @media screen and (max-width: 640px) {
+        .p-multiselect {
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: 1240px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 60% !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 70% !important;
+    }
+}
+
+@media (max-width: 900px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 80% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 90% !important;
+    }
+}
+
+@media (max-width: 425px) {
+    .bandeja-examen-de-valoracion ::ng-deep.p-card .p-card-title {
+        text-align: center;
+    }
+
+    .card-data {
+        flex-direction: column;
+        margin-bottom: 2rem;
+        align-items: center;
+    }
+
+    .card-data > span:first-of-type {
+        font-weight: bold;
+    }
+
+    .card-data:last-of-type {
+        margin-bottom: 0;
+    }
+}

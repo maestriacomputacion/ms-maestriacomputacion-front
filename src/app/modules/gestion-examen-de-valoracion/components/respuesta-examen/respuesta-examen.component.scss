@@ -1,0 +1,108 @@
+.respuesta ::ng-deep.p-fileupload .p-message {
+    display: none;
+}
+
+.respuesta ::ng-deep.p-fileupload-buttonbar p-button {
+    display: none;
+}
+
+.respuesta ::ng-deep.p-fileupload-content .p-fileupload-files.ng-star-inserted {
+    display: none;
+}
+
+.responsive-dialog {
+    width: 50vw;
+}
+
+.text-description {
+    color: gray;
+}
+
+@media (max-width: 1240px) {
+    .respuesta-wrap {
+        flex-wrap: wrap;
+        row-gap: 2rem;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 900px) {
+    .respuesta ::ng-deep.p-fieldset .p-fieldset-content {
+        padding: 1rem 0.2rem !important;
+    }
+
+    .respuesta ::ng-deep.p-fileupload-content {
+        padding: 1rem 0.6rem !important;
+    }
+
+    .respuesta ::ng-deep.p-fileupload-content ul {
+        padding-left: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .responsive-dialog {
+        width: 95vw;
+    }
+}
+
+@media (max-width: 425px) {
+    .panel-respuesta ::ng-deep.p-button {
+        padding: 0.75rem 0.75rem;
+    }
+}
+
+.spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    ::ng-deep .custom-spinner .p-progress-spinner-circle {
+        animation: custom-progress-spinner-dash 1.5s ease-in-out infinite,
+            custom-progress-spinner-color 6s ease-in-out infinite;
+    }
+
+    @keyframes custom-progress-spinner-color {
+        0% {
+            stroke: #1f497d;
+        }
+        25% {
+            stroke: #16697a;
+        }
+        50% {
+            stroke: #489fb5;
+        }
+        75% {
+            stroke: #82c0cc;
+        }
+        100% {
+            stroke: #ffa62b;
+        }
+    }
+
+    @keyframes custom-progress-spinner-dash {
+        0% {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -35px;
+        }
+        100% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -124px;
+        }
+    }
+
+    .spinner-text {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #666;
+    }
+}

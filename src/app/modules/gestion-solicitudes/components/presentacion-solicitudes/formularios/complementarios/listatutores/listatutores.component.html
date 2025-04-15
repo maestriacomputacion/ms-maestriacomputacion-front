@@ -1,0 +1,21 @@
+<form [formGroup]="formListaTutores">
+    <div class="mt-4">
+        <p-fieldset legend="Tutor del Estudiante" styleClass="bg-bluegray-50">
+            <div class="grid">
+                <div class="col-12">
+                    <span class="p-float-label mt-3">
+                        <p-dropdown
+                            formControlName="tutor"
+                            inputId="tutor"
+                            [autoDisplayFirst]="false"
+                            [options]="radicar.listadoTutoresYDirectores"
+                            optionLabel="nombreTutor"
+                            [style]="{ width: '100%' }"
+                        ></p-dropdown>
+                        <label for="tutor">Tutor que avala la solicitud</label>
+                    </span>
+                </div>
+            </div>
+        </p-fieldset>
+    </div>
+</form>

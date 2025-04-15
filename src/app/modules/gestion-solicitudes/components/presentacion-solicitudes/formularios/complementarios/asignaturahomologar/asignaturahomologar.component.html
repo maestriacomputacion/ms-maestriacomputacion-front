@@ -1,0 +1,98 @@
+<form [formGroup]="formAsigHomologar">
+    <div class="grid">
+        <div class="col-12 lg:col-3 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="nombreAsignatura"
+                    class="w-full"
+                    id="nomasigna"
+                    type="text"
+                    spellcheck="true"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="nomasigna"
+                    >Nombre de la Asignatura {{ indice + 1 }}</label
+                >
+            </span>
+        </div>
+
+        <div class="col-6 sm:col-4 lg:col-2 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="numeroCreditos"
+                    class="w-full"
+                    id="numcredi"
+                    type="number"
+                    min="1"
+                    pattern="[0-9]+"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="numcredi">No. de creditos</label>
+            </span>
+        </div>
+
+        <div class="col-6 sm:col-4 lg:col-2 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="intensidadHoraria"
+                    class="w-full"
+                    id="intensidad"
+                    type="number"
+                    min="1"
+                    pattern="[0-9]+"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="intensidad">Intensidad horaria</label>
+            </span>
+        </div>
+        <div class="col-12 sm:col-4 lg:col-2 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="calificacion"
+                    class="w-full"
+                    id="califi"
+                    type="text"
+                    pattern="^\d*\.?\d*$"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="califi">Calificación</label>
+            </span>
+        </div>
+        <div class="col-12 lg:col-3 mt-3">
+            <p-fileUpload
+                #fubauto
+                mode="basic"
+                name="file[]"
+                [auto]="true"
+                [customUpload]="true"
+                (uploadHandler)="onUpload($event, fubauto)"
+                accept=".pdf"
+                chooseIcon="pi pi-upload"
+                maxFileSize="5000000"
+                [auto]="true"
+                chooseLabel="Contenido programático"
+                [style]="{ width: '100%' }"
+                invalidFileSizeMessageDetail="Maximo 5MB"
+                [disabled]="deshabilitarCargaArchivo"
+            >
+            </p-fileUpload>
+        </div>
+        <div class="col-12 pt-0 mb-2">
+            <ng-container
+                *ngIf="radicar.datosAsignaturasAHomologar[indice]?.contenidos"
+            >
+                <span class="text-xs">
+                    <i class="pi pi-paperclip mr-1 text-xs"></i
+                    >{{
+                        radicar.datosAsignaturasAHomologar[indice].contenidos
+                            .name
+                    }}
+                </span>
+            </ng-container>
+        </div>
+    </div>
+</form>

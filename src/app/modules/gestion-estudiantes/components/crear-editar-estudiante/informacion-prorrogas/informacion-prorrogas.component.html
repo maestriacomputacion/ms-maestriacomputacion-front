@@ -1,0 +1,73 @@
+<br />
+
+<!-- Porrogas o Supenciones-->
+<div class="col-4 text-right font-medium">
+    <p><b>Prórrogas/suspensiones de término</b></p>
+</div>
+<div class="field grid">
+    <div class="col-4 text-right font-medium align-self-center">
+        <label></label>
+    </div>
+    <div class="col-7">
+                <!-- Tabla Prorrogas-->
+                <p-table
+                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+                [breakpoint]="'800px'"
+                [value]="prorrogas"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col">Fecha prórroga o suspención</th>
+                        <th scope="col">No. resolución</th>
+                        <th scope="col">Documento</th>
+                        <th scope="col" class="text-center">Opciones</th>
+                    </tr>
+                </ng-template>
+                <!-- Contenido  -->
+                <ng-template pTemplate="body" let-prorroga>
+                    <tr>
+                        <td>{{ prorroga.fecha | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ prorroga.resolucion }}</td>
+                        <td>{{ prorroga.linkDocumento }}</td>
+                        <td class="text-center">
+                            <button
+                                pButton
+                                pTooltip="Editar"
+                                type="button"
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-text p-button-warning"
+                                (click)="onEditarProrroga(prorroga)"
+                            ></button>
+                            <button
+                                pButton
+                                pTooltip="Eliminar"
+                                type="button"
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-text p-button-danger"
+                                (click)="onDeleteProrroga(prorroga)"
+                            ></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <!-- Agregar nuevo registro -->
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-end">
+                        <button
+                            pButton
+                            pTooltip="Agregar prórroga"
+                            icon="pi pi-plus"
+                            class="p-button"
+                            styleClass="p-button-sm"
+                            (click)="onAgregarProrroga()"
+                        ></button>
+                    </div>
+                </ng-template>
+                <!-- Mensaje sin registros -->
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                        <td [attr.colspan]="4">No se encontraron registros</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+    </div>
+</div>

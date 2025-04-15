@@ -1,0 +1,262 @@
+<p-panel class="bandeja-examen-de-valoracion">
+    <ng-template pTemplate="header">
+        <div
+            class="flex flex-column align-items-center justify-content-center w-full row-gap-4"
+        >
+            <span
+                class="font-medium w-full text-center"
+                *ngIf="role.includes('ROLE_DOCENTE') && !estudianteSeleccionado"
+                >Por favor, seleccione el estudiante que se encuentra bajo su
+                dirección</span
+            >
+            <span
+                class="font-bold w-full text-center"
+                *ngIf="!role.includes('ROLE_DOCENTE')"
+                >Examen de Valoración</span
+            >
+            <p-card
+                class="m-2 w-full max-w-30rem"
+                *ngIf="estudianteSeleccionado"
+            >
+                <div class="flex justify-content-between">
+                    <span style="font-size: 18px; font-weight: bold"
+                        >Datos del Estudiante</span
+                    >
+                    <button
+                        pButton
+                        class="p-button-secondary"
+                        icon="pi pi-times"
+                        (click)="limpiarEstudiante()"
+                    ></button>
+                </div>
+                <div class="mt-2 card-data flex justify-content-between">
+                    <span>Código</span>
+                    <span>{{ estudianteSeleccionado.codigo }}</span>
+                </div>
+                <div class="mt-2 card-data flex justify-content-between">
+                    <span>Numero de Identificación</span>
+                    <span>{{ estudianteSeleccionado.identificacion }}</span>
+                </div>
+                <div class="mt-2 card-data flex justify-content-between">
+                    <span>Nombres y Apellidos</span>
+                    <span
+                        >{{ estudianteSeleccionado.nombre }}
+                        {{ estudianteSeleccionado.apellido }}</span
+                    >
+                </div>
+            </p-card>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div
+            class="flex flex-column justify-content-center align-items-center mb-3 w-full"
+        >
+            <button
+                *ngIf="
+                    (role.includes('ROLE_DOCENTE') ||
+                        role.includes('ROLE_ESTUDIANTE')) &&
+                    !estudianteSeleccionado
+                "
+                pButton
+                icon="pi pi-plus"
+                label="Buscar Estudiante"
+                (click)="onSeleccionarEstudiante()"
+            ></button>
+            <button
+                *ngIf="role.includes('ROLE_DOCENTE') && estudianteSeleccionado"
+                pButton
+                icon="pi pi-plus"
+                label="Iniciar Proceso Trabajo de Grado"
+                (click)="onProcesoExamen()"
+                [disabled]="isCrearExamenDisabled()"
+            ></button>
+            <span
+                style="max-width: 80rem; line-height: 1.4; text-align: center"
+                *ngIf="role.includes('ROLE_COORDINADOR')"
+                >En esta sección se gestionan las solicitudes y el estado de los
+                exámenes de valoración. Los usuarios autorizados pueden revisar
+                y actualizar la información correspondiente a cada estudiante.
+                Utilice los filtros para buscar y gestionar los exámenes de
+                valoración de manera eficiente.</span
+            >
+        </div>
+        <div
+            *ngIf="
+                estudianteSeleccionado?.id &&
+                (role.includes('ROLE_DOCENTE') ||
+                    role.includes('ROLE_ESTUDIANTE'))
+            "
+        >
+            <div
+                class="col flex flex-column align-items-center justify-content-center w-full"
+            >
+                <p-table
+                    [value]="solicitudesPorEstudiante"
+                    [paginator]="true"
+                    [loading]="loading"
+                    [rows]="5"
+                    [tableStyle]="{ width: '100%', 'max-width': '80rem' }"
+                    [showCurrentPageReport]="true"
+                    [scrollable]="true"
+                    currentPageReportTemplate="{first} - {last} de {totalRecords}"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th scope="col" style="min-width: 200px">Titulo</th>
+                            <th scope="col" style="min-width: 200px">
+                                Fecha creación
+                            </th>
+                            <th scope="col" style="min-width: 200px">
+                                Estado Actual
+                            </th>
+                            <th scope="col" style="min-width: 200px">
+                                Opciones
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-solicitud>
+                        <tr>
+                            <td style="min-width: 200px">
+                                {{ solicitud.titulo }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ solicitud.fechaCreacion }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ solicitud.estado }}
+                            </td>
+                            <td style="min-width: 200px">
+                                <button
+                                    pButton
+                                    pTooltip="Editar"
+                                    type="button"
+                                    icon="pi pi-arrow-right"
+                                    class="p-button-rounded p-button-text p-button-warning"
+                                    (click)="
+                                        onEditar(
+                                            solicitud.id,
+                                            null,
+                                            solicitud.titulo
+                                        )
+                                    "
+                                ></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                            <td [attr.colspan]="6">
+                                No se encontraron registros
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <div
+            *ngIf="
+                role.includes('ROLE_COORDINADOR') ||
+                role.includes('ROLE_COMITE')
+            "
+        >
+            <div
+                class="col flex flex-column align-items-center justify-content-center w-full"
+            >
+                <div class="mb-3">
+                    <label class="mr-4" for="estadoSelect"
+                        >Filtrar por estado:</label
+                    >
+                    <p-multiSelect
+                        class="multiselect-custom-virtual-scroll"
+                        [(ngModel)]="selectedEstados"
+                        [options]="estados"
+                        optionLabel="text"
+                        itemSize="34"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [showToggleAll]="true"
+                        selectedItemsLabel="{0} estados seleccionados"
+                        (onChange)="onStateChange($event)"
+                    ></p-multiSelect>
+                </div>
+                <p-table
+                    [value]="solicitudesPorEstado"
+                    [paginator]="true"
+                    [loading]="loading"
+                    [rows]="5"
+                    [tableStyle]="{ width: '100%', 'max-width': '80rem' }"
+                    [showCurrentPageReport]="true"
+                    [scrollable]="true"
+                    currentPageReportTemplate="{first} - {last} de {totalRecords}"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th scope="col" style="min-width: 200px">
+                                Identificación
+                            </th>
+                            <th scope="col" style="min-width: 200px">
+                                Nombre Completo
+                            </th>
+                            <th scope="col" style="min-width: 200px">
+                                Correo Electrónico
+                            </th>
+                            <th scope="col" style="min-width: 200px">Estado</th>
+                            <th scope="col" style="min-width: 200px">
+                                Opciones
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-solicitud>
+                        <tr>
+                            <td style="min-width: 200px">
+                                {{ solicitud.identificacion }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ solicitud.nombreCompleto }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ solicitud.correoElectronico }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ solicitud.estado }}
+                            </td>
+                            <td style="min-width: 200px">
+                                <button
+                                    pButton
+                                    pTooltip="Editar"
+                                    type="button"
+                                    icon="pi pi-arrow-right"
+                                    class="p-button-rounded p-button-text p-button-warning"
+                                    (click)="
+                                        onEditar(
+                                            solicitud.id,
+                                            solicitud.estudianteId,
+                                            null
+                                        )
+                                    "
+                                ></button>
+                                <button
+                                    *ngIf="role.includes('ROLE_COORDINADOR')"
+                                    pButton
+                                    pTooltip="Cancelar"
+                                    type="button"
+                                    icon="pi pi-ban"
+                                    class="p-button-rounded p-button-text p-button-danger"
+                                    (click)="onDelete($event, solicitud.id)"
+                                ></button>
+                                <p-confirmPopup></p-confirmPopup>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                            <td [attr.colspan]="6">
+                                No se encontraron registros
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </ng-template>
+</p-panel>

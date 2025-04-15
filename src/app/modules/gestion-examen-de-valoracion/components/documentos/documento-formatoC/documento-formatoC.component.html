@@ -1,0 +1,385 @@
+<div>
+    <div id="formatoC1">
+        <div class="flex flex-column w-full mb-4">
+            <div
+                class="flex flex-row align-items-center justify-content-evenly header-logo"
+            >
+                <div>
+                    <h2>Maestría en Computación</h2>
+                    <h2>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                    </h2>
+                </div>
+                <img
+                    src="assets/layout/images/logoUnicauca.png"
+                    alt="Logo Unicauca"
+                    width="120px"
+                    height="180px"
+                />
+            </div>
+            <div
+                class="flex flex-column w-full justify-content-center align-items-center row-gap-4 title-head"
+            >
+                <span style="font-size: 20px; font-weight: bold"
+                    >FORMATO C</span
+                >
+                <span> Popayán {{ fechaActual | date : "dd/MM/yyyy" }} </span>
+            </div>
+        </div>
+        <form class="mt-4" [formGroup]="formatoCForm">
+            <div class="flex flex-column gap-4">
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Doctor(a)</label>
+                        <span>{{
+                            formatoCForm.get("receptor").value +
+                                "\n" +
+                                "Coordinador(a)\n Maestría en Computación\n Universidad del Cauca\n Popayán"
+                        }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Doctor(a)</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="receptor"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Asunto:</label>
+                        <span>{{ formatoCForm.get("asunto").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Asunto</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="asunto"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Titulo:</label>
+                        <span>{{ formatoCForm.get("titulo").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Titulo</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="titulo"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label
+                            >Observaciones y recomendaciones para el
+                            estudiante:</label
+                        >
+                        <span>{{
+                            formatoCForm.get("observaciones").value
+                        }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold"
+                            >Observaciones y recomendaciones para el estudiante
+                        </label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="observaciones"
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-2">
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show mt-6">
+                        <label>Firma Jurado</label>
+                    </div>
+                    <!-- END -->
+
+                    <span
+                        class="col-2 col-label--firma text-right align-self-start"
+                    >
+                        <b>Firma Jurado</b>
+                    </span>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Nombre Jurado</label>
+                        <span>{{ docente?.value?.nombres }}</span>
+                    </div>
+                    <!-- END -->
+                    <div class="col-2 col-label text-right flex flex-column">
+                        <span>{{ docente?.value?.nombres }}</span>
+                        <span>{{ experto?.value?.nombres }}</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="flex flex-row align-items-center justify-content-center footer-logo footer-content"
+            >
+                <img
+                    src="assets/layout/images/logosIcontec.png"
+                    alt="Logo Icontec"
+                    width="200px"
+                    height="140px"
+                />
+                <div
+                    class="flex flex-column align-items-center justify-content-center footer-text"
+                >
+                    <span>Por una Universidad de excelencia y solidaria</span>
+                    <hr />
+                    <strong>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                        Cra 2 No. 4N-140 Edif. de Ingenierías - Sector Tulcán
+                        Popayán - Cauca - Colombia Conmutador 8209800 Ext. 2145
+                        maestriacomputacion@unicauca.edu.co -
+                        www.unicauca.edu.co
+                        www.unicauca.edu.co/maestriacomputación
+                    </strong>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="formatoC2" class="hidden">
+        <div class="flex flex-column w-full mb-4">
+            <div
+                class="flex flex-row align-items-center justify-content-evenly header-logo"
+            >
+                <div>
+                    <h2>Maestría en Computación</h2>
+                    <h2>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                    </h2>
+                </div>
+                <img
+                    src="assets/layout/images/logoUnicauca.png"
+                    alt="Logo Unicauca"
+                    width="120px"
+                    height="180px"
+                />
+            </div>
+            <div
+                class="flex flex-column w-full justify-content-center align-items-center row-gap-4 title-head"
+            >
+                <span style="font-size: 20px; font-weight: bold"
+                    >FORMATO C</span
+                >
+                <span> Popayán {{ fechaActual | date : "dd/MM/yyyy" }} </span>
+            </div>
+        </div>
+        <form class="mt-4" [formGroup]="formatoCForm">
+            <div class="flex flex-column gap-4">
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Doctor(a)</label>
+                        <span>{{
+                            formatoCForm.get("receptor").value +
+                                "\n" +
+                                "Coordinador(a)\n Maestría en Computación\n Universidad del Cauca\n Popayán"
+                        }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Doctor(a)</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="receptor"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Asunto:</label>
+                        <span>{{ formatoCForm.get("asunto").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Asunto</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="asunto"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Titulo:</label>
+                        <span>{{ formatoCForm.get("titulo").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Titulo</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="titulo"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label
+                            >Observaciones y recomendaciones para el
+                            estudiante:</label
+                        >
+                        <span>{{
+                            formatoCForm.get("observaciones").value
+                        }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold"
+                            >Observaciones y recomendaciones para el estudiante
+                        </label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            class="p-inputtextarea-md w-full p-hide"
+                            formControlName="observaciones"
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-2">
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show mt-6">
+                        <label>Firma Jurado</label>
+                    </div>
+                    <!-- END -->
+
+                    <span
+                        class="col-2 col-label--firma text-right align-self-start"
+                    >
+                        <b>Firma Jurado</b>
+                    </span>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label>Nombre Jurado</label>
+                        <span>{{ experto?.value?.nombres }}</span>
+                    </div>
+                    <!-- END -->
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        {{ experto?.value?.nombres }}
+                    </div>
+                </div>
+            </div>
+            <div
+                class="flex flex-row align-items-center justify-content-center footer-logo footer-content"
+            >
+                <img
+                    src="assets/layout/images/logosIcontec.png"
+                    alt="Logo Icontec"
+                    width="200px"
+                    height="140px"
+                />
+                <div
+                    class="flex flex-column align-items-center justify-content-center footer-text"
+                >
+                    <span>Por una Universidad de excelencia y solidaria</span>
+                    <hr />
+                    <strong>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                        Cra 2 No. 4N-140 Edif. de Ingenierías - Sector Tulcán
+                        Popayán - Cauca - Colombia Conmutador 8209800 Ext. 2145
+                        maestriacomputacion@unicauca.edu.co -
+                        www.unicauca.edu.co
+                        www.unicauca.edu.co/maestriacomputación
+                    </strong>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="flex align-items-center justify-content-end mt-4 column-gap-2">
+        <button
+            pButton
+            type="button"
+            icon="pi pi-paperclip"
+            label="Adjuntar"
+            (click)="onAdjuntar()"
+            [loading]="loading"
+        ></button>
+        <button
+            pButton
+            type="button"
+            icon="pi pi-download"
+            label="Descargar"
+            (click)="onDownload()"
+            [loading]="loading"
+        ></button>
+    </div>
+</div>

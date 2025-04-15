@@ -1,0 +1,283 @@
+<br />
+
+<form [formGroup]="maestriaForm">
+    <!-- Informacion Mestria -->
+    <div class="col-4 text-right font-medium">
+        <p><b>Información sobre la maestria actual</b></p>
+    </div>
+    <br />
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Estado</label>
+        </div>
+        <div class="col-8 flex aling-items-center">
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="estadoMaestria"
+                    value="ACTIVO"
+                    formControlName="estadoMaestria"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('estadoMaestria').invalid && getFormControl('estadoMaestria').touched }"
+                ></p-radioButton>
+                <label>Activo</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="estadoMaestria"
+                    value="MAESTRIA_FINALIZADA"
+                    formControlName="estadoMaestria"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('estadoMaestria').invalid && getFormControl('estadoMaestria').touched }"
+                ></p-radioButton>
+                <label>Finalizó la maestria</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="estadoMaestria"
+                    value="RETIRADO"
+                    formControlName="estadoMaestria"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('estadoMaestria').invalid && getFormControl('estadoMaestria').touched }"
+                ></p-radioButton>
+                <label>Retirado</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="estadoMaestria"
+                    value="EN_SUSPENCION"
+                    formControlName="estadoMaestria"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('estadoMaestria').invalid && getFormControl('estadoMaestria').touched }"
+                ></p-radioButton>
+                <label>En suspención</label>
+            </div>
+        </div>
+    </div>
+    <div class="field grid mt-4">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Modalidad</label>
+        </div>
+        <div class="col-8 flex aling-items-center">
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="modalidad"
+                    value="INVESTIGACION"
+                    formControlName="modalidad"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('modalidad').invalid && getFormControl('modalidad').touched }"
+                ></p-radioButton>
+                <label>Investigación</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="modalidad"
+                    value="PROFUNDIZACION"
+                    formControlName="modalidad"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('modalidad').invalid && getFormControl('modalidad').touched }"
+                ></p-radioButton>
+                <label>Profundización</label>
+            </div>
+        </div>
+    </div>
+    <div class="field grid h-36px">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Estudiante de doctorado</label>
+        </div>
+        <div class="col-8 flex aling-items-center">
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="esEstudianteDoctorado"
+                    value="true"
+                    formControlName="esEstudianteDoctorado"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('esEstudianteDoctorado').invalid && getFormControl('esEstudianteDoctorado').touched }"
+                ></p-radioButton>
+                <label>Si</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="esEstudianteDoctorado"
+                    value="false"
+                    formControlName="esEstudianteDoctorado"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('esEstudianteDoctorado').invalid && getFormControl('esEstudianteDoctorado').touched }"
+                ></p-radioButton>
+                <label>No</label>
+            </div>
+            <div class="flex align-items-center" *ngIf="getFormControl('esEstudianteDoctorado').value === 'true'">
+                <label class="font-medium ml-2 mr-3">Nombre doctorado</label>
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-sm w-20rem"
+                    formControlName="tituloDoctorado"
+                />
+            </div>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Director</label>
+        </div>
+        <div class="col-8">
+            <div class="p-inputgroup w-25rem">
+                <div class="p-inputtext p-inputtext-sm border-noround-right">
+                    {{ director?.value?.nombre }} {{ director?.value?.apellido }}
+                </div>
+                <button
+                    type="button"
+                    pButton
+                    label="Seleccionar"
+                    (click)="onSeleccionarDirector()"
+                ></button>
+            </div>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Co director</label>
+        </div>
+        <div class="col-8">
+            <div class="p-inputgroup w-25rem">
+                <div class="p-inputtext p-inputtext-sm border-noround-right">
+                    {{ codirector?.value?.nombre }} {{ codirector?.value?.apellido }}
+                </div>
+                <button
+                    type="button"
+                    pButton
+                    label="Seleccionar"
+                    (click)="onSeleccionarCodirector()"
+                ></button>
+            </div>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Cohorte</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                pKeyFilter="int"
+                [maxLength]="25"
+                class="p-inputtext-sm w-25rem"
+                formControlName="cohorte"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('cohorte').invalid && getFormControl('cohorte').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Periodo de ingreso</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="periodoIngreso"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('periodoIngreso').invalid && getFormControl('periodoIngreso').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Modalidad de ingreso</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="modalidadesIngreso"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="modalidadIngreso"
+            ></p-dropdown>
+        </div>
+    </div>
+
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Semestre académico</label>
+        </div>
+        <div class="col-8">
+            <p-inputNumber
+                class="p-inputtext-sm"
+                [showButtons]="true"
+                [min]="1"
+                [max]="10"
+                formControlName="semestreAcademico"
+            ></p-inputNumber>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Semestre financiero</label>
+        </div>
+        <div class="col-8">
+            <p-inputNumber
+                class="p-inputtext-sm"
+                [showButtons]="true"
+                [min]="1"
+                [max]="10"
+                formControlName="semestreFinanciero"
+            ></p-inputNumber>
+        </div>
+    </div>
+    <br />
+
+    <!-- Beca -->
+    <div class="col-4 text-right font-medium">
+        <p><b>Beca</b></p>
+    </div>
+    <br />
+    <div class="field grid h-36px">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>La beca es ofrecida por una entidad externa a la Universidad del Cauca</label>
+        </div>
+        <div class="col-8 flex aling-items-center">
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="esOfrecidaPorUnicauca"
+                    value="true"
+                    formControlName="esOfrecidaPorUnicauca"
+                ></p-radioButton>
+                <label>Si</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="esOfrecidaPorUnicauca"
+                    value="false"
+                    formControlName="esOfrecidaPorUnicauca"
+                ></p-radioButton>
+                <label>No</label>
+            </div>
+            <div class="flex align-items-center" *ngIf="getFormControl('esOfrecidaPorUnicauca').value === 'true'">
+                <label class="font-medium ml-2 mr-3">Entidad que ofrece la beca</label>
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-sm w-20rem"
+                    formControlName="entidadAsociada"
+                />
+            </div>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Tipo</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="tiposBeca"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="tipo"
+            ></p-dropdown>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Dedicación</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="dedicacionesBeca"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="dedicacion"
+            ></p-dropdown>
+        </div>
+    </div>
+</form>

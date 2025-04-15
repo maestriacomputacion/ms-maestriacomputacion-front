@@ -1,0 +1,47 @@
+<form [formGroup]="formAsigAdiCancel">
+    <div class="grid">
+        <div class="col-12 md:col-6 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="nombreAsignatura"
+                    class="w-full"
+                    id="nomasignadcan"
+                    type="text"
+                    pInputText
+                    spellcheck="true"
+                    (change)="actualizarDatos()"
+                />
+                <label for="nomasignadcan">Nombre de la Asignatura {{ indice + 1 }}</label>
+            </span>
+        </div>
+
+        <div class="col-6 md:col-2 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="grupoAsignatura"
+                    class="w-full"
+                    id="grupAsig"
+                    type="text"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="nomasignadcan">Grupo</label>
+            </span>
+        </div>
+
+        <div class="col-6 md:col-4 mt-3">
+            <span class="p-float-label">
+                <p-dropdown
+                    formControlName="docenteAsig"
+                    inputId="docenteAdCan"
+                    [autoDisplayFirst]="false"
+                    [options]="radicar.listadoTutoresYDirectores"
+                    (onChange)="actualizarDatos()"
+                    optionLabel="nombreTutor"
+                    [style]="{ width: '100%' }"
+                ></p-dropdown>
+                <label for="docenteAdCan">Docente a cargo</label>
+            </span>
+        </div>
+    </div>
+</form>

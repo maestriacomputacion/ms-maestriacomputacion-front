@@ -1,0 +1,187 @@
+<form [formGroup]="formAsigExterna">
+    <div class="grid">
+        <div class="col-12 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="nombreAsignatura"
+                    class="w-full"
+                    id="nomasigna"
+                    type="text"
+                    spellcheck="true"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="nomasigna">Nombre de la Asignatura {{ indice + 1 }}</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-6 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="institucion"
+                    class="w-full"
+                    id="progasigna"
+                    type="text"
+                    spellcheck="true"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="progasigna">Institución</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-6 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="programa"
+                    class="w-full"
+                    id="nomprog"
+                    type="text"
+                    pInputText
+                    spellcheck="true"
+                    (change)="actualizarDatos()"
+                />
+                <label for="nomprog">Programa</label>
+            </span>
+        </div>
+        <div class="col-12 md:col-6 lg:col-3 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="numCreditos"
+                    class="w-full"
+                    id="numcredi"
+                    type="number"
+                    min="1"
+                    pattern="[0-9]+"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="numcredi">No. de creditos</label>
+            </span>
+        </div>
+        <div class="col-12 md:col-6 lg:col-3 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="intensidadHoraria"
+                    class="w-full"
+                    id="intensidad"
+                    type="number"
+                    min="1"
+                    pattern="[0-9]+"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="intensidad">Intensidad horaria (h/semana)</label>
+            </span>
+        </div>
+        <div class="col-12 md:col-6 lg:col-3 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="codigoAsignatura"
+                    class="w-full"
+                    id="codasig"
+                    type="text"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="codasig">Código Asignatura</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-6 lg:col-3 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="grupoAsignatura"
+                    class="w-full"
+                    id="grupasig"
+                    type="text"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="grupasig">Grupo</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-9 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="nombreDocente"
+                    class="w-full"
+                    id="docente"
+                    type="text"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="docente">Docente (Nombres y Apellidos)</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-3 mt-3">
+            <span class="p-float-label">
+                <input
+                    formControlName="tituloDocente"
+                    class="w-full"
+                    id="titulo"
+                    type="text"
+                    pInputText
+                    (change)="actualizarDatos()"
+                />
+                <label for="titulo">Título Docente (Dr. MSc. PhD.)</label>
+            </span>
+        </div>
+
+        <div class="col-12 sm:col-6 mt-3">
+            <p-fileUpload
+                #fubautocont
+                mode="basic"
+                name="file[]"
+                [auto]="true"
+                [customUpload]="true"
+                (uploadHandler)="onUploadConten($event, fubautocont, indice + 1)"
+                accept=".pdf"
+                chooseIcon="pi pi-upload"
+                maxFileSize="5000000"
+                [auto]="true"
+                chooseLabel="Contenido programático"
+                [style]="{ width: '100%' }"
+                invalidFileSizeMessageDetail="Maximo 5MB"
+            >
+            </p-fileUpload>
+        </div>
+        <div class="col-12 sm:col-6 mt-3">
+            <p-fileUpload
+                #fubautocarta
+                mode="basic"
+                name="file[]"
+                [auto]="true"
+                [customUpload]="true"
+                (uploadHandler)="onUploadCarta($event, fubautocarta, indice + 1)"
+                multiple="multiple"
+                accept=".pdf"
+                chooseIcon="pi pi-upload"
+                maxFileSize="5000000"
+                [auto]="true"
+                chooseLabel="Carta de Aceptación"
+                [style]="{ width: '100%' }"
+            >
+            </p-fileUpload>
+        </div>
+        <div class="col-6 pt-0 mb-2">
+            <ng-container *ngIf="radicar.datosAsignaturasExternas[indice]">
+                <ng-container *ngIf="radicar.datosAsignaturasExternas[indice].contenidos">
+                    <i class="pi pi-paperclip mr-1 text-xs"></i>
+                    {{ radicar.datosAsignaturasExternas[indice].contenidos.name }}
+                </ng-container>
+            </ng-container>
+        </div>
+        <div class="col-6 pt-0 mb-2">
+            <ng-container *ngIf="radicar.datosAsignaturasExternas[indice]">
+                <ng-container *ngIf="radicar.datosAsignaturasExternas[indice].cartaAceptacion">
+                    <i class="pi pi-paperclip mr-1 text-xs"></i>
+
+                    {{ radicar.datosAsignaturasExternas[indice].cartaAceptacion.name }}
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</form>

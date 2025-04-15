@@ -1,0 +1,15 @@
+.group-name {
+    font-weight: bold;
+    display: block; /* O display: inline-block; si prefieres que todo esté en la misma línea */
+    margin-top: 0.5rem;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+}

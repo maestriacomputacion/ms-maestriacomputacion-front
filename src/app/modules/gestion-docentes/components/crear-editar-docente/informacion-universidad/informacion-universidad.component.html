@@ -1,0 +1,74 @@
+<br />
+
+<form [formGroup]="universidadForm">
+    <!-- Informacion Titluo -->
+    <div class="col-4 text-right font-medium">
+        <p><b>Información sobre vinculación a la universidad</b></p>
+    </div>
+    <br />
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Facultad a la cual pertenece</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="facultad"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Departamento a la cual pertenece</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="departamento"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Tipo de vinculación</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="tiposVinculacion"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="tipoVinculacion"
+            ></p-dropdown>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Escalafón</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="escalafonesDocente"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="escalafon"
+            ></p-dropdown>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Observación</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="observacion"
+            />
+        </div>
+    </div>
+</form>

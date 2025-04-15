@@ -1,0 +1,33 @@
+<form [formGroup]="this.radicar.formSemestreAplazar">
+    <p-fieldset legend="Semestre a aplazar" styleClass="bg-bluegray-50">
+        <div class="grid">
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <p-inputMask
+                        formControlName="semestre"
+                        inputId="semestre"
+                        mask="2099-9"
+                        [style]="{ width: '100%' }"
+                    ></p-inputMask>
+                    <label for="semestre">Semestre (20XX-1 / 20XX-2)</label>
+                </span>
+            </div>
+
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <textarea
+                        formControlName="motivo"
+                        id="motivo"
+                        [rows]="5"
+                        pInputTextarea
+                        spellcheck="true"
+                        class="w-full"
+                    ></textarea>
+                    <label for="motivo"
+                        >La presente solicitud obedece a que...
+                    </label>
+                </span>
+            </div>
+        </div>
+    </p-fieldset>
+</form>

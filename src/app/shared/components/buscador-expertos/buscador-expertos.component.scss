@@ -1,0 +1,7 @@
+@media (max-width: 768px) {
+    ::ng-deep app-buscador-expertos .footer-modal {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+}

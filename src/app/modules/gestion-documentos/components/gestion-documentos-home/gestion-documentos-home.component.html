@@ -1,0 +1,407 @@
+<p-panel header="Gestión de los documentos de la maestría">
+    <p-card>
+        <p-toast></p-toast>
+        <div class="contenedor-flex">
+            <div class="elemento">
+                <p-dropdown
+                    [options]="opcionesSelectTipoDocumento"
+                    [(ngModel)]="opcionSeleccionada"
+                    placeholder="Selecciona el tipo de documento"
+                    optionLabel="nombre"
+                    [showClear]="true"
+                    class="field col-12 md:col-4"
+                    (click)="limpiarFiltros()"
+                ></p-dropdown>
+
+                <div
+                    class="elemento"
+                    *ngIf="opcionSeleccionada?.codigo === 'AC'"
+                >
+                    <label for="numeroActaFiltrar">No de acta: </label>
+                    <p-inputNumber
+                        inputId="withoutgrouping"
+                        id="numeroActaFiltrar"
+                        [(ngModel)]="numeroActaFiltrar"
+                    ></p-inputNumber>
+                </div>
+
+                <div
+                    class="elemento"
+                    *ngIf="opcionSeleccionada?.codigo === 'OF'"
+                >
+                    <label for="numeroOficioFiltrar">No de oficio: </label>
+                    <p-inputNumber
+                        inputId="withoutgrouping"
+                        id="numeroOficioFiltrar"
+                        [(ngModel)]="numeroOficioFiltrar"
+                    ></p-inputNumber>
+                </div>
+
+                <div
+                    class="elemento"
+                    *ngIf="opcionSeleccionada?.codigo === 'OT'"
+                >
+                    <label for="nombreDocumentoFiltrar"
+                        >Nombre del documento:
+                    </label>
+                    <input
+                        pInputText
+                        id="nombreDocumentoFiltrar"
+                        [(ngModel)]="nombreDocumentoFiltrar"
+                    />
+                </div>
+
+                <div
+                    class="elemento"
+                    *ngIf="
+                        opcionSeleccionada?.codigo === 'AC' ||
+                        opcionSeleccionada?.codigo === 'OF'
+                    "
+                >
+                    <div style="display: flex; align-items: center">
+                        <div style="margin-right: 10px">
+                            <label for="fechaInicio">Fecha inicio: </label>
+                            <p-calendar
+                                id="fechaInicio"
+                                [(ngModel)]="fechaInicio"
+                                dateFormat="dd/mm/yy"
+                                [maxDate]="maxFechaFin"
+                            ></p-calendar>
+                        </div>
+                        <div>
+                            <label for="fechaFin">Fecha fin: </label>
+                            <p-calendar
+                                id="fechaFin"
+                                [(ngModel)]="fechaFin"
+                                [maxDate]="maxFechaFin"
+                                dateFormat="dd/mm/yy"
+                            ></p-calendar>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ... -->
+                <div
+                    class="contenedor-flex"
+                    *ngIf="
+                        opcionSeleccionada?.codigo === 'AC' ||
+                        opcionSeleccionada?.codigo === 'OF' ||
+                        opcionSeleccionada?.codigo === 'OT'
+                    "
+                >
+                    <!-- ... -->
+                    <div class="elemento">
+                        <button
+                            pButton
+                            type="button"
+                            label="Buscar"
+                            icon="pi pi-search"
+                            (click)="filtrarDocumentos()"
+                            style="margin-right: 10px"
+                        ></button>
+                        <button
+                            pButton
+                            type="button"
+                            label="Limpiar"
+                            icon="pi pi-times"
+                            (click)="limpiarFiltros()"
+                        ></button>
+                    </div>
+                </div>
+                <!-- ... -->
+            </div>
+            <div class="elemento">
+                <p-button
+                    label="Agregar documento"
+                    icon="pi pi-plus"
+                    routerLink="registrar-documento"
+                ></p-button>
+            </div>
+
+            <div class="elemento">
+                <p-fileUpload
+                    mode="basic"
+                    name="excelFile"
+                    accept=".xlsx, .xls"
+                    maxFileSize="1000000"
+                    [auto]="false"
+                    (onSelect)="handleFileSelect($event)"
+                    chooseLabel="Seleccionar archivo"
+                ></p-fileUpload>
+            </div>
+        </div>
+    </p-card>
+
+    <!--DOCUMENTOS FILTRADAS-->
+    <p-card class="table-container">
+        <p-table
+            [value]="documentos"
+            [paginator]="true"
+            [rows]="5"
+            [showCurrentPageReport]="true"
+            responsiveLayout="scroll"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [rowsPerPageOptions]="[5, 25, 50]"
+            [loading]="loading"
+            #tablaDocumentos
+        >
+            <ng-template pTemplate="headergrouped">
+                <tr>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Versión</th>
+                    <th scope="col">Opciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-documento>
+                <tr>
+                    <td>
+                        {{ documento.numeroActa ? "Acta" : "" }}
+                        {{ documento.numeroOficio ? "Oficio" : "" }}
+                        {{ documento.idOtroDoc ? "Otro" : "" }}
+                    </td>
+                    <td>
+                        {{ documento.numeroActa ? documento.nombre : "" }}
+                        {{ documento.numeroOficio ? documento.nombre : "" }}
+                        {{
+                            documento.idOtroDoc ? documento.nombreDocumento : ""
+                        }}
+                    </td>
+                    <td>
+                        {{
+                            documento.numeroActa || documento.numeroOficio
+                                ? "-"
+                                : documento.versionDoc
+                        }}
+                    </td>
+                    <td>
+                        <button
+                            pButton
+                            icon="pi pi-eye"
+                            class="p-button-rounded mr-2"
+                            (click)="visualizarDocumento(documento)"
+                        ></button>
+                        <button
+                            pButton
+                            icon="pi pi-pencil"
+                            class="p-button-rounded mr-2"
+                            (click)="editarDocumento(documento)"
+                        ></button>
+                        <button
+                            pButton
+                            icon="pi pi-trash"
+                            class="p-button-rounded"
+                            (click)="eliminarAsignatura(documento)"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+
+    <p-confirmDialog [style]="{ width: '300px' }"></p-confirmDialog>
+
+    <p-dialog
+        header="{{ isEditing ? 'Editar Documento' : 'Detalles del Documento' }}"
+        [(visible)]="displayModal"
+        [modal]="true"
+        (onHide)="isEditing = false"
+        [responsive]="true"
+        [style]="{ width: '600px' }"
+    >
+        <div class="p-fluid">
+            <div class="p-field p-2">
+                <label for="tipo">Tipo</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="tipo"
+                    [(ngModel)]="selectedDocumento.tipo"
+                    disabled
+                />
+            </div>
+
+            <div class="p-field p-2" *ngIf="selectedDocumento.tipo === 'Acta'">
+                <label for="numeroActa">Número del Acta</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="numeroActa"
+                    [(ngModel)]="selectedDocumento.numeroActa"
+                    [disabled]="!isEditing"
+                    (ngModelChange)="isNumeroActaChanged = true"
+                />
+            </div>
+
+            <div
+                *ngIf="selectedDocumento.tipo === 'Acta'"
+                [disabled]="!isEditing"
+                class="p-field p-2"
+            >
+                <label for="fechaActa">Fecha del Acta</label>
+                <p-calendar
+                    id="fechaActa"
+                    [(ngModel)]="selectedFechaActaFormatted"
+                    [showIcon]="true"
+                    [readonlyInput]="!isEditing"
+                    [disabled]="!isEditing"
+                    (ngModelChange)="
+                        isFechaActaChanged = true; onFechaActaChange($event)
+                    "
+                    [appendTo]="'body'"
+                    dateFormat="dd/mm/yy"
+                ></p-calendar>
+            </div>
+
+            <div *ngIf="selectedDocumento.tipo === 'Acta'" class="p-field p-2">
+                <label for="linkDocumento">Link del Documento</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="linkDocumento"
+                    [(ngModel)]="selectedDocumento.idDocMaestria.linkDocumento"
+                    [disabled]="true"
+                />
+            </div>
+
+            <div
+                *ngIf="selectedDocumento.tipo === 'Oficio'"
+                class="p-field p-2"
+            >
+                <label for="numeroOficio">Número del Oficio</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="numeroOficio"
+                    [(ngModel)]="selectedDocumento.numeroOficio"
+                    [disabled]="!isEditing"
+                />
+            </div>
+
+            <div
+                *ngIf="selectedDocumento.tipo === 'Oficio'"
+                class="p-field p-2"
+            >
+                <label for="asuntoOfi">Asunto del Oficio</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="asuntoOfi"
+                    [(ngModel)]="selectedDocumento.asuntoOfi"
+                    [disabled]="!isEditing"
+                />
+            </div>
+
+            <div
+                *ngIf="selectedDocumento.tipo === 'Oficio'"
+                class="p-field p-2"
+                [disabled]="!isEditing"
+            >
+                <label for="fechaOficio">Fecha del Oficio</label>
+                <p-calendar
+                    id="fechaOficio"
+                    [(ngModel)]="selectedFechaOficioFormatted"
+                    [showIcon]="true"
+                    [readonlyInput]="!isEditing"
+                    [disabled]="!isEditing"
+                    (ngModelChange)="onFechaOficioChange($event)"
+                    [appendTo]="'body'"
+                    dateFormat="dd/mm/yy"
+                ></p-calendar>
+            </div>
+
+            <div
+                *ngIf="selectedDocumento.tipo === 'Oficio'"
+                class="p-field p-2"
+            >
+                <label for="linkDocumento">Link del Documento</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="linkDocumento"
+                    [(ngModel)]="selectedDocumento.idDocMaestria.linkDocumento"
+                    [disabled]="true"
+                />
+            </div>
+
+            <div *ngIf="selectedDocumento.tipo === 'Otro'" class="p-field p-2">
+                <label for="nombreDocumento">Nombre Documento</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="nombreDocumento"
+                    [(ngModel)]="selectedDocumento.nombreDocumento"
+                    [disabled]="!isEditing"
+                    #nombreDocumentoInput
+                />
+            </div>
+
+            <div *ngIf="selectedDocumento.tipo === 'Otro'" class="p-field p-2">
+                <label for="descripcionDocumento"
+                    >Descripción del Documento</label
+                >
+                <input
+                    type="text"
+                    pInputText
+                    id="descripcionDocumento"
+                    [(ngModel)]="selectedDocumento.descripcionDocumento"
+                    [disabled]="!isEditing"
+                />
+            </div>
+
+            <div *ngIf="selectedDocumento.tipo === 'Otro'" class="p-field p-2">
+                <label for="versionDoc">Versión</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="versionDoc"
+                    [(ngModel)]="selectedDocumento.versionDoc"
+                    [disabled]="!isEditing"
+                />
+            </div>
+
+            <div *ngIf="selectedDocumento.tipo === 'Otro'" class="p-field p-2">
+                <label for="linkDocumento">Link del Documento</label>
+                <input
+                    type="text"
+                    pInputText
+                    id="linkDocumento"
+                    [(ngModel)]="selectedDocumento.idDocMaestria.linkDocumento"
+                    [disabled]="true"
+                />
+            </div>
+
+            <div *ngIf="isEditing === true" class="p-field p-2">
+                <div class="container-upload">
+                    <p-fileUpload
+                        #fubauto
+                        mode="basic"
+                        name="base64File[]"
+                        accept=".pdf"
+                        (onSelect)="onFileSelect($event)"
+                        chooseLabel="Cambiar documento"
+                        invalidFileSizeMessageDetail="El tamaño máximo de carga es {0}"
+                        invalidFileSizeMessageSummary=" {0}: tamaño de archivo no válido "
+                    ></p-fileUpload>
+
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-times"
+                        class="p-button-rounded p-button-secondary p-button-outlined"
+                        (click)="limpiarBase64()"
+                    ></button>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <button
+                type="button"
+                pButton
+                icon="pi pi-check"
+                label="{{ isEditing ? 'Guardar Cambios' : 'Cerrar' }}"
+                (click)="isEditing ? guardarEdicion() : closeModal()"
+            ></button>
+        </p-footer>
+    </p-dialog>
+</p-panel>

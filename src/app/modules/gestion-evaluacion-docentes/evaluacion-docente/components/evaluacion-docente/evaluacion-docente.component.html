@@ -1,0 +1,87 @@
+<p-panel header="Evaluación docente" class="flex justify-content-center"
+  [style]="{ width: '100rem', 'margin-bottom': '2em' }">
+  <div class="container">
+    <div class="header">
+      <div class="docentes-evaluados">
+        <p>Docentes evaluados {{ docentesEvaluados }} de {{ totalDocentes }}</p>
+      </div>
+    </div>
+
+    <!-- Tabla con el listado de docentes -->
+    <p-table [value]="docentes" class="docentes-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col">Docente</th>
+          <th scope="col">Asignatura</th>
+          <th scope="col">Nota final</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-docente>
+        <tr>
+          <td>{{ docente.nombre }}</td>
+          <td>{{ docente.asignatura }}</td>
+          <td>{{ docente.notaFinal !== null ? docente.notaFinal : 'Sin evaluar' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Sección de evaluación del docente seleccionado -->
+    <div *ngIf="currentDocente !== null && docentes && docentes[currentDocente]" class="evaluacion-container">
+      <div class="card">
+        <!-- Contenido condicional dentro de la tarjeta -->
+        <ng-container *ngIf="!docentes[currentDocente]?.completado; else evaluacionCompletada">
+          <h3 class="asignatura">Asignatura - {{ docentes[currentDocente]?.asignatura }}</h3>
+          <h4 class="docente-evaluar">Docente a evaluar - {{ docentes[currentDocente]?.nombre }}</h4>
+        </ng-container>
+        <ng-template #evaluacionCompletada>
+          <p>Has realizado todas las evaluaciones.</p>
+        </ng-template>
+      </div>
+
+      <!-- Mostrar preguntas y botón "Guardar" solo si la evaluación no está completada -->
+      <ng-container *ngIf="!docentes[currentDocente]?.completado">
+        <!-- Tabla de criterios de evaluación -->
+        <p-table [value]="preguntas" class="evaluacion-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Pregunta</th>
+              <th *ngFor="let n of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" scope="col">{{ n }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-pregunta let-j="rowIndex">
+            <tr>
+              <td>{{ j + 1 }}</td>
+              <td>{{ pregunta.nombre }}</td>
+              <td *ngFor="let n of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
+                <p-radioButton name="pregunta{{ currentDocente }}{{ j }}" [value]="n"
+                  [(ngModel)]="evaluaciones[currentDocente].respuestas[j]"></p-radioButton>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <!-- Sección de Observaciones con validación -->
+        <div class="mt-4">
+          <h4 class="text-xl font-medium mb-2">Observación (opcional)</h4>
+          <div class="field w-full">
+            <textarea id="observacion" [(ngModel)]="evaluaciones[currentDocente].observacion"
+              class="w-full min-h-12rem p-3 border-round" rows="5" pInputTextarea maxlength="255"
+              placeholder="Escribe una observación si lo deseas..."></textarea>
+          </div>
+
+          <!-- Contador de caracteres -->
+          <p class="text-right text-sm text-gray-500">
+            {{ evaluaciones[currentDocente].observacion.length }}/255 caracteres
+          </p>
+        </div>
+
+        <!-- Contenedor del botón de guardar -->
+        <div class="flex justify-content-end mt-3">
+          <button pButton type="button" label="Guardar" (click)="guardarRespuestas()"
+            [disabled]="!allQuestionsAnswered"></button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</p-panel>

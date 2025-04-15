@@ -1,0 +1,18 @@
+<!-- Paso 1: SelectorComponent -->
+<div *ngIf="esPasoActual(1)">
+    <app-selector (cambioDePaso)="manejarCambioDePaso($event)"></app-selector>
+</div>
+
+<div *ngIf="esPasoActual(2)">
+    <app-formularios (cambioDePaso)="manejarCambioDePaso($event)"></app-formularios>
+</div>
+
+<!-- Paso 3: DocsAdjuntosComponent -->
+<div *ngIf="esPasoActual(3)">
+    <app-docsadjuntos (cambioDePaso)="manejarCambioDePaso($event)"></app-docsadjuntos>
+</div>
+
+<!-- Paso 4: ResumenComponent -->
+<div *ngIf="esPasoActual(4)">
+    <app-resumen (cambioDePaso)="manejarCambioDePaso($event)"></app-resumen>
+</div>

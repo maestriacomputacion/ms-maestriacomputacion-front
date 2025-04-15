@@ -1,0 +1,328 @@
+<p-panel>
+    <div id="formatoHva">
+        <div class="flex flex-column w-full mb-4 header-logo">
+            <img
+                src="assets/layout/images/asset-header.jpg"
+                alt="Asset Header"
+                class="header-image"
+            />
+            <div class="flex justify-content-start logo-container">
+                <img
+                    src="assets/layout/images/logoFacultad.png"
+                    alt="Logo Facultad"
+                    class="logo-image"
+                />
+            </div>
+        </div>
+        <div class="px-1 lg:px-8">
+            <form class="p-fluid" [formGroup]="formatoHvaForm">
+                <div class="flex flex-column mt-4">
+                    <label class="font-semibold mb-2" for="titulo"
+                        >Título:</label
+                    >
+                    <input
+                        pInputText
+                        type="text"
+                        id="titulo"
+                        formControlName="titulo"
+                        readonly
+                    />
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label class="font-semibold mb-2" for="estudiante"
+                        >Estudiante:</label
+                    >
+                    <input
+                        pInputText
+                        type="text"
+                        id="estudiante"
+                        formControlName="estudiante"
+                        readonly
+                    />
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="codigo"
+                        >Código:</label
+                    >
+                    <input
+                        pInputText
+                        type="text"
+                        id="codigo"
+                        formControlName="codigo"
+                    />
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="planEstudios"
+                        >Plan de Estudios:</label
+                    >
+                    <input
+                        pInputText
+                        type="text"
+                        id="planEstudios"
+                        formControlName="planEstudios"
+                    />
+                </div>
+                <div class="flex flex-wrap mt-4 gap-4">
+                    <div class="flex-1">
+                        <label class="font-semibold mb-2" for="director"
+                            >Director:</label
+                        >
+                        <input
+                            pInputText
+                            type="text"
+                            id="director"
+                            formControlName="director"
+                            readonly
+                            class="w-full p-inputtext"
+                        />
+                    </div>
+                    <div class="flex-1">
+                        <label class="font-semibold mb-2" for="codirector"
+                            >Codirector:</label
+                        >
+                        <input
+                            pInputText
+                            type="text"
+                            id="codirector"
+                            formControlName="codirector"
+                            readonly
+                            class="w-full p-inputtext"
+                        />
+                    </div>
+                    <div class="flex-1">
+                        <label class="font-semibold mb-2" for="coordinador"
+                            >Coordinador:</label
+                        >
+                        <input
+                            pInputText
+                            type="text"
+                            id="coordinador"
+                            class="w-full p-inputtext"
+                            formControlName="coordinador"
+                        />
+                    </div>
+                </div>
+
+                <div class="flex flex-column mt-4 max-w-20rem">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="fechaRevision"
+                        >Fecha de Revisión:</label
+                    >
+                    <p-calendar
+                        id="fechaRevision"
+                        formControlName="fechaRevision"
+                        [showIcon]="true"
+                        dateFormat="dd.mm.yy"
+                    ></p-calendar>
+                </div>
+                <div
+                    class="flex flex-column mt-4 p-4 border-round border-1 border-gray-300 bg-white shadow-2"
+                >
+                    <h2 class="text-2xl font-semibold mb-4">
+                        Configuración de Formación
+                    </h2>
+                    <div class="mb-4">
+                        <label class="label-required"
+                            >Seleccionar Semestre:</label
+                        >
+                        <p-dropdown
+                            placeholder="Seleccione el semestre"
+                            styleClass="p-inputtext-md w-full max-w-35rem mt-2"
+                            optionLabel="label"
+                            [options]="semestres"
+                            (onChange)="onSemestreChange($event)"
+                            pTooltip="Seleccione el semestre en el que se impartirá la asignatura"
+                            tooltipPosition="top"
+                        ></p-dropdown>
+                    </div>
+                    <div class="mb-4">
+                        <label class="label-required"
+                            >Tipo de Área de Formación:</label
+                        >
+                        <p-dropdown
+                            placeholder="Seleccione el tipo de área"
+                            styleClass="p-inputtext-md w-full max-w-35rem mt-2"
+                            optionLabel="label"
+                            [options]="tiposAreaFormacion"
+                            (onChange)="onAreaFormacionChange($event)"
+                            pTooltip="Seleccione el tipo de área de formación correspondiente"
+                            tooltipPosition="top"
+                        ></p-dropdown>
+                    </div>
+                    <div
+                        *ngFor="
+                            let area of areasFormacionControls;
+                            let areaIndex = index
+                        "
+                    >
+                        <p-card class="w-full p-0">
+                            <div class="card-title bg-blue-100 p-2">
+                                <div
+                                    class="flex justify-content-between align-items-center"
+                                >
+                                    <span class="font-semibold text-lg">
+                                        {{ area.get("tipo").value?.label }} -
+                                        {{
+                                            area.get("semestre").value?.label
+                                        }}</span
+                                    >
+                                    <button
+                                        pButton
+                                        icon="pi pi-trash"
+                                        class="p-button-danger"
+                                        (click)="removeAreaFormacion(areaIndex)"
+                                        pTooltip="Eliminar área de formación"
+                                        tooltipPosition="top"
+                                    ></button>
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <div class="mb-2">
+                                    <label class="label-required"
+                                        >Seleccionar Asignatura:</label
+                                    >
+                                    <p-dropdown
+                                        placeholder="Seleccione la asignatura"
+                                        styleClass="p-inputtext-md w-full mt-2"
+                                        optionLabel="nombre"
+                                        [options]="asignaturas"
+                                        (onChange)="
+                                            onAsignaturaChange(
+                                                areaIndex,
+                                                $event.value
+                                            )
+                                        "
+                                        pTooltip="Seleccione una asignatura para esta área"
+                                        tooltipPosition="top"
+                                    ></p-dropdown>
+                                </div>
+                                <div
+                                    class="card-data flex flex-column row-gap-2"
+                                >
+                                    <div
+                                        class="flex flex-row align-items-center justify-content-between p-2 border-round border-1 border-gray-300 bg-gray-50"
+                                        *ngFor="
+                                            let asignatura of area.get(
+                                                'asignaturas'
+                                            ).controls;
+                                            let i = index
+                                        "
+                                    >
+                                        <span>
+                                            {{ asignatura.get("nombre").value }}
+                                            -
+                                            {{
+                                                asignatura.get("creditos").value
+                                            }}
+                                            créditos
+                                        </span>
+                                        <button
+                                            pButton
+                                            icon="pi pi-times"
+                                            class="p-button-secondary"
+                                            (click)="
+                                                removeAsignatura(areaIndex, i)
+                                            "
+                                            pTooltip="Eliminar asignatura"
+                                            tooltipPosition="top"
+                                        ></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="pruebaSuperada"
+                        >Prueba de Suficiencia en Idioma Extranjero:</label
+                    >
+                    <p-dropdown
+                        id="pruebaSuperada"
+                        formControlName="pruebaSuperada"
+                        [options]="pruebaSuperadaOptions"
+                        optionLabel="label"
+                        placeholder="Seleccione"
+                    ></p-dropdown>
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="minimoArticulo"
+                        >Mínimo Artículo:</label
+                    >
+                    <input
+                        pInputText
+                        type="text"
+                        id="minimoArticulo"
+                        formControlName="minimoArticulo"
+                    />
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="creditosCumplidos"
+                        >Créditos Cumplidos:</label
+                    >
+                    <input
+                        pInputText
+                        type="text"
+                        id="creditosCumplidos"
+                        formControlName="creditosCumplidos"
+                    />
+                </div>
+                <div class="footer-logo mt-8">
+                    <img
+                        src="assets/layout/images/asset-calidad.png"
+                        alt="Asset Calidad"
+                        width="140px"
+                        height="100px"
+                    />
+                    <div
+                        class="flex flex-column align-items-center justify-content-center"
+                    >
+                        <span>
+                            Carrera 2 No. 15N esquina-Sector Tulcán
+                            Popayán-Cauca-Colombia Teléfono: 6028209800 ext.
+                            2100 ó 2101. decafiet&#64;unicauca.edu.co |
+                            <strong>www.unicauca.edu.co</strong>
+                        </span>
+                    </div>
+                    <img
+                        src="assets/layout/images/logosIcontec.png"
+                        alt="Logo Icontec"
+                        width="120px"
+                        height="80px"
+                    />
+                </div>
+            </form>
+            <div
+                class="flex align-items-center justify-content-end mt-4 column-gap-2"
+            >
+                <button
+                    pButton
+                    type="button"
+                    icon="pi pi-upload"
+                    label="Insertar"
+                    pTooltip="Haz clic para insertar el documento en el área de carga de archivos."
+                    tooltipPosition="top"
+                    (click)="onInsertar()"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    icon="pi pi-download"
+                    label="Descargar"
+                    (click)="onDownload()"
+                    [loading]="loading"
+                ></button>
+            </div>
+        </div>
+    </div>
+</p-panel>

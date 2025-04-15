@@ -1,0 +1,12 @@
+.marker-circle {
+    display: inline-block;
+    width: 30px; /* Ajusta el tamaño del círculo según sea necesario */
+    height: 30px; /* Ajusta el tamaño del círculo según sea necesario */
+    border-radius: 50%; /* Hace que el elemento sea circular */
+    text-align: center;
+    line-height: 30px; /* Ajusta el valor según el tamaño del círculo */
+}
+
+.marker-circle i {
+    color: white; /* Color del icono */
+}

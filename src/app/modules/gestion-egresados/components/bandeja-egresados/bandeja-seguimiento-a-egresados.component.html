@@ -1,0 +1,379 @@
+<p-panel *ngIf="!loading; else spinner" class="bandeja-egresados">
+    <ng-template pTemplate="header">
+        <div class="flex flex-column w-full">
+            <div class="text-center mb-2">
+                <span
+                    class="font-medium w-full text-center"
+                    *ngIf="!estudianteSeleccionado"
+                >
+                    {{
+                        role.includes("ROLE_ESTUDIANTE") === "estudiante"
+                            ? "Por favor, seleccione su nombre para continuar"
+                            : "Por favor, seleccione un estudiante para continuar"
+                    }}
+                </span>
+                <span
+                    class="font-bold w-full text-center"
+                    *ngIf="estudianteSeleccionado"
+                    >Seguimiento a egresados</span
+                >
+            </div>
+            <div *ngIf="estudianteSeleccionado">
+                <div class="flex justify-content-center">
+                    <button
+                        *ngIf="role.includes('ROLE_COORDINADOR')"
+                        pButton
+                        icon="pi pi-plus"
+                        label="Buscar Estudiante"
+                        (click)="onSeleccionarEstudiante()"
+                    ></button>
+                    <button
+                        *ngIf="
+                            role.includes('ROLE_ESTUDIANTE') &&
+                            !estudianteSeleccionado
+                        "
+                        pButton
+                        icon="pi pi-plus"
+                        label="Buscar Estudiante"
+                        (click)="onSeleccionarEstudiante()"
+                    ></button>
+                </div>
+                <div class="flex max-w-30rem w-full m-auto">
+                    <p-card header="Datos del Estudiante" class="m-2 w-full">
+                        <div
+                            class="mt-2 card-data flex justify-content-between"
+                        >
+                            <span>Código</span>
+                            <span>{{ estudianteSeleccionado.codigo }}</span>
+                        </div>
+                        <div
+                            class="mt-2 card-data flex justify-content-between"
+                        >
+                            <span>Nombres y Apellidos</span>
+                            <span
+                                >{{ estudianteSeleccionado.nombre }}
+                                {{ estudianteSeleccionado.apellido }}</span
+                            >
+                        </div>
+                        <div
+                            class="mt-2 card-data flex justify-content-between"
+                        >
+                            <span>Cohorte</span>
+                            <span>{{ estudianteSeleccionado.cohorte }}</span>
+                        </div>
+                        <div
+                            class="mt-2 card-data flex justify-content-between"
+                        >
+                            <span>Periodo de Ingreso</span>
+                            <span>{{
+                                estudianteSeleccionado.periodoIngreso
+                            }}</span>
+                        </div>
+                    </p-card>
+                </div>
+                <div class="flex flex-column gap-2 px-4">
+                    <div class="field grid">
+                        <div
+                            class="col-2 col-label text-left align-self-center"
+                        >
+                            <label>Fecha de grado</label>
+                        </div>
+                        <div class="col-10 col-input">
+                            <input
+                                pInputText
+                                [maxLength]="250"
+                                class="p-inputtext-md min-w-8rem w-full"
+                                [value]="estudianteSeleccionado.fechaGrado"
+                                disabled
+                            />
+                        </div>
+                    </div>
+                    <div class="field grid">
+                        <div
+                            class="col-2 col-label text-left align-self-center"
+                        >
+                            <label>Correo electrónico</label>
+                        </div>
+                        <div class="col-10 col-input">
+                            <input
+                                pInputText
+                                [maxLength]="250"
+                                class="p-inputtext-md min-w-8rem w-full"
+                                [value]="estudianteSeleccionado.correo"
+                                disabled
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div
+            class="flex justify-content-center"
+            *ngIf="!estudianteSeleccionado"
+        >
+            <button
+                pButton
+                icon="pi pi-plus"
+                label="Buscar Estudiante"
+                (click)="onSeleccionarEstudiante()"
+            ></button>
+        </div>
+        <div
+            class="flex flex-column gap-2 px-4 w-full"
+            *ngIf="estudianteSeleccionado"
+        >
+            <div class="field grid">
+                <div class="col-2 col-label text-left align-self-center">
+                    <label class="font-bold">Empresas donde ha laborado</label>
+                </div>
+                <div class="col-10 col-input text-right">
+                    <button
+                        *ngIf="role.includes('ROLE_ESTUDIANTE')"
+                        pButton
+                        icon="pi pi-plus"
+                        class="mr-2"
+                        label="Agregar Empresa"
+                        (click)="showAddEmpresa()"
+                    ></button>
+                </div>
+            </div>
+            <div class="field grid">
+                <p-table
+                    [value]="empresas"
+                    [paginator]="true"
+                    [loading]="loading"
+                    [rows]="5"
+                    [tableStyle]="{ width: '100%', 'max-width': '90rem' }"
+                    [showCurrentPageReport]="true"
+                    [scrollable]="true"
+                    currentPageReportTemplate="{first} - {last} de {totalRecords}"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 150px"
+                            >
+                                Empresa
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 150px"
+                            >
+                                Ubicación
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Cargo
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Jefe Directo
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 150px"
+                            >
+                                Teléfono de la Empresa
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Correo Electrónico
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Estado
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Opciones
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-empresa>
+                        <tr>
+                            <td style="min-width: 150px">
+                                {{ empresa.nombre }}
+                            </td>
+                            <td style="min-width: 150px">
+                                {{ empresa.ubicacion }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ empresa.cargo }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ empresa.jefeDirecto }}
+                            </td>
+                            <td style="min-width: 150px">
+                                {{ empresa.telefono }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ empresa.correo }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ empresa.estado }}
+                            </td>
+                            <td style="min-width: 200px">
+                                <button
+                                    *ngIf="role.includes('ROLE_ESTUDIANTE')"
+                                    pButton
+                                    pTooltip="Editar"
+                                    type="button"
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-text p-button-warning"
+                                    (click)="showUpdateEmpresa(empresa.id)"
+                                ></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                            <td [attr.colspan]="8">
+                                No se encontraron registros
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <div
+            class="flex flex-column gap-2 px-4 w-full"
+            *ngIf="estudianteSeleccionado"
+        >
+            <div class="field grid">
+                <div class="col-2 col-label text-left align-self-center">
+                    <label class="font-bold"
+                        >Cursos que ha orientado en la universidad del
+                        Cauca</label
+                    >
+                </div>
+                <div class="col-10 col-input text-right">
+                    <button
+                        *ngIf="role.includes('ROLE_ESTUDIANTE')"
+                        pButton
+                        icon="pi pi-plus"
+                        class="mr-2"
+                        label="Agregar Curso"
+                        (click)="showAddCurso()"
+                    ></button>
+                </div>
+            </div>
+            <div class="field grid">
+                <p-table
+                    [value]="cursos"
+                    [paginator]="true"
+                    [loading]="loading"
+                    [rows]="5"
+                    [tableStyle]="{ width: '100%', 'max-width': '80rem' }"
+                    [showCurrentPageReport]="true"
+                    [scrollable]="true"
+                    currentPageReportTemplate="{first} - {last} de {totalRecords}"
+                    sortMode="multiple"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                                pSortableColumn="nombre"
+                            >
+                                Curso
+                                <p-sortIcon field="nombre"></p-sortIcon>
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Orientado a
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                                pSortableColumn="fechaInicio"
+                            >
+                                Fecha inicio
+                                <p-sortIcon field="fechaInicio"></p-sortIcon>
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Fecha Fin
+                            </th>
+                            <th
+                                scope="col"
+                                class="text-left"
+                                style="min-width: 200px"
+                            >
+                                Opciones
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-curso>
+                        <tr>
+                            <td style="min-width: 200px">
+                                {{ curso.nombre }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ curso.orientadoA }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ curso.fechaInicio }}
+                            </td>
+                            <td style="min-width: 200px">
+                                {{ curso.fechaFin }}
+                            </td>
+                            <td style="min-width: 200px">
+                                <button
+                                    *ngIf="role.includes('ROLE_ESTUDIANTE')"
+                                    pButton
+                                    pTooltip="Editar"
+                                    type="button"
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-text p-button-warning"
+                                    (click)="showUpdateCurso(curso.id)"
+                                ></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                            <td [attr.colspan]="5">
+                                No se encontraron registros
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </ng-template>
+</p-panel>
+<ng-template #spinner>
+    <p-progressSpinner ariaLabel="loading" class="spinner"></p-progressSpinner>
+</ng-template>

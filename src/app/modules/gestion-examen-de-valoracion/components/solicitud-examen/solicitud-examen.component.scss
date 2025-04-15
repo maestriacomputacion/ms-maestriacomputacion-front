@@ -1,0 +1,195 @@
+.solicitud ::ng-deep.p-fieldset {
+    margin-top: 2rem !important;
+}
+
+.solicitud ::ng-deep.p-fileupload .p-message {
+    display: none;
+}
+
+.solicitud ::ng-deep.p-fileupload-buttonbar p-button {
+    display: none;
+}
+
+.solicitud ::ng-deep.p-fileupload-content .p-fileupload-files.ng-star-inserted {
+    display: none;
+}
+
+.solicitud
+    ::ng-deep
+    p-fileupload[ng-reflect-name="firmaEstudiante"]
+    .p-fileupload-content
+    .p-fileupload-files.ng-star-inserted {
+    display: block;
+}
+
+.truncate-text {
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pdf-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.pdf-viewer {
+    width: 100%;
+    height: 100%;
+}
+
+.text-description {
+    color: gray;
+}
+
+@media (max-width: 1240px) {
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 60% !important;
+    }
+
+    .solicitud-wrap {
+        flex-wrap: wrap;
+        row-gap: 2rem;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 1024px) {
+    .panel-solicitud ::ng-deep.p-calendar-w-btn {
+        width: 100% !important;
+    }
+
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 70% !important;
+    }
+}
+
+@media (max-width: 900px) {
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 80% !important;
+    }
+
+    .panel-solicitud ::ng-deep.p-panel .p-panel-content {
+        padding: 0.4rem !important;
+    }
+
+    .panel-solicitud ::ng-deep.p-fieldset .p-fieldset-content {
+        padding: 0.1rem !important;
+    }
+
+    .panel-solicitud ::ng-deep.p-fileupload-content {
+        padding: 1rem 0.2rem !important;
+    }
+
+    .panel-solicitud ::ng-deep.p-fileupload-content ul {
+        padding-left: 0.8rem;
+    }
+
+    .dialog-responsive ::ng-deep.p-dialog {
+        width: 95% !important;
+    }
+
+    .panel-solicitud ::ng-deep.solicitud .card {
+        padding: 0.1rem !important;
+    }
+
+    .panel-solicitud ::ng-deep.p-card .p-card-title {
+        text-align: center;
+    }
+
+    .panel-solicitud .card-data {
+        flex-direction: column;
+        margin-bottom: 2rem;
+        align-items: center;
+    }
+
+    .panel-solicitud .card-data > span:first-of-type {
+        font-weight: bold;
+    }
+
+    .panel-solicitud .card-data:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 95% !important;
+    }
+}
+
+@media (max-width: 425px) {
+    .solicitud ::ng-deep.p-card .p-card-title {
+        text-align: center;
+    }
+
+    .panel-solicitud ::ng-deep.p-button {
+        padding: 0.75rem 0.75rem;
+    }
+}
+
+.spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    ::ng-deep .custom-spinner .p-progress-spinner-circle {
+        animation: custom-progress-spinner-dash 1.5s ease-in-out infinite,
+            custom-progress-spinner-color 6s ease-in-out infinite;
+    }
+
+    @keyframes custom-progress-spinner-color {
+        0% {
+            stroke: #1f497d;
+        }
+        25% {
+            stroke: #16697a;
+        }
+        50% {
+            stroke: #489fb5;
+        }
+        75% {
+            stroke: #82c0cc;
+        }
+        100% {
+            stroke: #ffa62b;
+        }
+    }
+
+    @keyframes custom-progress-spinner-dash {
+        0% {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -35px;
+        }
+        100% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -124px;
+        }
+    }
+
+    .spinner-text {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #666;
+    }
+}

@@ -1,0 +1,84 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="card">
+ <div class="flex justify-content-between mb-3">
+   <span class="p-input-icon-left">
+     <i class="pi pi-search"></i>
+     <input 
+       pInputText 
+       type="text" 
+       [(ngModel)]="searchTerm" 
+       (keydown)="filterCertificates($event)"
+       placeholder="Buscar por código estudiante" 
+       class="w-full"/>
+   </span>
+
+   <div class="flex align-items-center gap-2">
+    <p-progressSpinner 
+      *ngIf="downloading" 
+      [style]="{width: '20px', height: '20px'}"
+      strokeWidth="4"
+      animationDuration=".5s">
+    </p-progressSpinner>
+  
+    <p-button 
+      icon="pi pi-download" 
+      label="Descargar Certificados Aprobados" 
+      (onClick)="descargarcertificados()"
+      [disabled]="downloading">
+    </p-button>
+
+    <p-button 
+      icon="pi pi-times" 
+      label="Vencer Certificados" 
+      (click)="confirmExpireCertificates()"
+      [disabled]="filteredCertificates.length === 0"
+      class="p-button-danger">
+  </p-button>
+  </div>  
+ </div>
+
+ <p-table 
+  [value]="filteredCertificates" 
+  [loading]="loading"
+  styleClass="p-datatable-gridlines" 
+  responsiveLayout="scroll"
+  [paginator]="true" 
+  [rows]="10" 
+  [rowsPerPageOptions]="[5, 10, 20]"
+  [value]="filteredCertificates" 
+  [loading]="loading"
+  styleClass="p-datatable-gridlines" 
+  responsiveLayout="scroll">
+   <ng-template pTemplate="caption">
+     Certificados de Votación
+   </ng-template>
+   
+   <ng-template pTemplate="header">
+     <tr>
+       <th>ID Certificado</th>
+       <th>Código Estudiante</th>
+       <th>Estado</th>
+       <th>Fecha Creación</th>
+       <th>Última Modificación</th>
+     </tr>
+   </ng-template>
+   
+   <ng-template pTemplate="body" let-certificate>
+     <tr>
+       <td>{{ certificate.id }}</td>
+       <td>{{ certificate.id_Estudiante }}</td>
+       <td>{{ certificate.estado }}</td>
+       <td>{{ certificate.fecha_creacion | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+       <td>{{ certificate.fecha_modificacion | date: 'yyyy-MM-dd HH:mm:ss'}}</td>        
+     </tr>
+   </ng-template>
+   
+   <ng-template pTemplate="emptymessage">
+     <tr>
+       <td colspan="5" class="text-center">No se encontraron certificados.</td>
+     </tr>
+   </ng-template>
+ </p-table>
+</div>

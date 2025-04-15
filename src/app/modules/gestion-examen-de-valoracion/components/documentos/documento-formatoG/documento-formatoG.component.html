@@ -1,0 +1,257 @@
+<p-panel>
+    <div id="formatoG">
+        <div class="flex flex-column w-full mb-4 header-logo">
+            <img
+                src="assets/layout/images/asset-header.jpg"
+                alt="Asset Header"
+                class="header-image"
+            />
+            <div class="flex justify-content-start logo-container">
+                <img
+                    src="assets/layout/images/logoFacultad.png"
+                    alt="Logo Facultad"
+                    class="logo-image"
+                />
+            </div>
+        </div>
+        <div class="mt-4 px-1 lg:px-8">
+            <form [formGroup]="formatoGForm">
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-2 col-label label-required font-semibold"
+                        for="consecutivo"
+                        >Consecutivo</label
+                    >
+                    <div class="col-10">
+                        <input
+                            pInputText
+                            class="p-inputtext-md col-input"
+                            type="text"
+                            id="consecutivo"
+                            formControlName="consecutivo"
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label class="col-2 col-label font-semibold" for="facultad"
+                        >Facultad</label
+                    >
+                    <div class="col-10">
+                        <input
+                            pInputText
+                            class="p-inputtext-md col-input w-full"
+                            type="text"
+                            id="facultad"
+                            formControlName="facultad"
+                            readonly
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label class="col-2 col-label font-semibold" for="programa"
+                        >Programa</label
+                    >
+                    <div class="col-10">
+                        <input
+                            pInputText
+                            class="p-inputtext-md col-input w-full"
+                            type="text"
+                            id="programa"
+                            formControlName="programa"
+                            readonly
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-2 col-label label-required font-semibold"
+                        for="coordinador"
+                        >Coordinador(a)</label
+                    >
+                    <div class="col-10">
+                        <input
+                            pInputText
+                            class="p-inputtext-md col-input w-full"
+                            type="text"
+                            id="coordinador"
+                            formControlName="coordinador"
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-2 col-label font-semibold"
+                        for="estudiante"
+                        >Nombre del estudiante</label
+                    >
+                    <div class="col-10">
+                        <input
+                            pInputText
+                            class="p-inputtext-md col-input w-full"
+                            type="text"
+                            id="estudiante"
+                            formControlName="estudiante"
+                            readonly
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label class="col-2 col-label font-semibold" for="director"
+                        >Nombre del director</label
+                    >
+                    <div class="col-10">
+                        <input
+                            pInputText
+                            class="p-inputtext-md col-input w-full"
+                            type="text"
+                            id="director"
+                            formControlName="director"
+                            readonly
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-2 col-label label-required font-semibold"
+                        for="observaciones"
+                        >Observaciones</label
+                    >
+                    <div class="col-10">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            id="observaciones"
+                            class="p-inputtextarea-md w-full"
+                            formControlName="observaciones"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label class="col-2 col-label font-semibold"
+                        >Jurado Interno</label
+                    >
+                    <div class="col-10">
+                        <p-card class="w-full m-0">
+                            <div class="flex">
+                                <span>{{
+                                    juradoInternoSeleccionado?.nombres ??
+                                        juradoInternoSeleccionado?.nombre +
+                                            " " +
+                                            juradoInternoSeleccionado?.apellido
+                                }}</span>
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+                <div class="field grid justify-content-start">
+                    <label class="col-2 col-label font-semibold"
+                        >Jurado Externo</label
+                    >
+                    <div class="col-10">
+                        <p-card class="w-full m-0">
+                            <div class="flex">
+                                <span>{{
+                                    juradoExternoSeleccionado?.nombres ??
+                                        juradoExternoSeleccionado?.nombre +
+                                            " " +
+                                            juradoExternoSeleccionado?.apellido
+                                }}</span>
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+
+                <div class="field grid mt-4">
+                    <span class="col-12 lg:col-9 text-right">
+                        <b>Firma Coordinador(a)</b>
+                    </span>
+                    <div class="col-12 lg:col-3 text-right lg:text-center">
+                        <p-fileUpload
+                            name="firmaCoordinador"
+                            chooseIcon="pi pi-file"
+                            accept=".png, .jpg, .jpeg"
+                            chooseLabel="Seleccionar"
+                            class="w-full max-w-30rem"
+                            previewWidth="100"
+                            [auto]="true"
+                            (onSelect)="
+                                onFirmaChange($event, 'firmaCoordinador')
+                            "
+                        >
+                            <ng-template
+                                let-file
+                                pTemplate="file"
+                                data-file="firma"
+                            >
+                                <div *ngIf="firmaCoordinador">
+                                    <img
+                                        [src]="firmaCoordinador"
+                                        alt="Vista Previa de la Firma"
+                                        style="
+                                            min-height: 120px;
+                                            min-width: 150px;
+                                            width: 100%;
+                                            height: 100%;
+                                        "
+                                    />
+                                </div>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                </div>
+                <div class="footer-logo mt-8">
+                    <img
+                        src="assets/layout/images/asset-calidad.png"
+                        alt="Asset Calidad"
+                        width="140px"
+                        height="100px"
+                    />
+                    <div
+                        class="flex flex-column align-items-center justify-content-center"
+                    >
+                        <span>
+                            Carrera 2 No. 15N esquina-Sector Tulcán
+                            Popayán-Cauca-Colombia Teléfono: 6028209800 ext.
+                            2100 ó 2101. decafiet&#64;unicauca.edu.co |
+                            <strong>www.unicauca.edu.co</strong>
+                        </span>
+                    </div>
+                    <img
+                        src="assets/layout/images/logosIcontec.png"
+                        alt="Logo Icontec"
+                        width="120px"
+                        height="80px"
+                    />
+                </div>
+                <div
+                    class="flex align-items-center justify-content-end mt-4 column-gap-2"
+                >
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-upload"
+                        label="Insertar"
+                        pTooltip="Haz clic para insertar el documento en el área de carga de archivos."
+                        tooltipPosition="top"
+                        (click)="onInsertar()"
+                    ></button>
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-download"
+                        label="Descargar"
+                        (click)="onDownload()"
+                        [loading]="loading"
+                    ></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</p-panel>

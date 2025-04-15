@@ -1,0 +1,19 @@
+<div class="layout-topbar" style="flex-wrap: wrap">
+    <div
+        class="topbar-container"
+        [ngClass]="{ 'topbar-hidden': !isTopBarVisible }"
+    >
+        <div class="logo">
+            <img
+                src="assets/layout/images/logoUnicauca.png"
+                style="height: 100px"
+                alt="logo"
+            />
+            <span class="titulo-logo">Maestría en computación</span>
+        </div>
+    </div>
+
+    <div style="width: 100%">
+        <p-menubar [model]="items"></p-menubar>
+    </div>
+</div>

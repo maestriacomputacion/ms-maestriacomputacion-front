@@ -1,0 +1,93 @@
+<form [formGroup]="cursoForm" class="mt-5">
+    <div class="curso-egresados flex flex-column gap-3">
+        <div class="field grid">
+            <div class="col-3 col-label text-right align-self-center">
+                <label class="label-required">Nombre del Curso</label>
+            </div>
+            <div class="col-9 col-input">
+                <p-dropdown
+                    class="dropdown-custom"
+                    [options]="asignaturas"
+                    formControlName="idCurso"
+                    placeholder="Selecciona una asignatura"
+                    [virtualScroll]="true"
+                    [itemSize]="31"
+                    [filter]="false"
+                    [ngClass]="{
+                        'ng-invalid ng-dirty':
+                            getFormControl('idCurso').invalid &&
+                            getFormControl('idCurso').dirty,
+                        'ng-invalid ng-touched':
+                            getFormControl('idCurso').invalid &&
+                            getFormControl('idCurso').touched
+                    }"
+                ></p-dropdown>
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-3 col-label text-right align-self-center">
+                <label class="label-required">Orientado a</label>
+            </div>
+            <div class="col-9 col-input">
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-md w-full"
+                    formControlName="orientadoA"
+                />
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-3 col-label text-right align-self-center">
+                <label class="label-required">Fecha de Inicio</label>
+            </div>
+            <div class="col-9 col-input">
+                <p-calendar
+                    formControlName="fechaInicio"
+                    [showIcon]="true"
+                    dateFormat="dd.mm.yy"
+                ></p-calendar>
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-3 col-label text-right align-self-center">
+                <label class="label-required">Fecha de Fin</label>
+            </div>
+            <div class="col-9 col-input">
+                <p-calendar
+                    formControlName="fechaFin"
+                    [showIcon]="true"
+                    dateFormat="dd.mm.yy"
+                ></p-calendar>
+            </div>
+        </div>
+    </div>
+    <div class="flex align-items-center justify-content-end column-gap-2 mt-4">
+        <button
+            pButton
+            type="button"
+            class="p-button-outlined"
+            icon="pi pi-mark"
+            label="Cancelar"
+            (click)="onCancel()"
+        ></button>
+        <button
+            pButton
+            *ngIf="!editMode"
+            type="submit"
+            icon="pi pi-save"
+            label="Registrar Información"
+            (click)="onSave()"
+            [loading]="loading"
+        ></button>
+        <button
+            *ngIf="editMode"
+            pButton
+            type="submit"
+            icon="pi pi-save"
+            label="Actualizar Información"
+            (click)="onSave()"
+            [loading]="loading"
+        ></button>
+    </div>
+</form>

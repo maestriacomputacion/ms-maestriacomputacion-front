@@ -1,0 +1,158 @@
+<div class="card">
+    <p-tabView>
+        <p-tabPanel header="Información" leftIcon="pi pi-id-card" tooltip="Información de la solicitud">
+            <ng-container *ngIf="cargandoDatos">
+                <app-skelinfosolicitud></app-skelinfosolicitud>
+            </ng-container>
+
+            <ng-container *ngIf="datosSolicitud">
+                <div class="flex block">
+                    <div style="padding-top: 5px">
+                        <p-tag severity="info" value="{{ gestor.estadoSolicitud }}"></p-tag>
+                    </div>
+                    <div class="col-11 text-lg font-bold">
+                        Solicitud COD:
+                        {{ datosSolicitud.datosComunSolicitud.radicado }} -
+                        {{ datosSolicitud.datosComunSolicitud.tipoSolicitud }}
+                    </div>
+                </div>
+
+                <div class="grid mt-1">
+                    <div class="mt-1 col-4">
+                        <p class="text-base m-0">
+                            Solicitante:
+                            {{ datosSolicitud.datosComunSolicitud.nombreSolicitante }}
+                            {{ datosSolicitud.datosComunSolicitud.apellidoSolicitante }}
+                        </p>
+                        <p class="text-base m-0">
+                            Identificación:
+
+                            {{ datosSolicitud.datosComunSolicitud.numeroIdentSolicitante }}
+                        </p>
+                        <p class="text-base m-0">
+                            Código:
+                            {{ datosSolicitud.datosComunSolicitud.codigoSolicitante }}
+                        </p>
+                    </div>
+                    <div class="col-4 mt-1">
+                        <p class="text-base m-0">
+                            Correo:
+                            {{ datosSolicitud.datosComunSolicitud.emailSolicitante }}
+                        </p>
+                        <p class="text-base m-0">
+                            Celular:
+                            {{ datosSolicitud.datosComunSolicitud.celularSolicitante }}
+                        </p>
+                    </div>
+                    <div class="col-4 mt-1">
+                        <p class="text-base m-0">
+                            Fecha Recepción:
+
+                            {{ datosSolicitud.datosComunSolicitud.fechaEnvioSolicitud }}
+                        </p>
+                    </div>
+
+                    <ng-container *ngIf="urlOficioPdf">
+                        <div class="col-12 mt-2">
+                            <embed
+                                id="embedElement"
+                                [src]="urlOficioPdf"
+                                type="application/pdf"
+                                width="100%"
+                                height="600px"
+                            />
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </p-tabPanel>
+
+        <p-tabPanel
+            *ngIf="docsAdjuntos?.length > 0 || enlacesAdjuntos?.length > 0"
+            header="Adjuntos"
+            leftIcon="pi pi-paperclip"
+            tooltip="Documentos anexos de la solicitud"
+        >
+            <ng-container *ngIf="cargandoDatos">
+                <app-skelinfosolicitud></app-skelinfosolicitud>
+            </ng-container>
+
+            <ng-container *ngIf="datosSolicitud">
+                <div class="flex block mb-3">
+                    <div style="padding-top: 5px">
+                        <p-tag severity="info" value="{{ gestor.estadoSolicitud }}"></p-tag>
+                    </div>
+                    <div class="col-11 text-lg font-bold">
+                        Solicitud COD:
+                        {{ datosSolicitud.datosComunSolicitud.radicado }} -
+                        {{ datosSolicitud.datosComunSolicitud.tipoSolicitud }}
+                    </div>
+                </div>
+
+                <p-scrollPanel [style]="{ width: '100%', height: '100px' }">
+                    <div class="col-12">
+                        <ng-container *ngFor="let documento of docsAdjuntos">
+                            <button
+                                pButton
+                                pRipple
+                                type="button"
+                                icon="pi pi-file-pdf"
+                                label="{{ documento.name }}"
+                                (click)="abrirArchivo(documento.name)"
+                                class="p-button-rounded p-button-secondary mr-2 mb-2 text-sm"
+                            ></button>
+                        </ng-container>
+
+                        <ng-container *ngIf="enlacesAdjuntos">
+                            <ng-container *ngFor="let enlace of enlacesAdjuntos">
+                                <button
+                                    pButton
+                                    pRipple
+                                    type="button"
+                                    icon="pi pi-external-link"
+                                    label="Enlace a material externo"
+                                    (click)="utilidades.abrirEnlaceExterno(enlace)"
+                                    class="p-button-rounded p-button-secondary mr-2 mb-2 text-sm"
+                                ></button
+                            ></ng-container>
+                        </ng-container>
+                    </div>
+                </p-scrollPanel>
+
+                <ng-container *ngIf="urlPdf">
+                    <div class="col-12 mt-2">
+                        <embed id="embedElement" [src]="urlPdf" type="application/pdf" width="100%" height="600px" />
+                    </div>
+                </ng-container>
+            </ng-container>
+        </p-tabPanel>
+        <p-tabPanel *ngIf="mostrarGestor" header="Gestión" leftIcon="pi pi-sliders-h" tooltip="Tramitar solicitud">
+            <ng-container *ngIf="cargandoDatos">
+                <app-skelinfosolicitud></app-skelinfosolicitud>
+            </ng-container>
+
+            <ng-container *ngIf="datosSolicitud">
+                <div class="flex block">
+                    <div style="padding-top: 5px">
+                        <p-tag severity="info" value="{{ gestor.estadoSolicitud }}"></p-tag>
+                    </div>
+                    <div class="col-11 text-lg font-bold">
+                        Solicitud COD:
+                        {{ datosSolicitud.datosComunSolicitud.radicado }} -
+                        {{ datosSolicitud.datosComunSolicitud.tipoSolicitud }}
+                    </div>
+                </div>
+                <app-tramite></app-tramite>
+            </ng-container>
+        </p-tabPanel>
+        <p-tabPanel header="Historial" leftIcon="pi pi-history" tooltip="Historial de la solicitud">
+            <ng-container *ngIf="cargandoDatos">
+                <app-skelinfosolicitud></app-skelinfosolicitud>
+            </ng-container>
+
+            <ng-container *ngIf="seguimiento.historial && seguimiento.historial.length > 0">
+                <app-historial></app-historial>
+            </ng-container>
+        </p-tabPanel>
+    </p-tabView>
+</div>

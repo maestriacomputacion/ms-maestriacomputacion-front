@@ -1,0 +1,57 @@
+:host {
+    ::ng-deep .p-card .p-card-body {
+        height: 100%;
+        min-height: 85vh;
+        min-width: 180px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-image: url(https://images.pexels.com/photos/127873/pexels-photo-127873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+    }
+}
+
+/* The hero image */
+.hero-image {
+    /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url('../../../../assets/layout/images/homeImage.png');
+
+    /* Set a specific height */
+
+    /* Position and center the image to scale nicely on all screens */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+
+    height: 100%;
+    min-height: 70vh;
+    min-width: 180px;
+    border-radius: 6px;
+}
+
+/* Place text in the middle of the image */
+.hero-text {
+    text-align: left;
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    width: 500px;
+    //color: #235070;
+    color: white;
+}
+
+.texto {
+    text-align: right;
+    position: absolute;
+    top: 95%;
+    left: 10%;
+    transform: translate(-10%, -50%);
+    color: white;
+}
+
+.imagen {
+    position: absolute;
+    top: 92%;
+    left: 65%;
+    transform: translate(-10%, -50%);
+
+}

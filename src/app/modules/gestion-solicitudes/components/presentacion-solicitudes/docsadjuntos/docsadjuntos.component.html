@@ -1,0 +1,82 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <div class="col-12 mb-4">
+        <p class="text-xl font-bold mb-0"><i class="pi pi-paperclip mr-2"></i>Paso 3 - Documentos adjuntos</p>
+        <p>Cargue la documentación adicional requerida</p>
+    </div>
+
+    <div class="mb-4" *ngFor="let documento of radicar.requisitosSolicitudEscogida.documentosRequeridos; let i = index">
+        <ng-container *ngIf="documento.adjuntarDocumento">
+            <p-panel header="• {{ documento.nombre }}">
+                <div class="grid">
+                    <div class="col-10 lg:col-2">
+                        <p-fileUpload
+                            #fubauto
+                            mode="basic"
+                            name="file[]"
+                            [auto]="true"
+                            [customUpload]="true"
+                            (uploadHandler)="onUpload($event, fubauto, i)"
+                            accept=".pdf"
+                            chooseIcon="pi pi-upload"
+                            maxFileSize="5000000"
+                            chooseLabel="Cargar Archivo"
+                            [style]="{ width: '100%' }"
+                            invalidFileSizeMessageDetail="Maximo 5MB"
+                        ></p-fileUpload>
+                    </div>
+
+                    <div class="col-2 lg:col-1" *ngIf="radicar.documentosAdjuntos[i]">
+                        <button
+                            pButton
+                            icon="pi pi-times"
+                            (click)="eliminarDocumento(i)"
+                            type="button"
+                            class="p-button-danger"
+                        ></button>
+                    </div>
+
+                    <div class="col-12 lg:col-9 text-lg pt-3" *ngIf="radicar.documentosAdjuntos[i]">
+                        <i class="pi pi-paperclip mr-1 text-lg"></i>{{ radicar.documentosAdjuntos[i].name }}
+                    </div>
+                </div>
+            </p-panel>
+        </ng-container>
+    </div>
+
+    <div class="mb-4" *ngFor="let enlace of radicar.requisitosSolicitudEscogida.enlacesRequeridos; let i = index">
+        <p-panel header="• {{ enlace }}">
+            <div class="grid">
+                <div class="col-12">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">www</span>
+                        <input
+                            id="enlaceMultimedia"
+                            type="text"
+                            pInputText
+                            placeholder="Enlace publico al repositorio donde se aloja el material"
+                            [(ngModel)]="radicar.enlacesAdjuntos[i]"
+                        />
+                    </div>
+                    <div class="mt-2">
+                        <p
+                            *ngIf="
+                                radicar.enlacesAdjuntos[i] && !utilidades.validarUrlSegura(radicar.enlacesAdjuntos[i])
+                            "
+                            class="ml-3"
+                            style="color: red"
+                        >
+                            URL inválido. No cumple con los criterios de seguridad admitidos
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+    </div>
+
+    <div class="grid grid-nogutter mt-4 justify-content-end">
+        <p-button class="mr-2" label="Atras" (click)="navigateToBack()" icon="pi pi-angle-left"></p-button>
+        <p-button label="Siguiente" (click)="navigateToNext()" icon="pi pi-angle-right" iconPos="right"></p-button>
+    </div>
+</div>

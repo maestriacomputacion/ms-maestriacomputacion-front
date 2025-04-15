@@ -1,0 +1,123 @@
+<form [formGroup]="empresaForm">
+    <div class="flex flex-column gap-2 mt-4">
+        <div class="field grid">
+            <div class="col-4 col-label text-right align-self-center">
+                <label class="label-required">Nombre de la Empresa</label>
+            </div>
+            <div class="col-8 col-input">
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-md w-full"
+                    formControlName="nombre"
+                />
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-4 col-label text-right align-self-center">
+                <label class="label-required">Ubicación de la Empresa</label>
+            </div>
+            <div class="col-8 col-input">
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-md w-full"
+                    formControlName="ubicacion"
+                />
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-4 col-label text-right align-self-center">
+                <label class="label-required">Cargo</label>
+            </div>
+            <div class="col-8 col-input">
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-md w-full"
+                    formControlName="cargo"
+                />
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-4 col-label text-right align-self-center">
+                <label class="label-required">Jefe Directo</label>
+            </div>
+            <div class="col-8 col-input">
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-md w-full"
+                    formControlName="jefeDirecto"
+                />
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-4 col-label text-right align-self-center">
+                <label class="label-required">Teléfono de la Empresa</label>
+            </div>
+            <div class="col-8 col-input">
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-md w-full"
+                    formControlName="telefono"
+                />
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-4 col-label text-right align-self-center">
+                <label class="label-required">Correo Electrónico</label>
+            </div>
+            <div class="col-8 col-input">
+                <input
+                    pInputText
+                    [maxLength]="250"
+                    class="p-inputtext-md w-full"
+                    formControlName="correo"
+                />
+            </div>
+        </div>
+        <div class="field grid">
+            <div class="col-4 col-label text-right align-self-center">
+                <label class="label-required">Estado</label>
+            </div>
+            <div class="col-8 col-input">
+                <p-dropdown
+                    [options]="estados"
+                    placeholder="Seleccione"
+                    styleClass="p-inputtext-md w-full"
+                    formControlName="estado"
+                ></p-dropdown>
+            </div>
+        </div>
+    </div>
+    <div class="flex align-items-center justify-content-end column-gap-2 mt-4">
+        <button
+            pButton
+            type="button"
+            class="p-button-outlined"
+            icon="pi pi-mark"
+            label="Cancelar"
+            (click)="onCancel()"
+        ></button>
+        <button
+            pButton
+            *ngIf="!editMode"
+            type="submit"
+            icon="pi pi-save"
+            label="Registrar Información"
+            (click)="onSave()"
+            [loading]="loading"
+        ></button>
+        <button
+            *ngIf="editMode"
+            pButton
+            type="submit"
+            icon="pi pi-save"
+            label="Actualizar Información"
+            (click)="onSave()"
+            [loading]="loading"
+        ></button>
+    </div>
+</form>

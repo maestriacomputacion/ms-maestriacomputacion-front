@@ -1,0 +1,109 @@
+<form [formGroup]="formApoyoPagoPublic">
+    <div class="grid p-fluid">
+        <div class="col-12 md:col-5">
+            <span class="p-float-label mt-3">
+                <input formControlName="nombreCongreso" class="w-full" id="nombreCongreso" type="text" pInputText />
+                <label for="nombreCongreso">Nombre del evento</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-4">
+            <span class="p-float-label mt-3">
+                <input formControlName="lugarEvento" class="w-full" id="lugarEvento" type="text" pInputText />
+                <label for="lugarEvento">Lugar del evento</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-3">
+            <span class="p-float-label mt-3">
+                <p-calendar
+                    formControlName="fechas"
+                    selectionMode="range"
+                    [readonlyInput]="true"
+                    inputId="fcongreso"
+                    dateFormat="dd/mm/yy"
+                    [style]="{ width: '100%' }"
+                ></p-calendar>
+                <label for="fcongreso">Fechas del evento (inicio - fin)</label>
+            </span>
+        </div>
+
+        <div class="col-12">
+            <span class="p-float-label mt-3">
+                <p-dropdown
+                    formControlName="grupoInvestigacion"
+                    inputId="grupoInvestigacion"
+                    [autoDisplayFirst]="false"
+                    [options]="listaGruposInvestigacion"
+                    [style]="{ width: '100%' }"
+                ></p-dropdown>
+                <label for="grupoInvestigacion">Grupo de Investigación</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-6 lg:col-3">
+            <span class="p-float-label mt-3">
+                <p-inputNumber
+                    formControlName="valorApoyo"
+                    inputId="valorApoyo"
+                    [minFractionDigits]="2"
+                    prefix="COP "
+                    [style]="{ width: '100%' }"
+                >
+                </p-inputNumber>
+
+                <label for="valorApoyo">Valor del Apoyo</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-6 lg:col-3">
+            <span class="p-float-label mt-3">
+                <input formControlName="nombreBanco" class="w-full" id="banco" type="text" pInputText />
+                <label for="banco">Entidad Bancaria</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-6 lg:col-3">
+            <span class="p-float-label mt-3">
+                <p-dropdown
+                    formControlName="tipoCuenta"
+                    inputId="tipocuenta"
+                    [autoDisplayFirst]="false"
+                    [options]="tiposCuentaBancaria"
+                    [style]="{ width: '100%' }"
+                ></p-dropdown>
+                <label for="tipocuenta">Tipo de Cuenta</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-6 lg:col-3">
+            <span class="p-float-label mt-3">
+                <input formControlName="numeroCuenta" class="w-full" id="cuentabanco" type="text" pInputText />
+                <label for="cuentabanco">Número de Cuenta</label>
+            </span>
+        </div>
+
+        <div class="col-12">
+            <span class="p-float-label mt-3">
+                <input formControlName="direccionRecidencia" class="w-full" id="direccion" type="text" pInputText />
+                <label for="direccion">Dirección y Ciudad de Residencia </label>
+            </span>
+        </div>
+
+        <div class="col-12">
+            <span class="p-float-label mt-3">
+                <textarea
+                    formControlName="infoDePago"
+                    id="infoDePagoFactura"
+                    [rows]="5"
+                    pInputTextarea
+                    spellcheck="true"
+                    class="w-full"
+                ></textarea>
+                <label for="infoDePagoFactura"
+                    >Información de pago de la factura (forma de pago o intrucciones especiales)</label
+                >
+            </span>
+        </div>
+    </div>
+</form>

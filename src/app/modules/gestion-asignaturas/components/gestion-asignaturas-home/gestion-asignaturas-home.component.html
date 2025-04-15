@@ -1,0 +1,412 @@
+<p-panel header="Gestión de Asignaturas">
+    <p-card>
+        <div class="contenedor-flex">
+            <div class="elemento">
+                <span class="p-input-icon-right">
+                    <i
+                        class="pi pi-search search"
+                        (click)="filtrarAsignaturas()"
+                        title="Buscar Asignatura"
+                    ></i>
+                    <input
+                        type="text"
+                        pInputText
+                        placeholder="Buscar Asignatura"
+                        [(ngModel)]="buscarAsignatura"
+                    />
+                </span>
+            </div>
+            <div class="elemento">
+                <p-button
+                    label="Agregar Asignatura"
+                    icon="pi pi-plus"
+                    routerLink="registrar-asignatura"
+                ></p-button>
+            </div>
+
+            <div class="elemento">
+                <p-fileUpload
+                    #fubauto
+                    mode="basic"
+                    name="demo[]"
+                    url="./upload.php"
+                    accept="image/*"
+                    maxFileSize="1000000"
+                    [auto]="true"
+                    chooseLabel="Seleccionar archivo"
+                    chooseIcon="pi-cloud-upload"
+                    iconPos="right"
+                ></p-fileUpload>
+            </div>
+        </div>
+    </p-card>
+
+    <!--ASIGNATURAS FILTRADAS-->
+    <p-card
+        class="table-container"
+        *ngIf="asignaturasFiltradas && asignaturasFiltradas.length > 0"
+    >
+        <p-table
+            [value]="asignaturasFiltradas"
+            [paginator]="true"
+            [rows]="5"
+            [showCurrentPageReport]="true"
+            responsiveLayout="scroll"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [rowsPerPageOptions]="[5, 25, 50]"
+        >
+            <ng-template pTemplate="headergrouped">
+                <tr>
+                    <th scope="col">Código</th>
+
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Fecha Aprobación</th>
+
+                    <th scope="col">Opciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-asignatura>
+                <tr>
+                    <td>{{ asignatura.codigoAsignatura }}</td>
+
+                    <td>{{ asignatura.nombreAsignatura }}</td>
+                    <td>{{ asignatura.estadoAsignatura }}</td>
+                    <td>{{ asignatura.fechaAprobacion }}</td>
+
+                    <td>
+                        <button
+                            pButton
+                            icon="pi pi-eye"
+                            class="p-button-rounded mr-2"
+                            (click)="visualizarAsignatura(asignatura)"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            icon
+                            icon="pi pi-pencil"
+                            class="p-button-rounded mr-2"
+                            (click)="editAsignatura(asignatura.idAsignatura)"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-trash"
+                            class="p-button-rounded"
+                            (click)="deleteAsignatura(asignatura)"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+
+    <p-dialog
+        header="Detalles de la Asignatura"
+        [(visible)]="displayModal"
+        [modal]="true"
+        [responsive]="true"
+        [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+        [style]="{ width: '50vw' }"
+    >
+        <ng-container *ngIf="detalleAsignatura">
+            <!-- Aquí muestra los detalles de la asignatura-->
+            <div>
+                <div class="flexbox-container">
+                    <p style="margin-right: 50px">
+                        <strong>Nombre:</strong>
+                        {{ detalleAsignatura.nombreAsignatura }}
+                    </p>
+                    <p>
+                        <strong>Código:</strong>
+                        {{ detalleAsignatura.codigoAsignatura }}
+                    </p>
+                </div>
+                <div class="flexbox-container">
+                    <p style="margin-right: 50px">
+                        <strong>Estado:</strong>
+                        {{
+                            detalleAsignatura.estadoAsignatura
+                                ? "Activa"
+                                : "Inactiva"
+                        }}
+                    </p>
+                    <p>
+                        <strong>Fecha de Aprobación:</strong>
+                        {{
+                            detalleAsignatura.fechaAprobacion
+                                | date : "dd/MM/yyyy"
+                        }}
+                    </p>
+                </div>
+                <div class="flexbox-container">
+                    <p style="margin-right: 50px">
+                        <strong>Tipo:</strong>
+                        {{ detalleAsignatura.tipoAsignatura }}
+                    </p>
+                    <p>
+                        <strong>Número de Créditos:</strong>
+                        {{ detalleAsignatura.creditos }}
+                    </p>
+                </div>
+                <div class="flexbox-container">
+                    <p style="margin-right: 50px">
+                        <strong>Horas Presenciales:</strong>
+                        {{ detalleAsignatura.horasPresencial }}
+                    </p>
+                    <p style="margin-right: 50px">
+                        <strong>Horas No Presenciales:</strong>
+                        {{ detalleAsignatura.horasNoPresencial }}
+                    </p>
+                    <p>
+                        <strong>Horas Totales:</strong>
+                        {{ detalleAsignatura.horasTotal }}
+                    </p>
+                </div>
+
+                <div *ngIf="detalleAsignatura.oficioFacultad">
+                    <p-panel header="Oficio Facultad">
+                        <table
+                            class="table table-bordered w-100 d-block"
+                            style="border-spacing: 10px"
+                        >
+                            <tr>
+                                <th scope="col" style="width: 33%">
+                                    Número de Oficio
+                                </th>
+                                <th scope="col" style="width: 33%">
+                                    Fecha de Oficio
+                                </th>
+                                <th scope="col" style="width: 33%">Asunto</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{
+                                        detalleAsignatura.oficioFacultad
+                                            .numeroOficio
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura.oficioFacultad
+                                            .fechaOficio | date : "dd/MM/yyyy"
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura.oficioFacultad
+                                            .asuntoOfi
+                                    }}
+                                </td>
+                            </tr>
+                        </table>
+                    </p-panel>
+                </div>
+
+                <br />
+
+                <div *ngIf="detalleAsignatura.areaFormacion">
+                    <p-panel header="Area formación">
+                        <table
+                            class="table table-bordered w-100 d-block"
+                            style="border-spacing: 10px"
+                        >
+                            <tr>
+                                <th style="width: 50%">Nombre</th>
+                                <th style="width: 50%">Descripción</th>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    {{ detalleAsignatura.areaFormacion.nombre }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura.areaFormacion
+                                            .descripcion
+                                    }}
+                                </td>
+                            </tr>
+                        </table>
+                    </p-panel>
+                </div>
+
+                <br />
+
+                <div *ngIf="detalleAsignatura.lineaInvestigacionAsignatura">
+                    <p-panel header="Línea de Investigación de la Asignatura">
+                        <table
+                            class="table table-bordered w-100 d-block"
+                            style="border-spacing: 10px"
+                        >
+                            <tr>
+                                <th style="width: 50%">Título</th>
+                                <th style="width: 50%">Categoría</th>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    {{
+                                        detalleAsignatura
+                                            .lineaInvestigacionAsignatura.titulo
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura
+                                            .lineaInvestigacionAsignatura
+                                            .categoria
+                                    }}
+                                </td>
+                            </tr>
+                        </table>
+                    </p-panel>
+                </div>
+                <br />
+
+                <div *ngIf="detalleAsignatura.contenidoProgramatico">
+                    <p-panel header="Contenido Programático">
+                        <table
+                            class="table table-bordered w-100 d-block"
+                            style="border-spacing: 10px"
+                        >
+                            <tr>
+                                <th scope="col" style="width: 33%">Nombre</th>
+                                <th scope="col" style="width: 33%">Versión</th>
+                                <th scope="col" style="width: 33%">
+                                    Descripción
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    {{
+                                        detalleAsignatura.contenidoProgramatico
+                                            .nombreDocumento
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura.contenidoProgramatico
+                                            .versionDoc
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura.contenidoProgramatico
+                                            .descripcionDocumento
+                                    }}
+                                </td>
+                            </tr>
+                        </table>
+                    </p-panel>
+                </div>
+                <br />
+
+                <div *ngIf="detalleAsignatura.microcurriculo">
+                    <p-panel header="Microcurrículo">
+                        <table
+                            class="table table-bordered w-100 d-block"
+                            style="border-spacing: 10px"
+                        >
+                            <tr>
+                                <th scope="col" style="width: 33%">Nombre</th>
+                                <th scope="col" style="width: 33%">Versión</th>
+                                <th scope="col" style="width: 33%">
+                                    Descripcion
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{
+                                        detalleAsignatura.microcurriculo
+                                            .nombreDocumento
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura.microcurriculo
+                                            .versionDoc
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        detalleAsignatura.microcurriculo
+                                            .descripcionDocumento
+                                    }}
+                                </td>
+                            </tr>
+                        </table>
+                    </p-panel>
+                </div>
+                <br />
+                <p-panel header="Docentes asignados">
+                    <p-table [value]="detalleAsignatura.docentesAsignaturas">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Correo Electrónico</th>
+                                <th scope="col">Teléfono</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-docente>
+                            <tr>
+                                <td>
+                                    {{ docente.docente.persona.nombre }}
+                                    {{ docente.docente.persona.apellido }}
+                                </td>
+                                <td>
+                                    {{
+                                        docente.docente.persona
+                                            .correoElectronico
+                                    }}
+                                </td>
+                                <td>{{ docente.docente.persona.telefono }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-panel>
+                <br />
+                <p-panel header="Actas asignadas">
+                    <p-table
+                        [value]="detalleAsignatura.actasAsignaturas"
+                        class="table-bordered"
+                    >
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th scope="col">Número de Acta</th>
+                                <th scope="col">Fecha de Acta</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-acta>
+                            <tr>
+                                <td>{{ acta.acta.numeroActa }}</td>
+                                <td>{{ acta.acta.fechaActa }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-panel>
+                <br />
+                <p-panel header="Objetivo">
+                    {{ detalleAsignatura.objetivoAsignatura }}
+                </p-panel>
+                <br>
+                <p-panel header="Contenido">
+                    {{ detalleAsignatura.contenidoAsignatura }}
+                </p-panel>
+            </div>
+        </ng-container>
+
+        <p-footer>
+            <button
+                type="button"
+                pButton
+                label="Cerrar"
+                (click)="displayModal = false"
+            ></button>
+        </p-footer>
+    </p-dialog>
+
+    <p-confirmDialog [style]="{ width: '900px' }"></p-confirmDialog>
+</p-panel>

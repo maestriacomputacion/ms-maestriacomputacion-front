@@ -1,0 +1,39 @@
+<p-panel styleClass="overflow-hidden">
+    <p-header>
+        <b>{{ editMode ? "EDITAR" : "REGISTRAR" }} EXPERTO</b>
+    </p-header>
+    
+    <!-- Información Personal -->
+    <app-informacion-personal
+        (formReady)="addForm('personal', $event)"
+    ></app-informacion-personal>
+    
+    <!-- Información de Títulos -->
+    <app-informacion-titulo
+        (formReady)="addForm('titulo', $event)"
+    ></app-informacion-titulo>
+    
+    <!-- Información de Vinculación -->
+    <app-informacion-vinculacion
+        (formReady)="addForm('vinculacion', $event)"
+    ></app-informacion-vinculacion>
+
+    <p-footer class="flex justify-end">
+        <button
+            pButton
+            icon="pi pi-times"
+            label="Cancelar"
+            class="p-button-outlined mr-2"
+            (click)="onCancel()"
+        ></button>
+        <button
+            pButton
+            icon="pi pi-save"
+            [label]="editMode ? 'Editar experto' : 'Registrar experto'"
+            class="ml-2"
+            (click)="onSave()"
+            [loading]="loading"
+        ></button>
+    </p-footer>
+</p-panel>
+<p-confirmDialog></p-confirmDialog>

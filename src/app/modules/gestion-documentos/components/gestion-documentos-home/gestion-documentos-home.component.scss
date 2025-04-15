@@ -1,0 +1,67 @@
+/* Estilos para el div contenedor principal */
+// .container {
+//     display: flex;
+//     flex-direction: row;
+// }
+
+// /* Estilos para el div contenedor del botón "Agregar Asignatura" */
+// .add-button-container {
+//     display: flex;
+//     justify-content: flex-end;
+//     padding: 20px;
+// }
+
+/* Estilos para el input de búsqueda */
+// .search-input-container {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: flex-end;
+//     padding: 20px;
+// }
+
+// .search-input {
+//     width: 100%;
+//     font-size: 16px;
+//     padding: 8px;
+// }
+
+
+
+/* Estilos para el contenedor de la tabla */
+.table-container {
+    padding: 20px;
+}
+
+.contenedor-flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Ajusta el espacio entre los elementos */
+}
+
+.elemento {
+    /* Estilos de los elementos */
+    padding: 10px;
+    // border: 1px solid #ccc;
+}
+
+.search{
+    cursor: pointer;
+}
+
+.container-upload{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding-left: 0px;
+}
+/* Media queries para diferentes tamaños de pantalla */
+@media screen and (max-width: 1023px) {
+
+.contenedor-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ajusta el espacio entre los elementos */
+}
+}

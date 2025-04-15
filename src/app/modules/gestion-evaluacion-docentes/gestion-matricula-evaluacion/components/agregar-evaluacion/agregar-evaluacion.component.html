@@ -1,0 +1,111 @@
+<p-confirmDialog></p-confirmDialog>
+
+<p-panel header="Agregar evaluación" class="flex justify-content-center"
+  [style]="{ width: '100rem', 'margin-bottom': '2em' }">
+  <form>
+    <div class="grid grid-cols-12 gap-4 items-center p-4">
+      <!-- Periodo -->
+      <div class="col-span-2">
+        <label for="periodo" class="block text-sm font-medium text-gray-700">Periodo</label>
+        <p-inputNumber id="periodo" [(ngModel)]="evaluacion.periodo" name="periodo" [showButtons]="true" mode="decimal"
+          class="mt-1 block w-full"></p-inputNumber>
+      </div>
+
+      <!-- Año -->
+      <div class="col-span-2">
+        <label for="anio" class="block text-sm font-medium text-gray-700">Año</label>
+        <p-calendar id="anio" [(ngModel)]="selectedYear" (onSelect)="onYearSelect($event)" name="anio" view="year"
+          dateFormat="yy" yearNavigator="true" [yearRange]="yearRange" [style]="{'width': '100%'}"
+          class="mt-1 block w-full">
+        </p-calendar>
+      </div>
+
+      <!-- Cuestionario Asociado -->
+      <div class="col-span-4">
+        <label for="cuestionario" class="block text-sm font-medium text-gray-700">Cuestionario asociado</label>
+        <p-dropdown id="cuestionario" [(ngModel)]="evaluacion.cuestionario" name="cuestionario"
+          [options]="cuestionarios" class="mt-1 block w-full"></p-dropdown>
+      </div>
+
+      <!-- Botón Ver Detalles -->
+      <div class="col-span-4 flex items-end">
+        <button pButton icon="pi pi-search" label="Ver detalles de la evaluación" (click)="verDetalles()"
+          class="ml-auto"></button>
+      </div>
+
+      <!-- Fechas container -->
+      <div class="col-span-12 mt-4">
+        <div class="flex align-items-center gap-4">
+          <!-- Fecha de Inicio -->
+          <div class="flex-1">
+            <label for="fecha_inicio" class="block text-sm font-medium text-gray-700 mb-2">Fecha de inicio</label>
+            <p-calendar id="fecha_inicio" [(ngModel)]="evaluacion.fecha_inicio" name="fecha_inicio"
+              dateFormat="dd/mm/yy" [showIcon]="true" [style]="{'width': '100%'}" class="w-full">
+            </p-calendar>
+          </div>
+
+          <!-- Fecha de Fin -->
+          <div class="flex-1">
+            <label for="fecha_fin" class="block text-sm font-medium text-gray-700 mb-2">Fecha de fin</label>
+            <p-calendar id="fecha_fin" [(ngModel)]="evaluacion.fecha_fin" name="fecha_fin" dateFormat="dd/mm/yy"
+              [showIcon]="true" [style]="{'width': '100%'}" class="w-full">
+            </p-calendar>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rest of the form remains the same -->
+    <div *ngIf="mostrarDetalles" class="mt-4 p-4">
+      <p-message *ngIf="evaluacionExistente" severity="error"
+        text="Ya existe una evaluación creada para el periodo y año seleccionado"></p-message>
+      <p-message *ngIf="!evaluacionExistente" severity="success" text="No existe una evaluación activa"></p-message>
+
+      <div class="card">
+        <h4 class="text-lg font-semibold">Detalles de la evaluación a realizar</h4>
+        <p>Cantidad de estudiantes que responderán la evaluación: {{ cantidadEstudiantesRegistrados }}</p>
+
+        <h5 class="text-md font-semibold mt-2">Asignaturas a evaluar</h5>
+        <div *ngFor="let area of areasFormacion" class="mt-4">
+          <div class="card p-4">
+            <h6 class="text-sm font-medium">{{ area.nombre }}</h6>
+            <p-table [value]="area.cursos" class="mt-2 w-full">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th scope="col">Código</th>
+                  <th scope="col">Grupo</th>
+                  <th scope="col">Asignatura</th>
+                  <th scope="col">Docentes</th>
+                  <th scope="col">Cantidad de estudiantes</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-curso>
+                <tr>
+                  <td>{{ curso.codigo }}</td>
+                  <td>{{ curso.grupoCurso }}</td>
+                  <td>{{ curso.asignatura }}</td>
+                  <td>
+                    <ul>
+                      <li *ngFor="let docente of curso.docentes">
+                        {{ docente.nombre }} {{ docente.apellido }}
+                      </li>
+                    </ul>
+                  </td>
+                  <td>{{ curso.cantidadEstudiantes }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón Registrar Evaluación -->
+      <div class="text-right mt-3">
+        <button pButton icon="pi pi-save" label="Registrar evaluación" (click)="registrarEvaluacion()"
+          [disabled]="!evaluacion.anio || !evaluacion.periodo || !evaluacion.cuestionario || !evaluacion.fecha_inicio || !evaluacion.fecha_fin || (evaluacion.fecha_fin < evaluacion.fecha_inicio)">
+        </button>
+      </div>
+
+    </div>
+  </form>
+</p-panel>

@@ -1,0 +1,305 @@
+<p-panel>
+    <div id="formatoEvaluadores">
+        <div class="flex flex-column w-full mb-4 header-logo">
+            <img
+                alt="Asset Header"
+                class="header-image"
+                src="assets/layout/images/asset-header.jpg"
+            />
+            <div class="flex justify-content-start logo-container">
+                <img
+                    alt="Logo Facultad"
+                    class="logo-image"
+                    src="assets/layout/images/logoFacultad.png"
+                />
+            </div>
+        </div>
+        <div class="mt-4 form-container px-1 md:px-4 lg:px-8">
+            <form class="p-fluid" [formGroup]="formatoEvaluadoresForm">
+                <div class="flex flex-column mt-4">
+                    <label class="font-semibold mb-2" for="consecutivo"
+                        >Consecutivo:</label
+                    >
+                    <input
+                        id="consecutivo"
+                        formControlName="consecutivo"
+                        pInputText
+                        type="text"
+                    />
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="propuesta"
+                        >Propuesta:</label
+                    >
+                    <input
+                        id="propuesta"
+                        formControlName="propuesta"
+                        pInputText
+                        readonly
+                        type="text"
+                    />
+                </div>
+                <div class="flex flex-column mt-4">
+                    <label
+                        class="label-required font-semibold mb-2"
+                        for="asunto"
+                        >Asunto:</label
+                    >
+                    <textarea
+                        id="asunto"
+                        formControlName="asunto"
+                        pInputTextarea
+                        rows="5"
+                    ></textarea>
+                </div>
+                <div
+                    class="flex flex-column xl:flex-row justify-content-start xl:justify-content-between row-gap-4 xl:row-gap-0 align-items-start xl:align-items-center mt-4"
+                >
+                    <div
+                        class="flex flex-column xl:flex-row xl:align-items-center mr-2 w-full xl:w-auto"
+                    >
+                        <label
+                            class="label-required font-semibold mr-2"
+                            for="coordinador"
+                            >Coordinador(a):</label
+                        >
+                        <input
+                            id="coordinador"
+                            class="mt-2 xl:mt-0"
+                            formControlName="coordinador"
+                            pInputText
+                            type="text"
+                        />
+                    </div>
+                    <div
+                        class="flex flex-column xl:flex-row xl:align-items-center mr-2 w-full xl:w-auto"
+                    >
+                        <label
+                            class="label-required font-semibold mr-2"
+                            for="docente"
+                            >Docente:</label
+                        >
+                        <div class="flex mt-2 xl:mt-0">
+                            <input
+                                id="docente"
+                                class="mr-2"
+                                formControlName="docente"
+                                pInputText
+                                readonly
+                                type="text"
+                            />
+                            <button
+                                icon="pi pi-search"
+                                pButton
+                                (click)="onSeleccionarDocente()"
+                            ></button>
+                        </div>
+                    </div>
+                    <div
+                        class="flex flex-column xl:flex-row xl:align-items-center w-full xl:w-auto"
+                    >
+                        <label
+                            class="label-required font-semibold mr-2"
+                            for="estudiante"
+                            >Estudiante:</label
+                        >
+                        <input
+                            id="estudiante"
+                            class="mt-2 xl:mt-0"
+                            formControlName="estudiante"
+                            pInputText
+                            readonly
+                            type="text"
+                        />
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="font-semibold">Evaluador Externo:</label>
+                    <div class="flex align-items-center">
+                        <p-card class="w-full m-0">
+                            <div
+                                class="flex justify-content-between align-items-center"
+                            >
+                                <span>{{
+                                    evaluadorInterno.value?.nombres ??
+                                        evaluadorInterno.value?.nombre +
+                                            " " +
+                                            evaluadorInterno.value?.apellido
+                                }}</span>
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="font-semibold">Evaluador Interno:</label>
+                    <div class="flex align-items-center">
+                        <p-card class="w-full m-0">
+                            <div
+                                class="flex justify-content-between align-items-center"
+                            >
+                                <span>{{
+                                    evaluadorExterno.value?.nombres ??
+                                        evaluadorExterno.value?.nombre +
+                                            " " +
+                                            evaluadorExterno.value?.apellido
+                                }}</span>
+                            </div>
+                        </p-card>
+                    </div>
+                </div>
+                <div class="flex flex-column mt-4 max-w-20rem">
+                    <div class="flex align-items-center column-gap-2 mb-2">
+                        <label
+                            class="label-required font-semibold"
+                            for="fechaSesion"
+                            >Fecha de Sesión:</label
+                        >
+                        <i
+                            class="pi pi-info-circle"
+                            pTooltip="Fecha en la que se celebró la sesión ordinaria del comité, que es importante para el seguimiento del proceso."
+                            style="color: orangered; font-size: 16px"
+                            tooltipPosition="top"
+                        ></i>
+                    </div>
+                    <p-calendar
+                        id="fechaSesion"
+                        formControlName="fechaSesion"
+                        [dateFormat]="'dd.mm.yy'"
+                        [showIcon]="true"
+                    ></p-calendar>
+                </div>
+                <div class="flex flex-column mt-4 max-w-20rem">
+                    <div class="flex align-items-center column-gap-2 mb-2">
+                        <label
+                            class="label-required font-semibold"
+                            for="fechaRespuesta"
+                            >Fecha de Respuestas:</label
+                        >
+                        <i
+                            class="pi pi-info-circle"
+                            pTooltip="Fecha límite para enviar los formatos B y C a la coordinación. Asegúrate de enviar la información antes de esta fecha para cumplir con el plazo."
+                            style="color: orangered; font-size: 16px"
+                            tooltipPosition="top"
+                        ></i>
+                    </div>
+                    <p-calendar
+                        id="fechaRespuesta"
+                        formControlName="fechaRespuesta"
+                        [dateFormat]="'dd.mm.yy'"
+                        [showIcon]="true"
+                    ></p-calendar>
+                </div>
+                <div class="flex flex-column mt-4">
+                    <button
+                        class="max-w-20rem align-self-end"
+                        icon="pi pi-plus"
+                        label="Rellenar Información"
+                        pButton
+                        (click)="generateContent()"
+                        [disabled]="!isFormValid()"
+                        pTooltip="Este botón generará automáticamente el contenido del oficio basado en los datos proporcionados en el formulario."
+                        tooltipPosition="top"
+                    ></button>
+                    <label
+                        class="label-required font-semibold my-2"
+                        for="contenido"
+                        >Contenido:</label
+                    >
+                    <textarea
+                        id="contenido"
+                        formControlName="contenido"
+                        pInputTextarea
+                        rows="20"
+                        style="text-align: justify"
+                        [readonly]="!isFormValid()"
+                    ></textarea>
+                </div>
+                <div class="field grid mt-4">
+                    <span
+                        class="col-12 xl:col-9 xl:mb-0 mb-2 text-left xl:text-right"
+                    >
+                        <b>Firma Coordinador(a)</b>
+                    </span>
+                    <div class="col-12 xl:col-3 xl:text-right text-center">
+                        <p-fileUpload
+                            accept=".png, .jpg, .jpeg"
+                            chooseIcon="pi pi-file"
+                            chooseLabel="Seleccionar"
+                            class="w-full max-w-30rem"
+                            name="firmaCoordinador"
+                            previewWidth="100"
+                            [auto]="true"
+                            (onSelect)="
+                                onFirmaChange($event, 'firmaCoordinador')
+                            "
+                        >
+                            <ng-template
+                                let-file
+                                pTemplate="file"
+                                data-file="firma"
+                            >
+                                <div *ngIf="firmaCoordinador">
+                                    <img
+                                        alt="Vista Previa de la Firma"
+                                        [src]="firmaCoordinador"
+                                        style="
+                                            min-height: 120px;
+                                            min-width: 150px;
+                                            width: 100%;
+                                            height: 100%;
+                                        "
+                                    />
+                                </div>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                </div>
+                <div class="footer-logo mt-8">
+                    <img
+                        alt="Asset Calidad"
+                        height="100px"
+                        src="assets/layout/images/asset-calidad.png"
+                        width="140px"
+                    />
+                    <div
+                        class="flex flex-column align-items-center justify-content-center"
+                    >
+                        <span>
+                            Carrera 2 No. 15N esquina-Sector Tulcán
+                            Popayán-Cauca-Colombia Teléfono: 6028209800 ext.
+                            2100 ó 2101. decafiet&#64;unicauca.edu.co |
+                            <strong>www.unicauca.edu.co</strong>
+                        </span>
+                    </div>
+                    <img
+                        alt="Logo Icontec"
+                        height="80px"
+                        src="assets/layout/images/logosIcontec.png"
+                        width="120px"
+                    />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="flex align-items-center justify-content-end mt-4 column-gap-2">
+        <button
+            pButton
+            type="button"
+            icon="pi pi-upload"
+            label="Insertar"
+            pTooltip="Haz clic para insertar el documento en el área de carga de archivos."
+            tooltipPosition="top"
+            (click)="onInsertar()"
+        ></button>
+        <button
+            pButton
+            type="button"
+            icon="pi pi-download"
+            label="Descargar"
+            [loading]="loading"
+            (click)="onDownload()"
+        ></button>
+    </div>
+</p-panel>

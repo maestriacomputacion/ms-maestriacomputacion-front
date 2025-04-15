@@ -1,0 +1,44 @@
+.custom-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.label-custom {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.custom-input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.fechas-container {
+    display: flex;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.fechas-container > div {
+    flex: 1;
+    min-width: 200px;
+}
+
+.calendar-custom {
+    width: 100%;
+}
+
+.warning-text {
+    color: red;
+    font-size: 14px;
+}
+
+button {
+    min-width: 120px;
+}

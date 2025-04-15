@@ -1,0 +1,130 @@
+<form [formGroup]="this.radicar.formSolicitudBecaDescuento">
+    <div class="mt-4">
+        <p-fieldset legend="Tipo de Beca" styleClass="bg-bluegray-50">
+            <div class="grid">
+                <div class="col-12">
+                    <span class="p-float-label mt-3">
+                        <p-dropdown
+                            formControlName="tipoBeca"
+                            inputId="tipoBeca"
+                            [autoDisplayFirst]="false"
+                            [options]="listaTiposDeBeca"
+                            [style]="{ width: '100%' }"
+                        ></p-dropdown>
+                        <label for="tipoBeca">Beca solicitada</label>
+                    </span>
+                </div>
+
+                <div
+                    class="col-12"
+                    *ngIf="
+                        ['Beca - Trabajo', 'Descuento en la matrícula'].includes(
+                            formSolicitudBecaDescuento.get('tipoBeca').value
+                        )
+                    "
+                >
+                    <span class="p-float-label mt-3">
+                        <textarea
+                            formControlName="justificacion"
+                            id="justificacion"
+                            [rows]="5"
+                            pInputTextarea
+                            spellcheck="true"
+                            class="w-full"
+                        ></textarea>
+                        <label for="justificacion">La presente solicitud obedece a que... </label>
+                    </span>
+                </div>
+
+                <div
+                    class="col-12 mt-3"
+                    *ngIf="
+                        formSolicitudBecaDescuento.get('tipoBeca').value === 'Beca - Convenio (cidesco)' ||
+                        formSolicitudBecaDescuento.get('tipoBeca').value === 'Beca - Mejor promedio en pregrado'
+                    "
+                >
+                    <p-panel
+                        header="Anexe como PDF el formato FA diligenciado con la información corresponiente a su solicitud"
+                    >
+                        <div class="grid">
+                            <div class="col-10 lg:col-2">
+                                <p-fileUpload
+                                    #fubauto
+                                    mode="basic"
+                                    name="file[]"
+                                    [auto]="true"
+                                    [customUpload]="true"
+                                    (uploadHandler)="onUpload($event, fubauto, 0)"
+                                    accept=".pdf"
+                                    chooseIcon="pi pi-upload"
+                                    maxFileSize="5000000"
+                                    chooseLabel="Cargar Archivo"
+                                    [style]="{ width: '100%' }"
+                                    invalidFileSizeMessageDetail="Maximo 5MB"
+                                ></p-fileUpload>
+                            </div>
+
+                            <div class="col-2 lg:col-1" *ngIf="radicar.documentosAdjuntos[0]">
+                                <button
+                                    pButton
+                                    icon="pi pi-times"
+                                    (click)="eliminarDocumento(0)"
+                                    type="button"
+                                    class="p-button-danger"
+                                ></button>
+                            </div>
+
+                            <div
+                                class="col-12 lg:col-9"
+                                style="padding-top: 18px"
+                                *ngIf="radicar.documentosAdjuntos[0]"
+                            >
+                                <i class="pi pi-paperclip mr-1"></i>{{ radicar.documentosAdjuntos[0].name }}
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+            </div>
+
+            <div
+                class="col-12 mt-3"
+                *ngIf="formSolicitudBecaDescuento.get('tipoBeca').value === 'Descuento en la matrícula'"
+            >
+                <p-panel header="Anexe en un archivo PDF los soportes que requiera">
+                    <div class="grid">
+                        <div class="col-10 lg:col-2">
+                            <p-fileUpload
+                                #fubauto
+                                mode="basic"
+                                name="file[]"
+                                [auto]="true"
+                                [customUpload]="true"
+                                (uploadHandler)="onUpload($event, fubauto, 0)"
+                                accept=".pdf"
+                                chooseIcon="pi pi-upload"
+                                maxFileSize="10000000"
+                                chooseLabel="Cargar Archivo"
+                                [style]="{ width: '100%' }"
+                                invalidFileSizeMessageDetail="Maximo 10MB"
+                            ></p-fileUpload>
+                        </div>
+
+                        <div class="col-2 lg:col-1" *ngIf="radicar.documentosAdjuntos[0]">
+                            <button
+                                pButton
+                                icon="pi pi-times"
+                                (click)="eliminarDocumento(0)"
+                                type="button"
+                                class="p-button-danger"
+                            ></button>
+                        </div>
+
+                        <div class="col-12 lg:col-9" style="padding-top: 18px" *ngIf="radicar.documentosAdjuntos[0]">
+                            <i class="pi pi-paperclip mr-1"></i>{{ radicar.documentosAdjuntos[0].name }}
+                        </div>
+                    </div>
+                </p-panel>
+            </div>
+        </p-fieldset>
+    </div>
+</form>

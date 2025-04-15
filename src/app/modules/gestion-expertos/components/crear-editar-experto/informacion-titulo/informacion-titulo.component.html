@@ -1,0 +1,37 @@
+<br />
+
+<!-- Informacion Titulo -->
+<form [formGroup]="tituloForm">
+    <div class="col-4 text-right font-medium">
+        <p><b>Información sobre titulos</b></p>
+    </div>
+    <div class="col-8"></div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Título</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="tituloexper"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('tituloexper').invalid && getFormControl('tituloexper').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Universidad del título</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="universidadtitexp"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('universidadtitexp').invalid && getFormControl('universidadtitexp').touched }"
+            />
+        </div>
+    </div>
+</form>

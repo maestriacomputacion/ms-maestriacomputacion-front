@@ -1,0 +1,43 @@
+<form [formGroup]="formInfoCoordinador">
+    <div
+        class="grid mt-3"
+        style="
+            border: 1px solid rgb(221, 221, 221);
+            border-radius: 9px;
+            background-color: rgb(248, 248, 248);
+            padding: 10px;
+        "
+    >
+        <div class="col-12 md:col-8">
+            <span class="p-float-label mt-3">
+                <input formControlName="nombreCompleto" class="w-full" id="nombreCoordinador" type="text" pInputText />
+                <label for="nombreCoordinador">Nombre Completo</label>
+            </span>
+        </div>
+        <div class="col-12 md:col-2">
+            <span class="p-float-label mt-3">
+                <input formControlName="titulo" class="w-full" id="tituloCoordinador" type="text" pInputText />
+                <label for="tituloCoordinador">Título Académico</label>
+            </span>
+        </div>
+
+        <div class="col-12 md:col-2">
+            <span class="p-float-label mt-3">
+                <p-dropdown
+                    formControlName="pronombre"
+                    inputId="tipoCongreso"
+                    [autoDisplayFirst]="false"
+                    [options]="pronombres"
+                    [style]="{ width: '100%' }"
+                ></p-dropdown>
+                <label for="tipoCongreso">Pronombre</label>
+            </span>
+        </div>
+    </div>
+</form>
+
+<div class="grid grid-nogutter mt-4 justify-content-end gap-1" style="display: flex; align-items: center">
+    <p *ngIf="showWarning" style="color: red; margin-right: auto">Por favor, llene todos los campos.</p>
+    <button type="button" pButton label="Guardar" icon="pi pi-check" (click)="guardarInfo()"></button>
+    <button type="button" pButton label="Cancelar" icon="pi pi-times" (click)="cancelar()"></button>
+</div>

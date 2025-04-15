@@ -1,0 +1,21 @@
+<form [formGroup]="formMotivoSolicitud">
+    <p-fieldset legend="Motivo" styleClass="bg-bluegray-50">
+        <div class="grid">
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <textarea
+                        formControlName="motivosolicitud"
+                        id="motivo"
+                        [rows]="5"
+                        pInputTextarea
+                        spellcheck="true"
+                        class="w-full"
+                    ></textarea>
+                    <label for="motivo"
+                        >La presente solicitud obedece a que...
+                    </label>
+                </span>
+            </div>
+        </div>
+    </p-fieldset>
+</form>

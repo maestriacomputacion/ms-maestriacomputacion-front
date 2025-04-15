@@ -1,0 +1,122 @@
+<form [formGroup]="formApoyoEconEstancia">
+    <p-fieldset legend="Información para apoyo económico" styleClass="bg-bluegray-50">
+        <div class="grid p-fluid">
+            <div class="col-12 md:col-4">
+                <span class="p-float-label mt-3">
+                    <input formControlName="universidad" class="w-full" id="universidad" type="text" pInputText />
+                    <label for="universidad">Universidad de la estancia</label>
+                </span>
+            </div>
+            <div class="col-12 md:col-4">
+                <span class="p-float-label mt-3">
+                    <input formControlName="lugar" class="w-full" id="lugpasantia" type="text" pInputText />
+                    <label for="lugpasantia">Lugar de la estancia (Ciudad - País)</label>
+                </span>
+            </div>
+
+            <div class="col-12 md:col-4">
+                <span class="p-float-label mt-3">
+                    <p-calendar
+                        formControlName="fechas"
+                        selectionMode="range"
+                        [readonlyInput]="true"
+                        inputId="fpasantia"
+                        dateFormat="dd/mm/yy"
+                        [style]="{ width: '100%' }"
+                    ></p-calendar>
+                    <label for="fpasantia">Periodo de Estancia (fecha inicio - fecha fin)</label>
+                </span>
+            </div>
+            <!--
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="grupoInvestigacion"
+                        class="w-full"
+                        id="nomgrupivst"
+                        type="text"
+                        pInputText
+                    />
+                    <label for="nomgrupivst">Grupo de Investigación</label>
+                </span>
+            </div>
+-->
+            <div class="col-12 md:col-6">
+                <span class="p-float-label mt-3">
+                    <input formControlName="grupoInvestExt" class="w-full" id="grupoInvestExt" type="text" pInputText />
+                    <label for="grupoInvestExt">Grupo de Investigación Externo</label>
+                </span>
+            </div>
+
+            <div class="col-12 md:col-6">
+                <span class="p-float-label mt-3">
+                    <input formControlName="docenteExterno" class="w-full" id="docenteExterno" type="text" pInputText />
+                    <label for="docenteExterno">Nombre Completo Docente Externo</label>
+                </span>
+            </div>
+
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <p-dropdown
+                        formControlName="grupoInvestigacion"
+                        inputId="nomgrupivst"
+                        [autoDisplayFirst]="false"
+                        [options]="listaGruposInvestigacion"
+                        [style]="{ width: '100%' }"
+                    ></p-dropdown>
+                    <label for="nomgrupivst">Grupo de Investigación</label>
+                </span>
+            </div>
+
+            <div class="col-12 md:col-6 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <p-inputNumber
+                        formControlName="valorApoyo"
+                        inputId="valorapoyo"
+                        [minFractionDigits]="2"
+                        prefix="COP $"
+                        [min]="1"
+                        [style]="{ width: '100%' }"
+                    >
+                    </p-inputNumber>
+
+                    <label for="valorapoyo">Valor del Apoyo</label>
+                </span>
+            </div>
+
+            <div class="col-12 md:col-6 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <input formControlName="nombreBanco" class="w-full" id="banco" type="text" pInputText />
+                    <label for="banco">Entidad Bancaria</label>
+                </span>
+            </div>
+
+            <div class="col-12 md:col-6 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <p-dropdown
+                        formControlName="tipoCuenta"
+                        inputId="tipocuenta"
+                        [autoDisplayFirst]="false"
+                        [options]="tiposCuentaBancaria"
+                        [style]="{ width: '100%' }"
+                    ></p-dropdown>
+                    <label for="tipocuenta">Tipo de Cuenta</label>
+                </span>
+            </div>
+
+            <div class="col-12 md:col-6 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <input formControlName="numeroCuenta" class="w-full" id="cuentabanco" type="text" pInputText />
+                    <label for="cuentabanco">Número de Cuenta</label>
+                </span>
+            </div>
+
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <input formControlName="direccionRecidencia" class="w-full" id="direccion" type="text" pInputText />
+                    <label for="direccion">Dirección y Ciudad de Residencia</label>
+                </span>
+            </div>
+        </div>
+    </p-fieldset>
+</form>

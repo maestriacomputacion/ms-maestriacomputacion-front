@@ -1,0 +1,185 @@
+<p-panel>
+    <p-header>
+        <b>GESTIONAR CUESTIONARIOS</b>
+    </p-header>
+    <!-- Encabezado -->
+    <div class="grid">
+        <!-- Busqueda -->
+        <div class="col-5">
+            <div class="flex align-items-end h-full">
+                <span class="p-input-icon-left w-full">
+                    <i class="pi pi-search"></i>
+                    <input
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        placeholder="Buscar cuestionario"
+                        (input)="
+                            tableCuestionarios.filterGlobal(
+                                $event.target.value,
+                                'contains'
+                            )
+                        "
+                    />
+                </span>
+            </div>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-6">
+            <div class="w-full text-right">
+                <button
+                    pButton
+                    icon="pi pi-plus"
+                    label="Agregar cuestionario"
+                    (click)="showDialog()"
+                ></button>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="col-12 text-right mb-3">
+        <p-selectButton
+            [(ngModel)]="mostrarInactivasFlag"
+            [options]="[
+                { label: 'Activas', value: true },
+                { label: 'Inactivas', value: false }
+            ]"
+            (onChange)="loadCuestionarios()"
+        ></p-selectButton>
+    </div>
+
+    <p-table
+        #tableCuestionarios
+        [value]="cuestionarios"
+        [paginator]="true"
+        [loading]="loading"
+        [rows]="10"
+        breakpoint="768px"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cuestionarios"
+        [globalFilterFields]="['nombre', 'observacion', 'fecha_creacion', 'cantidad_preguntas']"
+        [sortField]="'nombre'"
+        [sortOrder]="1"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="nombre" scope="col">
+                    Nombre del cuestionario
+                    <p-sortIcon field="nombre"></p-sortIcon>
+                </th>
+                <th pSortableColumn="cantidad_preguntas" scope="col">
+                    Cantidad de preguntas
+                    <p-sortIcon field="cantidad_preguntas"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fecha_creacion" scope="col">
+                    Fecha <p-sortIcon field="fecha_creacion"></p-sortIcon>
+                </th>
+                <th scope="col" class="text-center w-2">Opciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cuestionario>
+            <tr>
+                <td>{{ cuestionario.nombre }}</td>
+                <td>{{ cuestionario.cantidad_preguntas ?? 0 }}</td>
+                <td>{{ cuestionario.fecha_creacion }}</td>
+                <td class="text-center">
+                    <button
+                        *ngIf="cuestionario.estado === 'ACTIVO'"
+                        pButton
+                        pTooltip="Agregar preguntas"
+                        type="button"
+                        icon="pi pi-question-circle"
+                        class="p-button-rounded p-button-text p-button-info"
+                        (click)="navigateToAddQuestions(cuestionario.id)"
+                    ></button>
+                    <button
+                        pButton
+                        pTooltip="Editar"
+                        type="button"
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-text p-button-warning"
+                        (click)="onEdit(cuestionario.id)"
+                    ></button>
+                    <button
+                        *ngIf="cuestionario.estado === 'ACTIVO'"
+                        pButton
+                        pTooltip="Desactivar"
+                        type="button"
+                        icon="pi pi-times"
+                        class="p-button-rounded p-button-text p-button-danger"
+                        (click)="onDelete($event, cuestionario.id)"
+                    ></button>
+                    <button
+                        *ngIf="cuestionario.estado === 'INACTIVO'"
+                        pButton
+                        pTooltip="Habilitar"
+                        type="button"
+                        icon="pi pi-check"
+                        class="p-button-rounded p-button-text p-button-success"
+                        (click)="changeEstado($event, cuestionario, 'ACTIVO')"
+                    ></button>
+                    <p-confirmPopup></p-confirmPopup>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td [attr.colspan]="4">No se encontraron registros</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<!-- Modal -->
+<p-dialog
+    header="{{
+        isNewCuestionario ? 'Agregar Cuestionario' : 'Editar Cuestionario'
+    }}"
+    [(visible)]="displayDialog"
+    [modal]="true"
+    [closable]="false"
+    [responsive]="true"
+    [style]="{ width: '50vw' }"
+    [breakpoint]="768"
+>
+    <span class="p-text-secondary block mb-5"
+        ><span style="color: red">*</span> Indica que el campo es
+        obligatorio</span
+    >
+    <div class="p-fluid">
+        <div class="p-field">
+            <label for="nombre" class="font-semibold label-required"
+                >Nombre del cuestionario</label
+            >
+            <input
+                id="nombre"
+                type="text"
+                pInputText
+                [(ngModel)]="cuestionario.nombre"
+            />
+        </div>
+        <div class="p-field">
+            <label for="descripcion" class="font-semibold">Observación</label>
+            <textarea
+                id="descripcion"
+                pInputTextarea
+                [(ngModel)]="cuestionario.observacion"
+                [rows]="5"
+            ></textarea>
+        </div>
+    </div>
+    <p-footer>
+        <button
+            pButton
+            label="Cancelar"
+            icon="pi pi-times"
+            (click)="onCancel()"
+        ></button>
+        <button
+            pButton
+            label="Guardar"
+            icon="pi pi-check"
+            (click)="onSave()"
+        ></button>
+    </p-footer>
+</p-dialog>

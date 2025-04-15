@@ -1,0 +1,92 @@
+<p-toast></p-toast>
+<p-confirmDialog
+    [style]="{ width: '50vw' }"
+    [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
+
+<!--INICIO CODIGO DE PRUEBAS-->
+<!--
+<div class="col-12 mt-2">
+    <embed
+        id="embedElement"
+        [src]="urlPdf"
+        type="application/pdf"
+        width="100%"
+        height="600px"
+    />
+</div>
+-->
+<!--FIN ESTO CODIGO DE PRUEBAS-->
+
+<div>
+    <div class="grid">
+        <div class="col-12 lg:col-6 md:p-2">
+            <div class="col-12 card" style="height: 100%">
+                <div class="text-center text-2xl font-medium mt-3">Presentar una nueva solicitud</div>
+                <div class="grid flex flex-column align-items-center">
+                    <div class="col-7">
+                        <img
+                            id="imgPresentarSolic"
+                            src="../../../../../assets/layout/images/radicarsolicitud.svg"
+                            alt="Presentar Solicitud"
+                            style="width: 100%; height: auto"
+                        />
+                    </div>
+
+                    <div class="col-10 mt-3 flex justify-content-center">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-arrow-right"
+                            (click)="cargarPagina()"
+                            label="Presentar"
+                            iconPos="right"
+                            style="width: 100%; margin-left: auto; margin-right: auto"
+                        ></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 md:p-2">
+            <div class="col-12 card" style="height: 100%">
+                <div class="text-center text-2xl font-medium mt-3">Consultar el estado de una solicitud</div>
+
+                <div class="grid grid flex flex-column align-items-center">
+                    <div class="col-7">
+                        <img
+                            id="imgSeguirSolic"
+                            src="../../../../../assets/layout/images/consultarsolicitud.svg"
+                            alt="Seguimiento Solicitud"
+                            style="width: 100%; height: auto"
+                        />
+                    </div>
+
+                    <div class="grid col-10">
+                        <div class="col-12 lg:col-8 mt-3">
+                            <span class="p-float-label">
+                                <input id="numRad" type="text" style="width: 100%" [(ngModel)]="radicado" pInputText />
+                                <label for="numRad">Número de seguimiento</label>
+                            </span>
+                        </div>
+
+                        <div class="col-12 lg:col-4 mt-3 flex justify-content-center">
+                            <button
+                                pButton
+                                pRipple
+                                type="button"
+                                icon="pi pi-search"
+                                (click)="buscarSolicitud()"
+                                label="Consultar"
+                                iconPos="right"
+                                [loading]="buscandoSolicitud"
+                                style="width: 100%; margin-left: auto; margin-right: auto"
+                            ></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

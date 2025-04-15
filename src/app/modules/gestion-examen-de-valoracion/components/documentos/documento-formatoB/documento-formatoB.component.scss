@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+
+.header-logo {
+    opacity: 0.6;
+
+    h2 {
+        width: 100%;
+        color: #3e5270;
+        font-family: "Inria Serif", serif;
+        line-height: 0;
+        font-size: 18px;
+        line-height: 2px;
+    }
+
+    & h2:last-child {
+        font-weight: bold;
+    }
+}
+
+.footer-logo {
+    opacity: 0.6;
+    margin-top: 10px;
+
+    img {
+        object-fit: contain;
+        flex: 0.4;
+    }
+
+    div {
+        flex: 0.6;
+    }
+
+    & span:first-child {
+        font-family: "Inria Serif", serif;
+        font-weight: 400;
+        font-style: italic;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    hr {
+        margin: 0;
+        height: 2px;
+        background-color: #ff0000;
+        width: 70%;
+    }
+
+    & strong:last-child {
+        font-weight: 400;
+        margin-top: 7px;
+        width: 80%;
+        text-align: center;
+        font-size: 16px;
+        color: #3e5270;
+    }
+}
+
+.p-show {
+    display: none;
+}
+
+@media (max-width: 1440px) {
+    .card-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+}
+
+@media (max-width: 1024px) {
+    .col-label--firma {
+        text-align: left !important;
+        margin-bottom: 10px;
+    }
+
+    .col-label--firma,
+    .col-input--firma {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .p-inputwrapper {
+        width: 100%;
+    }
+
+    .btn-roles {
+        flex-direction: column;
+        gap: 2rem;
+        align-self: center;
+        width: 100%;
+    }
+
+    .col-label {
+        text-align: left !important;
+        margin-bottom: 10px;
+    }
+
+    .col-label,
+    .col-input {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .field-evaluador {
+        width: 100%;
+    }
+}
+
+@media (max-width: 425px) {
+    .card-title {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+
+    .card-data {
+        flex-direction: column;
+        margin-bottom: 1rem;
+        align-items: center;
+    }
+
+    .card-data > span:first-of-type {
+        font-weight: bold;
+    }
+
+    .card-data:last-of-type {
+        margin-bottom: 0;
+    }
+}

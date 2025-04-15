@@ -1,0 +1,36 @@
+<p-panel styleClass="overflow-hidden">
+    <p-header>
+        <b>{{ editMode ? 'EDITAR':'REGISTRAR' }} DOCENTE</b>
+    </p-header>
+
+    <app-informacion-personal (formReady)="addForm('personal', $event)"></app-informacion-personal>
+    <app-informacion-titulo (formReady)="addForm('titulo', $event)"></app-informacion-titulo>
+    <app-informacion-universidad (formReady)="addForm('universidad', $event)"></app-informacion-universidad>
+
+    <p-footer>
+        <button
+            pButton
+            icon="pi pi-times"
+            label="Cancelar"
+            class="p-button-outlined"
+            (click)="onCancel()"
+        ></button>
+        <button
+            *ngIf="!editMode"
+            pButton
+            icon="pi pi-save"
+            label="Registrar docente"
+            (click)="onSave()"
+            [loading]="loading"
+        ></button>
+        <button
+            *ngIf="editMode"
+            pButton
+            icon="pi pi-save"
+            label="Editar docente"
+            (click)="onSave()"
+            [loading]="loading"
+        ></button>
+    </p-footer>
+</p-panel>
+<p-confirmDialog></p-confirmDialog>

@@ -1,0 +1,122 @@
+.header-logo {
+    opacity: 0.6;
+}
+
+.header-image {
+    display: block;
+    height: auto;
+    width: 100%;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: start;
+}
+
+.logo-image {
+    height: 140px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.footer-logo {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    opacity: 0.6;
+    width: 100%;
+}
+
+.footer-logo div {
+    flex: 0.4;
+    text-align: center;
+}
+
+.footer-logo div span {
+    color: #1f497d;
+}
+
+.footer-logo img {
+    flex: 0.3;
+    max-width: 35%;
+    object-fit: contain;
+}
+
+@media (max-width: 1440px) {
+    .card-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+}
+
+@media (max-width: 1240px) {
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 60% !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .col-label {
+        margin-bottom: 10px;
+        text-align: left !important;
+    }
+
+    .col-label,
+    .col-input {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 70% !important;
+    }
+}
+
+@media (max-width: 900px) {
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 80% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    ::ng-deep.p-dialog.custom-docente-dialog,
+    ::ng-deep.p-dialog.custom-experto-dialog {
+        width: 95% !important;
+    }
+}
+
+@media (max-width: 425px) {
+    .btn-roles {
+        align-self: center;
+        flex-direction: column;
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .card-data {
+        align-items: center;
+        flex-direction: column;
+        margin-bottom: 1rem;
+    }
+
+    .card-data > span:first-of-type {
+        font-weight: bold;
+    }
+
+    .card-data:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .card-title {
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .footer-logo {
+        display: none;
+    }
+}

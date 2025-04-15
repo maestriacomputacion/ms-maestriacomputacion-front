@@ -1,0 +1,26 @@
+<form [formGroup]="formListaDirectores">
+    <div class="mt-4">
+        <p-fieldset
+            legend="Director del grupo de investigación"
+            styleClass="bg-bluegray-50"
+        >
+            <div class="grid">
+                <div class="col-12">
+                    <span class="p-float-label mt-3">
+                        <p-dropdown
+                            formControlName="director"
+                            inputId="director"
+                            [autoDisplayFirst]="false"
+                            [options]="radicar.listadoTutoresYDirectores"
+                            optionLabel="nombreTutor"
+                            [style]="{ width: '100%' }"
+                        ></p-dropdown>
+                        <label for="tutor"
+                            >Director que avala la solicitud</label
+                        >
+                    </span>
+                </div>
+            </div>
+        </p-fieldset>
+    </div>
+</form>

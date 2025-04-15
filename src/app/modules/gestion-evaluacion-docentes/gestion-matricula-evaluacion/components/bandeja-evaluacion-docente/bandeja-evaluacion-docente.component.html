@@ -1,0 +1,64 @@
+<p-panel header="Evaluaciones docente">
+    <p-confirmDialog></p-confirmDialog>
+
+    <div class="text-right mb-3">
+        <button pButton icon="pi pi-plus" label="Agregar evaluación" (click)="onAddEvaluation()"></button>
+    </div>
+
+    <p-message *ngIf="!hasActiveEvaluations" severity="error" text="No existe una evaluación activa"></p-message>
+    <p-message *ngIf="hasActiveEvaluations" severity="success" text="Existe una evaluación activa"></p-message>
+
+    <p-table #tableEvaluaciones [value]="evaluaciones" [paginator]="true" [rows]="5" [totalRecords]="totalRecords"
+        [lazy]="false" (onLazyLoad)="loadEvaluations($event)" [style]="{ 'margin-top': '1em' }" [sortField]="'anio'"
+        [sortOrder]="1">
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col" pSortableColumn="periodo">Periodo <p-sortIcon field="periodo"></p-sortIcon></th>
+                <th scope="col" pSortableColumn="anio">Año <p-sortIcon field="anio"></p-sortIcon></th>
+                <th scope="col" pSortableColumn="nombre">Nombre Cuestionario <p-sortIcon field="nombre"></p-sortIcon>
+                </th>
+                <th scope="col" pSortableColumn="asignaturasEvaluadas">Cantidad de asignaturas evaluadas <p-sortIcon
+                        field="asignaturasEvaluadas"></p-sortIcon></th>
+                <th scope="col" pSortableColumn="estado">Estado <p-sortIcon field="estado"></p-sortIcon></th>
+                <th scope="col" pSortableColumn="fechaCreacion">Fecha Creación <p-sortIcon
+                        field="fechaCreacion"></p-sortIcon></th>
+                <th scope="col" pSortableColumn="fechaInicio">Fecha Inicio <p-sortIcon field="fechaInicio"></p-sortIcon>
+                </th>
+                <th scope="col" pSortableColumn="fechaFin">Fecha Fin <p-sortIcon field="fechaFin"></p-sortIcon></th>
+                <th scope="col">Opciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-evaluacion>
+            <tr [ngClass]="{ 'active-row': evaluacion.estado === 'ACTIVO' }">
+                <td>{{ evaluacion.periodo }}</td>
+                <td>{{ evaluacion.anio }}</td>
+                <td>{{ evaluacion.nombre }}</td>
+                <td>{{ evaluacion.asignaturasEvaluadas }}</td>
+                <td>{{ evaluacion.estado }}</td>
+                <td>{{ evaluacion.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+                <td>{{ evaluacion.fechaInicio ? (evaluacion.fechaInicio | date:'dd/MM/yyyy') : 'No asignada' }}</td>
+                <td>{{ evaluacion.fechaFin ? (evaluacion.fechaFin | date:'dd/MM/yyyy') : 'No asignada' }}</td>
+                <td>
+                    <button *ngIf="evaluacion.estado === 'ACTIVO'" pButton icon="pi pi-times"
+                        class="p-button-rounded p-button-text p-button-danger"
+                        (click)="confirmarCambioEstado($event, evaluacion, 'INACTIVO')" pTooltip="Desactivar"></button>
+
+                    <button *ngIf="evaluacion.estado === 'INACTIVO'" pButton icon="pi pi-check"
+                        class="p-button-rounded p-button-text p-button-success"
+                        (click)="confirmarCambioEstado($event, evaluacion, 'ACTIVO')" pTooltip="Activar"></button>
+
+                    <button pButton icon="pi pi-chart-bar" class="p-button-rounded p-button-text"
+                        [routerLink]="['/gestion-matricula-evaluacion/estadistica', evaluacion.id]"
+                        pTooltip="Ver estadísticas"></button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="9">No se encontraron registros</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

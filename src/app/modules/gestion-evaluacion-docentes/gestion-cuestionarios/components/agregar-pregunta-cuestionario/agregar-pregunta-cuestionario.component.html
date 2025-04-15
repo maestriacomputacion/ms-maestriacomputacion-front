@@ -1,0 +1,76 @@
+<p-panel header="Agregar preguntas al cuestionario">
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class="p-field">
+                <label for="nombre-cuestionario"
+                    ><strong>Nombre cuestionario: </strong></label
+                >
+                <span id="nombre-cuestionario">{{ cuestionario?.nombre }}</span>
+            </div>
+            <div class="p-field">
+                <label for="fecha-creacion"
+                    ><strong>Fecha de creación: </strong></label
+                >
+                <span id="fecha-creacion">{{
+                    cuestionario?.fecha_creacion
+                }}</span>
+            </div>
+            <div class="p-field">
+                <label for="observacion"><strong>Observación: </strong></label>
+                <span id="observacion">{{ cuestionario?.observacion }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Adding a horizontal line to create space -->
+    <hr />
+
+    <p-pickList
+        [source]="preguntasDisponibles"
+        [target]="preguntasCuestionario"
+        sourceHeader="Preguntas Disponibles"
+        targetHeader="Preguntas del Cuestionario"
+        [responsive]="true"
+        sourceFilterPlaceholder="Buscar por nombre"
+        targetFilterPlaceholder="Buscar por nombre"
+        filterBy="nombre"
+        [style]="{ minHeight: '30rem' }"
+        [showSourceControls]="false"
+        [showTargetControls]="false"
+    >
+        <ng-template let-item pTemplate="item">
+            <div class="p-clearfix">
+                <div style="font-size: 14px; float: left; margin: 5px 5px 0 0">
+                    {{ item.nombre }}
+                </div>
+            </div>
+        </ng-template>
+    </p-pickList>
+
+    <div
+        class="p-field p-text-center"
+        style="
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            padding-top: 20px;
+        "
+    >
+        <button
+            pButton
+            label="Actualizar preguntas"
+            (click)="actualizarPreguntas()"
+        ></button>
+    </div>
+</p-panel>
+
+<style>
+    ::ng-deep .p-picklist-source-wrapper .p-picklist-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    ::ng-deep .p-picklist-target-wrapper .p-picklist-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+</style>

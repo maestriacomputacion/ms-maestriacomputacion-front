@@ -1,0 +1,51 @@
+::ng-deep .dialog-empresa {
+    .p-dialog-content {
+        overflow-y: visible !important;
+        overflow-x: visible !important;
+    }
+}
+
+@media (max-width: 1440px) {
+    .bandeja-title {
+        font-size: 2rem;
+    }
+
+    ::ng-deep .dialog-empresa {
+        width: 50% !important;
+    }
+}
+
+@media (max-width: 1240px) {
+    ::ng-deep .dialog-empresa {
+        width: 60% !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    ::ng-deep .dialog-empresa {
+        width: 70% !important;
+    }
+}
+
+@media (max-width: 900px) {
+    ::ng-deep .dialog-empresa {
+        width: 80% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    ::ng-deep .dialog-empresa {
+        width: 90% !important;
+    }
+
+    .col-label,
+    .col-input {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-label {
+        text-align: left !important;
+        margin-bottom: 0.2rem;
+    }
+}

@@ -1,0 +1,104 @@
+<p-panel header="Estadísticas de la evaluación docente">
+    <!-- Filtros para ver resultados -->
+    <div class="filtros mb-3 grid p-fluid">
+        <!-- Campo para "Ver resultados para" -->
+        <div class="col-12">
+            <label for="filtro-docentes">Ver resultados para:</label>
+            <p-dropdown id="filtro-docentes" class="custom-dropdown" [options]="docentesOptions"
+                [(ngModel)]="filtroDocentes" placeholder="Seleccione un filtro" (onChange)="resetFiltros()"
+                [style]="{ width: '20%' }"></p-dropdown>
+        </div>
+
+        <!-- Campo para "Asignatura:" -->
+        <div class="col-12" *ngIf="filtroDocentes === 'particular'">
+            <label for="filtro-asignaturas">Asignatura:</label>
+            <p-dropdown id="filtro-asignaturas" class="custom-dropdown" [options]="asignaturas"
+                [(ngModel)]="asignaturaSeleccionada" optionLabel="nombre" placeholder="Seleccione una asignatura"
+                [style]="{ width: '20%' }" (onChange)="obtenerDocentesPorAsignatura()"></p-dropdown>
+        </div>
+
+        <!-- Campo para seleccionar el docente -->
+        <div class="col-12" *ngIf="filtroDocentes === 'particular'">
+            <label for="docente-filtro">Docente:</label>
+            <p-dropdown id="docente-filtro" class="custom-dropdown" [options]="docentes"
+                [(ngModel)]="docenteSeleccionado" optionLabel="nombre" placeholder="Seleccione un docente"
+                [style]="{ width: '20%' }" (onChange)="obtenerEstadisticasDocente()"></p-dropdown>
+
+            <div class="col-12 mt-2" *ngIf="
+                    filtroDocentes === 'particular' &&
+                    docenteSeleccionado &&
+                    estadisticasDocente.length > 0
+                ">
+                <p>
+                    <strong>Estudiantes que respondieron la evaluación:</strong>
+                    {{ estadisticasDocenteRespondidas }} /
+                    {{ estadisticasDocenteTotal }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de estadísticas generales (por docente) -->
+    <p-table *ngIf="filtroDocentes === 'todos'" [value]="resultadosFiltrados()" [paginator]="true" [rows]="10"
+        [totalRecords]="resultadosFiltrados().length" [style]="{ 'margin-top': '1em' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col">Docente</th>
+                <th scope="col">Asignatura</th>
+                <th scope="col">No de evaluaciones</th>
+                <th scope="col">Nota final</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-resultado>
+            <tr>
+                <td>{{ resultado.docente }}</td>
+                <td>{{ resultado.asignatura }}</td>
+                <td>
+                    {{ resultado.totalRespondidas }} de
+                    {{ resultado.totalEvaluaciones }}
+                </td>
+                <td>{{ resultado.notaPromedio }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">No se encontraron resultados</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Tabla de estadísticas del docente-->
+    <p-table *ngIf="
+            filtroDocentes === 'particular' && estadisticasDocente.length > 0
+        " [value]="estadisticasDocente" [style]="{ 'margin-top': '1em' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col">Pregunta</th>
+                <th scope="col">Nota</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pregunta>
+            <tr>
+                <td>{{ pregunta.nombrePregunta }}</td>
+                <td>
+                    {{ pregunta.promedioValorRespuesta | number : "1.0-1" }}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="2">No se encontraron resultados</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Mensaje condicional -->
+    <p-message *ngIf="
+            estadisticasDocente.length === 0 && filtroDocentes === 'particular'
+        " severity="error" text="No se encontraron resultados para el docente seleccionado"></p-message>
+    <!-- Botón para generar reporte -->
+    <!-- Botón para generar reporte -->
+    <div class="text-right mt-3" *ngIf="filtroDocentes === 'todos'">
+        <button pButton icon="pi pi-file" label="Generar reporte" (click)="generarReporte()"></button>
+    </div>
+</p-panel>

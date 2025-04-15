@@ -1,0 +1,27 @@
+<div
+    class="flex flex-row w-full justify-content-between align-items-start column-gap-2"
+>
+    <p-fileUpload
+        #fileUpload
+        [auto]="true"
+        mode="basic"
+        (onSelect)="onFileChange($event)"
+        [customUpload]="true"
+        accept=".pdf"
+        chooseIcon="pi pi-file"
+        maxFileSize="5000000"
+        class="w-full max-w-30rem flex-1"
+        chooseLabel="Buscar documento"
+        [disabled]="selected && selected[arrayName + '.' + filename]"
+    >
+    </p-fileUpload>
+    <button
+        *ngIf="selected && selected[arrayName + '.' + filename]"
+        pButton
+        class="p-button-secondary"
+        icon="pi pi-times"
+        type="button"
+        (click)="clearFile()"
+        [disabled]="isRespuestaValid"
+    ></button>
+</div>

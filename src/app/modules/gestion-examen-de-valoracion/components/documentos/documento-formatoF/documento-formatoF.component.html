@@ -1,0 +1,270 @@
+<p-panel>
+    <div id="formatoF">
+        <div class="flex flex-column w-full mb-4 header-logo">
+            <img
+                src="assets/layout/images/asset-header.jpg"
+                alt="Asset Header"
+                class="header-image"
+            />
+            <div class="flex justify-content-start logo-container">
+                <img
+                    src="assets/layout/images/logoFacultad.png"
+                    alt="Logo Facultad"
+                    class="logo-image"
+                />
+            </div>
+        </div>
+        <div class="mt-4 px-1 md:px-4 lg:px-8">
+            <form [formGroup]="formatoFForm">
+                <div class="field grid justify-content-start">
+                    <label class="col-3 col-label font-semibold" for="titulo"
+                        >Titulo</label
+                    >
+                    <div class="col-9 col-input">
+                        <input
+                            pInputText
+                            type="text"
+                            id="titulo"
+                            class="p-inputtext-md w-full"
+                            formControlName="titulo"
+                            readonly
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-3 col-label font-semibold"
+                        for="estudiante"
+                        >Estudiante</label
+                    >
+                    <div class="col-9 col-input">
+                        <input
+                            pInputText
+                            type="text"
+                            id="estudiante"
+                            class="p-inputtext-md w-full"
+                            formControlName="estudiante"
+                            readonly
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label class="col-3 col-label font-semibold" for="director"
+                        >Director</label
+                    >
+                    <div class="col-9 col-input">
+                        <input
+                            pInputText
+                            type="text"
+                            id="director"
+                            class="p-inputtext-md w-full"
+                            formControlName="director"
+                            readonly
+                        />
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-3 col-label font-semibold"
+                        for="trabajoCumple"
+                        >A) El trabajo cumple con las condiciones de
+                        entrega?</label
+                    >
+                    <div
+                        class="col-9 flex justify-content-start align-items-center"
+                    >
+                        <div class="flex align-items-center column-gap-2">
+                            <label for="trabajoCumpleSi">SI</label>
+                            <p-checkbox
+                                type="checkbox"
+                                formControlName="trabajoCumpleSi"
+                                [binary]="true"
+                                inputId="trabajoCumpleSi"
+                            ></p-checkbox>
+                            <label for="trabajoCumpleNo">NO</label>
+                            <p-checkbox
+                                type="checkbox"
+                                formControlName="trabajoCumpleNo"
+                                [binary]="true"
+                                inputId="trabajoCumpleNo"
+                            ></p-checkbox>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-3 col-label font-semibold"
+                        for="documentoTerminado"
+                        >B) Documentos y anexos completamente terminados?</label
+                    >
+                    <div
+                        class="col-9 flex justify-content-start align-items-center"
+                    >
+                        <div class="flex align-items-center column-gap-2">
+                            <label for="documentoTerminadoSi">SI</label>
+                            <p-checkbox
+                                type="checkbox"
+                                formControlName="documentoTerminadoSi"
+                                [binary]="true"
+                                inputId="documentoTerminadoSi"
+                            ></p-checkbox>
+                            <label for="documentoTerminadoNo">NO</label>
+                            <p-checkbox
+                                type="checkbox"
+                                formControlName="documentoTerminadoNo"
+                                [binary]="true"
+                                inputId="documentoTerminadoNo"
+                            ></p-checkbox>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label
+                        class="col-3 label-required font-semibold"
+                        for="observaciones"
+                        >Observaciones</label
+                    >
+                    <div class="col-9 col-input">
+                        <textarea
+                            pInputTextarea
+                            [maxLength]="250"
+                            id="observaciones"
+                            class="p-inputtextarea-md w-full"
+                            formControlName="observaciones"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label class="col-3 col-label font-semibold"
+                        >Jurados sugeridos y datos de contacto</label
+                    >
+                    <div
+                        *ngIf="
+                            juradoExternoSeleccionado &&
+                            juradoInternoSeleccionado
+                        "
+                        class="col-9"
+                    >
+                        <div
+                            class="flex flex-column justify-content-start align-items-start column-gap-4"
+                        >
+                            <span
+                                >{{ juradoExternoSeleccionado?.nombres }},
+                                {{ juradoExternoSeleccionado?.correo }},
+                                {{
+                                    juradoExternoSeleccionado?.universidad
+                                }}</span
+                            >
+                            <span
+                                >{{ juradoInternoSeleccionado.nombres }},
+                                {{ juradoInternoSeleccionado?.correo }},
+                                {{
+                                    juradoInternoSeleccionado?.universidad
+                                }}</span
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field grid justify-content-start">
+                    <label class="col-3 col-label font-semibold" for="fecha"
+                        >FECHA</label
+                    >
+                    <div class="col-9 col-input">
+                        <span> {{ fechaActual | date : "dd/MM/yyyy" }} </span>
+                    </div>
+                </div>
+
+                <div class="field grid mt-4">
+                    <span
+                        class="col-12 xl:col-9 xl:mb-0 mb-2 text-left xl:text-right"
+                    >
+                        <b>Firma Director</b>
+                    </span>
+                    <div class="col-12 xl:col-3 xl:text-right text-center">
+                        <p-fileUpload
+                            name="firmaDirector"
+                            chooseIcon="pi pi-file"
+                            accept=".png, .jpg, .jpeg"
+                            chooseLabel="Seleccionar"
+                            class="w-full max-w-30rem"
+                            previewWidth="100"
+                            [auto]="true"
+                            (onSelect)="onFirmaChange($event, 'firmaDirector')"
+                        >
+                            <ng-template
+                                let-file
+                                pTemplate="file"
+                                data-file="firma"
+                            >
+                                <div *ngIf="firmaDirector">
+                                    <img
+                                        [src]="firmaDirector"
+                                        alt="Vista Previa de la Firma"
+                                        style="
+                                            min-height: 120px;
+                                            min-width: 150px;
+                                            width: 100%;
+                                            height: 100%;
+                                        "
+                                    />
+                                </div>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                </div>
+                <div class="footer-logo mt-8">
+                    <img
+                        src="assets/layout/images/asset-calidad.png"
+                        alt="Asset Calidad"
+                        width="140px"
+                        height="100px"
+                    />
+                    <div
+                        class="flex flex-column align-items-center justify-content-center"
+                    >
+                        <span>
+                            Carrera 2 No. 15N esquina-Sector Tulcán
+                            Popayán-Cauca-Colombia Teléfono: 6028209800 ext.
+                            2100 ó 2101. decafiet&#64;unicauca.edu.co |
+                            <strong>www.unicauca.edu.co</strong>
+                        </span>
+                    </div>
+                    <img
+                        src="assets/layout/images/logosIcontec.png"
+                        alt="Logo Icontec"
+                        width="120px"
+                        height="80px"
+                    />
+                </div>
+                <div
+                    class="flex align-items-center justify-content-end mt-4 column-gap-2"
+                >
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-upload"
+                        label="Insertar"
+                        pTooltip="Haz clic para insertar el documento en el área de carga de archivos."
+                        tooltipPosition="top"
+                        (click)="onInsertar()"
+                    ></button>
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-download"
+                        label="Descargar"
+                        (click)="onDownload()"
+                        [loading]="loading"
+                    ></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</p-panel>

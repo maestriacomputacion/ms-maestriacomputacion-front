@@ -1,0 +1,48 @@
+.flexbox-container {
+    display: -ms-flex;
+    display: -webkit-flex;
+    display: flex;
+
+}
+
+.flexbox-container > div {
+    width: 50%;
+    padding: 10px;
+
+}
+
+.flexbox-container > div:first-child {
+    margin-right: 20px;
+
+}
+
+/* Estilos para el contenedor de la tabla */
+.table-container {
+    padding: 20px;
+}
+
+.contenedor-flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Ajusta el espacio entre los elementos */
+}
+
+.elemento {
+    /* Estilos de los elementos */
+    padding: 10px;
+    // border: 1px solid #ccc;
+}
+
+.search{
+    cursor: pointer;
+}
+
+/* Media queries para diferentes tamaños de pantalla */
+@media screen and (max-width: 1023px) {
+
+.contenedor-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ajusta el espacio entre los elementos */
+}
+}

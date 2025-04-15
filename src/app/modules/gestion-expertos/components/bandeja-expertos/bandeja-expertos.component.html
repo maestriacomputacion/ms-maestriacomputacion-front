@@ -1,0 +1,191 @@
+<p-panel>
+    <p-header>
+        <b>GESTIÓN DE EXPERTOS</b>
+    </p-header>
+    <!-- Encabezado -->
+    <div class="grid">
+        <!-- Busqueda -->
+        <div class="col-5">
+            <div class="flex align-items-end h-full">
+                <span class="p-input-icon-left w-full">
+                    <i class="pi pi-search"></i>
+                    <input
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        placeholder="Buscar experto"
+                        (input)="
+                            tableExpertos.filterGlobal(
+                                $event.target.value,
+                                'contains'
+                            )
+                        "
+                    />
+                </span>
+            </div>
+        </div>
+        <div class="col-1"></div>
+        <!-- Carga Expertos -->
+        <div class="col-6">
+            <div class="w-full text-right">
+                <button
+                    pButton
+                    icon="pi pi-plus"
+                    label="Agregar experto"
+                    (click)="onRegistrarExperto()"
+                ></button>
+            </div>
+            <p-fieldset legend="Cargar Expertos">
+                <app-cargar-expertos
+                    (onCargaExitosa)="onCargaExitosa()"
+                ></app-cargar-expertos>
+            </p-fieldset>
+        </div>
+    </div>
+    <br />
+    <!-- InputSwitch para mostrar inactivos -->
+    <div class="col-12 text-right mb-3">
+        <p-selectButton
+            [(ngModel)]="mostrarInactivosFlag"
+            [options]="[
+                { label: 'Activos', value: true },
+                { label: 'Inactivos', value: false }
+            ]"
+            (onChange)="listExpertos()"
+        ></p-selectButton>
+    </div>
+    <!-- Tabla Expertos -->
+    <p-table
+        #tableExpertos
+        [value]="expertos"
+        [paginator]="true"
+        [loading]="loading"
+        [rows]="10"
+        breakpoint="768px"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [globalFilterFields]="[
+            'persona.identificacion',
+            'persona.nombre',
+            'persona.apellido',
+            'persona.correoElectronico',
+            'universidadexp'
+        ]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="{first} - {last} de {totalRecords}"
+        [sortField]="'persona.apellido'"
+        [sortOrder]="1"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col" pSortableColumn="persona.identificacion">
+                    Identificación<p-sortIcon
+                        field="persona.identificacion"
+                    ></p-sortIcon>
+                </th>
+                <th scope="col" pSortableColumn="persona.nombre">
+                    Nombres <p-sortIcon field="persona.nombre"></p-sortIcon>
+                </th>
+                <th scope="col" pSortableColumn="persona.apellido">
+                    Apellidos <p-sortIcon field="persona.apellido"></p-sortIcon>
+                </th>
+                <th scope="col">Correo electrónico</th>
+                <th scope="col" pSortableColumn="universidadexp">
+                    Universidad <p-sortIcon field="universidadexp"></p-sortIcon>
+                </th>
+                <th scope="col" class="text-center w-2">Opciones</th>
+            </tr>
+        </ng-template>
+        <!-- Contenido  -->
+        <ng-template pTemplate="body" let-experto>
+            <tr>
+                <td>{{ experto.persona.identificacion }}</td>
+                <td>{{ experto.persona.nombre }}</td>
+                <td>{{ experto.persona.apellido }}</td>
+                <td>{{ experto.persona.correoElectronico }}</td>
+                <td>{{ experto.universidadexp }}</td>
+                <td class="text-center">
+                    <button
+                        pButton
+                        pTooltip="Editar"
+                        type="button"
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-text p-button-warning"
+                        (click)="onEditar(experto.id)"
+                    ></button>
+                    <button
+                        *ngIf="experto.estado === 'ACTIVO'"
+                        pButton
+                        pTooltip="Desactivar"
+                        type="button"
+                        icon="pi pi-times"
+                        class="p-button-rounded p-button-text p-button-danger"
+                        (click)="onDelete($event, experto.id)"
+                    ></button>
+                    <button
+                        *ngIf="experto.estado === 'INACTIVO'"
+                        pButton
+                        pTooltip="Habilitar"
+                        type="button"
+                        icon="pi pi-check"
+                        class="p-button-rounded p-button-text p-button-success"
+                        (click)="cambiarEstado($event, experto, 'ACTIVO')"
+                    ></button>
+                    <button
+                        pButton
+                        pTooltip="Previsualizar"
+                        type="button"
+                        icon="pi pi-eye"
+                        class="p-button-rounded p-button-text p-button-info"
+                        (click)="onPrevisualizar(experto)"
+                    ></button>
+                    <p-confirmPopup></p-confirmPopup>
+                </td>
+            </tr>
+        </ng-template>
+        <!-- Mensaje sin registros -->
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td [attr.colspan]="7">No se encontraron registros</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Dialogo de Previsualización -->
+    <p-dialog
+        header="Previsualización del Experto"
+        [(visible)]="displayDialog"
+        [modal]="true"
+        [responsive]="true"
+        [style]="{ 'max-width': '800px' }"
+        [contentStyle]="{ 'max-height': '70vh', overflow: 'auto' }"
+        [dismissableMask]="true"
+    >
+        <div class="p-4 bg-white rounded-lg shadow-lg">
+            <div *ngIf="expertoSeleccionado">
+                <table class="min-w-full divide-y divide-gray-200 table-auto">
+                    <thead class="bg-gray-100"></thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr
+                            *ngFor="
+                                let item of getKeys(expertoSeleccionado);
+                                let i = index
+                            "
+                            [ngClass]="{ 'bg-gray-50': i % 2 !== 0 }"
+                        >
+                            <td
+                                class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900"
+                            >
+                                {{ item.key }}
+                            </td>
+                            <td
+                                class="px-2 py-2 whitespace-nowrap text-sm text-gray-700"
+                            >
+                                {{ item.value }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </p-dialog>
+</p-panel>

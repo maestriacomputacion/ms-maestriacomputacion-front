@@ -1,0 +1,121 @@
+<br />
+
+<!-- Informacion Personal -->
+<form [formGroup]="personalForm">
+    <div class="col-4 text-right font-medium">
+        <p><b>Información personal</b></p>
+    </div>
+    <div class="col-8"></div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Tipo de identifcación</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="tiposIndentificacion"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="tipoIdentificacion"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('tipoIdentificacion').invalid && getFormControl('tipoIdentificacion').touched }"
+            ></p-dropdown>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Número indentificación</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                pKeyFilter="int"
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="identificacion"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('identificacion').invalid && getFormControl('identificacion').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Nombres y apellidos</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-12rem"
+                formControlName="nombre"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('nombre').invalid && getFormControl('nombre').touched }"
+            />
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-12rem ml-3"
+                formControlName="apellido"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('apellido').invalid && getFormControl('apellido').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Género</label>
+        </div>
+        <div class="col-8 flex aling-items-center">
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="genero"
+                    value="MASCULINO"
+                    formControlName="genero"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('genero').invalid && getFormControl('genero').touched }"
+                ></p-radioButton>
+                <label>Masculino</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="genero"
+                    value="FEMENINO"
+                    formControlName="genero"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('genero').invalid && getFormControl('genero').touched }"
+                ></p-radioButton>
+                <label>Femenino</label>
+            </div>
+            <div class="field-radiobutton mb-0 mr-3">
+                <p-radioButton
+                    name="genero"
+                    value="OTRO"
+                    formControlName="genero"
+                    [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('genero').invalid && getFormControl('genero').touched }"
+                ></p-radioButton>
+                <label>Otro</label>
+            </div>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Teléfono</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                pKeyFilter="int"
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="telefono"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Correo electrónico</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="correoElectronico"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('correoElectronico').invalid && getFormControl('correoElectronico').touched }"
+            />
+        </div>
+    </div>
+</form>

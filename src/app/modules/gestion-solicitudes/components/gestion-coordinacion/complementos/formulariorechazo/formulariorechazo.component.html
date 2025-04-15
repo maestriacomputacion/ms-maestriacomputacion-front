@@ -1,0 +1,38 @@
+<div class="grid mt-1">
+    <div class="col-12">
+        <span class="p-float-label mt-3">
+            <textarea
+                id="motivoRechazo"
+                [rows]="5"
+                pInputTextarea
+                spellcheck="true"
+                class="w-full"
+                [(ngModel)]="motivoRechazo"
+                (ngModelChange)="clearWarning()"
+            ></textarea>
+            <label for="motivoRechazo"
+                >Motivo de rechazo de la solicitud
+            </label>
+        </span>
+        <p *ngIf="showWarning" style="color: red">
+            Por favor, escriba el motivo de rechazo de la solicitud.
+        </p>
+    </div>
+</div>
+
+<div class="grid grid-nogutter mt-4 justify-content-end gap-1">
+    <button
+        type="button"
+        pButton
+        label="Rechazar"
+        icon="pi pi-check"
+        (click)="confirmar()"
+    ></button>
+    <button
+        type="button"
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="cancelar()"
+    ></button>
+</div>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Maestria en computación</title>
+        <base href="/" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <link id="theme-css" rel="stylesheet" type="text/css" href="assets/theme/lara-light-indigo/theme.css" />
+        <!-- Carga condicional de env.js solo si no es localhost -->
+        <script>
+            if (window.location.hostname !== "localhost") {
+                document.write('<script src="assets/env.js"><\/script>');
+            }
+        </script>
+    </head>
+    <body>
+        <app-root></app-root>
+    </body>
+</html>

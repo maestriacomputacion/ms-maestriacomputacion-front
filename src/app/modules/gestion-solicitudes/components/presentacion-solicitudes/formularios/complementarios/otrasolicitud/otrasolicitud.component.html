@@ -1,0 +1,45 @@
+<form [formGroup]="this.radicar.formInfoOtraSolicitud">
+    <p-fieldset legend="Información de las solicitud" styleClass="bg-bluegray-50">
+        <div class="grid p-fluid">
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="asuntoSolicitud"
+                        class="w-full"
+                        id="asuntoSolicitud"
+                        type="text"
+                        spellcheck="true"
+                        pInputText
+                    />
+                    <label for="asuntoSolicitud">Asunto</label>
+                </span>
+            </div>
+
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <textarea
+                        formControlName="contenidoSolicitud"
+                        id="contenidoSolicitud"
+                        [rows]="10"
+                        pInputTextarea
+                        spellcheck="true"
+                        class="w-full"
+                    ></textarea>
+                    <label for="contenidoSolicitud">Descripcion de la solicitud </label>
+                </span>
+            </div>
+        </div>
+
+        <p class="font-semibold mt-4">¿Su solicitud va avalda?</p>
+
+        <div class="flex align-items-center mb-3 gap-2">
+            <p-inputSwitch formControlName="requiereAvalTutor"></p-inputSwitch>
+            <span style="margin-top: -3px">Tutor del estudiante</span>
+        </div>
+
+        <div class="flex align-items-center mb-3 gap-2">
+            <p-inputSwitch formControlName="requiereAvalDirector"></p-inputSwitch>
+            <span style="margin-top: -3px">Director de grupo de investigación</span>
+        </div>
+    </p-fieldset>
+</form>

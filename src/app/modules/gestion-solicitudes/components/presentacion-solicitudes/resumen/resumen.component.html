@@ -1,0 +1,77 @@
+<p-toast></p-toast>
+<p-confirmDialog
+    [style]="{ width: '50vw' }"
+    [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"
+></p-confirmDialog>
+
+<div class="card">
+    <div class="col-12 mb-4">
+        <p class="text-xl font-bold mb-0"><i class="pi pi-file mr-2"></i>Final - Resumen de su solicitud</p>
+        <p>Revise y envíe la solicitud</p>
+    </div>
+
+    <div class="col-12 mt-2">
+        <embed
+            id="vistaPreviaSolicitudPDF"
+            [src]="urlVistaPreviaSolicitudPDF"
+            type="application/pdf"
+            width="100%"
+            height="600px"
+        />
+    </div>
+
+    <div class="w-full md:w-8 mt-4" style="margin-left: auto; margin-right: auto" *ngIf="!isSolicitudTipoCerVoto()">
+        <p-fieldset class="" legend="Firma">
+            <div class="grid">
+                <div class="col-12">
+                    <p-fileUpload
+                        #fsigSolicitante
+                        mode="basic"
+                        name="file[]"
+                        [auto]="true"
+                        [customUpload]="true"
+                        (uploadHandler)="onUpload($event, fsigSolicitante)"
+                        accept="image/*"
+                        chooseIcon="pi pi-upload"
+                        maxFileSize="1000000"
+                        [auto]="true"
+                        chooseLabel="Cargue una imagen de su firma"
+                        [style]="{ width: '100%' }"
+                    >
+                    </p-fileUpload>
+
+                    <div class="col-12 md:col-6 md:col-offset-3 mt-3" *ngIf="mostrarBtnFirmar">
+                        <img #firmaImage class="max-w-full" />
+                    </div>
+
+                    <div class="mb-2" *ngIf="firmaEnProceso">
+                        <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+                    </div>
+
+                    <button
+                        #firmar
+                        *ngIf="mostrarBtnFirmar"
+                        pButton
+                        pRipple
+                        type="button"
+                        (click)="firmarSolicitud()"
+                        label="Firmar documento"
+                        class="p-button-secondary"
+                        [style]="{ width: '100%' }"
+                    ></button>
+                </div>
+            </div>
+        </p-fieldset>
+    </div>
+
+    <div class="grid grid-nogutter mt-4 justify-content-end">
+        <p-button class="mr-2" label="Atrás" (click)="navigateToBack()" icon="pi pi-angle-left"></p-button>
+
+        <p-button label="Enviar" (click)="enviarSolicitud()" icon="pi pi-send" iconPos="right"></p-button>
+    </div>
+
+    <div class="mt-4" *ngIf="guardadoEnProceso">
+        <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+    </div>
+</div>

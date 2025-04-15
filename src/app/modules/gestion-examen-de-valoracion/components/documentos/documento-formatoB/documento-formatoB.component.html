@@ -1,0 +1,570 @@
+<div>
+    <div id="formatoB1">
+        <div class="flex flex-column w-full mb-4">
+            <div
+                class="flex flex-row align-items-center justify-content-evenly header-logo"
+            >
+                <div>
+                    <h2>Maestría en Computación</h2>
+                    <h2>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                    </h2>
+                </div>
+                <img
+                    src="assets/layout/images/logoUnicauca.png"
+                    alt="Logo Unicauca"
+                    width="120px"
+                    height="180px"
+                />
+            </div>
+            <div
+                class="flex flex-column w-full justify-content-center align-items-center row-gap-4 title-head"
+            >
+                <span style="font-size: 20px; font-weight: bold"
+                    >Formato B</span
+                >
+                <span style="font-size: 20px; font-weight: bold">
+                    ACTA DE EXAMEN DE VALORACION
+                </span>
+                <span> Popayán {{ fechaActual | date : "dd/MM/yyyy" }} </span>
+            </div>
+        </div>
+        <form class="mt-4" [formGroup]="formatoBForm">
+            <div class="flex flex-column gap-4">
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Programa:</label>
+                        <span>Maestría en Computación</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label
+                            class="uppercase font-bold"
+                            style="line-height: 1.5rem"
+                            >Programa</label
+                        >
+                    </div>
+                    <div class="col-9 col-input">
+                        <span>Maestría en Computación</span>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Titulo:</label>
+                        <span>{{ formatoBForm.get("titulo").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Titulo</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <input
+                            pInputText
+                            [maxLength]="250"
+                            class="p-inputtext-md w-full"
+                            formControlName="titulo"
+                        />
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Estudiante:</label>
+                        <span>{{ formatoBForm.get("estudiante").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Estudiante</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <input
+                            pInputText
+                            [maxLength]="250"
+                            class="p-inputtext-md w-full"
+                            formControlName="estudiante"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-2">
+                <div class="field grid gap-2">
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="pdf-label uppercase font-bold"
+                            >Jurado</label
+                        >
+                    </div>
+                    <div
+                        class="col-9 col-input field-content"
+                        *ngIf="docente.value"
+                    >
+                        <!-- FIELD TO PDF -->
+                        <div class="field-content p-show">
+                            <label>Jurado:</label
+                            ><span
+                                >{{ docente?.value?.nombres }}
+                                {{ docente?.value?.correo }},
+                                {{ docente?.value?.universidad }}</span
+                            >
+                        </div>
+                        <!-- END -->
+
+                        <div class="flex align-items-center">
+                            <p-card class="w-full max-w-30rem">
+                                <div class="flex justify-content-between">
+                                    <span class="card-title"
+                                        >Datos del Jurado Interno</span
+                                    >
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Nombres y Apellidos</span>
+                                    <span>{{ docente?.value?.nombres }}</span>
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Universidad</span>
+                                    <span>{{
+                                        docente?.value?.universidad
+                                    }}</span>
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Correo</span>
+                                    <span>{{ docente?.value?.correo }}</span>
+                                </div>
+                            </p-card>
+                        </div>
+                        <div class="flex align-items-center mt-2">
+                            <p-card class="w-full max-w-30rem">
+                                <div class="flex justify-content-between">
+                                    <span class="card-title"
+                                        >Datos del Jurado Externo</span
+                                    >
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Nombres y Apellidos</span>
+                                    <span>{{ experto?.value?.nombres }}</span>
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Universidad</span>
+                                    <span>{{
+                                        experto?.value?.universidad
+                                    }}</span>
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Correo</span>
+                                    <span>{{ experto?.value?.correo }}</span>
+                                </div>
+                            </p-card>
+                        </div>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Fecha:</label>
+                        <span>{{ getFormattedDate() }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Fecha</label>
+                    </div>
+                    <div class="col-9">
+                        <p-calendar
+                            formControlName="fecha"
+                            [showIcon]="true"
+                            dateFormat="dd.mm.yy"
+                        ></p-calendar>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Concepto del Jurado:</label>
+                        <ul
+                            *ngFor="let estado of estados"
+                            class="field-checkbox"
+                        >
+                            <li>{{ estado }} ___</li>
+                        </ul>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold"
+                            >Concepto de jurado
+                        </label>
+                    </div>
+                    <div class="col-9">
+                        <div
+                            *ngFor="let estado of estados"
+                            class="field-checkbox"
+                        >
+                            <p-radioButton
+                                [inputId]="estado"
+                                [value]="estado"
+                                formControlName="conceptoJurado"
+                            ></p-radioButton>
+                            <label [for]="estado" class="ml-2">{{
+                                estado
+                            }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start field-content"
+                    >
+                        <label class="font-bold">Firma:</label>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-firma p-show">
+                        <span style="display: inline"
+                            >{{ docente?.value?.nombres }} -
+                            {{ docente?.value?.universidad }}</span
+                        >
+                        <hr style="display: inline" />
+                    </div>
+                    <!-- END -->
+                    <div class="col-2 col-label text-right flex flex-column">
+                        <span>{{ docente?.value?.nombres }}</span>
+                        <span>{{ experto?.value?.nombres }}</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="flex flex-row align-items-center justify-content-center footer-logo footer-content"
+            >
+                <img
+                    src="assets/layout/images/logosIcontec.png"
+                    alt="Logo Icontec"
+                    width="200px"
+                    height="140px"
+                />
+                <div
+                    class="flex flex-column align-items-center justify-content-center footer-text"
+                >
+                    <span>Por una Universidad de excelencia y solidaria</span>
+                    <hr />
+                    <strong>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                        Cra 2 No. 4N-140 Edif. de Ingenierías - Sector Tulcán
+                        Popayán - Cauca - Colombia Conmutador 8209800 Ext. 2145
+                        maestriacomputacion@unicauca.edu.co -
+                        www.unicauca.edu.co
+                        www.unicauca.edu.co/maestriacomputación
+                    </strong>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="formatoB2" class="hidden">
+        <div class="flex flex-column w-full mb-4">
+            <div
+                class="flex flex-row align-items-center justify-content-evenly header-logo"
+            >
+                <div>
+                    <h2>Maestría en Computación</h2>
+                    <h2>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                    </h2>
+                </div>
+                <img
+                    src="assets/layout/images/logoUnicauca.png"
+                    alt="Logo Unicauca"
+                    width="120px"
+                    height="180px"
+                />
+            </div>
+            <div
+                class="flex flex-column w-full justify-content-center align-items-center row-gap-4 title-head"
+            >
+                <span style="font-size: 20px; font-weight: bold">
+                    ACTA DE EXAMEN DE VALORACION
+                </span>
+                <span> Popayán {{ fechaActual | date : "dd/MM/yyyy" }} </span>
+            </div>
+        </div>
+        <form class="mt-4" [formGroup]="formatoBForm">
+            <div class="flex flex-column gap-4">
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Programa:</label>
+                        <span>Maestría en Computación</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label
+                            class="uppercase font-bold"
+                            style="line-height: 1.5rem"
+                            >Programa</label
+                        >
+                    </div>
+                    <div class="col-9 col-input">
+                        <span>Maestría en Computación</span>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Titulo:</label>
+                        <span>{{ formatoBForm.get("titulo").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Titulo</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <input
+                            pInputText
+                            [maxLength]="250"
+                            class="p-inputtext-md w-full"
+                            formControlName="titulo"
+                        />
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Estudiante:</label>
+                        <span>{{ formatoBForm.get("estudiante").value }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Estudiante</label>
+                    </div>
+                    <div class="col-9 col-input">
+                        <input
+                            pInputText
+                            [maxLength]="250"
+                            class="p-inputtext-md w-full"
+                            formControlName="estudiante"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-2">
+                <div class="field grid gap-2">
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="pdf-label uppercase font-bold"
+                            >Jurado</label
+                        >
+                    </div>
+                    <div
+                        class="col-9 col-input field-content"
+                        *ngIf="experto.value"
+                    >
+                        <!-- FIELD TO PDF -->
+                        <div class="field-content p-show">
+                            <label for="">Jurado:</label
+                            ><span
+                                >{{ experto?.value?.nombres }}
+                                {{ experto?.value?.correo }},
+                                {{ experto?.value?.universidad }}</span
+                            >
+                        </div>
+                        <!-- END -->
+
+                        <div class="flex align-items-center">
+                            <p-card class="w-full max-w-30rem">
+                                <div class="flex justify-content-between">
+                                    <span class="card-title"
+                                        >Datos del Jurado Externo</span
+                                    >
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Nombres y Apellidos</span>
+                                    <span>{{ experto?.value?.nombres }}</span>
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Universidad</span>
+                                    <span>{{
+                                        experto?.value?.universidad
+                                    }}</span>
+                                </div>
+                                <div
+                                    class="mt-2 card-data flex justify-content-between"
+                                >
+                                    <span>Correo</span>
+                                    <span>{{ experto?.value?.correo }}</span>
+                                </div>
+                            </p-card>
+                        </div>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Fecha:</label>
+                        <span>{{ getFormattedDate() }}</span>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold">Fecha</label>
+                    </div>
+                    <div class="col-9">
+                        <p-calendar
+                            formControlName="fecha"
+                            [showIcon]="true"
+                            dateFormat="dd.mm.yy"
+                        ></p-calendar>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-content p-show">
+                        <label class="uppercase">Concepto del Jurado:</label>
+                        <div class="field-content p-show">
+                            <label class="uppercase"
+                                >Concepto del Jurado:</label
+                            >
+                            <ul
+                                *ngFor="let estado of estados"
+                                class="field-checkbox"
+                            >
+                                <li>{{ estado }} ___</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- END -->
+
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        <label class="uppercase font-bold"
+                            >Concepto de jurado
+                        </label>
+                    </div>
+                    <div class="col-9">
+                        <div
+                            *ngFor="let estado of estados"
+                            class="field-checkbox"
+                        >
+                            <p-radioButton
+                                [inputId]="estado"
+                                [value]="estado"
+                                formControlName="conceptoJurado"
+                            ></p-radioButton>
+                            <label [for]="estado" class="ml-2">{{
+                                estado
+                            }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <div
+                        class="col-2 col-label text-right mr-2 align-self-start field-content"
+                    >
+                        <label class="font-bold">Firma:</label>
+                    </div>
+                </div>
+                <div class="field grid">
+                    <!-- FIELD TO PDF -->
+                    <div class="field-firma p-show">
+                        <span style="display: inline"
+                            >{{ experto?.value?.nombres }} -
+                            {{ experto?.value?.universidad }}</span
+                        >
+                        <hr style="display: inline" />
+                    </div>
+                    <!-- END -->
+                    <span
+                        class="col-2 col-label text-right mr-2 align-self-start"
+                    >
+                        {{ experto?.value?.nombres }}
+                    </span>
+                </div>
+            </div>
+            <div
+                class="flex flex-row align-items-center justify-content-center footer-logo footer-content"
+            >
+                <img
+                    src="assets/layout/images/logosIcontec.png"
+                    alt="Logo Icontec"
+                    width="200px"
+                    height="140px"
+                />
+                <div
+                    class="flex flex-column align-items-center justify-content-center footer-text"
+                >
+                    <span>Por una Universidad de excelencia y solidaria</span>
+                    <hr />
+                    <strong>
+                        Facultad de Ingeniería Electrónica y Telecomunicaciones
+                        Cra 2 No. 4N-140 Edif. de Ingenierías - Sector Tulcán
+                        Popayán - Cauca - Colombia Conmutador 8209800 Ext. 2145
+                        maestriacomputacion@unicauca.edu.co -
+                        www.unicauca.edu.co
+                        www.unicauca.edu.co/maestriacomputación
+                    </strong>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="flex align-items-center justify-content-end mt-4 column-gap-2">
+        <button
+            pButton
+            type="button"
+            icon="pi pi-paperclip"
+            label="Adjuntar"
+            (click)="onAdjuntar()"
+            [loading]="loading"
+        ></button>
+        <button
+            pButton
+            type="button"
+            icon="pi pi-download"
+            label="Descargar"
+            (click)="onDownload()"
+            [loading]="loading"
+        ></button>
+    </div>
+</div>

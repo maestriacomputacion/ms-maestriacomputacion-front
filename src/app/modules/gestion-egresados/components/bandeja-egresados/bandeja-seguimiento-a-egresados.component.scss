@@ -1,0 +1,77 @@
+.spinner {
+    transform: translate(-50%, 50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+@media (max-width: 1440px) {
+    .bandeja-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 1240px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 60% !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 70% !important;
+    }
+}
+
+@media (max-width: 900px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 80% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    ::ng-deep.custom-estudiante-dialog {
+        width: 90% !important;
+    }
+
+    .col-label,
+    .col-input {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-label {
+        text-align: left !important;
+        margin-bottom: 1rem;
+    }
+
+    .card-label,
+    .card-input {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 425px) {
+    .bandeja-title {
+        font-size: 1.5rem;
+    }
+
+    .bandeja-egresados ::ng-deep.p-card .p-card-title {
+        text-align: center;
+    }
+
+    .card-data {
+        flex-direction: column;
+        margin-bottom: 2rem;
+        align-items: center;
+    }
+
+    .card-data > span:first-of-type {
+        font-weight: bold;
+    }
+
+    .card-data:last-of-type {
+        margin-bottom: 0;
+    }
+}

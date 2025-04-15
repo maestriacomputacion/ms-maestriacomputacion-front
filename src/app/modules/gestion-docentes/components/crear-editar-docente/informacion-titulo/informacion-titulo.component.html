@@ -1,0 +1,76 @@
+<br />
+
+<!-- Informacion Titulo -->
+<form [formGroup]="tituloForm">
+    <div class="col-4 text-right font-medium">
+        <p><b>Información sobre titulos</b></p>
+    </div>
+    <div class="col-8"></div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Título</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="titulo"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('titulo').invalid && getFormControl('titulo').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Abreviatura del titulo</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="abreviaturasTitulo"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="abreviatura"
+            ></p-dropdown>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label class="label-required">Universidad del título</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="universidad"
+                [ngClass]="{ 'ng-invalid ng-dirty': getFormControl('universidad').invalid && getFormControl('universidad').touched }"
+            />
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Categoria minCiencias</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown
+                [options]="categoriasMinCiencia"
+                placeholder="Seleccione"
+                styleClass="p-inputtext-sm w-25rem"
+                formControlName="categoriaMinCiencia"
+            ></p-dropdown>
+        </div>
+    </div>
+    <div class="field grid">
+        <div class="col-4 text-right font-medium align-self-center">
+            <label>Link a CvLAC</label>
+        </div>
+        <div class="col-8">
+            <input
+                pInputText
+                [maxLength]="250"
+                class="p-inputtext-sm w-25rem"
+                formControlName="linkCvLac"
+            />
+        </div>
+    </div>
+</form>

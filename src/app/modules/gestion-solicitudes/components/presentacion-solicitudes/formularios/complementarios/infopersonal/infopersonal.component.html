@@ -1,0 +1,91 @@
+<p-fieldset class="" legend="Información personal" styleClass="bg-bluegray-50">
+    <form [formGroup]="this.radicar.formInfoPersonal">
+        <div class="grid">
+            <div class="col-12 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="nombres"
+                        class="w-full"
+                        id="nombres"
+                        type="text"
+                        pInputText
+                    />
+                    <label for="nombres">Nombres</label>
+                </span>
+            </div>
+            <div class="col-12 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="apellidos"
+                        class="w-full"
+                        id="apellidos"
+                        type="text"
+                        pInputText
+                    />
+                    <label for="apellidos">Apellidos</label>
+                </span>
+            </div>
+            <div class="col-12 lg:col-6">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="correo"
+                        class="w-full"
+                        id="email"
+                        autocomplete="email"
+                        type="text"
+                        pInputText
+                    />
+                    <label for="email">Correo Electronico</label>
+                </span>
+            </div>
+            <div class="col-12 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="celular"
+                        class="w-full"
+                        id="cell"
+                        type="text"
+                        pInputText
+                    />
+                    <label for="cell">Celular</label>
+                </span>
+            </div>
+            <div class="col-12 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="codigoAcademico"
+                        class="w-full"
+                        id="codacad"
+                        type="text"
+                        pInputText
+                    />
+                    <label for="codacad">Código Academico</label>
+                </span>
+            </div>
+            <div class="col-12 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <p-dropdown
+                        formControlName="tipoDocumento"
+                        inputId="tipoid"
+                        [autoDisplayFirst]="false"
+                        [options]="tiposIdentificacion"
+                        [style]="{ width: '100%' }"
+                    ></p-dropdown>
+                    <label for="tipoid">Tipo Identificación</label>
+                </span>
+            </div>
+            <div class="col-12 lg:col-3">
+                <span class="p-float-label mt-3">
+                    <input
+                        formControlName="numeroDocumento"
+                        class="w-full"
+                        id="numid"
+                        type="text"
+                        pInputText
+                    />
+                    <label for="numid">Número de Identificación</label>
+                </span>
+            </div>
+        </div>
+    </form>
+</p-fieldset>

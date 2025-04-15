@@ -1,0 +1,59 @@
+<br />
+<!-- Reingresos -->
+<div class="col-4 text-right font-medium">
+    <p><b>Reingresos</b></p>
+</div>
+<div class="field grid">
+    <div class="col-4 text-right font-medium align-self-center">
+        <label></label>
+    </div>
+    <div class="col-7">
+            <!-- Tabla Reingresos-->
+            <p-table
+                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+                [breakpoint]="'800px'"
+                [value]="[]"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col">Fecha de reingreso</th>
+                        <th scope="col">No. resolución</th>
+                        <th scope="col">Semestre financiero</th>
+                        <th scope="col">Semestre académico</th>
+                        <th scope="col">Documento</th>
+                        <th scope="col" class="text-center">Opciones</th>
+                    </tr>
+                </ng-template>
+                <!-- Contenido  -->
+                <ng-template pTemplate="body" let-reingreso>
+                    <tr>
+                        <td>{{ reingreso.fecha | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ reingreso.resolucion }}</td>
+                        <td>{{ reingreso.semestreFinanciero }}</td>
+                        <td>{{ reingreso.semestreAcademico }}</td>
+                        <td>{{ reingreso.linkDocumento }}</td>
+                        <td class="text-center"></td>
+                    </tr>
+                </ng-template>
+                <!-- Agregar nuevo registro -->
+                <ng-template pTemplate="summary">
+                    <div class="flex align-items-center justify-content-end">
+                        <button
+                            pButton
+                            pTooltip="Agregar reingreso"
+                            icon="pi pi-plus"
+                            class="p-button"
+                            styleClass="p-button-sm"
+                            (click)="showModalReingreso()"
+                        ></button>
+                    </div>
+                </ng-template>
+                <!-- Mensaje sin registros -->
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                        <td [attr.colspan]="6">No se encontraron registros</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+    </div>
+</div>

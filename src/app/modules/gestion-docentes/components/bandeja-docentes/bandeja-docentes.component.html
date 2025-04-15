@@ -1,0 +1,105 @@
+<p-panel>
+    <p-header>
+        <b>GESTIÓN DE DOCENTES</b>
+    </p-header>
+    <!-- Encabezado -->
+    <div class="grid">
+        <!-- Busqueda -->
+        <div class="col-5">
+            <div class="flex align-items-end h-full">
+                <span class="p-input-icon-left w-full">
+                    <i class="pi pi-search"></i>
+                    <input
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        placeholder="Buscar docente"
+                        (input)="tableDocentes.filterGlobal($event.target.value, 'contains')"
+                    />
+                </span>
+            </div>
+        </div>
+        <div class="col-1"></div>
+        <!-- Carga Docentes -->
+        <div class="col-6">
+            <div class="w-full text-right">
+                <button
+                    pButton
+                    icon="pi pi-plus"
+                    label="Agregar docente"
+                    (click)="onRegistrarDocente()"
+                ></button>
+            </div>
+            <p-fieldset legend="Cargar docentes">
+                <app-cargar-docentes (onCargaExitosa)="onCargaExitosa()"></app-cargar-docentes>
+            </p-fieldset>
+        </div>
+    </div>
+    <br />
+    <!-- Tabla Docentes -->
+    <p-table
+        #tableDocentes
+        [value]="docentes"
+        [paginator]="true"
+        [loading]="loading"
+        [rows]="5"
+        breakpoint="768px"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [globalFilterFields]="['persona.identificacion','persona.nombre', 'persona.apellido', 'persona.correoElectronico']"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="{first} - {last} de {totalRecords}"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col">Indetificación</th>
+                <th scope="col">Nombres</th>
+                <th scope="col">Apellidos</th>
+                <th scope="col">Correo electronico</th>
+                <th scope="col" class="text-center w-2">Opciones</th>
+            </tr>
+        </ng-template>
+        <!-- Contenido  -->
+        <ng-template pTemplate="body" let-docente>
+            <tr>
+                <td>{{ docente.persona.identificacion }}</td>
+                <td>{{ docente.persona.nombre }}</td>
+                <td>{{ docente.persona.apellido }}</td>
+                <td>{{ docente.persona.correoElectronico }}</td>
+                <td class="text-center">
+                    <button
+                        *ngIf="false"
+                        pButton
+                        type="button"
+                        icon="pi pi-search"
+                        class="p-button-rounded p-button-text"
+                    ></button>
+                    <button
+                        pButton
+                        pTooltip="Editar"
+                        type="button"
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-text p-button-warning"
+                        (click)="onEditar(docente.id)"
+                    ></button>
+                    <button
+                        pButton
+                        pTooltip="Eliminar"
+                        type="button"
+                        icon="pi pi-trash"
+                        class="p-button-rounded p-button-text p-button-danger"
+                        (click)="onDelete($event, docente.id)"
+                    ></button>
+                    <p-confirmPopup></p-confirmPopup>
+                </td>
+            </tr>
+        </ng-template>
+        <!-- Mensaje sin registros -->
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td [attr.colspan]="6">
+                    No se encontraron registros
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

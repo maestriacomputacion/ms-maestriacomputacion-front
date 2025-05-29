@@ -153,6 +153,18 @@ export class AppTopBarComponent implements OnInit {
 
                 return false;
             }
+            if (item.label === 'MATRICULAS') {
+                if (user?.role.includes('ROLE_COORDINADOR')) {
+                    // Solo mostrar "Evaluación Docente" si es coordinador
+                    item.items = item.items?.filter(
+                        (subItem) => subItem.label === 'Evaluación Docente'
+                    ) || [];
+                } else {
+                    // Si no es coordinador, eliminar la propiedad items para que no muestre el icono de submenú
+                    delete item.items;
+                }
+                return true;
+            }
             return true;
         });
     }

@@ -1,3 +1,164 @@
-<p>
-  gestion-periodo-academico works!
-</p>
+<p-panel>
+    <p-header>
+        <b>GESTIÓN DE PERIODOS ACADÉMICOS</b>
+    </p-header>
+    <!-- Encabezado -->
+    <div class="grid mb-3">
+        <!-- Busqueda -->
+        <div class="col-6">
+            <div class="flex align-items-end h-full">
+                <span class="p-input-icon-left w-full">
+                    <i class="pi pi-search"></i>
+                    <input
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        placeholder="Buscar periodo"
+                        (input)="
+                            tablePeriodos.filterGlobal(
+                                $event.target.value,
+                                'contains'
+                            )
+                        "
+                    />
+                </span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="w-full text-right">
+                <button
+                    pButton
+                    icon="pi pi-plus"
+                    label="Agregar periodo"
+                    class="mb-2"
+                    (click)="onAgregarPeriodo()"
+                ></button>
+            </div>
+        </div>
+    </div>
+    <!-- Tabla Periodos -->
+    <p-table
+        #tablePeriodos
+        [value]="periodos"
+        [paginator]="true"
+        [rows]="5"
+        [globalFilterFields]="['id', 'fechaInicio', 'fechaFin', 'descripcion']"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="{first} - {last} de {totalRecords}"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Fecha Inicio</th>
+                <th scope="col">Fecha Fin</th>
+                <th scope="col">Descripción</th>
+                <th scope="col" class="text-center w-2">Opciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-periodo>
+            <tr>
+                <td>{{ periodo.id }}</td>
+                <td>{{ periodo.fechaInicio }}</td>
+                <td>{{ periodo.fechaFin }}</td>
+                <td>{{ periodo.descripcion }}</td>
+                <td class="text-center">
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-text p-button-warning mr-2"
+                        (click)="onEditarPeriodo(periodo.id)"
+                    ></button>
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-trash"
+                        class="p-button-rounded p-button-text p-button-danger"
+                        (click)="onEliminarPeriodo($event, periodo.id)"
+                    ></button>
+                    <p-confirmPopup></p-confirmPopup>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td [attr.colspan]="5">No se encontraron registros</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Modal para agregar periodo académico -->
+    <p-dialog
+        [(visible)]="displayModal"
+        [modal]="true"
+        [closable]="false"
+        [style]="{ width: '400px' }"
+    >
+        <ng-template pTemplate="header">
+            <span class="text-xl font-bold">
+                {{
+                    editMode ? "Editar periodo académico" : "Periodo académico"
+                }}
+            </span>
+        </ng-template>
+        <form [formGroup]="form" (ngSubmit)="registrarPeriodo()">
+            <div class="field mb-3 flex align-items-center gap-2">
+                <label for="fechaInicio" class="text-nowrap w-6rem"
+                    >Fecha Inicio:</label
+                >
+                <p-calendar
+                    id="fechaInicio"
+                    formControlName="fechaInicio"
+                    [showIcon]="true"
+                    appendTo="body"
+                    dateFormat="yy-mm-dd"
+                    class="flex-1"
+                ></p-calendar>
+            </div>
+            <div class="field mb-3 flex align-items-center gap-2">
+                <label for="fechaFin" class="text-nowrap w-6rem"
+                    >Fecha Fin:</label
+                >
+                <p-calendar
+                    id="fechaFin"
+                    formControlName="fechaFin"
+                    [showIcon]="true"
+                    appendTo="body"
+                    dateFormat="yy-mm-dd"
+                    class="flex-1"
+                ></p-calendar>
+            </div>
+            <div class="field mb-3">
+                <label for="descripcion">Descripción</label>
+                <textarea
+                    id="descripcion"
+                    pInputTextarea
+                    formControlName="descripcion"
+                    rows="4"
+                    class="w-full"
+                ></textarea>
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <button
+                    pButton
+                    type="submit"
+                    [label]="
+                        editMode ? 'Actualizar periodo' : 'Registrar periodo'
+                    "
+                    class="p-button-primary"
+                    [disabled]="!form.valid || !fechasValidas"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    label="Cancelar"
+                    class="p-button-secondary p-button-outlined"
+                    (click)="cancelarModal()"
+                ></button>
+            </div>
+        </form>
+    </p-dialog>
+
+    <p-toast></p-toast>
+</p-panel>

@@ -145,6 +145,13 @@ import { HomeComponent } from './core/components/home/home.component';
                                     './modules/gestion-evaluacion-docentes/gestion-matricula-evaluacion/gestion-evaluacion.module'
                                 ).then((m) => m.GestionEvaluacionModule),
                         },
+                        {
+                            path: 'gestion-matricula-academica',
+                            loadChildren: () =>
+                                import(
+                                    './modules/gestion-matricula-academica/gestion-matricula-academica.module'
+                                ).then((m) => m.GestionMatriculaAcademicaModule),
+                        }
                     ],
                 },
 

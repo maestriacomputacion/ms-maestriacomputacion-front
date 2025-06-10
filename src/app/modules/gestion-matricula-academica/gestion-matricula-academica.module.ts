@@ -4,9 +4,10 @@ import { GestionPeriodoAcademicoComponent } from './components/gestion-periodo-a
 import { GestionMatriculaAcademicaRoutingModule } from './gestion-matricula-academica-routing.module';
 import { PrimenNgModule } from '../primen-ng/primen-ng.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { GestionCursoComponent } from './components/gestion-curso/gestion-curso.component';
 
 @NgModule({
-    declarations: [GestionPeriodoAcademicoComponent],
+    declarations: [GestionPeriodoAcademicoComponent,GestionCursoComponent],
     imports: [
         CommonModule,
         GestionMatriculaAcademicaRoutingModule,

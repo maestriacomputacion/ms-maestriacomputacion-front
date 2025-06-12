@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    Validators,
+    AbstractControl,
+    ValidatorFn,
+} from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiResponse } from '../../models/api-response.model';
 import {
-  PeriodoAcademico,
-  PeriodoAcademicoService,
+    PeriodoAcademico,
+    PeriodoAcademicoService,
 } from '../../services/periodo-academico.service';
 
 @Component({
@@ -18,6 +24,10 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
     editMode = false;
     editPeriodoId: string | null = null;
     form: FormGroup;
+    periodoTagOptions = [
+        { label: '1', value: 1 },
+        { label: '2', value: 2 },
+    ];
 
     constructor(
         private readonly periodoService: PeriodoAcademicoService,
@@ -25,11 +35,16 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         private readonly confirmationService: ConfirmationService,
         private readonly messageService: MessageService
     ) {
-        this.form = this.fb.group({
-            fechaInicio: [null, Validators.required],
-            fechaFin: [null, Validators.required],
-            descripcion: [''],
-        });
+        this.form = this.fb.group(
+            {
+                fechaInicio: [null, Validators.required],
+                fechaFin: [null, Validators.required],
+                fechaFinMatricula: [null, Validators.required],
+                periodoTag: [null, Validators.required],
+                descripcion: [''],
+            },
+            { validators: this.fechaFinMatriculaEntreFechasValidator() }
+        );
     }
 
     ngOnInit() {
@@ -50,6 +65,34 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
             });
     }
 
+    fechaFinMatriculaEntreFechasValidator(): ValidatorFn {
+        return (group: AbstractControl) => {
+            const inicio = group.get('fechaInicio')?.value;
+            const fin = group.get('fechaFin')?.value;
+            const finMatricula = group.get('fechaFinMatricula')?.value;
+            if (inicio && fin && finMatricula) {
+                const inicioDate = new Date(inicio);
+                const finDate = new Date(fin);
+                const finMatriculaDate = new Date(finMatricula);
+                if (
+                    finMatriculaDate < inicioDate ||
+                    finMatriculaDate > finDate
+                ) {
+                    return { fechaFinMatriculaFueraRango: true };
+                }
+            }
+            return null;
+        };
+    }
+
+    get fechaFinMatriculaInvalida() {
+        return (
+            this.form.hasError('fechaFinMatriculaFueraRango') &&
+            (this.form.get('fechaFinMatricula')?.dirty ||
+                this.form.get('fechaFinMatricula')?.touched)
+        );
+    }
+
     onAgregarPeriodo() {
         this.form.reset();
         this.editMode = false;
@@ -63,6 +106,8 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         this.form.patchValue({
             fechaInicio: periodo.fechaInicio,
             fechaFin: periodo.fechaFin,
+            fechaFinMatricula: periodo.fechaFinMatricula,
+            periodoTag: periodo.periodoTag,
             descripcion: periodo.descripcion,
         });
         this.editMode = true;
@@ -85,11 +130,17 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         const value = this.form.value;
         const fechaInicio = this.formatDateToString(value.fechaInicio);
         const fechaFin = this.formatDateToString(value.fechaFin);
+        const fechaFinMatricula = this.formatDateToString(
+            value.fechaFinMatricula
+        );
+        const periodoTag = value.periodoTag;
         if (this.editMode && this.editPeriodoId) {
             this.actualizarPeriodo(
                 this.editPeriodoId,
                 fechaInicio,
                 fechaFin,
+                fechaFinMatricula,
+                periodoTag,
                 value.descripcion
             );
             this.messageService.add({
@@ -98,7 +149,13 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                 detail: 'El periodo académico fue actualizado correctamente.',
             });
         } else {
-            this.agregarPeriodo(fechaInicio, fechaFin, value.descripcion);
+            this.agregarPeriodo(
+                fechaInicio,
+                fechaFin,
+                fechaFinMatricula,
+                periodoTag,
+                value.descripcion
+            );
             this.messageService.add({
                 severity: 'success',
                 summary: 'Periodo registrado',
@@ -108,12 +165,20 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         this.displayModal = false;
     }
 
-    agregarPeriodo(fechaInicio: string, fechaFin: string, descripcion: string) {
+    agregarPeriodo(
+        fechaInicio: string,
+        fechaFin: string,
+        fechaFinMatricula: string,
+        periodoTag: number,
+        descripcion: string
+    ) {
         const nuevoId = this.generarIdPeriodo(fechaInicio, fechaFin);
         this.periodos.push({
             id: nuevoId,
             fechaInicio,
             fechaFin,
+            fechaFinMatricula,
+            periodoTag,
             descripcion,
         });
     }
@@ -122,6 +187,8 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         id: string,
         fechaInicio: string,
         fechaFin: string,
+        fechaFinMatricula: string,
+        periodoTag: number,
         descripcion: string
     ) {
         const idx = this.periodos.findIndex((p) => p.id === id);
@@ -130,6 +197,8 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                 ...this.periodos[idx],
                 fechaInicio,
                 fechaFin,
+                fechaFinMatricula,
+                periodoTag,
                 descripcion,
             };
         }

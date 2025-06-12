@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { GestionPeriodoAcademicoComponent } from './components/gestion-periodo-academico/gestion-periodo-academico.component';
 import { GestionCursoComponent } from './components/gestion-curso/gestion-curso.component';
 import { GenerarCursosOfertadosComponent } from './components/generar-cursos-ofertados/generar-cursos-ofertados.component';
+import { RegistrarCursoComponent } from './components/registrar-curso/registrar-curso.component';
 
 const routes: Routes = [{
     path:'',
@@ -19,6 +20,10 @@ const routes: Routes = [{
         {
             path: 'generar-cursos-ofertados',
             component: GenerarCursosOfertadosComponent
+        },
+        {
+            path: 'registrar-curso',
+            component: RegistrarCursoComponent
         }
     ]
 }];

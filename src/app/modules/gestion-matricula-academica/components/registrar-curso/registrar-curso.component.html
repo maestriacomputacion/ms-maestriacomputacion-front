@@ -1,0 +1,135 @@
+<p-panel>
+  <p-header>
+    <b>REGISTRAR CURSO</b>
+  </p-header>
+
+  <!-- Sección Grupo -->
+  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
+    <label for="grupo" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
+    <input id="grupo" type="text" pInputText [(ngModel)]="grupo" class="flex-1" />
+  </div>
+
+  <!-- Sección Periodo -->
+  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
+    <label for="periodoNumero" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Periodo</label>
+    <input id="periodoNumero" type="number" min="1" max="2" pInputText class="w-5rem" [(ngModel)]="periodoNumero" />
+    <p-dropdown id="periodoAnio" [options]="anios" [(ngModel)]="periodoAnio" placeholder="Año"
+      style="min-width: 6rem"></p-dropdown>
+  </div>
+
+  <!-- Sección Horario -->
+  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
+    <label for="horario" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Horario</label>
+    <input id="horario" type="text" pInputText [(ngModel)]="horario" class="flex-1" />
+  </div>
+
+  <!-- Sección Salón -->
+  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
+    <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
+    <input id="salon" type="text" pInputText [(ngModel)]="salon" class="flex-1" />
+  </div>
+
+  <div class="p-fluid p-formgrid p-grid mt-5">
+    <div class="p-field p-col-12">
+      <label for="asignaturaAsociada" class="font-medium mb-2"><b>Asignatura Asociada: *</b></label>
+      <div style="margin-left: 13.5rem">
+        <!-- Ajusta este valor según el largo del label -->
+        <div class="flex align-items-center mt-2 justify-content-between" style="gap: 1rem">
+          <div class="p-card p-component flex-grow-1 flex-basis-0 min-w-0">
+            <div class="p-card-body p-p-0">
+              <div class="p-card-content p-p-3">
+                <div class="flex flex-row p-mb-2">
+                  <div class="font-bold mr-2">Código</div>
+                  <div class="flex-grow-1">
+                    {{ asignatura?.codigo }}
+                  </div>
+                </div>
+                <div class="flex flex-row">
+                  <div class="font-bold mr-2">Nombre</div>
+                  <div class="flex-grow-1">
+                    {{ asignatura?.nombre }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button pButton label="Seleccionar" class="w-auto p-button-sm"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-fluid p-formgrid p-grid mt-5">
+    <div class="p-field p-col-12">
+      <label for="buscarDocente"><b>Docentes que dictan el curso: *</b></label>
+      <div style="margin-left: 16.5rem">
+        <!-- Ajusta este valor según el largo del label -->
+        <div class="p-input-icon-left w-20rem mb-3">
+          <i class="pi pi-search"></i>
+          <input id="buscarDocente" pInputText type="text" class="w-full" placeholder="Buscar Docente" />
+        </div>
+        <p-pickList [source]="sourceDocentes" [target]="targetDocentes" sourceHeader="Docentes Disponibles"
+          targetHeader="Docentes Seleccionados" [responsive]="true" [dragdrop]="true" [breakpoint]="'1400px'"
+          [sourceStyle]="{ height: '22rem' }" [targetStyle]="{ height: '22rem' }" [showSourceControls]="false"
+          [showTargetControls]="false">
+          <ng-template let-docente pTemplate="item">
+            <div>{{ docente.nombre }} | {{ docente.codigo }}</div>
+          </ng-template>
+        </p-pickList>
+        <div class="flex justify-content-center mt-3">
+          <button pButton label="Registrar Material" class="p-button-primary w-auto p-button-sm"
+            style="min-width: unset; width: auto"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-fluid p-formgrid p-grid mt-5">
+    <div class="p-field p-col-12">
+      <p-table [value]="materialesApoyo" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 25, 50, 100]" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th scope="col">No</th>
+            <th scope="col">Nombre del apoyo</th>
+            <th scope="col">Acción</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-material let-rowIndex="rowIndex">
+          <tr>
+            <td>{{ rowIndex + 1 }}</td>
+            <td>{{ material.nombre }}</td>
+            <td class="text-center">
+              <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info mr-2"
+                title="Ver"></button>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning mr-2"
+                title="Editar"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
+                title="Eliminar"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="3">
+              No se encontraron materiales de apoyo
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <div class="p-fluid p-formgrid p-grid mt-5">
+    <div class="p-field p-col-12">
+      <label for="observacion"><b>Observación: </b></label>
+      <textarea id="observacion" rows="5" pInputTextarea autoResize="autoResize" [(ngModel)]="observacion"></textarea>
+    </div>
+  </div>
+
+  <div class="flex justify-content-end mt-4">
+    <button pButton label="Registrar Curso" class="p-button-primary mr-2"></button>
+    <button pButton label="Cancelar" class="p-button-secondary"></button>
+  </div>
+</p-panel>

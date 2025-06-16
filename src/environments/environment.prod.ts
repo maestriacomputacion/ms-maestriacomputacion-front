@@ -41,3 +41,8 @@ export const gestion_docentes_estudiantes = {
     production: true,
     api_url: 'https://apptest.unicauca.edu.co:4414/api/',
 };
+
+export const gestion_periodos_academicos = {
+    production: true,
+    api_url: 'https://sxc6582p-8081.use.devtunnels.ms/api/',
+};

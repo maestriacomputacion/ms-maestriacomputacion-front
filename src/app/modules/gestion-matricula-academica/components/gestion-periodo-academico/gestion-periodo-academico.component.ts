@@ -9,9 +9,9 @@ import {
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiResponse } from '../../models/api-response.model';
 import {
-    PeriodoAcademico,
     PeriodoAcademicoService,
 } from '../../services/periodo-academico.service';
+import { PeriodoAcademico } from '../../models/periodo-academico.model';
 
 @Component({
     selector: 'app-gestion-periodo-academico',
@@ -24,9 +24,14 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
     editMode = false;
     editPeriodoId: string | null = null;
     form: FormGroup;
-    periodoTagOptions = [
+    tagPeriodoOptions = [
         { label: '1', value: 1 },
         { label: '2', value: 2 },
+    ];
+    estadoOptions = [
+        { label: 'ACTIVO', value: 'ACTIVO' },
+        { label: 'INACTIVO', value: 'INACTIVO' },
+        { label: 'FINALIZADO', value: 'FINALIZADO' },
     ];
 
     constructor(
@@ -40,8 +45,9 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                 fechaInicio: [null, Validators.required],
                 fechaFin: [null, Validators.required],
                 fechaFinMatricula: [null, Validators.required],
-                periodoTag: [null, Validators.required],
+                tagPeriodo: [null, Validators.required],
                 descripcion: [''],
+                estado: [null],
             },
             { validators: this.fechaFinMatriculaEntreFechasValidator() }
         );
@@ -107,8 +113,9 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
             fechaInicio: periodo.fechaInicio,
             fechaFin: periodo.fechaFin,
             fechaFinMatricula: periodo.fechaFinMatricula,
-            periodoTag: periodo.periodoTag,
+            tagPeriodo: periodo.tagPeriodo,
             descripcion: periodo.descripcion,
+            estado: periodo.estado,
         });
         this.editMode = true;
         this.editPeriodoId = id;
@@ -133,43 +140,109 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         const fechaFinMatricula = this.formatDateToString(
             value.fechaFinMatricula
         );
-        const periodoTag = value.periodoTag;
+        const tagPeriodo = value.tagPeriodo;
+        const estado = value.estado;
         if (this.editMode && this.editPeriodoId) {
-            this.actualizarPeriodo(
-                this.editPeriodoId,
-                fechaInicio,
-                fechaFin,
-                fechaFinMatricula,
-                periodoTag,
-                value.descripcion
-            );
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Periodo actualizado',
-                detail: 'El periodo académico fue actualizado correctamente.',
-            });
+            this.periodoService
+                .actualizarPeriodo(this.editPeriodoId, {
+                    fechaInicio,
+                    fechaFin,
+                    fechaFinMatricula,
+                    tagPeriodo,
+                    descripcion: value.descripcion,
+                    estado,
+                })
+                .subscribe({
+                    next: (resp) => {
+                        this.messageService.add({
+                            severity:
+                                resp.typeResponse === 'SUCCESS'
+                                    ? 'success'
+                                    : 'error',
+                            summary:
+                                resp.typeResponse === 'SUCCESS'
+                                    ? 'Éxito'
+                                    : 'Error',
+                            detail: resp.message,
+                        });
+                        if (resp.typeResponse === 'SUCCESS') {
+                            this.periodoService
+                                .getPeriodos()
+                                .subscribe(
+                                    (resp: ApiResponse<PeriodoAcademico[]>) => {
+                                        if (resp.typeResponse === 'SUCCESS') {
+                                            this.periodos = resp.data;
+                                        }
+                                    }
+                                );
+                            this.displayModal = false;
+                        }
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail:
+                                err?.error?.message ??
+                                'No se pudo actualizar el periodo académico.',
+                        });
+                    },
+                });
         } else {
-            this.agregarPeriodo(
-                fechaInicio,
-                fechaFin,
-                fechaFinMatricula,
-                periodoTag,
-                value.descripcion
-            );
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Periodo registrado',
-                detail: 'El periodo académico fue registrado correctamente.',
-            });
+            // Usar el servicio para crear el periodo en el backend
+            this.periodoService
+                .crearPeriodo({
+                    fechaInicio,
+                    fechaFin,
+                    fechaFinMatricula,
+                    tagPeriodo,
+                    descripcion: value.descripcion,
+                    estado,
+                })
+                .subscribe({
+                    next: (resp) => {
+                        this.messageService.add({
+                            severity:
+                                resp.typeResponse === 'SUCCESS'
+                                    ? 'success'
+                                    : 'error',
+                            summary:
+                                resp.typeResponse === 'SUCCESS'
+                                    ? 'Éxito'
+                                    : 'Error',
+                            detail: resp.message,
+                        });
+                        if (resp.typeResponse === 'SUCCESS') {
+                            this.periodoService
+                                .getPeriodos()
+                                .subscribe(
+                                    (resp: ApiResponse<PeriodoAcademico[]>) => {
+                                        if (resp.typeResponse === 'SUCCESS') {
+                                            this.periodos = resp.data;
+                                        }
+                                    }
+                                );
+                            this.displayModal = false;
+                        }
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail:
+                                err?.error?.message ??
+                                'No se pudo registrar el periodo académico.',
+                        });
+                    },
+                });
         }
-        this.displayModal = false;
     }
 
     agregarPeriodo(
         fechaInicio: string,
         fechaFin: string,
         fechaFinMatricula: string,
-        periodoTag: number,
+        tagPeriodo: number,
         descripcion: string
     ) {
         const nuevoId = this.generarIdPeriodo(fechaInicio, fechaFin);
@@ -178,7 +251,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
             fechaInicio,
             fechaFin,
             fechaFinMatricula,
-            periodoTag,
+            tagPeriodo,
             descripcion,
         });
     }
@@ -188,7 +261,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         fechaInicio: string,
         fechaFin: string,
         fechaFinMatricula: string,
-        periodoTag: number,
+        tagPeriodo: number,
         descripcion: string
     ) {
         const idx = this.periodos.findIndex((p) => p.id === id);
@@ -198,7 +271,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                 fechaInicio,
                 fechaFin,
                 fechaFinMatricula,
-                periodoTag,
+                tagPeriodo,
                 descripcion,
             };
         }
@@ -231,11 +304,40 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
             acceptLabel: 'Sí',
             rejectLabel: 'No',
             accept: () => {
-                this.periodos = this.periodos.filter((p) => p.id !== id);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Periodo eliminado',
-                    detail: 'El periodo académico fue eliminado correctamente.',
+                this.periodoService.eliminarPeriodo(id).subscribe({
+                    next: (resp) => {
+                        this.messageService.add({
+                            severity:
+                                resp.typeResponse === 'SUCCESS'
+                                    ? 'success'
+                                    : 'error',
+                            summary:
+                                resp.typeResponse === 'SUCCESS'
+                                    ? 'Éxito'
+                                    : 'Error',
+                            detail: resp.message,
+                        });
+                        if (resp.typeResponse === 'SUCCESS') {
+                            this.periodoService
+                                .getPeriodos()
+                                .subscribe(
+                                    (resp: ApiResponse<PeriodoAcademico[]>) => {
+                                        if (resp.typeResponse === 'SUCCESS') {
+                                            this.periodos = resp.data;
+                                        }
+                                    }
+                                );
+                        }
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail:
+                                err?.error?.message ??
+                                'No se pudo eliminar el periodo académico.',
+                        });
+                    },
                 });
             },
         });

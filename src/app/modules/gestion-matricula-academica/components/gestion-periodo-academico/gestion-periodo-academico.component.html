@@ -26,7 +26,7 @@
         </div>
     </div>
     <!-- Tabla Periodos -->
-    <p-table #tablePeriodos [value]="periodos" [paginator]="true" [rows]="5"
+    <p-table #tablePeriodos [value]="periodos" [paginator]="true" [rows]="7"
         [globalFilterFields]="['id', 'fechaInicio', 'fechaFin', 'descripcion']" [showCurrentPageReport]="true"
         currentPageReportTemplate="{first} - {last} de {totalRecords}"
         styleClass="p-datatable-gridlines p-datatable-striped">
@@ -38,6 +38,7 @@
                 <th scope="col">Fecha fin matrícula</th>
                 <th scope="col">Periodo</th>
                 <th scope="col">Descripción</th>
+                <th scope="col">Estado</th>
                 <th scope="col" class="text-center w-2">Opciones</th>
             </tr>
         </ng-template>
@@ -47,8 +48,9 @@
                 <td>{{ periodo.fechaInicio }}</td>
                 <td>{{ periodo.fechaFin }}</td>
                 <td>{{ periodo.fechaFinMatricula }}</td>
-                <td>{{ periodo.periodoTag }}</td>
+                <td>{{ periodo.tagPeriodo }}</td>
                 <td>{{ periodo.descripcion }}</td>
+                <td>{{ periodo.estado }}</td>
                 <td class="text-center">
                     <button pButton pRipple icon="pi pi-pencil"
                         class="p-button-rounded p-button-text p-button-warning mr-2"
@@ -61,7 +63,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage" let-columns>
             <tr>
-                <td [attr.colspan]="5">No se encontraron registros</td>
+                <td [attr.colspan]="7">No se encontraron registros</td>
             </tr>
         </ng-template>
     </p-table>
@@ -103,9 +105,15 @@
             </div>
             <div class="field mb-3 flex align-items-center gap-2">
                 <label for="periodoTag" class="text-nowrap w-6rem label-required">Periodo:</label>
-                <p-dropdown id="periodoTag" formControlName="periodoTag" [options]="periodoTagOptions"
+                <p-dropdown id="tagPeriodo" formControlName="tagPeriodo" [options]="tagPeriodoOptions"
                     optionLabel="label" optionValue="value" placeholder="Seleccione" class="flex-1"
-                    [ngClass]="{'ng-invalid ng-dirty': form.get('periodoTag').invalid && form.get('periodoTag').touched}"></p-dropdown>
+                    [ngClass]="{'ng-invalid ng-dirty': form.get('tagPeriodo').invalid && form.get('tagPeriodo').touched}"></p-dropdown>
+            </div>
+            <div *ngIf="editMode" class="field mb-3 flex align-items-center gap-2">
+                <label for="estado" class="text-nowrap w-6rem label-required">Estado:</label>
+                <p-dropdown id="estado" formControlName="estado" [options]="estadoOptions" optionLabel="label"
+                    optionValue="value" placeholder="Seleccione" class="flex-1"
+                    [ngClass]="{'ng-invalid ng-dirty': form.get('estado').invalid && form.get('estado').touched}"></p-dropdown>
             </div>
             <div class="field mb-3">
                 <label for="descripcion">Descripción: </label>

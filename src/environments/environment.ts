@@ -55,6 +55,11 @@ export const evaluacion_docente = {
     production: false,
     api_url: 'http://localhost:8086/api/',
 };
+
+export const gestion_periodos_academicos = {
+    production: false,
+    api_url: 'https://sxc6582p-8081.use.devtunnels.ms/api/',
+};
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

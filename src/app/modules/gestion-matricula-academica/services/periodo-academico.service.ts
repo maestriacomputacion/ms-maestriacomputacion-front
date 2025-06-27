@@ -72,4 +72,18 @@ export class PeriodoAcademicoService {
     eliminarPeriodo(id: string): Observable<ApiResponse<any>> {
         return this.http.delete<ApiResponse<any>>(backendPeriodoAcademico(id));
     }
+
+    validarFechasPeriodo(
+        fechaInicio: string,
+        fechaFin: string
+    ): Observable<ApiResponse<boolean>> {
+        const params = {
+            fechaInicio,
+            fechaFin,
+        };
+        return this.http.get<ApiResponse<boolean>>(
+            backendPeriodoAcademico('validar-fechas'),
+            { params }
+        );
+    }
 }

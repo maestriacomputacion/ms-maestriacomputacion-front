@@ -8,9 +8,7 @@ import {
 } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiResponse } from '../../models/api-response.model';
-import {
-    PeriodoAcademicoService,
-} from '../../services/periodo-academico.service';
+import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
 
 @Component({
@@ -23,6 +21,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
     displayModal = false;
     editMode = false;
     editPeriodoId: string | null = null;
+    fechasValidasBackend = true; // Para controlar si las fechas son válidas según el backend
     form: FormGroup;
     tagPeriodoOptions = [
         { label: '1', value: 1 },
@@ -51,6 +50,15 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
             },
             { validators: this.fechaFinMatriculaEntreFechasValidator() }
         );
+
+        // Suscribirse a cambios en fechaInicio y fechaFin para validar
+        this.form.get('fechaInicio')?.valueChanges.subscribe(() => {
+            this.validarFechasConBackend();
+        });
+
+        this.form.get('fechaFin')?.valueChanges.subscribe(() => {
+            this.validarFechasConBackend();
+        });
     }
 
     ngOnInit() {
@@ -99,10 +107,47 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         );
     }
 
+    validarFechasConBackend() {
+        const fechaInicio = this.form.get('fechaInicio')?.value;
+        const fechaFin = this.form.get('fechaFin')?.value;
+
+        if (fechaInicio && fechaFin) {
+            const fechaInicioStr = this.formatDateToString(fechaInicio);
+            const fechaFinStr = this.formatDateToString(fechaFin);
+
+            this.periodoService
+                .validarFechasPeriodo(fechaInicioStr, fechaFinStr)
+                .subscribe({
+                    next: (resp) => {
+                        if (resp.typeResponse === 'SUCCESS') {
+                            this.fechasValidasBackend = resp.data;
+                            if (!resp.data) {
+                                // Si la validación es false, mostrar el mensaje de error
+                                this.messageService.add({
+                                    severity: 'warn',
+                                    summary: 'Validación de fechas',
+                                    detail: resp.message,
+                                });
+                            }
+                        } else {
+                            this.fechasValidasBackend = false;
+                        }
+                    },
+                    error: (err) => {
+                        console.error('Error al validar fechas:', err);
+                        this.fechasValidasBackend = false;
+                    },
+                });
+        } else {
+            this.fechasValidasBackend = true; // Si no hay fechas, no hay error de validación backend
+        }
+    }
+
     onAgregarPeriodo() {
         this.form.reset();
         this.editMode = false;
         this.editPeriodoId = null;
+        this.fechasValidasBackend = true; // Resetear validación del backend
         this.displayModal = true;
     }
 
@@ -119,6 +164,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         });
         this.editMode = true;
         this.editPeriodoId = id;
+        this.fechasValidasBackend = true; // Resetear validación del backend para edición
         this.displayModal = true;
     }
 
@@ -351,6 +397,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
             this.form.get('fechaFin')?.value
         );
         if (!fechaInicio || !fechaFin) return false;
-        return fechaInicio < fechaFin;
+        // Validar tanto la lógica local como la validación del backend
+        return fechaInicio < fechaFin && this.fechasValidasBackend;
     }
 }

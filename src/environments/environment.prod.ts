@@ -42,7 +42,7 @@ export const gestion_docentes_estudiantes = {
     api_url: 'https://apptest.unicauca.edu.co:4414/api/',
 };
 
-export const gestion_periodos_academicos = {
+export const matricula_academica = {
     production: true,
-    api_url: 'https://sxc6582p-8081.use.devtunnels.ms/api/',
+    api_url: 'http://localhost:8087/api/',
 };

@@ -56,9 +56,9 @@ export const evaluacion_docente = {
     api_url: 'http://localhost:8086/api/',
 };
 
-export const gestion_periodos_academicos = {
+export const matricula_academica = {
     production: false,
-    api_url: 'https://sxc6582p-8081.use.devtunnels.ms/api/',
+    api_url: 'http://localhost:8087/api/',
 };
 /*
  * For easier debugging in development mode, you can import the following file

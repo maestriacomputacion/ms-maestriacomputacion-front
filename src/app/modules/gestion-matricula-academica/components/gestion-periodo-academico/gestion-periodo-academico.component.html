@@ -91,9 +91,9 @@
                     [ngClass]="{'ng-invalid ng-dirty': form.get('fechaFin').invalid && form.get('fechaFin').touched}"></p-calendar>
             </div>
             <div class="field mb-3 flex align-items-center gap-2">
-                <label for="fechaFinMatricula" class="text-nowrap w-6rem label-required">
-                    Fecha fin matrícula:
-                    <span class="pi pi-info-circle text-primary" pTooltip="Fecha de finalización de la matrícula"
+                <label for="fechaFinMatricula" class="text-nowrap w-6rem flex align-items-center">
+                    <span class="label-required">Fecha fin matrícula:</span>
+                    <span class="pi pi-info-circle text-primary ml-1" pTooltip="Fecha de finalización de la matrícula"
                         tooltipPosition="top" style="cursor: pointer;"></span>
                 </label>
                 <p-calendar id="fechaFinMatricula" formControlName="fechaFinMatricula" [showIcon]="true" appendTo="body"

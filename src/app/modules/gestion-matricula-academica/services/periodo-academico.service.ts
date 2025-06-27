@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
-import { gestion_periodos_academicos } from 'src/environments/environment';
+import { matricula_academica } from 'src/environments/environment';
 import { PeriodoAcademico } from '../models/periodo-academico.model';
 
 const backendPeriodoAcademico = (path: string = '') =>
-    `${gestion_periodos_academicos.api_url}periodos${path ? '/' + path : ''}`;
+    `${matricula_academica.api_url}periodos${path ? '/' + path : ''}`;
 
 @Injectable({ providedIn: 'root' })
 export class PeriodoAcademicoService {

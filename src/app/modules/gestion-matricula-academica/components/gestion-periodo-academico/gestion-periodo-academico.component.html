@@ -27,8 +27,8 @@
     </div>
     <!-- Tabla Periodos -->
     <p-table #tablePeriodos [value]="periodos" [paginator]="true" [rows]="7"
-        [globalFilterFields]="['id', 'fechaInicio', 'fechaFin', 'descripcion']" [showCurrentPageReport]="true"
-        currentPageReportTemplate="{first} - {last} de {totalRecords}"
+        [globalFilterFields]="['id', 'fechaInicio', 'fechaFin', 'fechaFinMatricula', 'tagPeriodo', 'descripcion', 'estado']"
+        [showCurrentPageReport]="true" currentPageReportTemplate="{first} - {last} de {totalRecords}"
         styleClass="p-datatable-gridlines p-datatable-striped">
         <ng-template pTemplate="header">
             <tr>

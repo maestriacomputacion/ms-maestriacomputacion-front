@@ -1,0 +1,96 @@
+<p-panel>
+  <p-header>
+    <b>GESTIONAR MATERIAL DE APOYO</b>
+  </p-header>
+  <div class="grid">
+    <div class="col-5">
+      <div class="flex align-items-end h-full">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" class="w-full" placeholder="Buscar Material de Apoyo" (input)="
+                            tableMaterialApoyo.filterGlobal(
+                                $event.target.value,
+                                'contains'
+                            )
+                        " />
+        </span>
+      </div>
+    </div>
+    <div class="col-1"></div>
+    <div class="col-6">
+      <div class="w-full text-right">
+        <button pButton icon="pi pi-plus" label="Registrar Material" (click)="showDialog()"></button>
+      </div>
+    </div>
+  </div>
+  <br />
+  <p-table #tableMaterialApoyo [value]="materialesApoyo" [paginator]="true" [loading]="loading" [rows]="10"
+    breakpoint="768px" styleClass="p-datatable-gridlines p-datatable-striped"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} materiales"
+    [globalFilterFields]="['nombre', 'descripcion']" [sortField]="'nombre'" [sortOrder]="1">
+    <ng-template pTemplate="header">
+      <tr>
+        <th scope="col" class="text-center w-1">No.</th>
+        <th pSortableColumn="nombre" scope="col">
+          Nombre del Material de Apoyo <p-sortIcon field="nombre"></p-sortIcon>
+        </th>
+        <th scope="col" class="text-center w-3">Acción</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-material let-rowIndex="rowIndex">
+      <tr>
+        <td class="text-center">{{ rowIndex + 1 }}</td>
+        <td>{{ material.nombre }}</td>
+        <td class="text-center">
+          <button pButton pTooltip="Ver Material" type="button" icon="pi pi-external-link"
+            class="p-button-rounded p-button-text p-button-info" (click)="abrirEnlace(material.enlace)"></button>
+          <button pButton pTooltip="Editar" type="button" icon="pi pi-pencil"
+            class="p-button-rounded p-button-text p-button-warning" (click)="onEditar(material.id)"></button>
+          <button pButton pTooltip="Eliminar" type="button" icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-danger" (click)="onDelete($event, material.id)"></button>
+          <p-confirmPopup></p-confirmPopup>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+      <tr>
+        <td [attr.colspan]="3">No se encontraron registros</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-footer></p-footer>
+</p-panel>
+
+<p-dialog header="{{ isNewMaterial ? 'Registrar Material de Apoyo' : 'Editar Material de Apoyo' }}"
+  [(visible)]="displayDialog" [modal]="true" [closable]="false" [responsive]="true" [style]="{ width: '50vw' }"
+  [breakpoint]="768">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="nombre">Nombre del Material <span class="text-red-600">*</span></label>
+      <input id="nombre" type="text" pInputText [(ngModel)]="materialApoyo.nombre"
+        [class.p-invalid]="!materialApoyo.nombre && submitted" />
+      <small *ngIf="!materialApoyo.nombre && submitted" class="p-error">
+        El nombre es requerido
+      </small>
+    </div>
+    <div class="field">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" pInputTextarea [(ngModel)]="materialApoyo.descripcion" [rows]="3"
+        placeholder="Descripción del material de apoyo (opcional)"></textarea>
+    </div>
+    <div class="field">
+      <label for="enlace">Enlace al Material de Apoyo <span class="text-red-600">*</span></label>
+      <input id="enlace" type="url" pInputText [(ngModel)]="materialApoyo.enlace"
+        [class.p-invalid]="!materialApoyo.enlace && submitted" placeholder="https://ejemplo.com/documento.pdf" />
+      <small *ngIf="!materialApoyo.enlace && submitted" class="p-error">
+        El enlace es requerido
+      </small>
+    </div>
+  </div>
+  <p-footer>
+    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-outlined" (click)="onCancel()"></button>
+    <button pButton label="Guardar" icon="pi pi-check" [disabled]="!materialApoyo.nombre || !materialApoyo.enlace"
+      (click)="onSave()"></button>
+  </p-footer>
+</p-dialog>

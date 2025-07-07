@@ -90,6 +90,9 @@
                     dateFormat="yy-mm-dd" class="flex-1"
                     [ngClass]="{'ng-invalid ng-dirty': form.get('fechaFin').invalid && form.get('fechaFin').touched}"></p-calendar>
             </div>
+            <div *ngIf="mostrarValidacionBackend" class="text-danger text-xs mb-2 ml-6" style="color: red !important;">
+                {{ mensajeValidacionBackend }}
+            </div>
             <div class="field mb-3 flex align-items-center gap-2">
                 <label for="fechaFinMatricula" class="text-nowrap w-6rem flex align-items-center">
                     <span class="label-required">Fecha fin matrícula:</span>
@@ -103,6 +106,7 @@
             <div *ngIf="fechaFinMatriculaInvalida" class="text-danger text-xs mb-2 ml-6" style="color: red !important;">
                 La fecha fin matrícula debe estar entre la fecha de inicio y la fecha de fin del periodo.
             </div>
+            
             <div class="field mb-3 flex align-items-center gap-2">
                 <label for="periodoTag" class="text-nowrap w-6rem label-required">Periodo:</label>
                 <p-dropdown id="tagPeriodo" formControlName="tagPeriodo" [options]="tagPeriodoOptions"

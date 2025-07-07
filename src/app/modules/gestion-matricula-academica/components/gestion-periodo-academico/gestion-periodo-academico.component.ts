@@ -22,6 +22,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
     editMode = false;
     editPeriodoId: string | null = null;
     fechasValidasBackend = true; // Para controlar si las fechas son válidas según el backend
+    mensajeValidacionBackend = ''; // Para almacenar el mensaje de validación del backend
     form: FormGroup;
     tagPeriodoOptions = [
         { label: '1', value: 1 },
@@ -107,6 +108,11 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         );
     }
 
+    get mostrarValidacionBackend() {
+        return !this.fechasValidasBackend && this.mensajeValidacionBackend &&
+               (this.form.get('fechaInicio')?.touched || this.form.get('fechaFin')?.touched);
+    }
+
     validarFechasConBackend() {
         const fechaInicio = this.form.get('fechaInicio')?.value;
         const fechaFin = this.form.get('fechaFin')?.value;
@@ -119,27 +125,25 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                 .validarFechasPeriodo(fechaInicioStr, fechaFinStr)
                 .subscribe({
                     next: (resp) => {
-                        if (resp.typeResponse === 'SUCCESS') {
-                            this.fechasValidasBackend = resp.data;
-                            if (!resp.data) {
-                                // Si la validación es false, mostrar el mensaje de error
-                                this.messageService.add({
-                                    severity: 'warn',
-                                    summary: 'Validación de fechas',
-                                    detail: resp.message,
-                                });
-                            }
+                        // Actualizar el estado de validación basado en el data
+                        this.fechasValidasBackend = resp.data;
+                        
+                        // Si la validación es false, almacenar el mensaje
+                        if (!resp.data) {
+                            this.mensajeValidacionBackend = resp.message;
                         } else {
-                            this.fechasValidasBackend = false;
+                            this.mensajeValidacionBackend = '';
                         }
                     },
                     error: (err) => {
                         console.error('Error al validar fechas:', err);
                         this.fechasValidasBackend = false;
+                        this.mensajeValidacionBackend = 'Error al validar las fechas con el servidor.';
                     },
                 });
         } else {
             this.fechasValidasBackend = true; // Si no hay fechas, no hay error de validación backend
+            this.mensajeValidacionBackend = '';
         }
     }
 
@@ -148,6 +152,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         this.editMode = false;
         this.editPeriodoId = null;
         this.fechasValidasBackend = true; // Resetear validación del backend
+        this.mensajeValidacionBackend = ''; // Resetear mensaje de validación
         this.displayModal = true;
     }
 
@@ -165,19 +170,14 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         this.editMode = true;
         this.editPeriodoId = id;
         this.fechasValidasBackend = true; // Resetear validación del backend para edición
+        this.mensajeValidacionBackend = ''; // Resetear mensaje de validación
         this.displayModal = true;
     }
 
     registrarPeriodo() {
         if (!this.form.valid || !this.fechasValidas) {
             this.form.markAllAsTouched();
-            if (!this.fechasValidas) {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Fechas inválidas',
-                    detail: 'La fecha de inicio debe ser menor a la fecha de fin.',
-                });
-            }
+            // No mostrar messageService aquí, las validaciones se muestran como advertencias en el formulario
             return;
         }
         const value = this.form.value;

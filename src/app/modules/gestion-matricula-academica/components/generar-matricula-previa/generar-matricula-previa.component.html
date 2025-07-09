@@ -1,0 +1,106 @@
+<p-panel>
+  <p-header>
+    <b>GENERAR MATRÍCULA PREVIA</b>
+  </p-header>
+
+  <!-- Contenido principal en una sola línea -->
+  <div class="grid" *ngIf="estudiante">
+    <!-- Datos del Estudiante -->
+    <div class="col-12 lg:col-4">
+      <div class="surface-card border-round shadow-1 h-full">
+        <div class="p-3">
+          <h5 class="mb-3 font-semibold text-900">Datos del Estudiante</h5>
+          <div class="flex flex-column gap-3">
+            <div>
+              <span class="font-medium text-600 text-sm">Código:</span>
+              <p class="text-900 mt-1 mb-0">{{ estudiante.codigo }}</p>
+            </div>
+            <div>
+              <span class="font-medium text-600 text-sm">Nombre:</span>
+              <p class="text-900 mt-1 mb-0">{{ estudiante.nombre }}</p>
+            </div>
+            <div>
+              <span class="font-medium text-600 text-sm">Apellidos:</span>
+              <p class="text-900 mt-1 mb-0">{{ estudiante.apellidos }}</p>
+            </div>
+            <div>
+              <span class="font-medium text-600 text-sm">Director:</span>
+              <p class="text-900 mt-1 mb-0">{{ estudiante.director }}</p>
+            </div>
+            <div>
+              <span class="font-medium text-600 text-sm">Co-Director:</span>
+              <p class="text-900 mt-1 mb-0">{{ estudiante.coDirector }}</p>
+            </div>
+            <div>
+              <span class="font-medium text-600 text-sm">Semestre Académico:</span>
+              <p class="text-900 mt-1 mb-0">{{ estudiante.semestreAcademico }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Asignaturas a Matricular -->
+    <div class="col-12 lg:col-8">
+      <div class="surface-card border-round shadow-1 h-full">
+        <div class="p-3">
+          <h5 class="mb-3 font-semibold text-900">Asignaturas a Matricular</h5>
+          <p-table [value]="asignaturas" styleClass="p-datatable-striped">
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th scope="col">Grupo</th>
+                <th scope="col">Nombre Asignatura</th>
+                <th scope="col">Opciones</th>
+                <th scope="col">Observación</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-asignatura>
+              <tr>
+                <td>{{ asignatura.grupo }}</td>
+                <td>{{ asignatura.nombreAsignatura }}</td>
+                <td>{{ asignatura.opciones }}</td>
+                <td>{{ asignatura.observacion }}</td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="4" class="text-center">No hay asignaturas registradas</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TabView con las pestañas -->
+  <div class="mt-4 flex justify-content-center">
+    <p-tabView>
+      <p-tabPanel header="Electiva Propuesta">
+        <!-- Contenido de Electiva Propuesta -->
+      </p-tabPanel>
+
+      <p-tabPanel header="Fundamentación">
+        <!-- Contenido de Fundamentación -->
+      </p-tabPanel>
+
+      <p-tabPanel header="Electivas">
+        <!-- Contenido de Electivas -->
+      </p-tabPanel>
+
+      <p-tabPanel header="Complementación">
+        <!-- Contenido de Complementación -->
+      </p-tabPanel>
+
+      <p-tabPanel header="Investigación">
+        <!-- Contenido de Investigación -->
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</p-panel>
+
+<!-- Componentes de mensajes -->
+<p-toast></p-toast>

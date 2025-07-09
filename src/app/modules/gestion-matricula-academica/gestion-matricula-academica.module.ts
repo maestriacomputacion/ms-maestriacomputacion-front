@@ -10,6 +10,7 @@ import { RegistrarCursoComponent } from './components/registrar-curso/registrar-
 import { GestionMaterialApoyoComponent } from './components/gestion-material-apoyo/gestion-material-apoyo.component';
 import { MaterialApoyoService } from './services/material-apoyo.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-previa/generar-matricula-previa.component';
 
 @NgModule({
     declarations: [
@@ -18,6 +19,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
         GenerarCursosOfertadosComponent,
         RegistrarCursoComponent,
         GestionMaterialApoyoComponent,
+        GenerarMatriculaPreviaComponent
     ],
     imports: [
         CommonModule,

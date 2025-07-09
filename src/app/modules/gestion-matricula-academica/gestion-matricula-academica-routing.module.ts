@@ -5,6 +5,7 @@ import { GestionCursoComponent } from './components/gestion-curso/gestion-curso.
 import { GenerarCursosOfertadosComponent } from './components/generar-cursos-ofertados/generar-cursos-ofertados.component';
 import { RegistrarCursoComponent } from './components/registrar-curso/registrar-curso.component';
 import { GestionMaterialApoyoComponent } from './components/gestion-material-apoyo/gestion-material-apoyo.component';
+import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-previa/generar-matricula-previa.component';
 
 const routes: Routes = [{
     path:'',
@@ -29,6 +30,10 @@ const routes: Routes = [{
         {
             path:'material-apoyo',
             component: GestionMaterialApoyoComponent
+        },
+        {
+            path:'generar-matricula-previa',
+            component: GenerarMatriculaPreviaComponent
         }
     ]
 }];

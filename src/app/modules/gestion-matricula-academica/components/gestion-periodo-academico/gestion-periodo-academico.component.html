@@ -52,16 +52,21 @@
                 <td>{{ periodo.descripcion }}</td>
                 <td>{{ periodo.estado }}</td>
                 <td class="text-center">
-                    <button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-text p-button-info mr-2"
-                        pTooltip="Precargar cursos" tooltipPosition="top"
-                        (click)="onPrecargarCursos($event, periodo.id)"></button>
-                    <button pButton pRipple icon="pi pi-pencil"
-                        class="p-button-rounded p-button-text p-button-warning mr-2" pTooltip="Editar periodo"
-                        tooltipPosition="top" (click)="onEditarPeriodo(periodo.id)"></button>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-                        pTooltip="Eliminar periodo" tooltipPosition="top"
-                        (click)="onEliminarPeriodo($event, periodo.id)"></button>
-                    <p-confirmPopup></p-confirmPopup>
+                    <div *ngIf="periodo.estado !== 'FINALIZADO'">
+                        <button pButton pRipple icon="pi pi-book"
+                            class="p-button-rounded p-button-text p-button-info mr-2" pTooltip="Precargar cursos"
+                            tooltipPosition="top" (click)="onPrecargarCursos($event, periodo.id)"></button>
+                        <button pButton pRipple icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text p-button-warning mr-2" pTooltip="Editar periodo"
+                            tooltipPosition="top" (click)="onEditarPeriodo(periodo.id)"></button>
+                        <button pButton pRipple icon="pi pi-trash"
+                            class="p-button-rounded p-button-text p-button-danger" pTooltip="Eliminar periodo"
+                            tooltipPosition="top" (click)="onEliminarPeriodo($event, periodo.id)"></button>
+                        <p-confirmPopup></p-confirmPopup>
+                    </div>
+                    <div *ngIf="periodo.estado === 'FINALIZADO'" class="text-muted">
+                        <span class="text-xs">Periodo finalizado</span>
+                    </div>
                 </td>
             </tr>
         </ng-template>

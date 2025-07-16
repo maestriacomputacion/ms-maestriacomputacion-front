@@ -78,14 +78,15 @@
             </span>
         </ng-template>
         <form [formGroup]="form" (ngSubmit)="registrarPeriodo()">
-            <div class="field mb-3 flex align-items-center gap-2">
-                <label for="fechaInicio" class="text-nowrap w-6rem label-required">Fecha Inicio:</label>
+            <div class="field mb-3 flex align-items-center gap-3">
+                <label for="fechaInicio" class="text-nowrap w-9rem label-required white-space-nowrap">Fecha
+                    Inicio:</label>
                 <p-calendar id="fechaInicio" formControlName="fechaInicio" [showIcon]="true" appendTo="body"
                     dateFormat="yy-mm-dd" class="flex-1"
                     [ngClass]="{'ng-invalid ng-dirty': form.get('fechaInicio').invalid && form.get('fechaInicio').touched}"></p-calendar>
             </div>
-            <div class="field mb-3 flex align-items-center gap-2">
-                <label for="fechaFin" class="label-required text-nowrap w-6rem ">Fecha Fin:</label>
+            <div class="field mb-3 flex align-items-center gap-3">
+                <label for="fechaFin" class="text-nowrap w-9rem label-required white-space-nowrap">Fecha Fin:</label>
                 <p-calendar id="fechaFin" formControlName="fechaFin" [showIcon]="true" appendTo="body"
                     dateFormat="yy-mm-dd" class="flex-1"
                     [ngClass]="{'ng-invalid ng-dirty': form.get('fechaFin').invalid && form.get('fechaFin').touched}"></p-calendar>
@@ -93,12 +94,9 @@
             <div *ngIf="mostrarValidacionBackend" class="text-danger text-xs mb-2 ml-6" style="color: red !important;">
                 {{ mensajeValidacionBackend }}
             </div>
-            <div class="field mb-3 flex align-items-center gap-2">
-                <label for="fechaFinMatricula" class="text-nowrap w-6rem flex align-items-center">
-                    <span class="label-required">Fecha fin matrícula:</span>
-                    <span class="pi pi-info-circle text-primary ml-1" pTooltip="Fecha de finalización de la matrícula"
-                        tooltipPosition="top" style="cursor: pointer;"></span>
-                </label>
+            <div class="field mb-3 flex align-items-center gap-3">
+                <label for="fechaFinMatricula" class="text-nowrap w-9rem label-required white-space-nowrap">Fecha fin
+                    matrícula:</label>
                 <p-calendar id="fechaFinMatricula" formControlName="fechaFinMatricula" [showIcon]="true" appendTo="body"
                     dateFormat="yy-mm-dd" class="flex-1"
                     [ngClass]="{'ng-invalid ng-dirty': form.get('fechaFinMatricula').invalid && form.get('fechaFinMatricula').touched}"></p-calendar>
@@ -106,15 +104,15 @@
             <div *ngIf="fechaFinMatriculaInvalida" class="text-danger text-xs mb-2 ml-6" style="color: red !important;">
                 La fecha fin matrícula debe estar entre la fecha de inicio y la fecha de fin del periodo.
             </div>
-            
-            <div class="field mb-3 flex align-items-center gap-2">
-                <label for="periodoTag" class="text-nowrap w-6rem label-required">Periodo:</label>
+
+            <div class="field mb-3 flex align-items-center gap-3">
+                <label for="periodoTag" class="text-nowrap w-9rem label-required">Periodo:</label>
                 <p-dropdown id="tagPeriodo" formControlName="tagPeriodo" [options]="tagPeriodoOptions"
                     optionLabel="label" optionValue="value" placeholder="Seleccione" class="flex-1"
                     [ngClass]="{'ng-invalid ng-dirty': form.get('tagPeriodo').invalid && form.get('tagPeriodo').touched}"></p-dropdown>
             </div>
-            <div *ngIf="editMode" class="field mb-3 flex align-items-center gap-2">
-                <label for="estado" class="text-nowrap w-6rem label-required">Estado:</label>
+            <div *ngIf="editMode" class="field mb-3 flex align-items-center gap-3">
+                <label for="estado" class="text-nowrap w-9rem label-required">Estado:</label>
                 <p-dropdown id="estado" formControlName="estado" [options]="estadoOptions" optionLabel="label"
                     optionValue="value" placeholder="Seleccione" class="flex-1"
                     [ngClass]="{'ng-invalid ng-dirty': form.get('estado').invalid && form.get('estado').touched}"></p-dropdown>
@@ -122,7 +120,11 @@
             <div class="field mb-3">
                 <label for="descripcion">Descripción: </label>
                 <textarea id="descripcion" pInputTextarea formControlName="descripcion" rows="4" class="w-full"
+                    maxlength="200"
                     [ngClass]="{'ng-invalid ng-dirty': form.get('descripcion').invalid && form.get('descripcion').touched}"></textarea>
+                <div class="text-right text-xs mt-1 text-500">
+                    {{ form.get('descripcion')?.value?.length || 0 }}/200 caracteres
+                </div>
             </div>
             <div class="flex justify-content-end gap-2">
                 <button pButton type="submit" [label]="

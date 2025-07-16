@@ -109,8 +109,12 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
     }
 
     get mostrarValidacionBackend() {
-        return !this.fechasValidasBackend && this.mensajeValidacionBackend &&
-               (this.form.get('fechaInicio')?.touched || this.form.get('fechaFin')?.touched);
+        return (
+            !this.fechasValidasBackend &&
+            this.mensajeValidacionBackend &&
+            (this.form.get('fechaInicio')?.touched ||
+                this.form.get('fechaFin')?.touched)
+        );
     }
 
     validarFechasConBackend() {
@@ -127,7 +131,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                     next: (resp) => {
                         // Actualizar el estado de validación basado en el data
                         this.fechasValidasBackend = resp.data;
-                        
+
                         // Si la validación es false, almacenar el mensaje
                         if (!resp.data) {
                             this.mensajeValidacionBackend = resp.message;
@@ -138,7 +142,8 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                     error: (err) => {
                         console.error('Error al validar fechas:', err);
                         this.fechasValidasBackend = false;
-                        this.mensajeValidacionBackend = 'Error al validar las fechas con el servidor.';
+                        this.mensajeValidacionBackend =
+                            'Error al validar las fechas con el servidor.';
                     },
                 });
         } else {
@@ -384,6 +389,43 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
                                 'No se pudo eliminar el periodo académico.',
                         });
                     },
+                });
+            },
+        });
+    }
+
+    onPrecargarCursos(event: Event, periodoId: string) {
+        const periodo = this.periodos.find((p) => p.id === periodoId);
+        if (!periodo) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No se encontró el periodo académico.',
+            });
+            return;
+        }
+
+        this.confirmationService.confirm({
+            target: event.target,
+            message: `¿Está seguro que desea precargar los cursos para el periodo ${periodo.tagPeriodo} (${periodo.fechaInicio} - ${periodo.fechaFin})?`,
+            header: 'Confirmar Precarga de Cursos',
+            icon: 'pi pi-info-circle',
+            acceptLabel: 'Sí, precargar',
+            rejectLabel: 'Cancelar',
+            accept: () => {
+                console.log(
+                    'Precargando cursos para el periodo:',
+                    periodoId,
+                    periodo
+                );
+
+                // TODO: Implementar la lógica de precarga de cursos
+                // this.periodoService.precargarCursos(periodoId).subscribe({...});
+
+                this.messageService.add({
+                    severity: 'info',
+                    summary: 'Proceso iniciado',
+                    detail: 'La precarga de cursos ha sido iniciada.',
                 });
             },
         });

@@ -8,7 +8,7 @@
       <div class="col-span-2">
         <label for="periodo" class="block text-sm font-medium text-gray-700">Periodo</label>
         <p-inputNumber id="periodo" [(ngModel)]="evaluacion.periodo" name="periodo" [showButtons]="true" mode="decimal"
-          class="mt-1 block w-full"></p-inputNumber>
+          class="mt-1 block w-full" [min]="1" [max]="2"></p-inputNumber>
       </div>
 
       <!-- Año -->
@@ -30,7 +30,8 @@
       <!-- Botón Ver Detalles -->
       <div class="col-span-4 flex items-end">
         <button pButton icon="pi pi-search" label="Ver detalles de la evaluación" (click)="verDetalles()"
-          class="ml-auto"></button>
+          class="ml-auto" [disabled]="!evaluacion.periodo || !evaluacion.anio || !evaluacion.cuestionario">
+        </button>
       </div>
 
       <!-- Fechas container -->
@@ -58,10 +59,11 @@
     <!-- Rest of the form remains the same -->
     <div *ngIf="mostrarDetalles" class="mt-4 p-4">
       <p-message *ngIf="evaluacionExistente" severity="error"
-        text="Ya existe una evaluación creada para el periodo y año seleccionado"></p-message>
-      <p-message *ngIf="!evaluacionExistente" severity="success" text="No existe una evaluación activa"></p-message>
+        text="Ya existe una evaluación creada para el periodo y año seleccionado" class="mb-4"></p-message>
+      <p-message *ngIf="!evaluacionExistente" severity="success" text="No existe una evaluación activa"
+        class="mb-4"></p-message>
 
-      <div class="card">
+      <div class="card mt-3">
         <h4 class="text-lg font-semibold">Detalles de la evaluación a realizar</h4>
         <p>Cantidad de estudiantes que responderán la evaluación: {{ cantidadEstudiantesRegistrados }}</p>
 

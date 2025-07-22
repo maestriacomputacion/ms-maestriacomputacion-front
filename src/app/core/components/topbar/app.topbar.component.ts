@@ -69,6 +69,15 @@ export class AppTopBarComponent implements OnInit {
         });
 
         if (this.autenticacion.isLoggedIn()) {
+            const user = this.autenticacion.getLoggedInUser();
+            // Asignar routerLink dinámico a Evaluación Docente si existe el usuario y la opción
+            if (user && user.idNumber) {
+                this.items.forEach((item) => {
+                    if (item.label === 'EVALUACIÓN DOCENTE') {
+                        item.routerLink = `/gestion-evaluacion-docentes/evaluacion-docente/${user.idNumber}`;
+                    }
+                });
+            }
             this.updateMenuForLoggedInUser();
         } else {
             this.filterMenuItems(null);
@@ -152,6 +161,25 @@ export class AppTopBarComponent implements OnInit {
                 }
 
                 return false;
+            }
+            if (item.label === 'MATRICULAS') {
+                if (user?.role.includes('ROLE_COORDINADOR')) {
+                    // Solo mostrar "Evaluación Docente" si es coordinador
+                    item.items =
+                        item.items?.filter(
+                            (subItem) => subItem.label === 'Evaluación Docente'
+                        ) || [];
+                } else {
+                    // Si no es coordinador, eliminar la propiedad items para que no muestre el icono de submenú
+                    delete item.items;
+                }
+                return true;
+            }
+            if (item.label === 'EVALUACIÓN DOCENTE') {
+                // Solo mostrar si el usuario es estudiante
+                return (
+                    user && user.role && user.role.includes('ROLE_ESTUDIANTE')
+                );
             }
             return true;
         });

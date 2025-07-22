@@ -87,6 +87,14 @@ export const menuItems: MenuItem[] = [
     {
         label: 'MATRICULAS',
         icon: 'pi pi-fw pi-id-card',
+        items: [
+            {
+                label: 'Evaluación Docente',
+                icon: 'pi pi-fw pi-id-card',
+                routerLink: '/gestion-matricula-evaluacion',
+            },
+            
+        ],
     },
     {
         label: 'SOLICITUDES',
@@ -117,6 +125,11 @@ export const menuItems: MenuItem[] = [
                 routerLink: '/seguimiento-a-egresados',
             },
         ],
+    },
+    {
+        label: 'EVALUACIÓN DOCENTE',
+        icon: 'pi pi-fw pi-star',
+        routerLink: '/evaluacion-docente',
     },
     {
         label: 'LOGIN',

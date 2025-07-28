@@ -91,6 +91,16 @@ export class AgregarEvaluacionComponent implements OnInit {
             return;
         }
 
+        // Validar que periodo solo sea 1 o 2
+        if (periodo !== 1 && periodo !== 2) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Periodo inválido',
+                detail: 'El periodo solo puede ser 1 o 2.',
+            });
+            return;
+        }
+
         // Validar que fecha_fin no sea menor que fecha_inicio
         if (new Date(fecha_fin) < new Date(fecha_inicio)) {
             this.messageService.add({

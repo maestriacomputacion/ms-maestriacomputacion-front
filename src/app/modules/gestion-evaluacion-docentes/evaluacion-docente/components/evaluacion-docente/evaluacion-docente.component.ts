@@ -16,10 +16,11 @@ export class EvaluacionDocenteComponent implements OnInit {
   idEstudiante: string | null = null;
   idCuestionario: number | null = null;
   idEvaluacionCursoActual: number | null = null;
+  noEvaluacionActiva = false;
 
   constructor(
-    private route: ActivatedRoute,
-    private evaluacionDocenteService: EvaluacionDocenteService
+    private readonly route: ActivatedRoute,
+    private readonly evaluacionDocenteService: EvaluacionDocenteService
   ) { }
 
   ngOnInit() {
@@ -36,6 +37,14 @@ export class EvaluacionDocenteComponent implements OnInit {
       .getCursosEvaluacion(idEstudiante)
       .subscribe({
         next: (response) => {
+          if (!response?.evaluacionesCurso?.length) {
+            this.docentes = [];
+            this.noEvaluacionActiva = true;
+            this.preguntas = [];
+            this.evaluaciones = [];
+            return;
+          }
+          this.noEvaluacionActiva = false;
           this.idCuestionario = response.idCuestionario;
           this.docentes = response.evaluacionesCurso.map(
             (curso: any) => ({
@@ -49,6 +58,10 @@ export class EvaluacionDocenteComponent implements OnInit {
           this.loadCuestionario(this.idCuestionario);
         },
         error: (error) => {
+          this.docentes = [];
+          this.noEvaluacionActiva = true;
+          this.preguntas = [];
+          this.evaluaciones = [];
           console.error('Error al cargar los docentes:', error);
         },
       });
@@ -81,12 +94,11 @@ export class EvaluacionDocenteComponent implements OnInit {
         docente: docente.nombre,
         asignatura: docente.asignatura,
         respuestas: Array(this.preguntas.length).fill(null),
-        observacion: ''
+        observacion: '',
       };
       this.evaluaciones.push(evaluacion);
     });
   }
-
 
   mostrarPrimeroSinEvaluar() {
     const index = this.docentes.findIndex((docente) => !docente.completado);
@@ -106,9 +118,12 @@ export class EvaluacionDocenteComponent implements OnInit {
     }
 
     // Validar longitud de la observación antes de enviar
-    const observacion = this.evaluaciones[this.currentDocente].observacion.trim();
+    const observacion =
+      this.evaluaciones[this.currentDocente].observacion.trim();
     if (observacion.length > 255) {
-      console.error('La observación supera los 255 caracteres permitidos.');
+      console.error(
+        'La observación supera los 255 caracteres permitidos.'
+      );
       return;
     }
 
@@ -116,7 +131,9 @@ export class EvaluacionDocenteComponent implements OnInit {
       .map((valor, index) => {
         const idPregunta = this.preguntas[index]?.id;
         if (!idPregunta) {
-          console.error(`Error: La pregunta con índice ${index} no tiene un ID válido.`);
+          console.error(
+            `Error: La pregunta con índice ${index} no tiene un ID válido.`
+          );
           return null;
         }
         return { idPregunta: idPregunta, valor };
@@ -147,8 +164,6 @@ export class EvaluacionDocenteComponent implements OnInit {
       },
     });
   }
-
-
 
   get docentesEvaluados() {
     return this.docentes.filter((d) => d.completado).length;

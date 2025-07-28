@@ -8,7 +8,7 @@ import { getHeaders } from 'src/app/core/constants/header';
   providedIn: 'root',
 })
 export class EvaluacionDocenteService {
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   // Obtener cursos para evaluación por estudiante
   getCursosEvaluacion(idEstudiante: number): Observable<any> {

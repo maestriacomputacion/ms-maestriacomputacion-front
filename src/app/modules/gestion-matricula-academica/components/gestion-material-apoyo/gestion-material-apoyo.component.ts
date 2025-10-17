@@ -19,6 +19,10 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
     isNewMaterial: boolean = true;
     submitted: boolean = false;
 
+    readonly MAX_DESCRIPTION: number = 255;
+    descriptionLength: number = 0;
+    private descriptionTruncatedNotified: boolean = false;
+
     private readonly subscriptions: Subscription[] = [];
 
     constructor(
@@ -33,12 +37,71 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         this.listMaterialApoyo();
     }
 
+    // Actualiza el contador de caracteres y asegura maxlength
+    onDescripcionChange(value: string = '') {
+        if (value.length > this.MAX_DESCRIPTION) {
+            // recortar y actualizar el modelo
+            this.materialApoyo.descripcion = value.substring(
+                0,
+                this.MAX_DESCRIPTION
+            );
+            this.descriptionLength = this.MAX_DESCRIPTION;
+
+            // notificar al usuario sólo una vez por recorte continuo
+            if (!this.descriptionTruncatedNotified) {
+                // Notificar recorte al usuario
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: 'Aviso',
+                    detail: `El texto fue recortado a ${this.MAX_DESCRIPTION} caracteres.`,
+                    life: 3000,
+                });
+                this.descriptionTruncatedNotified = true;
+
+                // resetear la notificación después de 2s para permitir futuras notificaciones
+                setTimeout(() => {
+                    this.descriptionTruncatedNotified = false;
+                }, 2000);
+            }
+        } else {
+            this.descriptionLength = value.length;
+            this.materialApoyo.descripcion = value;
+        }
+    }
+
+    // Maneja el evento paste para detectar pegado de texto mayor al máximo permitido
+    onDescripcionPaste(event: ClipboardEvent) {
+        const clipboardData =
+            event.clipboardData || (globalThis as any).clipboardData;
+        const pastedText = clipboardData ? clipboardData.getData('text') : '';
+        if (!pastedText) {
+            return;
+        }
+
+        // Si el texto pegado excede el límite, evitamos que el navegador lo pegue completo
+        if (pastedText.length > this.MAX_DESCRIPTION) {
+            event.preventDefault();
+            // Pegar solo la porción permitida y actualizar modelo/contador
+            const toPaste = pastedText.substring(0, this.MAX_DESCRIPTION);
+            this.materialApoyo.descripcion = toPaste;
+            this.descriptionLength = toPaste.length;
+
+            // notificar al usuario
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Aviso',
+                detail: `El texto fue recortado a ${this.MAX_DESCRIPTION} caracteres.`,
+                life: 3000,
+            });
+        }
+    }
+
     ngOnDestroy(): void {
-        this.subscriptions.forEach((subscription) => {
+        for (const subscription of this.subscriptions) {
             if (subscription && !subscription.closed) {
                 subscription.unsubscribe();
             }
-        });
+        }
     }
 
     setBreadcrumb() {
@@ -83,6 +146,7 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         this.isNewMaterial = true;
         this.displayDialog = true;
         this.submitted = false;
+        this.descriptionLength = this.materialApoyo.descripcion?.length || 0;
     }
 
     onEditar(id: number) {
@@ -94,6 +158,8 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                     this.isNewMaterial = false;
                     this.displayDialog = true;
                     this.submitted = false;
+                    this.descriptionLength =
+                        this.materialApoyo.descripcion?.length || 0;
                 },
                 error: (err) =>
                     this.handleError(

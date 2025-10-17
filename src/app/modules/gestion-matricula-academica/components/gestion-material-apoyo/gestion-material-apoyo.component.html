@@ -69,23 +69,33 @@
   [breakpoint]="768">
   <div class="p-fluid">
     <div class="field">
-      <label for="nombre">Nombre del Material <span class="text-red-600">*</span></label>
-      <input id="nombre" type="text" pInputText [(ngModel)]="materialApoyo.nombre"
-        [class.p-invalid]="!materialApoyo.nombre && submitted" />
-      <small *ngIf="!materialApoyo.nombre && submitted" class="p-error">
+      <label for="nombre" class="label-required">Nombre del Material: </label>
+      <input id="nombre" name="nombre" type="text" pInputText [(ngModel)]="materialApoyo.nombre" #nombreCtrl="ngModel"
+        [class.p-invalid]="nombreCtrl.invalid && (nombreCtrl.touched || submitted)" aria-required="true"
+        [attr.aria-invalid]="nombreCtrl.invalid && (nombreCtrl.touched || submitted)" />
+      <small *ngIf="nombreCtrl.invalid && (nombreCtrl.touched || submitted)" class="p-error">
         El nombre es requerido
       </small>
     </div>
     <div class="field">
       <label for="descripcion">Descripción</label>
-      <textarea id="descripcion" pInputTextarea [(ngModel)]="materialApoyo.descripcion" [rows]="3"
-        placeholder="Descripción del material de apoyo (opcional)"></textarea>
+      <textarea id="descripcion" pInputTextarea [(ngModel)]="materialApoyo.descripcion"
+        (ngModelChange)="onDescripcionChange($event)" (paste)="onDescripcionPaste($event)" [rows]="3"
+        placeholder="Descripción del material de apoyo" maxlength="255" aria-describedby="descCounter"
+        [attr.aria-invalid]="descriptionLength > MAX_DESCRIPTION"></textarea>
+      <div class="flex justify-content-between">
+        <small class="text-muted">Opcional</small>
+        <small id="descCounter" [ngClass]="{ 'p-error': descriptionLength > MAX_DESCRIPTION }">{{ descriptionLength }} /
+          {{ MAX_DESCRIPTION }}</small>
+      </div>
     </div>
     <div class="field">
-      <label for="enlace">Enlace al Material de Apoyo <span class="text-red-600">*</span></label>
-      <input id="enlace" type="url" pInputText [(ngModel)]="materialApoyo.enlace"
-        [class.p-invalid]="!materialApoyo.enlace && submitted" placeholder="https://ejemplo.com/documento.pdf" />
-      <small *ngIf="!materialApoyo.enlace && submitted" class="p-error">
+      <label for="enlace" class="label-required">Enlace al Material de Apoyo: </label>
+      <input id="enlace" name="enlace" type="url" pInputText [(ngModel)]="materialApoyo.enlace" #enlaceCtrl="ngModel"
+        [class.p-invalid]="enlaceCtrl.invalid && (enlaceCtrl.touched || submitted)" aria-required="true"
+        [attr.aria-invalid]="enlaceCtrl.invalid && (enlaceCtrl.touched || submitted)"
+        placeholder="https://ejemplo.com/documento.pdf" />
+      <small *ngIf="enlaceCtrl.invalid && (enlaceCtrl.touched || submitted)" class="p-error">
         El enlace es requerido
       </small>
     </div>

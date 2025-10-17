@@ -3,15 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
+import { CursoUI } from '../models/curso.model';
 import { matricula_academica } from 'src/environments/environment';
-
-export interface Curso {
-    id: number;
-    grupo: string;
-    asignatura: string;
-    docente: string;
-    fecha: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class CursoService {
@@ -25,7 +18,7 @@ export class CursoService {
         return `${day}/${month}/${year}`;
     }
 
-    private readonly cursos: Curso[] = [
+    private readonly cursos: CursoUI[] = [
         {
             id: 1,
             grupo: 'Grupo A',
@@ -93,13 +86,13 @@ export class CursoService {
 
     constructor(private readonly http: HttpClient) {}
 
-    getCursos(): Observable<ApiResponse<Curso[]>> {
-        return this.http.get<ApiResponse<any>>(this.backend).pipe(
+    getCursos(): Observable<ApiResponse<CursoUI[]>> {
+        return this.http.get<ApiResponse<unknown>>(this.backend).pipe(
             map((resp) => ({
                 typeResponse: resp.typeResponse,
                 message: resp.message,
                 statusCode: resp.statusCode,
-                data: (resp.data || []).map((item: any) => ({
+                data: ((resp.data as any[]) || []).map((item: any) => ({
                     id: Number(item.id),
                     grupo: item.grupo,
                     // asignatura viene como objeto { id, nombre, ... }
@@ -137,39 +130,38 @@ export class CursoService {
                         fecha: CursoService.formatDateString(c.fecha),
                     })),
                     statusCode: 200,
-                } as ApiResponse<Curso[]>)
+                } as ApiResponse<CursoUI[]>)
             )
         );
     }
-
-    crearCurso(curso: Omit<Curso, 'id'>): Observable<ApiResponse<Curso>> {
+    crearCurso(curso: Omit<CursoUI, 'id'>): Observable<ApiResponse<CursoUI>> {
         const payload = {
             grupo: curso.grupo,
             asignatura: curso.asignatura,
             docente: curso.docente,
             fecha: curso.fecha,
         };
-        return this.http.post<ApiResponse<Curso>>(this.backend, payload);
+        return this.http.post<ApiResponse<CursoUI>>(this.backend, payload);
     }
 
     actualizarCurso(
         id: number | string,
-        curso: Omit<Curso, 'id'>
-    ): Observable<ApiResponse<Curso>> {
+        curso: Omit<CursoUI, 'id'>
+    ): Observable<ApiResponse<CursoUI>> {
         const payload = {
             grupo: curso.grupo,
             asignatura: curso.asignatura,
             docente: curso.docente,
             fecha: curso.fecha,
         };
-        return this.http.put<ApiResponse<Curso>>(
+        return this.http.put<ApiResponse<CursoUI>>(
             `${this.backend}/${id}`,
             payload
         );
     }
 
-    eliminarCurso(id: number | string): Observable<ApiResponse<any>> {
-        return this.http.delete<ApiResponse<any>>(`${this.backend}/${id}`);
+    eliminarCurso(id: number | string): Observable<ApiResponse<unknown>> {
+        return this.http.delete<ApiResponse<unknown>>(`${this.backend}/${id}`);
     }
 
     getAreasFormacion(): Observable<

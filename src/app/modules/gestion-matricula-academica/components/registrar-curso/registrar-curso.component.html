@@ -1,37 +1,34 @@
-<p-panel>
+<p-panel [formGroup]="form">
   <p-header>
     <b>REGISTRAR CURSO</b>
   </p-header>
 
   <!-- Sección Grupo -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
-    <label for="grupo" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
-    <input id="grupo" type="text" pInputText [(ngModel)]="grupo" class="flex-1" />
+    <label for="grupo" class="font-medium mb-1 label-required"
+      style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
+    <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
+      [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" />
   </div>
 
-  <!-- Sección Periodo -->
-  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
-    <label for="periodoNumero" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Periodo</label>
-    <input id="periodoNumero" type="number" min="1" max="2" pInputText class="w-5rem" [(ngModel)]="periodoNumero" />
-    <p-dropdown id="periodoAnio" [options]="anios" [(ngModel)]="periodoAnio" placeholder="Año"
-      style="min-width: 6rem"></p-dropdown>
-  </div>
+
 
   <!-- Sección Horario -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="horario" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Horario</label>
-    <input id="horario" type="text" pInputText [(ngModel)]="horario" class="flex-1" />
+    <input id="horario" type="text" pInputText formControlName="horario" class="flex-1" />
   </div>
 
   <!-- Sección Salón -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
-    <input id="salon" type="text" pInputText [(ngModel)]="salon" class="flex-1" />
+    <input id="salon" type="text" pInputText formControlName="salon" class="flex-1" maxlength="100"
+      [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}" />
   </div>
 
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">
-      <label for="asignaturaAsociada" class="font-medium mb-2"><b>Asignatura Asociada: *</b></label>
+      <label for="asignaturaAsociada" class="font-medium mb-2 label-required"><b>Asignatura Asociada: *</b></label>
       <div style="margin-left: 13.5rem">
         <!-- Ajusta este valor según el largo del label -->
         <div class="flex align-items-center mt-2 justify-content-between" style="gap: 1rem">
@@ -61,7 +58,7 @@
 
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">
-      <label for="buscarDocente"><b>Docentes que dictan el curso: *</b></label>
+      <label for="buscarDocente" class="label-required"><b>Docentes que dictan el curso: *</b></label>
       <div style="margin-left: 16.5rem">
         <!-- Ajusta este valor según el largo del label -->
         <div class="p-input-icon-left w-20rem mb-3">
@@ -124,12 +121,14 @@
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">
       <label for="observacion"><b>Observación: </b></label>
-      <textarea id="observacion" rows="5" pInputTextarea autoResize="autoResize" [(ngModel)]="observacion"></textarea>
+      <textarea id="observacion" rows="5" pInputTextarea autoResize="autoResize"
+        formControlName="observacion"></textarea>
     </div>
   </div>
 
   <div class="flex justify-content-end mt-4">
-    <button pButton label="Registrar Curso" class="p-button-primary mr-2"></button>
-    <button pButton label="Cancelar" class="p-button-secondary"></button>
+    <button pButton label="Registrar Curso" class="p-button-primary mr-2" [disabled]="form.invalid"
+      (click)="onSubmit()"></button>
+    <button pButton label="Cancelar" class="p-button-secondary" type="button"></button>
   </div>
 </p-panel>

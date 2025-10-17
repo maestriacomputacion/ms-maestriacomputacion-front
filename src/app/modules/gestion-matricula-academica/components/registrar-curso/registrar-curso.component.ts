@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface Asignatura {
     codigo: string;
@@ -22,15 +23,13 @@ interface MaterialApoyo {
     styleUrls: ['./registrar-curso.component.scss'],
 })
 export class RegistrarCursoComponent implements OnInit {
-    grupo: string = '';
+    form!: FormGroup;
     periodoNumero: number = 1;
     periodoAnio: number | null = null;
     anios: SelectItem[] = Array.from({ length: 6 }, (_, i) => ({
         label: `${2023 + i}`,
         value: 2023 + i,
     }));
-    horario: string = '';
-    salon: string = '';
     asignatura: Asignatura | null = {
         codigo: '28955',
         nombre: 'Fundamentos de diseño de software',
@@ -56,7 +55,50 @@ export class RegistrarCursoComponent implements OnInit {
 
     observacion: string = '';
 
-    constructor() {}
+    constructor(private readonly fb: FormBuilder) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.form = this.fb.group({
+            grupo: [
+                '',
+                [Validators.required, Validators.pattern(/^[A-Za-z]$/)],
+            ],
+            periodoNumero: [this.periodoNumero],
+            periodoAnio: [this.periodoAnio],
+            horario: [''],
+            salon: ['', [Validators.maxLength(100)]],
+            observacion: [''],
+        });
+
+        // convertir grupo a una sola letra mayúscula usando valueChanges (Angular way)
+        const grupoControl = this.form.get('grupo');
+        if (grupoControl) {
+            grupoControl.valueChanges.subscribe((val: string) => {
+                if (typeof val !== 'string') return;
+                const trimmed = val.trim().charAt(0) || '';
+                const upper = trimmed.toUpperCase();
+                if (upper !== val) {
+                    grupoControl.setValue(upper, { emitEvent: false });
+                }
+            });
+        }
+    }
+
+    get grupo() {
+        return this.form.get('grupo');
+    }
+
+    get salonControl() {
+        return this.form.get('salon');
+    }
+
+    onSubmit() {
+        if (this.form.invalid) {
+            this.form.markAllAsTouched();
+            return;
+        }
+        // Aquí puedes construir el payload y llamar al servicio de registro
+        const value = this.form.value;
+        console.log('Formulario válido. Payload:', value);
+    }
 }

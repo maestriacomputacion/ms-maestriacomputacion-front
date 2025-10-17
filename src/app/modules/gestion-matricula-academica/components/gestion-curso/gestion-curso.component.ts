@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CursoService, Curso } from '../../services/curso.service';
+import { CursoService } from '../../services/curso.service';
+import { CursoUI } from '../../models/curso.model';
 import { ApiResponse } from '../../models/api-response.model';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
@@ -11,7 +12,7 @@ import { PeriodoAcademico } from '../../models/periodo-academico.model';
     styleUrls: ['./gestion-curso.component.scss'],
 })
 export class GestionCursoComponent implements OnInit {
-    cursos: Curso[] = [];
+    cursos: CursoUI[] = [];
     displayModal = false;
     editMode = false;
     editCursoId: number | null = null;
@@ -56,7 +57,7 @@ export class GestionCursoComponent implements OnInit {
         });
         this.cursoService
             .getCursos()
-            .subscribe((resp: ApiResponse<Curso[]>) => {
+            .subscribe((resp: ApiResponse<CursoUI[]>) => {
                 if (resp.typeResponse === 'SUCCESS') {
                     this.cursos = resp.data;
                 }
@@ -110,7 +111,7 @@ export class GestionCursoComponent implements OnInit {
         this.displayModal = true;
     }
 
-    actualizarCurso(id: number, value: Curso) {
+    actualizarCurso(id: number, value: CursoUI) {
         const idx = this.cursos.findIndex((c) => c.id === id);
         if (idx > -1) {
             this.cursos[idx] = {

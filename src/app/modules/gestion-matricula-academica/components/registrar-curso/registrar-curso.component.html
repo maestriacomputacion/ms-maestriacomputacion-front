@@ -75,7 +75,7 @@
         </p-pickList>
         <div class="flex justify-content-center mt-3">
           <button pButton label="Registrar Material" class="p-button-primary w-auto p-button-sm"
-            style="min-width: unset; width: auto"></button>
+            style="min-width: unset; width: auto" (click)="openMaterialDialog()"></button>
         </div>
       </div>
     </div>
@@ -83,7 +83,7 @@
 
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">
-      <p-table [value]="materialesApoyo" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+      <p-table [value]="selectedMateriales" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [rowsPerPageOptions]="[10, 25, 50, 100]" [responsiveLayout]="'scroll'">
         <ng-template pTemplate="header">
@@ -98,25 +98,49 @@
             <td>{{ rowIndex + 1 }}</td>
             <td>{{ material.nombre }}</td>
             <td class="text-center">
-              <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info mr-2"
-                title="Ver"></button>
-              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning mr-2"
-                title="Editar"></button>
               <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-                title="Eliminar"></button>
+                pTooltip="Quitar de la selección" (click)="removeSelectedMaterial(material)"></button>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
             <td [attr.colspan]="3">
-              No se encontraron materiales de apoyo
+              No se encontraron materiales seleccionados
             </td>
           </tr>
         </ng-template>
       </p-table>
     </div>
   </div>
+
+  <!-- Dialogo para seleccionar materiales -->
+  <p-dialog header="Seleccionar Materiales de Apoyo" [(visible)]="displayMaterialDialog" [modal]="true"
+    [style]="{ width: '60vw' }" [closable]="false">
+    <p-table [value]="materialesApoyo" selectionMode="multiple" [(selection)]="tableSelection" [paginator]="true"
+      [rows]="10">
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col" style="width:3rem"></th>
+          <th scope="col">Nombre</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-material>
+        <tr [pSelectableRow]="material">
+          <td>
+            <p-tableCheckbox [value]="material"></p-tableCheckbox>
+          </td>
+          <td>{{ material.nombre }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-footer>
+      <div class="flex justify-content-end gap-2">
+        <button pButton label="Cancelar" class="p-button-outlined" (click)="cancelMaterialSelection()"></button>
+        <button pButton label="Aceptar" class="p-button-primary" (click)="confirmMaterialSelection()"></button>
+      </div>
+    </p-footer>
+  </p-dialog>
 
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">

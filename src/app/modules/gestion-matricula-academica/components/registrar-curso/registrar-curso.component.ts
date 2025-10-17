@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MaterialApoyo } from '../../models/material-apoyo';
+import { MaterialApoyoService } from '../../services/material-apoyo.service';
 
 interface Asignatura {
     codigo: string;
@@ -9,11 +11,6 @@ interface Asignatura {
 
 interface Docente {
     codigo: string;
-    nombre: string;
-}
-
-interface MaterialApoyo {
-    id: number;
     nombre: string;
 }
 
@@ -45,17 +42,20 @@ export class RegistrarCursoComponent implements OnInit {
         { codigo: '1067', nombre: 'Carolina Gonzales' },
     ];
 
-    materialesApoyo: MaterialApoyo[] = [
-        { id: 1, nombre: 'Lecturas sobre Metaheuristicas' },
-        { id: 2, nombre: 'Fundamentos de Aprendizaje Profundo' },
-        { id: 3, nombre: 'Manual de Metodología de Investigación' },
-        { id: 4, nombre: 'Presentación Ingeniería de Software' },
-        { id: 5, nombre: 'Presentación Ingeniería de Software' },
-    ];
+    materialesApoyo: MaterialApoyo[] = [];
 
     observacion: string = '';
+    // Material dialog + selection
+    displayMaterialDialog: boolean = false;
+    // materiales seleccionados en el formulario
+    selectedMateriales: MaterialApoyo[] = [];
+    // selección temporal dentro del diálogo
+    tableSelection: MaterialApoyo[] = [];
 
-    constructor(private readonly fb: FormBuilder) {}
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly materialApoyoService: MaterialApoyoService
+    ) {}
 
     ngOnInit() {
         this.form = this.fb.group({
@@ -82,6 +82,17 @@ export class RegistrarCursoComponent implements OnInit {
                 }
             });
         }
+
+        // cargar materiales desde el servicio
+        this.materialApoyoService.listMaterialApoyo().subscribe({
+            next: (resp) => {
+                if (resp && resp.typeResponse === 'SUCCESS') {
+                    this.materialesApoyo = resp.data || [];
+                }
+            },
+            error: (err) =>
+                console.error('Error cargando materiales de apoyo', err),
+        });
     }
 
     get grupo() {
@@ -100,5 +111,36 @@ export class RegistrarCursoComponent implements OnInit {
         // Aquí puedes construir el payload y llamar al servicio de registro
         const value = this.form.value;
         console.log('Formulario válido. Payload:', value);
+    }
+
+    openMaterialDialog() {
+        // Abrir diálogo y precargar selección con los ya seleccionados
+        this.tableSelection = [...this.selectedMateriales];
+        this.displayMaterialDialog = true;
+    }
+
+    confirmMaterialSelection() {
+        this.selectedMateriales = [...this.tableSelection];
+        this.displayMaterialDialog = false;
+    }
+
+    cancelMaterialSelection() {
+        this.tableSelection = [];
+        this.displayMaterialDialog = false;
+    }
+
+    removeSelectedMaterial(material: MaterialApoyo) {
+        if (!material) return;
+        const id = (material as any).id;
+        // Remove by id if available, otherwise by name
+        if (typeof id === 'number') {
+            this.selectedMateriales = this.selectedMateriales.filter(
+                (m) => m.id !== id
+            );
+        } else {
+            this.selectedMateriales = this.selectedMateriales.filter(
+                (m) => m.nombre !== material.nombre
+            );
+        }
     }
 }

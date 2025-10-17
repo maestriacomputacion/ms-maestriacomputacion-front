@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CursoService, Curso } from '../../services/curso.service';
 import { ApiResponse } from '../../models/api-response.model';
+import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
+import { PeriodoAcademico } from '../../models/periodo-academico.model';
 
 @Component({
     selector: 'app-gestion-curso',
@@ -16,12 +18,8 @@ export class GestionCursoComponent implements OnInit {
     form: FormGroup;
 
     // Filtros
-    periodoNumero: number = 1;
-    periodoAnio: number | null = null;
-    anios = Array.from({ length: 6 }, (_, i) => ({
-        label: `${2023 + i}`,
-        value: 2023 + i,
-    }));
+    periodos: { label: string; value: string }[] = [];
+    periodoSeleccionado: string | null = null;
 
     areasFormacion: { label: string; value: string }[] = [];
     areaSeleccionada: string | null = null;
@@ -31,7 +29,8 @@ export class GestionCursoComponent implements OnInit {
 
     constructor(
         private readonly fb: FormBuilder,
-        private readonly cursoService: CursoService
+        private readonly cursoService: CursoService,
+        private readonly periodoService: PeriodoAcademicoService
     ) {
         this.form = this.fb.group({
             grupo: ['', Validators.required],
@@ -42,6 +41,19 @@ export class GestionCursoComponent implements OnInit {
     }
 
     ngOnInit() {
+        // cargar periodos para el filtro
+        this.periodoService.getPeriodos().subscribe((resp) => {
+            if (resp.typeResponse === 'SUCCESS') {
+                this.periodos = (resp.data || []).map(
+                    (p: PeriodoAcademico) => ({
+                        label: `${this.formatDateString(
+                            p.fechaInicio
+                        )} - ${this.formatDateString(p.fechaFin)}`,
+                        value: String(p.id),
+                    })
+                );
+            }
+        });
         this.cursoService
             .getCursos()
             .subscribe((resp: ApiResponse<Curso[]>) => {
@@ -67,6 +79,14 @@ export class GestionCursoComponent implements OnInit {
                     }
                 }
             );
+    }
+
+    private formatDateString(dateStr: string): string {
+        if (!dateStr) return '';
+        const parts = dateStr.split('T')[0].split('-');
+        if (parts.length !== 3) return dateStr;
+        const [year, month, day] = parts;
+        return `${day}/${month}/${year}`;
     }
 
     onAgregarCurso() {

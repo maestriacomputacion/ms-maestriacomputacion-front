@@ -1,15 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { SelectItem } from 'primeng/api';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { SelectItem, MessageService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
+import { RegistrarCursoService } from '../../services/registrar-curso.service';
+import { Subscription } from 'rxjs';
+import {
+    debounceTime,
+    distinctUntilChanged,
+    filter,
+    switchMap,
+} from 'rxjs/operators';
 
 interface Asignatura {
+    id?: number;
     codigo: string;
     nombre: string;
 }
 
 interface Docente {
+    id?: number;
     codigo: string;
     nombre: string;
 }
@@ -19,7 +29,7 @@ interface Docente {
     templateUrl: './registrar-curso.component.html',
     styleUrls: ['./registrar-curso.component.scss'],
 })
-export class RegistrarCursoComponent implements OnInit {
+export class RegistrarCursoComponent implements OnInit, OnDestroy {
     form!: FormGroup;
     periodoNumero: number = 1;
     periodoAnio: number | null = null;
@@ -28,18 +38,18 @@ export class RegistrarCursoComponent implements OnInit {
         value: 2023 + i,
     }));
     asignatura: Asignatura | null = {
+        id: 6,
         codigo: '28955',
         nombre: 'Fundamentos de diseño de software',
     };
 
     sourceDocentes: Docente[] = [
-        { codigo: '1061', nombre: 'Erwin Meza' },
-        { codigo: '1062', nombre: 'Carlos Alberto Ardila' },
-        { codigo: '1063', nombre: 'Julio Hurtado' },
+        { id: 1061, codigo: '1061', nombre: 'Erwin Meza' },
+        { id: 1062, codigo: '1062', nombre: 'Carlos Alberto Ardila' },
+        { id: 1063, codigo: '1063', nombre: 'Julio Hurtado' },
     ];
     targetDocentes: Docente[] = [
-        { codigo: '1065', nombre: 'Martha Mendoza' },
-        { codigo: '1067', nombre: 'Carolina Gonzales' },
+        { id: 1, codigo: '1065', nombre: 'Martha Mendoza' },
     ];
 
     materialesApoyo: MaterialApoyo[] = [];
@@ -54,8 +64,14 @@ export class RegistrarCursoComponent implements OnInit {
 
     constructor(
         private readonly fb: FormBuilder,
-        private readonly materialApoyoService: MaterialApoyoService
-    ) {}
+        private readonly materialApoyoService: MaterialApoyoService,
+        private readonly registrarCursoService: RegistrarCursoService,
+        private readonly messageService: MessageService
+    ) { }
+
+    private readonly subs: Subscription[] = [];
+    cursoExistsMessage: string | null = null;
+    saving: boolean = false;
 
     ngOnInit() {
         this.form = this.fb.group({
@@ -93,6 +109,53 @@ export class RegistrarCursoComponent implements OnInit {
             error: (err) =>
                 console.error('Error cargando materiales de apoyo', err),
         });
+
+        // validar existencia de curso cuando cambia el grupo (debounce)
+        const grupoCtrl = this.form.get('grupo');
+        if (grupoCtrl) {
+            const s = (grupoCtrl.valueChanges as any)
+                .pipe(
+                    debounceTime(400),
+                    distinctUntilChanged(),
+                    filter((v: string) => !!v && v.length > 0),
+                    switchMap((val: string) => {
+                        const asignaturaId = this.asignatura
+                            ? this.asignatura.id || 0
+                            : 0;
+                        return this.registrarCursoService.exists(
+                            val,
+                            asignaturaId
+                        );
+                    })
+                )
+                .subscribe({
+                    next: (resp) => {
+                        if (
+                            resp &&
+                            resp.typeResponse === 'SUCCESS' &&
+                            resp.data === true
+                        ) {
+                            this.cursoExistsMessage = resp.message;
+                            grupoCtrl.setErrors({ exists: true });
+                        } else {
+                            this.cursoExistsMessage = null;
+                            const errors = grupoCtrl.errors || {};
+                            if (errors.exists) {
+                                delete errors.exists;
+                            }
+                            if (Object.keys(errors).length === 0) {
+                                grupoCtrl.setErrors(null);
+                            } else {
+                                grupoCtrl.setErrors(errors);
+                            }
+                        }
+                    },
+                    error: () => {
+                        this.cursoExistsMessage = null;
+                    },
+                });
+            this.subs.push(s as Subscription);
+        }
     }
 
     get grupo() {
@@ -108,9 +171,85 @@ export class RegistrarCursoComponent implements OnInit {
             this.form.markAllAsTouched();
             return;
         }
-        // Aquí puedes construir el payload y llamar al servicio de registro
-        const value = this.form.value;
-        console.log('Formulario válido. Payload:', value);
+        // Verificar existencia una última vez antes de enviar
+        const grupo = this.form.value.grupo;
+        const asignaturaId = this.asignatura ? this.asignatura.id || 0 : 0;
+        const existsSub = this.registrarCursoService
+            .exists(grupo, asignaturaId)
+            .subscribe({
+                next: (resp) => {
+                    if (
+                        resp &&
+                        resp.typeResponse === 'SUCCESS' &&
+                        resp.data === true
+                    ) {
+                        this.cursoExistsMessage = resp.message;
+                        this.form.get('grupo')?.setErrors({ exists: true });
+                        return;
+                    }
+
+                    // construir payload y enviar
+                    const payload = {
+                        grupo: this.form.value.grupo,
+                        asignaturaId: this.asignatura?.id || 0,
+                        docentesIds: this.targetDocentes.map((d) =>
+                            d.id ? d.id : Number(d.codigo) || 0
+                        ),
+                        horario: this.form.value.horario,
+                        salon: this.form.value.salon,
+                        materialApoyoIds: this.selectedMateriales
+                            .map((m) => (m as any).id)
+                            .filter((id) => !!id),
+                        observacion: this.form.value.observacion,
+                    };
+
+                    this.saving = true;
+                    const regSub = this.registrarCursoService
+                        .registrarCurso(payload)
+                        .subscribe({
+                            next: (r) => {
+                                if (r.typeResponse === 'SUCCESS') {
+                                    // mostrar toast con el message del ApiResponse
+                                    this.messageService.add({
+                                        severity: 'success',
+                                        summary: 'Éxito',
+                                        detail: r.message,
+                                    });
+                                    console.log('Curso registrado', r.data);
+                                    this.form.reset();
+                                    this.selectedMateriales = [];
+                                } else {
+                                    // mostrar mensaje de error devuelto por la API
+                                    this.messageService.add({
+                                        severity: 'error',
+                                        summary: 'Error',
+                                        detail: r.message,
+                                    });
+                                }
+                                this.saving = false;
+                            },
+                            error: (err) => {
+                                console.error('Error registrando curso', err);
+                                this.messageService.add({
+                                    severity: 'error',
+                                    summary: 'Error',
+                                    detail: 'Error registrando curso',
+                                });
+                                this.saving = false;
+                            },
+                        });
+                    this.subs.push(regSub);
+                },
+                error: (err) =>
+                    console.error('Error validando existencia', err),
+            });
+        this.subs.push(existsSub);
+    }
+
+    ngOnDestroy(): void {
+        for (const s of this.subs) {
+            if (s && !s.closed) s.unsubscribe();
+        }
     }
 
     openMaterialDialog() {

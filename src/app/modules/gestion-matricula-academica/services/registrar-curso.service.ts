@@ -29,4 +29,18 @@ export class RegistrarCursoService {
             payload
         );
     }
+
+    exists(
+        grupo: string,
+        asignaturaId: number
+    ): Observable<ApiResponse<boolean>> {
+        const params = {
+            grupo,
+            asignaturaId: String(asignaturaId),
+        };
+        return this.http.get<ApiResponse<boolean>>(
+            `${backendRegistrarCurso()}/existe`,
+            { params }
+        );
+    }
 }

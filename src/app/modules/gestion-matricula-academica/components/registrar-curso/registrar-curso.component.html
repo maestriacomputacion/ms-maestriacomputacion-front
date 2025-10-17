@@ -9,6 +9,7 @@
       style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
     <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
       [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" />
+    <small *ngIf="cursoExistsMessage" class="p-error">{{ cursoExistsMessage }}</small>
   </div>
 
 
@@ -151,7 +152,7 @@
   </div>
 
   <div class="flex justify-content-end mt-4">
-    <button pButton label="Registrar Curso" class="p-button-primary mr-2" [disabled]="form.invalid"
+    <button pButton label="Registrar Curso" class="p-button-primary mr-2" [disabled]="form.invalid || saving"
       (click)="onSubmit()"></button>
     <button pButton label="Cancelar" class="p-button-secondary" type="button"></button>
   </div>

@@ -10,6 +10,7 @@ import {
     distinctUntilChanged,
     filter,
     switchMap,
+    finalize,
 } from 'rxjs/operators';
 
 import { AsignaturaModel, DocenteModel } from '../../models/curso.model';
@@ -34,10 +35,11 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         { id: 1063, nombre: 'Julio Hurtado', codigo: '1063' },
     ];
     targetDocentes: DocenteModel[] = [
-        { id: 1065, nombre: 'Martha Mendoza', codigo: '1065' },
+        { id: 1, nombre: 'Martha Mendoza', codigo: '1065' },
     ];
 
     materialesApoyo: MaterialApoyo[] = [];
+    loadingMaterials: boolean = false;
 
     // Observación se guarda en el FormControl 'observacion'
     // Material dialog + selection
@@ -82,16 +84,20 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             });
         }
 
-        // cargar materiales desde el servicio
-        this.materialApoyoService.listMaterialApoyo().subscribe({
-            next: (resp) => {
-                if (resp && resp.typeResponse === 'SUCCESS') {
-                    this.materialesApoyo = resp.data || [];
-                }
-            },
-            error: (err) =>
-                console.error('Error cargando materiales de apoyo', err),
-        });
+        // cargar materiales desde el servicio (mostrar estado de carga)
+        this.loadingMaterials = true;
+        this.materialApoyoService
+            .listMaterialApoyo()
+            .pipe(finalize(() => (this.loadingMaterials = false)))
+            .subscribe({
+                next: (resp) => {
+                    if (resp && resp.typeResponse === 'SUCCESS') {
+                        this.materialesApoyo = resp.data || [];
+                    }
+                },
+                error: (err) =>
+                    console.error('Error cargando materiales de apoyo', err),
+            });
 
         // validar existencia de curso cuando cambia el grupo (debounce)
         const grupoCtrl = this.form.get('grupo');
@@ -118,7 +124,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                             resp.typeResponse === 'SUCCESS' &&
                             resp.data === true
                         ) {
-                            this.cursoExistsMessage = resp.message;
+                            const detail = resp.message || null;
+                            this.cursoExistsMessage = detail;
                             grupoCtrl.setErrors({ exists: true });
                         } else {
                             this.cursoExistsMessage = null;
@@ -133,8 +140,17 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                             }
                         }
                     },
-                    error: () => {
-                        this.cursoExistsMessage = null;
+                    error: (err) => {
+                        const detail =
+                            err?.error?.message || err?.message || null;
+                        this.cursoExistsMessage = detail;
+                        if (detail) {
+                            this.messageService.add({
+                                severity: 'warn',
+                                summary: 'Atención',
+                                detail,
+                            });
+                        }
                     },
                 });
             this.subs.push(s as Subscription);
@@ -213,10 +229,14 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                             },
                             error: (err) => {
                                 console.error('Error registrando curso', err);
+                                const detail =
+                                    err?.error?.message ||
+                                    err?.message ||
+                                    'Error registrando curso';
                                 this.messageService.add({
                                     severity: 'error',
                                     summary: 'Error',
-                                    detail: 'Error registrando curso',
+                                    detail,
                                 });
                                 this.saving = false;
                             },
@@ -253,6 +273,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     removeSelectedMaterial(material: MaterialApoyo) {
         if (!material) return;
+        // confirmación para evitar eliminación accidental (heurística: user control & freedom)
+        if (!confirm('¿Quitar el material seleccionado?')) return;
         const id = (material as any).id;
         if (typeof id === 'number') {
             this.selectedMateriales = this.selectedMateriales.filter(

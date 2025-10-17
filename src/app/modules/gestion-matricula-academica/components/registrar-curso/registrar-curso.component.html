@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <p-panel [formGroup]="form">
   <p-header>
     <b>REGISTRAR CURSO</b>
@@ -9,9 +10,10 @@
       <label for="grupo" class="font-medium mb-1 label-required"
         style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
       <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
-        [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" />
+        [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" [attr.aria-invalid]="grupo?.invalid"
+        [disabled]="saving" placeholder="Ej: A" />
     </div>
-    <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem);">
+    <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem);" aria-live="assertive">
       <small *ngIf="cursoExistsMessage" class="p-error">{{ cursoExistsMessage }}</small>
     </div>
   </div>
@@ -66,7 +68,8 @@
         <!-- Ajusta este valor según el largo del label -->
         <div class="p-input-icon-left w-20rem mb-3">
           <i class="pi pi-search"></i>
-          <input id="buscarDocente" pInputText type="text" class="w-full" placeholder="Buscar Docente" />
+          <input id="buscarDocente" pInputText type="text" class="w-full" placeholder="Buscar Docente"
+            [disabled]="saving" />
         </div>
         <p-pickList [source]="sourceDocentes" [target]="targetDocentes" sourceHeader="Docentes Disponibles"
           targetHeader="Docentes Seleccionados" [responsive]="true" [dragdrop]="true" [breakpoint]="'1400px'"
@@ -78,7 +81,8 @@
         </p-pickList>
         <div class="flex justify-content-center mt-3">
           <button pButton label="Registrar Material" class="p-button-primary w-auto p-button-sm"
-            style="min-width: unset; width: auto" (click)="openMaterialDialog()"></button>
+            style="min-width: unset; width: auto" (click)="openMaterialDialog()" [disabled]="saving || loadingMaterials"
+            pTooltip="Abrir selector de materiales"></button>
         </div>
       </div>
     </div>
@@ -154,8 +158,8 @@
   </div>
 
   <div class="flex justify-content-end mt-4">
-    <button pButton label="Registrar Curso" class="p-button-primary mr-2" [disabled]="form.invalid || saving"
-      (click)="onSubmit()"></button>
-    <button pButton label="Cancelar" class="p-button-secondary" type="button"></button>
+    <button pButton label="Registrar Curso" class="p-button-primary mr-2"
+      [disabled]="form.invalid || saving || loadingMaterials" (click)="onSubmit()" [loading]="saving"></button>
+    <button pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"></button>
   </div>
 </p-panel>

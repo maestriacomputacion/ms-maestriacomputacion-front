@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { CursoUI } from '../models/curso.model';
-import { AsignaturaModel } from '../models/curso.model';
+import { CursoUI, AsignaturaModel, DocenteModel } from '../models/curso.model';
 import { matricula_academica } from 'src/environments/environment';
 
 export interface RegistrarCursoPayload {
@@ -48,6 +47,12 @@ export class RegistrarCursoService {
     listAsignaturas(): Observable<ApiResponse<AsignaturaModel[]>> {
         return this.http.get<ApiResponse<AsignaturaModel[]>>(
             `${backendRegistrarCurso()}/asignaturas`
+        );
+    }
+
+    listDocentesByAsignatura(asignaturaId: number): Observable<ApiResponse<DocenteModel[]>> {
+        return this.http.get<ApiResponse<DocenteModel[]>>(
+            `${backendRegistrarCurso()}/asignaturas/docente/${asignaturaId}`
         );
     }
 }

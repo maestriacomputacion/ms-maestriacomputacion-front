@@ -66,15 +66,15 @@
       <label for="buscarDocente" class="label-required"><b>Docentes que dictan el curso: </b></label>
       <div style="margin-left: 16.5rem">
         <!-- Ajusta este valor según el largo del label -->
-        <div class="p-input-icon-left w-20rem mb-3">
+          <div class="p-input-icon-left w-20rem mb-3">
           <i class="pi pi-search"></i>
           <input id="buscarDocente" pInputText type="text" class="w-full" placeholder="Buscar Docente"
-            [disabled]="saving" />
+            [disabled]="loadingDocentes || saving" />
         </div>
         <p-pickList [source]="sourceDocentes" [target]="targetDocentes" sourceHeader="Docentes Disponibles"
           targetHeader="Docentes Seleccionados" [responsive]="true" [dragdrop]="true" [breakpoint]="'1400px'"
           [sourceStyle]="{ height: '22rem' }" [targetStyle]="{ height: '22rem' }" [showSourceControls]="false"
-          [showTargetControls]="false">
+          [showTargetControls]="false" [disabled]="loadingDocentes || saving">
           <ng-template let-docente pTemplate="item">
             <div>{{ docente.nombre }} | {{ docente.codigo }}</div>
           </ng-template>
@@ -165,7 +165,8 @@
           <td>{{ asign.codigo }}</td>
           <td>{{ asign.nombre }}</td>
           <td class="text-center">
-            <button type="button" class="p-link" (click)="selectAsignatura(asign)" style="color: #0d6efd;">Seleccionar</button>
+            <button type="button" class="p-link" (click)="selectAsignatura(asign)"
+              style="color: #0d6efd;">Seleccionar</button>
           </td>
         </tr>
       </ng-template>
@@ -194,7 +195,7 @@
 
   <div class="flex justify-content-end mt-4">
     <button pButton label="Registrar Curso" class="p-button-primary mr-2"
-      [disabled]="form.invalid || saving || loadingMaterials" (click)="onSubmit()" [loading]="saving"></button>
+      [disabled]="form.invalid || saving || loadingMaterials || !targetDocentes || targetDocentes.length === 0" (click)="onSubmit()" [loading]="saving"></button>
     <button pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"></button>
   </div>
 </p-panel>

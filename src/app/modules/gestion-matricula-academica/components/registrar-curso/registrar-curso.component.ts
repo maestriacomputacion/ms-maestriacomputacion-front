@@ -25,14 +25,9 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     // asignatura seleccionada (se rellenará desde el modal)
     asignatura: AsignaturaModel | null = null;
 
-    sourceDocentes: DocenteModel[] = [
-        { id: 1061, nombre: 'Erwin Meza', codigo: '1061' },
-        { id: 1062, nombre: 'Carlos Alberto Ardila', codigo: '1062' },
-        { id: 1063, nombre: 'Julio Hurtado', codigo: '1063' },
-    ];
-    targetDocentes: DocenteModel[] = [
-        { id: 1, nombre: 'Martha Mendoza', codigo: '1065' },
-    ];
+    sourceDocentes: DocenteModel[] = [];
+    targetDocentes: DocenteModel[] = [];
+    loadingDocentes: boolean = false;
 
     // asignaturas modal
     asignaturas: AsignaturaModel[] = [];
@@ -110,7 +105,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 .pipe(
                     debounceTime(400),
                     distinctUntilChanged(),
-                    filter((v: string) => !!v && v.length > 0),
+                    // Sólo validar existencia si hay al menos un docente seleccionado
+                    filter((v: string) => !!v && v.length > 0 && this.targetDocentes && this.targetDocentes.length > 0),
                     switchMap((val: string) => {
                         const asignaturaId = this.asignatura
                             ? this.asignatura.id || 0
@@ -174,9 +170,72 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             this.form.markAllAsTouched();
             return;
         }
-        // Verificar existencia una última vez antes de enviar
+        // Verificar existencia una última vez antes de enviar solo si hay docentes seleccionados
         const grupo = this.form.value.grupo;
         const asignaturaId = this.asignatura ? this.asignatura.id || 0 : 0;
+
+        const doSubmit = () => {
+            const payload = {
+                grupo: this.form.value.grupo,
+                asignaturaId: this.asignatura?.id || 0,
+                docentesIds: this.targetDocentes.map((d) =>
+                    d.id ? d.id : Number(d.codigo) || 0
+                ),
+                horario: this.form.value.horario,
+                salon: this.form.value.salon,
+                materialApoyoIds: this.selectedMateriales
+                    .map((m) => (m as any).id)
+                    .filter((id) => !!id),
+                observacion: this.form.value.observacion,
+            };
+
+            this.saving = true;
+            const regSub = this.registrarCursoService
+                .registrarCurso(payload)
+                .subscribe({
+                    next: (r) => {
+                        if (r.typeResponse === 'SUCCESS') {
+                            // mostrar toast con el message del ApiResponse
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: 'Éxito',
+                                detail: r.message,
+                            });
+                            console.log('Curso registrado', r.data);
+                            this.form.reset();
+                            this.selectedMateriales = [];
+                        } else {
+                            // mostrar mensaje de error devuelto por la API
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: 'Error',
+                                detail: r.message,
+                            });
+                        }
+                        this.saving = false;
+                    },
+                    error: (err) => {
+                        console.error('Error registrando curso', err);
+                        const detail =
+                            err?.error?.message || err?.message ||
+                            'Error registrando curso';
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail,
+                        });
+                        this.saving = false;
+                    },
+                });
+            this.subs.push(regSub);
+        };
+
+        if (!this.targetDocentes || this.targetDocentes.length === 0) {
+            // no hay docentes seleccionados: omitir la verificación de existencia y enviar
+            doSubmit();
+            return;
+        }
+
         const existsSub = this.registrarCursoService
             .exists(grupo, asignaturaId)
             .subscribe({
@@ -192,60 +251,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                     }
 
                     // construir payload y enviar
-                    const payload = {
-                        grupo: this.form.value.grupo,
-                        asignaturaId: this.asignatura?.id || 0,
-                        docentesIds: this.targetDocentes.map((d) =>
-                            d.id ? d.id : Number(d.codigo) || 0
-                        ),
-                        horario: this.form.value.horario,
-                        salon: this.form.value.salon,
-                        materialApoyoIds: this.selectedMateriales
-                            .map((m) => (m as any).id)
-                            .filter((id) => !!id),
-                        observacion: this.form.value.observacion,
-                    };
-
-                    this.saving = true;
-                    const regSub = this.registrarCursoService
-                        .registrarCurso(payload)
-                        .subscribe({
-                            next: (r) => {
-                                if (r.typeResponse === 'SUCCESS') {
-                                    // mostrar toast con el message del ApiResponse
-                                    this.messageService.add({
-                                        severity: 'success',
-                                        summary: 'Éxito',
-                                        detail: r.message,
-                                    });
-                                    console.log('Curso registrado', r.data);
-                                    this.form.reset();
-                                    this.selectedMateriales = [];
-                                } else {
-                                    // mostrar mensaje de error devuelto por la API
-                                    this.messageService.add({
-                                        severity: 'error',
-                                        summary: 'Error',
-                                        detail: r.message,
-                                    });
-                                }
-                                this.saving = false;
-                            },
-                            error: (err) => {
-                                console.error('Error registrando curso', err);
-                                const detail =
-                                    err?.error?.message ||
-                                    err?.message ||
-                                    'Error registrando curso';
-                                this.messageService.add({
-                                    severity: 'error',
-                                    summary: 'Error',
-                                    detail,
-                                });
-                                this.saving = false;
-                            },
-                        });
-                    this.subs.push(regSub);
+                    doSubmit();
                 },
                 error: (err) =>
                     console.error('Error validando existencia', err),
@@ -350,6 +356,33 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             else grupoCtrl.setErrors(errors);
         }
         this.displayAsignaturaDialog = false;
+        // cargar docentes asociados a la asignatura seleccionada
+    if (asign?.id) {
+            this.loadingDocentes = true;
+            const sub = this.registrarCursoService
+                .listDocentesByAsignatura(asign.id)
+                .pipe(finalize(() => (this.loadingDocentes = false)))
+                .subscribe({
+                    next: (resp) => {
+                        if (resp && resp.typeResponse === 'SUCCESS') {
+                            // colocar todos en source y limpiar target
+                            this.sourceDocentes = resp.data || [];
+                            this.targetDocentes = [];
+                        } else {
+                            this.messageService.add({
+                                severity: 'warn',
+                                summary: 'Atención',
+                                detail: resp?.message || 'No se encontraron docentes',
+                            });
+                        }
+                    },
+                    error: (err) => {
+                        const detail = err?.error?.message || err?.message || 'Error cargando docentes';
+                        this.messageService.add({ severity: 'error', summary: 'Error', detail });
+                    },
+                });
+            this.subs.push(sub);
+        }
     }
 
     openMaterialDialog() {

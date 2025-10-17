@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CursoService } from '../../services/curso.service';
 import { CursoUI } from '../../models/curso.model';
@@ -31,7 +32,9 @@ export class GestionCursoComponent implements OnInit {
     constructor(
         private readonly fb: FormBuilder,
         private readonly cursoService: CursoService,
-        private readonly periodoService: PeriodoAcademicoService
+        private readonly periodoService: PeriodoAcademicoService,
+        private readonly router: Router,
+        private readonly route: ActivatedRoute
     ) {
         this.form = this.fb.group({
             grupo: ['', Validators.required],
@@ -91,10 +94,12 @@ export class GestionCursoComponent implements OnInit {
     }
 
     onAgregarCurso() {
-        this.form.reset();
-        this.editMode = false;
-        this.editCursoId = null;
-        this.displayModal = true;
+        // Navegar al formulario de registro de curso usando ruta absoluta para evitar problemas
+        // con navegación relativa y estrategias de ubicación (hash)
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'registrar-curso',
+        ]);
     }
 
     onEditarCurso(id: number) {

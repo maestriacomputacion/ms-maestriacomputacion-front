@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { HttpClient } from '@angular/common/http';
 
 export interface Estudiante {
     codigo: string;
@@ -22,19 +21,70 @@ export interface AsignaturaMatricular {
 
 @Injectable({ providedIn: 'root' })
 export class MatriculaPreviaService {
-    constructor(private readonly http: HttpClient) {}
+    private readonly estudiante: Estudiante = {
+        codigo: '20191006789',
+        nombre: 'Juan Carlos',
+        apellidos: 'González Pérez',
+        director: 'Dr. María Elena Rodríguez',
+        coDirector: 'Dr. Carlos Alberto Martínez',
+        semestreAcademico: '2025-1',
+    };
+
+    private readonly asignaturasMatricular: AsignaturaMatricular[] = [
+        {
+            id: 1,
+            grupo: 'Grupo A',
+            nombreAsignatura: 'Metodología de la Investigación',
+            opciones: 'Matricular',
+            observacion: 'Curso requerido para el programa',
+        },
+        {
+            id: 2,
+            grupo: 'Grupo B',
+            nombreAsignatura: 'Seminario de Matemáticas',
+            opciones: 'Matricular',
+            observacion: 'Prerrequisito: Cálculo Avanzado',
+        },
+        {
+            id: 3,
+            grupo: 'Grupo A',
+            nombreAsignatura: 'Gestión de la Tecnología',
+            opciones: 'Matricular',
+            observacion: 'Curso fundamental del programa',
+        },
+        {
+            id: 4,
+            grupo: 'Grupo C',
+            nombreAsignatura: 'Electiva: Aprendizaje Profundo',
+            opciones: 'No Matricular',
+            observacion: 'Requisito: conocimientos de programación',
+        },
+        {
+            id: 5,
+            grupo: 'Grupo A',
+            nombreAsignatura: 'Trabajo de Grado 1',
+            opciones: 'Matricular',
+            observacion: 'Definir tema de investigación',
+        },
+    ];
 
     getEstudiante(): Observable<ApiResponse<Estudiante>> {
-        return this.http.get<ApiResponse<Estudiante>>(
-            'assets/app/modules/gestion-matricula-academica/data/matricula-previa.json'
-        );
+        return of({
+            typeResponse: 'SUCCESS',
+            message: 'Datos del estudiante cargados correctamente',
+            data: this.estudiante,
+            statusCode: 200,
+        });
     }
 
     getAsignaturasMatricular(): Observable<
         ApiResponse<AsignaturaMatricular[]>
     > {
-        return this.http.get<ApiResponse<AsignaturaMatricular[]>>(
-            'assets/app/modules/gestion-matricula-academica/data/matricula-previa.json'
-        );
+        return of({
+            typeResponse: 'SUCCESS',
+            message: 'Asignaturas para matricular cargadas correctamente',
+            data: this.asignaturasMatricular,
+            statusCode: 200,
+        });
     }
 }

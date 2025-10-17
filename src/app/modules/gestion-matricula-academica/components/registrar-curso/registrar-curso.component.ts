@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { SelectItem, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
@@ -12,17 +12,7 @@ import {
     switchMap,
 } from 'rxjs/operators';
 
-interface Asignatura {
-    id?: number;
-    codigo: string;
-    nombre: string;
-}
-
-interface Docente {
-    id?: number;
-    codigo: string;
-    nombre: string;
-}
+import { AsignaturaModel, DocenteModel } from '../../models/curso.model';
 
 @Component({
     selector: 'app-registrar-curso',
@@ -31,30 +21,25 @@ interface Docente {
 })
 export class RegistrarCursoComponent implements OnInit, OnDestroy {
     form!: FormGroup;
-    periodoNumero: number = 1;
-    periodoAnio: number | null = null;
-    anios: SelectItem[] = Array.from({ length: 6 }, (_, i) => ({
-        label: `${2023 + i}`,
-        value: 2023 + i,
-    }));
-    asignatura: Asignatura | null = {
+    // valores por defecto para el formulario (incrustados en el FormGroup)
+    asignatura: AsignaturaModel | null = {
         id: 6,
-        codigo: '28955',
         nombre: 'Fundamentos de diseño de software',
+        codigo: '28955',
     };
 
-    sourceDocentes: Docente[] = [
-        { id: 1061, codigo: '1061', nombre: 'Erwin Meza' },
-        { id: 1062, codigo: '1062', nombre: 'Carlos Alberto Ardila' },
-        { id: 1063, codigo: '1063', nombre: 'Julio Hurtado' },
+    sourceDocentes: DocenteModel[] = [
+        { id: 1061, nombre: 'Erwin Meza', codigo: '1061' },
+        { id: 1062, nombre: 'Carlos Alberto Ardila', codigo: '1062' },
+        { id: 1063, nombre: 'Julio Hurtado', codigo: '1063' },
     ];
-    targetDocentes: Docente[] = [
-        { id: 1, codigo: '1065', nombre: 'Martha Mendoza' },
+    targetDocentes: DocenteModel[] = [
+        { id: 1065, nombre: 'Martha Mendoza', codigo: '1065' },
     ];
 
     materialesApoyo: MaterialApoyo[] = [];
 
-    observacion: string = '';
+    // Observación se guarda en el FormControl 'observacion'
     // Material dialog + selection
     displayMaterialDialog: boolean = false;
     // materiales seleccionados en el formulario
@@ -67,7 +52,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         private readonly materialApoyoService: MaterialApoyoService,
         private readonly registrarCursoService: RegistrarCursoService,
         private readonly messageService: MessageService
-    ) { }
+    ) {}
 
     private readonly subs: Subscription[] = [];
     cursoExistsMessage: string | null = null;
@@ -79,8 +64,6 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 '',
                 [Validators.required, Validators.pattern(/^[A-Za-z]$/)],
             ],
-            periodoNumero: [this.periodoNumero],
-            periodoAnio: [this.periodoAnio],
             horario: [''],
             salon: ['', [Validators.maxLength(100)]],
             observacion: [''],
@@ -271,7 +254,6 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     removeSelectedMaterial(material: MaterialApoyo) {
         if (!material) return;
         const id = (material as any).id;
-        // Remove by id if available, otherwise by name
         if (typeof id === 'number') {
             this.selectedMateriales = this.selectedMateriales.filter(
                 (m) => m.id !== id

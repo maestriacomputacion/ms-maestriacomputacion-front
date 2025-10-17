@@ -4,15 +4,17 @@
   </p-header>
 
   <!-- Sección Grupo -->
-  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
-    <label for="grupo" class="font-medium mb-1 label-required"
-      style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
-    <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
-      [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" />
-    <small *ngIf="cursoExistsMessage" class="p-error">{{ cursoExistsMessage }}</small>
+  <div class="mt-3" style="max-width: 22rem">
+    <div class="flex items-center gap-3">
+      <label for="grupo" class="font-medium mb-1 label-required"
+        style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
+      <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
+        [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" />
+    </div>
+    <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem);">
+      <small *ngIf="cursoExistsMessage" class="p-error">{{ cursoExistsMessage }}</small>
+    </div>
   </div>
-
-
 
   <!-- Sección Horario -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">

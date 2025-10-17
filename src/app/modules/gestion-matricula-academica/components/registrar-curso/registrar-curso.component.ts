@@ -22,12 +22,8 @@ import { AsignaturaModel, DocenteModel } from '../../models/curso.model';
 })
 export class RegistrarCursoComponent implements OnInit, OnDestroy {
     form!: FormGroup;
-    // valores por defecto para el formulario (incrustados en el FormGroup)
-    asignatura: AsignaturaModel | null = {
-        id: 6,
-        nombre: 'Fundamentos de diseño de software',
-        codigo: '28955',
-    };
+    // asignatura seleccionada (se rellenará desde el modal)
+    asignatura: AsignaturaModel | null = null;
 
     sourceDocentes: DocenteModel[] = [
         { id: 1061, nombre: 'Erwin Meza', codigo: '1061' },
@@ -37,6 +33,13 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     targetDocentes: DocenteModel[] = [
         { id: 1, nombre: 'Martha Mendoza', codigo: '1065' },
     ];
+
+    // asignaturas modal
+    asignaturas: AsignaturaModel[] = [];
+    loadingAsignaturas = false;
+    displayAsignaturaDialog = false;
+    // asignatura seleccionada (temporal en el modal)
+    modalSelectedAsignaturas: AsignaturaModel[] = [];
 
     materialesApoyo: MaterialApoyo[] = [];
     loadingMaterials: boolean = false;
@@ -59,6 +62,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     private readonly subs: Subscription[] = [];
     cursoExistsMessage: string | null = null;
     saving: boolean = false;
+    loadingAsignaturasError = false;
 
     ngOnInit() {
         this.form = this.fb.group({
@@ -253,6 +257,99 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         for (const s of this.subs) {
             if (s && !s.closed) s.unsubscribe();
         }
+    }
+
+    // Asignaturas modal handlers
+    openAsignaturaDialog() {
+        this.modalSelectedAsignaturas = this.asignatura
+            ? [this.asignatura]
+            : [];
+        this.displayAsignaturaDialog = true;
+        // cargar asignaturas si no están cargadas
+        if (!this.asignaturas || this.asignaturas.length === 0) {
+            this.loadingAsignaturas = true;
+            const sub = this.registrarCursoService
+                .listAsignaturas()
+                .pipe(finalize(() => (this.loadingAsignaturas = false)))
+                .subscribe({
+                    next: (resp) => {
+                        if (resp && resp.typeResponse === 'SUCCESS') {
+                            this.asignaturas = resp.data || [];
+                        } else {
+                            this.messageService.add({
+                                severity: 'warn',
+                                summary: 'Atención',
+                                detail:
+                                    resp?.message ||
+                                    'No se pudieron cargar asignaturas',
+                            });
+                        }
+                    },
+                    error: (err) => {
+                        const detail =
+                            err?.error?.message ||
+                            err?.message ||
+                            'Error cargando asignaturas';
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail,
+                        });
+                        this.loadingAsignaturasError = true;
+                    },
+                });
+            this.subs.push(sub);
+        }
+    }
+
+    confirmAsignaturaSelection() {
+        if (
+            this.modalSelectedAsignaturas &&
+            this.modalSelectedAsignaturas.length > 0
+        ) {
+            if (this.modalSelectedAsignaturas.length > 1) {
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: 'Aviso',
+                    detail: `Se seleccionaron ${this.modalSelectedAsignaturas.length} asignaturas; se usará la primera seleccionada.`,
+                });
+            }
+            this.asignatura = this.modalSelectedAsignaturas[0];
+            // reset existing cursoExistsMessage when asignatura cambia
+            this.cursoExistsMessage = null;
+            const grupoCtrl = this.form.get('grupo');
+            if (grupoCtrl) {
+                const errors = grupoCtrl.errors || {};
+                if (errors.exists) {
+                    delete errors.exists;
+                }
+                if (Object.keys(errors).length === 0) {
+                    grupoCtrl.setErrors(null);
+                } else {
+                    grupoCtrl.setErrors(errors);
+                }
+            }
+        }
+        this.displayAsignaturaDialog = false;
+    }
+
+    cancelAsignaturaSelection() {
+        this.modalSelectedAsignaturas = [];
+        this.displayAsignaturaDialog = false;
+    }
+
+    selectAsignatura(asign: AsignaturaModel) {
+        this.asignatura = asign;
+        // limpiar estado de existencia de curso al cambiar asignatura
+        this.cursoExistsMessage = null;
+        const grupoCtrl = this.form.get('grupo');
+        if (grupoCtrl) {
+            const errors = grupoCtrl.errors || {};
+            if (errors.exists) delete errors.exists;
+            if (Object.keys(errors).length === 0) grupoCtrl.setErrors(null);
+            else grupoCtrl.setErrors(errors);
+        }
+        this.displayAsignaturaDialog = false;
     }
 
     openMaterialDialog() {

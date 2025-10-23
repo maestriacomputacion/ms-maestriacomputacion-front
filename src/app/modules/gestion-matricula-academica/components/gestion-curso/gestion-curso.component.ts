@@ -45,7 +45,7 @@ export class GestionCursoComponent implements OnInit {
     }
 
     ngOnInit() {
-        // cargar periodos para el filtro
+        // Cargar periodos para el filtro
         this.periodoService.getPeriodos().subscribe((resp) => {
             if (resp.typeResponse === 'SUCCESS') {
                 this.periodos = (resp.data || []).map(
@@ -94,8 +94,7 @@ export class GestionCursoComponent implements OnInit {
     }
 
     onAgregarCurso() {
-        // Navegar al formulario de registro de curso usando ruta absoluta para evitar problemas
-        // con navegación relativa y estrategias de ubicación (hash)
+        // Navegar al formulario de registro
         this.router.navigate([
             '/gestion-matricula-academica',
             'registrar-curso',

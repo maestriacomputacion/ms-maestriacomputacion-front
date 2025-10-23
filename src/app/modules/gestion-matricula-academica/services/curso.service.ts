@@ -8,7 +8,7 @@ import { matricula_academica } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CursoService {
-    // Helper para formatear fechas 'YYYY-MM-DD' a 'DD/MM/YYYY'
+    // Formatea fechas 'YYYY-MM-DD' o ISO a 'DD/MM/YYYY'
     private static formatDateString(dateStr: string): string {
         if (!dateStr) return '';
         // soporta formatos YYYY-MM-DD o ISO
@@ -17,9 +17,6 @@ export class CursoService {
         const [year, month, day] = parts;
         return `${day}/${month}/${year}`;
     }
-
-    // Eliminados datos quemados (mocks). En producción/QA los datos vendrán
-    // del backend; en fallbacks devolvemos estructuras vacías seguras.
 
     private readonly backend = `${matricula_academica.api_url}cursos`;
 
@@ -34,11 +31,9 @@ export class CursoService {
                 data: ((resp.data as any[]) || []).map((item: any) => ({
                     id: Number(item.id),
                     grupo: item.grupo,
-                    // asignatura viene como objeto { id, nombre, ... }
                     asignatura:
                         item.asignatura?.nombre ??
                         String(item.asignatura ?? ''),
-                    // docentes es un array; preferimos nombre+apellido si existen, si no usamos el código
                     docente: (item.docentes || [])
                         .map((d: any) => {
                             const nombreCompleto = `${d.nombre ?? ''} ${
@@ -53,15 +48,12 @@ export class CursoService {
                         })
                         .filter((v: string) => !!v)
                         .join(', '),
-                    // no hay campo 'fecha' directo; usamos fechaInicio del periodo si está
                     fecha: CursoService.formatDateString(
                         item.periodo?.fechaInicio ?? item.fecha ?? ''
                     ),
                 })),
             })),
-            // En caso de error devolvemos una respuesta vacía segura para
-            // no romper la UI en desarrollo. El frontend debe tratar arrays
-            // vacíos como ausencia de datos.
+            // Fallback: devolver lista vacía en caso de error
             catchError(() =>
                 of({
                     typeResponse: 'SUCCESS',

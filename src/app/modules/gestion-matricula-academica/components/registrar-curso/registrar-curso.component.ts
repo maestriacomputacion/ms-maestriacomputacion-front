@@ -22,25 +22,20 @@ import { AsignaturaModel, DocenteModel } from '../../models/curso.model';
 })
 export class RegistrarCursoComponent implements OnInit, OnDestroy {
     form!: FormGroup;
-    // asignatura seleccionada (se rellenará desde el modal)
     asignatura: AsignaturaModel | null = null;
 
     sourceDocentes: DocenteModel[] = [];
     targetDocentes: DocenteModel[] = [];
     loadingDocentes: boolean = false;
 
-    // asignaturas modal
     asignaturas: AsignaturaModel[] = [];
     loadingAsignaturas = false;
     displayAsignaturaDialog = false;
-    // asignatura seleccionada (temporal en el modal)
     modalSelectedAsignaturas: AsignaturaModel[] = [];
 
     materialesApoyo: MaterialApoyo[] = [];
     loadingMaterials: boolean = false;
 
-    // Observación se guarda en el FormControl 'observacion'
-    // Material dialog + selection
     displayMaterialDialog: boolean = false;
     // materiales seleccionados en el formulario
     selectedMateriales: MaterialApoyo[] = [];
@@ -70,7 +65,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             observacion: ['', [Validators.maxLength(200)]],
         });
 
-        // convertir grupo a una sola letra mayúscula usando valueChanges (Angular way)
+        // Convertir grupo a una sola letra mayúscula
         const grupoControl = this.form.get('grupo');
         if (grupoControl) {
             grupoControl.valueChanges.subscribe((val: string) => {
@@ -83,7 +78,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             });
         }
 
-        // cargar materiales desde el servicio (mostrar estado de carga)
+        // Cargar materiales desde el servicio
         this.loadingMaterials = true;
         this.materialApoyoService
             .listMaterialApoyo()
@@ -98,7 +93,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                     console.error('Error cargando materiales de apoyo', err),
             });
 
-        // validar existencia de curso cuando cambia el grupo (debounce)
+        // Validar existencia de curso cuando cambia el grupo (debounce)
         const grupoCtrl = this.form.get('grupo');
         if (grupoCtrl) {
             const s = (grupoCtrl.valueChanges as any)
@@ -183,7 +178,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             this.form.markAllAsTouched();
             return;
         }
-        // Verificar existencia una última vez antes de enviar solo si hay docentes seleccionados
+        // Verificar existencia antes de enviar (si hay docentes seleccionados)
         const grupo = this.form.value.grupo;
         const asignaturaId = this.asignatura ? this.asignatura.id || 0 : 0;
 
@@ -279,13 +274,12 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         }
     }
 
-    // Asignaturas modal handlers
     openAsignaturaDialog() {
         this.modalSelectedAsignaturas = this.asignatura
             ? [this.asignatura]
             : [];
         this.displayAsignaturaDialog = true;
-        // cargar asignaturas si no están cargadas
+        // Cargar asignaturas si no están cargadas
         if (!this.asignaturas || this.asignaturas.length === 0) {
             this.loadingAsignaturas = true;
             const sub = this.registrarCursoService
@@ -335,7 +329,6 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 });
             }
             this.asignatura = this.modalSelectedAsignaturas[0];
-            // reset existing cursoExistsMessage when asignatura cambia
             this.cursoExistsMessage = null;
             this.clearGrupoExistsErrorIfAny();
             // Validar existencia inmediatamente si ya hay un grupo escrito
@@ -357,7 +350,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.cursoExistsMessage = null;
         this.clearGrupoExistsErrorIfAny();
         this.displayAsignaturaDialog = false;
-        // cargar docentes asociados a la asignatura seleccionada
+        // Cargar docentes asociados a la asignatura seleccionada
         // Validar existencia inmediatamente si ya hay un grupo escrito
         const currentGrupo = this.form.get('grupo')?.value;
         if (currentGrupo && currentGrupo.length > 0) {
@@ -456,7 +449,6 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     openMaterialDialog() {
-        // Abrir diálogo y precargar selección con los ya seleccionados
         this.tableSelection = [...this.selectedMateriales];
         this.displayMaterialDialog = true;
     }
@@ -472,18 +464,25 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     removeSelectedMaterial(material: MaterialApoyo) {
-        if (!material) return;
-        // confirmación para evitar eliminación accidental (heurística: user control & freedom)
-        if (!confirm('¿Quitar el material seleccionado?')) return;
+        if (!material) {
+            return;
+        }
+
+        const confirmed = confirm('¿Quitar el material seleccionado?');
+        if (!confirmed) {
+            return;
+        }
+
         const id = (material as any).id;
         if (typeof id === 'number') {
             this.selectedMateriales = this.selectedMateriales.filter(
                 (m) => m.id !== id
             );
-        } else {
-            this.selectedMateriales = this.selectedMateriales.filter(
-                (m) => m.nombre !== material.nombre
-            );
+            return;
         }
+
+        this.selectedMateriales = this.selectedMateriales.filter(
+            (m) => m.nombre !== material.nombre
+        );
     }
 }

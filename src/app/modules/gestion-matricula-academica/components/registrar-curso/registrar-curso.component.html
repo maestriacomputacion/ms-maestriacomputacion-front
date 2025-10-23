@@ -18,17 +18,19 @@
     </div>
   </div>
 
+
   <!-- Sección Horario -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="horario" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Horario</label>
-    <input id="horario" type="text" pInputText formControlName="horario" class="flex-1" />
+    <textarea id="horario" rows="1" pInputTextarea autoResize="autoResize" formControlName="horario" class="flex-1"
+      maxlength="200"></textarea>
   </div>
 
   <!-- Sección Salón -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
-    <input id="salon" type="text" pInputText formControlName="salon" class="flex-1" maxlength="100"
-      [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}" />
+    <textarea id="salon" rows="1" pInputTextarea autoResize="autoResize" formControlName="salon" class="flex-1"
+      maxlength="200" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}"></textarea>
   </div>
 
   <div class="p-fluid p-formgrid p-grid mt-5">

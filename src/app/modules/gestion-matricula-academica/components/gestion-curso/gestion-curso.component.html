@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <p-panel>
     <p-header>
         <b>GESTIÓN DE CURSOS</b>
@@ -67,7 +69,8 @@
                         class="p-button-rounded p-button-text p-button-warning mr-2" (click)="onEditarCurso(curso.id)"
                         title="Editar"></button>
                     <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-                        (click)="onEliminarCurso(curso.id)" title="Eliminar"></button>
+                        (click)="onEliminarCurso($event, curso.id)" title="Eliminar"></button>
+                    <p-confirmPopup></p-confirmPopup>
                 </td>
             </tr>
         </ng-template>

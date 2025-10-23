@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ConfirmationService, MessageService, PrimeIcons } from 'primeng/api';
 import { CursoService } from '../../services/curso.service';
 import { CursoUI } from '../../models/curso.model';
 import { ApiResponse } from '../../models/api-response.model';
@@ -34,7 +35,9 @@ export class GestionCursoComponent implements OnInit {
         private readonly cursoService: CursoService,
         private readonly periodoService: PeriodoAcademicoService,
         private readonly router: Router,
-        private readonly route: ActivatedRoute
+        private readonly route: ActivatedRoute,
+        private readonly confirmationService: ConfirmationService,
+        private readonly messageService: MessageService
     ) {
         this.form = this.fb.group({
             grupo: ['', Validators.required],
@@ -132,7 +135,42 @@ export class GestionCursoComponent implements OnInit {
         this.displayModal = false;
     }
 
-    onEliminarCurso(id: number) {
-        this.cursos = this.cursos.filter((c) => c.id !== id);
+    onEliminarCurso(eventOrId: any, maybeId?: number) {
+        const id = typeof eventOrId === 'number' ? eventOrId : maybeId;
+        const target =
+            typeof eventOrId === 'object' ? eventOrId.target : undefined;
+        if (id === undefined || id === null) return;
+
+        this.confirmationService.confirm({
+            target: target,
+            message: '¿Está seguro de que desea eliminar este curso?',
+            icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+            acceptLabel: 'Sí, eliminar',
+            rejectLabel: 'No',
+            accept: () => this.deleteCurso(id),
+        });
+    }
+
+    private deleteCurso(id: number) {
+        this.cursoService.eliminarCurso(id).subscribe({
+            next: (resp) => {
+                if (resp.typeResponse === 'SUCCESS') {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Éxito',
+                        detail: resp.message,
+                    });
+                    this.cursos = this.cursos.filter((c) => c.id !== id);
+                }
+            },
+            error: (err) => {
+                const detail = err?.message || 'Error al eliminar el curso';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail,
+                });
+            },
+        });
     }
 }

@@ -105,13 +105,13 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 .pipe(
                     debounceTime(400),
                     distinctUntilChanged(),
-                    // Sólo validar existencia si hay al menos un docente seleccionado
+                    // Validar existencia tan pronto haya valor y exista una asignatura asociada
                     filter(
                         (v: string) =>
                             !!v &&
                             v.length > 0 &&
-                            this.targetDocentes &&
-                            this.targetDocentes.length > 0
+                            !!this.asignatura &&
+                            !!this.asignatura.id
                     ),
                     switchMap((val: string) => {
                         const asignaturaId = this.asignatura
@@ -136,9 +136,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         } else {
                             this.cursoExistsMessage = null;
                             const errors = grupoCtrl.errors || {};
-                            if (errors.exists) {
-                                delete errors.exists;
-                            }
+                            if (errors.exists) delete errors.exists;
                             if (Object.keys(errors).length === 0) {
                                 grupoCtrl.setErrors(null);
                             } else {
@@ -339,18 +337,11 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             this.asignatura = this.modalSelectedAsignaturas[0];
             // reset existing cursoExistsMessage when asignatura cambia
             this.cursoExistsMessage = null;
-            const grupoCtrl = this.form.get('grupo');
-            if (grupoCtrl) {
-                const errors = grupoCtrl.errors || {};
-                if (errors.exists) {
-                    delete errors.exists;
-                }
-                if (Object.keys(errors).length === 0) {
-                    grupoCtrl.setErrors(null);
-                } else {
-                    grupoCtrl.setErrors(errors);
-                }
-            }
+            this.clearGrupoExistsErrorIfAny();
+            // Validar existencia inmediatamente si ya hay un grupo escrito
+            const currentGrupo = this.form.get('grupo')?.value;
+            if (currentGrupo && currentGrupo.length > 0)
+                this.validateGroupWithAsignatura(currentGrupo);
         }
         this.displayAsignaturaDialog = false;
     }
@@ -364,15 +355,14 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.asignatura = asign;
         // limpiar estado de existencia de curso al cambiar asignatura
         this.cursoExistsMessage = null;
-        const grupoCtrl = this.form.get('grupo');
-        if (grupoCtrl) {
-            const errors = grupoCtrl.errors || {};
-            if (errors.exists) delete errors.exists;
-            if (Object.keys(errors).length === 0) grupoCtrl.setErrors(null);
-            else grupoCtrl.setErrors(errors);
-        }
+        this.clearGrupoExistsErrorIfAny();
         this.displayAsignaturaDialog = false;
         // cargar docentes asociados a la asignatura seleccionada
+        // Validar existencia inmediatamente si ya hay un grupo escrito
+        const currentGrupo = this.form.get('grupo')?.value;
+        if (currentGrupo && currentGrupo.length > 0) {
+            this.validateGroupWithAsignatura(currentGrupo);
+        }
         if (asign?.id) {
             this.loadingDocentes = true;
             const sub = this.registrarCursoService
@@ -408,6 +398,61 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 });
             this.subs.push(sub);
         }
+    }
+
+    private clearGrupoExistsErrorIfAny() {
+        const grupoCtrl = this.form.get('grupo');
+        if (!grupoCtrl) return;
+        const errors = grupoCtrl.errors || {};
+        if (errors.exists) delete errors.exists;
+        if (Object.keys(errors).length === 0) grupoCtrl.setErrors(null);
+        else grupoCtrl.setErrors(errors);
+    }
+
+    /**
+     * Valida existencia del curso para la combinación grupo + asignatura.
+     * Actualiza `cursoExistsMessage` y los errores del control `grupo`.
+     */
+    private validateGroupWithAsignatura(grupoValue: string) {
+        if (!grupoValue || !this.asignatura) return;
+        const asignaturaId = this.asignatura?.id || 0;
+        const grupoCtrl = this.form.get('grupo');
+        const sub = this.registrarCursoService
+            .exists(grupoValue, asignaturaId)
+            .subscribe({
+                next: (resp) => {
+                    if (
+                        resp &&
+                        resp.typeResponse === 'SUCCESS' &&
+                        resp.data === true
+                    ) {
+                        const detail = resp.message || null;
+                        this.cursoExistsMessage = detail;
+                        grupoCtrl?.setErrors({ exists: true });
+                    } else {
+                        this.cursoExistsMessage = null;
+                        if (grupoCtrl) {
+                            const errors = grupoCtrl.errors || {};
+                            if (errors.exists) delete errors.exists;
+                            if (Object.keys(errors).length === 0)
+                                grupoCtrl.setErrors(null);
+                            else grupoCtrl.setErrors(errors);
+                        }
+                    }
+                },
+                error: (err) => {
+                    const detail = err?.error?.message || err?.message || null;
+                    this.cursoExistsMessage = detail;
+                    if (detail) {
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: 'Atención',
+                            detail,
+                        });
+                    }
+                },
+            });
+        this.subs.push(sub);
     }
 
     openMaterialDialog() {

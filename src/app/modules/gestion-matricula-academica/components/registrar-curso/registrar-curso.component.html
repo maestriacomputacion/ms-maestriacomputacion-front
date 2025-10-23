@@ -66,7 +66,7 @@
       <label for="buscarDocente" class="label-required"><b>Docentes que dictan el curso: </b></label>
       <div style="margin-left: 16.5rem">
         <!-- Ajusta este valor según el largo del label -->
-          <div class="p-input-icon-left w-20rem mb-3">
+        <div class="p-input-icon-left w-20rem mb-3">
           <i class="pi pi-search"></i>
           <input id="buscarDocente" pInputText type="text" class="w-full" placeholder="Buscar Docente"
             [disabled]="loadingDocentes || saving" />
@@ -188,14 +188,18 @@
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">
       <label for="observacion"><b>Observación: </b></label>
-      <textarea id="observacion" rows="5" pInputTextarea autoResize="autoResize"
+      <textarea id="observacion" rows="5" pInputTextarea autoResize="autoResize" maxlength="200"
         formControlName="observacion"></textarea>
+      <div class="text-right mt-1" style="margin-right: 0.5rem;">
+        <small>{{ observacionLength }} / 200</small>
+      </div>
     </div>
   </div>
 
   <div class="flex justify-content-end mt-4">
     <button pButton label="Registrar Curso" class="p-button-primary mr-2"
-      [disabled]="form.invalid || saving || loadingMaterials || !targetDocentes || targetDocentes.length === 0" (click)="onSubmit()" [loading]="saving"></button>
+      [disabled]="form.invalid || saving || loadingMaterials || !targetDocentes || targetDocentes.length === 0"
+      (click)="onSubmit()" [loading]="saving"></button>
     <button pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"></button>
   </div>
 </p-panel>

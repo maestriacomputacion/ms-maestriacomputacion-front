@@ -50,7 +50,9 @@ export class RegistrarCursoService {
         );
     }
 
-    listDocentesByAsignatura(asignaturaId: number): Observable<ApiResponse<DocenteModel[]>> {
+    listDocentesByAsignatura(
+        asignaturaId: number
+    ): Observable<ApiResponse<DocenteModel[]>> {
         return this.http.get<ApiResponse<DocenteModel[]>>(
             `${backendRegistrarCurso()}/asignaturas/docente/${asignaturaId}`
         );

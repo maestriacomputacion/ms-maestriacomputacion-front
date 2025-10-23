@@ -18,69 +18,8 @@ export class CursoService {
         return `${day}/${month}/${year}`;
     }
 
-    private readonly cursos: CursoUI[] = [
-        {
-            id: 1,
-            grupo: 'Grupo A',
-            asignatura: 'Metodología de la Investigación',
-            docente: 'Andrés Pérez',
-            fecha: '2025-01-15',
-        },
-        {
-            id: 2,
-            grupo: 'Grupo B',
-            asignatura: 'Seminario de Matemáticas',
-            docente: 'Laura Gómez',
-            fecha: '2025-01-16',
-        },
-        {
-            id: 3,
-            grupo: 'Grupo B',
-            asignatura: 'Gestión de la Tecnología',
-            docente: 'Carlos Rodríguez',
-            fecha: '2025-01-17',
-        },
-        {
-            id: 4,
-            grupo: 'Grupo A',
-            asignatura: 'Electiva: Aprendizaje profundo',
-            docente: 'Felipe Martínez',
-            fecha: '2025-01-18',
-        },
-        {
-            id: 5,
-            grupo: 'Grupo A',
-            asignatura: 'Trabajo de Grado 1',
-            docente: 'Andrés Castilloh',
-            fecha: '2025-01-19',
-        },
-    ];
-
-    private readonly areasFormacion = [
-        { label: 'Ciencias Básicas', value: 'Ciencias Básicas' },
-        { label: 'Ingeniería', value: 'Ingeniería' },
-        { label: 'Humanidades', value: 'Humanidades' },
-    ];
-
-    private readonly asignaturas = [
-        {
-            label: 'Metodología de la Investigación',
-            value: 'Metodología de la Investigación',
-        },
-        {
-            label: 'Seminario de Matemáticas',
-            value: 'Seminario de Matemáticas',
-        },
-        {
-            label: 'Gestión de la Tecnología',
-            value: 'Gestión de la Tecnología',
-        },
-        {
-            label: 'Electiva: Aprendizaje profundo',
-            value: 'Electiva: Aprendizaje profundo',
-        },
-        { label: 'Trabajo de Grado 1', value: 'Trabajo de Grado 1' },
-    ];
+    // Eliminados datos quemados (mocks). En producción/QA los datos vendrán
+    // del backend; en fallbacks devolvemos estructuras vacías seguras.
 
     private readonly backend = `${matricula_academica.api_url}cursos`;
 
@@ -120,15 +59,14 @@ export class CursoService {
                     ),
                 })),
             })),
-            // En caso de error devolvemos el mock para no romper la UI en desarrollo
+            // En caso de error devolvemos una respuesta vacía segura para
+            // no romper la UI en desarrollo. El frontend debe tratar arrays
+            // vacíos como ausencia de datos.
             catchError(() =>
                 of({
                     typeResponse: 'SUCCESS',
-                    message: 'Cursos cargados desde mock (fallback)',
-                    data: this.cursos.map((c) => ({
-                        ...c,
-                        fecha: CursoService.formatDateString(c.fecha),
-                    })),
+                    message: 'No se pudieron cargar cursos; fallback vacío',
+                    data: [] as CursoUI[],
                     statusCode: 200,
                 } as ApiResponse<CursoUI[]>)
             )
@@ -167,10 +105,11 @@ export class CursoService {
     getAreasFormacion(): Observable<
         ApiResponse<{ label: string; value: string }[]>
     > {
+        // Devolvemos lista vacía; el backend debe proveer valores reales.
         return of({
             typeResponse: 'SUCCESS',
-            message: 'Áreas de formación cargadas correctamente',
-            data: this.areasFormacion,
+            message: 'Áreas de formación no disponibles (vacío)',
+            data: [] as { label: string; value: string }[],
             statusCode: 200,
         });
     }
@@ -178,10 +117,11 @@ export class CursoService {
     getAsignaturas(): Observable<
         ApiResponse<{ label: string; value: string }[]>
     > {
+        // Devolvemos lista vacía; el backend debe proveer valores reales.
         return of({
             typeResponse: 'SUCCESS',
-            message: 'Asignaturas cargadas correctamente',
-            data: this.asignaturas,
+            message: 'Asignaturas no disponibles (vacío)',
+            data: [] as { label: string; value: string }[],
             statusCode: 200,
         });
     }

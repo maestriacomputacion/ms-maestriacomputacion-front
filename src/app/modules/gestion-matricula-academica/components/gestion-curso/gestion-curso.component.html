@@ -43,8 +43,8 @@
     </div>
 
     <!-- Tabla -->
-    <p-table #tableCursos [value]="cursos" [paginator]="true" [rows]="10" [totalRecords]="200"
-        [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    <p-table #tableCursos [value]="cursos" [paginator]="true" [rows]="10" [totalRecords]="cursos?.length || 0"
+    [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
         styleClass="p-datatable-gridlines p-datatable-striped" [rowsPerPageOptions]="[10, 25, 50, 100]"
         [responsiveLayout]="'scroll'" [globalFilterFields]="['grupo', 'asignatura', 'docente', 'fecha']">
         <ng-template pTemplate="header">
@@ -73,7 +73,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage" let-columns>
             <tr>
-                <td [attr.colspan]="4">No se encontraron registros</td>
+                <td [attr.colspan]="4">No se encontraron cursos</td>
             </tr>
         </ng-template>
     </p-table>

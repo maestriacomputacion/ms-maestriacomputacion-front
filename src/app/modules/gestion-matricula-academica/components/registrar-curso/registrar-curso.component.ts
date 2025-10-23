@@ -67,7 +67,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             ],
             horario: [''],
             salon: ['', [Validators.maxLength(100)]],
-            observacion: [''],
+            observacion: ['', [Validators.maxLength(200)]],
         });
 
         // convertir grupo a una sola letra mayúscula usando valueChanges (Angular way)
@@ -106,7 +106,13 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                     debounceTime(400),
                     distinctUntilChanged(),
                     // Sólo validar existencia si hay al menos un docente seleccionado
-                    filter((v: string) => !!v && v.length > 0 && this.targetDocentes && this.targetDocentes.length > 0),
+                    filter(
+                        (v: string) =>
+                            !!v &&
+                            v.length > 0 &&
+                            this.targetDocentes &&
+                            this.targetDocentes.length > 0
+                    ),
                     switchMap((val: string) => {
                         const asignaturaId = this.asignatura
                             ? this.asignatura.id || 0
@@ -165,6 +171,15 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         return this.form.get('salon');
     }
 
+    get observacionControl() {
+        return this.form.get('observacion');
+    }
+
+    get observacionLength(): number {
+        const v = this.observacionControl?.value;
+        return v ? String(v).length : 0;
+    }
+
     onSubmit() {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
@@ -217,7 +232,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                     error: (err) => {
                         console.error('Error registrando curso', err);
                         const detail =
-                            err?.error?.message || err?.message ||
+                            err?.error?.message ||
+                            err?.message ||
                             'Error registrando curso';
                         this.messageService.add({
                             severity: 'error',
@@ -357,7 +373,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         }
         this.displayAsignaturaDialog = false;
         // cargar docentes asociados a la asignatura seleccionada
-    if (asign?.id) {
+        if (asign?.id) {
             this.loadingDocentes = true;
             const sub = this.registrarCursoService
                 .listDocentesByAsignatura(asign.id)
@@ -372,13 +388,22 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                             this.messageService.add({
                                 severity: 'warn',
                                 summary: 'Atención',
-                                detail: resp?.message || 'No se encontraron docentes',
+                                detail:
+                                    resp?.message ||
+                                    'No se encontraron docentes',
                             });
                         }
                     },
                     error: (err) => {
-                        const detail = err?.error?.message || err?.message || 'Error cargando docentes';
-                        this.messageService.add({ severity: 'error', summary: 'Error', detail });
+                        const detail =
+                            err?.error?.message ||
+                            err?.message ||
+                            'Error cargando docentes';
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail,
+                        });
                     },
                 });
             this.subs.push(sub);

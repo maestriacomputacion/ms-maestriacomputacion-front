@@ -65,7 +65,7 @@
                 <td class="text-center">
                     <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info mr-2"
                         (click)="onVerCurso(curso)" title="Ver"></button>
-                    <button pButton pRipple icon="pi pi-pencil"
+                    <button *ngIf="curso.periodoEstado === 'ACTIVO'" pButton pRipple icon="pi pi-pencil"
                         class="p-button-rounded p-button-text p-button-warning mr-2" (click)="onEditarCurso(curso.id)"
                         title="Editar"></button>
                     <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"

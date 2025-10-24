@@ -43,4 +43,5 @@ export interface CursoUI {
     asignatura: string;
     docente: string; // concatenado
     fecha: string; // fecha formateada
+    periodoEstado?: string; // estado del periodo (e.g., 'ACTIVO'|'INACTIVO')
 }

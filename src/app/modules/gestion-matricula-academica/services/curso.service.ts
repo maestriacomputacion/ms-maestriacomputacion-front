@@ -41,6 +41,7 @@ export class CursoService {
             fecha: CursoService.formatDateString(
                 item.periodo?.fechaInicio ?? ''
             ),
+            periodoEstado: item.periodo?.estado ?? null,
         };
     }
 

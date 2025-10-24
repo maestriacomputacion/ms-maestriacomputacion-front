@@ -25,7 +25,9 @@ export class CursoService {
     private transformToUI(item: BackendCurso): CursoUI {
         const docentes = (item.docentes || [])
             .map((d) => {
-                const nombreCompleto = `${d.nombre ?? ''} ${d.apellido ?? ''}`.trim();
+                const nombreCompleto = `${d.nombre ?? ''} ${
+                    d.apellido ?? ''
+                }`.trim();
                 return nombreCompleto || d.codigo || d.correoElectronico || '';
             })
             .filter((v: string) => !!v)
@@ -36,7 +38,9 @@ export class CursoService {
             grupo: item.grupo,
             asignatura: item.asignatura?.nombre ?? '',
             docente: docentes,
-            fecha: CursoService.formatDateString(item.periodo?.fechaInicio ?? ''),
+            fecha: CursoService.formatDateString(
+                item.periodo?.fechaInicio ?? ''
+            ),
         };
     }
 
@@ -74,7 +78,10 @@ export class CursoService {
         curso: Omit<CursoUI, 'id'>
     ): Observable<ApiResponse<CursoUI>> {
         const payload = this.buildPayload(curso);
-        return this.http.put<ApiResponse<CursoUI>>(`${this.backend}/${id}`, payload);
+        return this.http.put<ApiResponse<CursoUI>>(
+            `${this.backend}/${id}`,
+            payload
+        );
     }
 
     eliminarCurso(id: number | string): Observable<ApiResponse<unknown>> {

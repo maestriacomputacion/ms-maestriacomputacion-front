@@ -219,7 +219,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                             // Esperar un momento para que el toast sea visible antes de navegar
                             const navigateDelay = 1000; // ms
                             setTimeout(() => {
-                                this.router.navigate(['/gestion-matricula-academica', 'gestion-cursos']);
+                                this.router.navigate([
+                                    '/gestion-matricula-academica',
+                                    'gestion-cursos',
+                                ]);
                             }, navigateDelay);
                         } else {
                             // mostrar mensaje de error devuelto por la API

@@ -31,12 +31,12 @@ export class GestionCursoComponent implements OnInit {
     asignaturaSeleccionada: string | null = null;
 
     constructor(
-    private readonly fb: FormBuilder,
-    private readonly cursoService: CursoService,
-    private readonly periodoService: PeriodoAcademicoService,
-    private readonly router: Router,
-    private readonly confirmationService: ConfirmationService,
-    private readonly messageService: MessageService
+        private readonly fb: FormBuilder,
+        private readonly cursoService: CursoService,
+        private readonly periodoService: PeriodoAcademicoService,
+        private readonly router: Router,
+        private readonly confirmationService: ConfirmationService,
+        private readonly messageService: MessageService
     ) {
         this.form = this.fb.group({
             grupo: ['', Validators.required],
@@ -139,7 +139,10 @@ export class GestionCursoComponent implements OnInit {
      */
     onEliminarCurso(eventOrId: Event | number, maybeId?: number): void {
         const id = typeof eventOrId === 'number' ? eventOrId : maybeId;
-        const target = typeof eventOrId === 'object' ? (eventOrId.target as any) : undefined;
+        const target =
+            typeof eventOrId === 'object'
+                ? (eventOrId.target as any)
+                : undefined;
         if (id === undefined || id === null) return;
 
         this.confirmationService.confirm({

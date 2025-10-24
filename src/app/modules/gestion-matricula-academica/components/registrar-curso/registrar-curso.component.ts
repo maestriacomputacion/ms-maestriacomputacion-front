@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
@@ -14,7 +14,11 @@ import {
     finalize,
 } from 'rxjs/operators';
 
-import { AsignaturaModel, DocenteModel } from '../../models/curso.model';
+import {
+    AsignaturaModel,
+    DocenteModel,
+    BackendCurso,
+} from '../../models/curso.model';
 
 @Component({
     selector: 'app-registrar-curso',
@@ -43,12 +47,18 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     // selección temporal dentro del diálogo
     tableSelection: MaterialApoyo[] = [];
 
+    // Propiedades para modo edición
+    isEditMode: boolean = false;
+    cursoId: number | null = null;
+    cursoOriginal: BackendCurso | null = null;
+
     constructor(
         private readonly fb: FormBuilder,
         private readonly materialApoyoService: MaterialApoyoService,
         private readonly registrarCursoService: RegistrarCursoService,
         private readonly messageService: MessageService,
-        private readonly router: Router
+        private readonly router: Router,
+        private readonly route: ActivatedRoute
     ) {}
 
     private readonly subs: Subscription[] = [];
@@ -57,6 +67,15 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     loadingAsignaturasError = false;
 
     ngOnInit() {
+        // Verificar si estamos en modo edición
+        this.route.params.subscribe((params) => {
+            if (params['id']) {
+                this.isEditMode = true;
+                this.cursoId = +params['id'];
+                this.loadCursoForEdit(this.cursoId);
+            }
+        });
+
         this.form = this.fb.group({
             grupo: [
                 '',
@@ -180,104 +199,88 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             this.form.markAllAsTouched();
             return;
         }
-        // Verificar existencia antes de enviar (si hay docentes seleccionados)
-        const grupo = this.form.value.grupo;
-        const asignaturaId = this.asignatura ? this.asignatura.id || 0 : 0;
 
-        const doSubmit = () => {
-            const payload = {
-                grupo: this.form.value.grupo,
-                asignaturaId: this.asignatura?.id || 0,
-                docentesIds: this.targetDocentes.map((d) =>
-                    d.id ? d.id : Number(d.codigo) || 0
-                ),
-                horario: this.form.value.horario,
-                salon: this.form.value.salon,
-                materialApoyoIds: this.selectedMateriales
-                    .map((m) => (m as any).id)
-                    .filter((id) => !!id),
-                observacion: this.form.value.observacion,
-            };
-
-            this.saving = true;
-            const regSub = this.registrarCursoService
-                .registrarCurso(payload)
-                .subscribe({
-                    next: (r) => {
-                        if (r.typeResponse === 'SUCCESS') {
-                            // mostrar toast con el message del ApiResponse y mantenerlo un tiempo
-                            const toastLife = 2500; // ms
-                            this.messageService.add({
-                                severity: 'success',
-                                summary: 'Éxito',
-                                detail: r.message,
-                                life: toastLife,
-                            });
-                            console.log('Curso registrado', r.data);
-                            this.form.reset();
-                            this.selectedMateriales = [];
-                            // Esperar un momento para que el toast sea visible antes de navegar
-                            const navigateDelay = 1000; // ms
-                            setTimeout(() => {
-                                this.router.navigate([
-                                    '/gestion-matricula-academica',
-                                    'gestion-cursos',
-                                ]);
-                            }, navigateDelay);
-                        } else {
-                            // mostrar mensaje de error devuelto por la API
-                            this.messageService.add({
-                                severity: 'error',
-                                summary: 'Error',
-                                detail: r.message,
-                            });
-                        }
-                        this.saving = false;
-                    },
-                    error: (err) => {
-                        console.error('Error registrando curso', err);
-                        const detail =
-                            err?.error?.message ||
-                            err?.message ||
-                            'Error registrando curso';
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Error',
-                            detail,
-                        });
-                        this.saving = false;
-                    },
-                });
-            this.subs.push(regSub);
+        const payload = {
+            grupo: this.form.value.grupo,
+            asignaturaId: this.asignatura?.id || 0,
+            docentesIds: this.targetDocentes.map((d) =>
+                d.id ? d.id : Number(d.codigo) || 0
+            ),
+            horario: this.form.value.horario,
+            salon: this.form.value.salon,
+            materialApoyoIds: this.selectedMateriales
+                .map((m) => (m as any).id)
+                .filter((id) => !!id),
+            observacion: this.form.value.observacion,
         };
 
-        if (!this.targetDocentes || this.targetDocentes.length === 0) {
-            // no hay docentes seleccionados: omitir la verificación de existencia y enviar
-            doSubmit();
-            return;
-        }
+        this.saving = true;
 
-        const existsSub = this.registrarCursoService
-            .exists(grupo, asignaturaId)
-            .subscribe({
-                next: (resp) => {
-                    if (
-                        resp &&
-                        resp.typeResponse === 'SUCCESS' &&
-                        resp.data === true
-                    ) {
-                        this.cursoExistsMessage = resp.message;
-                        this.form.get('grupo')?.setErrors({ exists: true });
-                        return;
-                    }
+        const serviceCall =
+            this.isEditMode && this.cursoId
+                ? this.registrarCursoService.actualizarCurso(
+                      this.cursoId,
+                      payload
+                  )
+                : this.registrarCursoService.registrarCurso(payload);
 
-                    // construir payload y enviar
-                    doSubmit();
-                },
-                error: (err) =>
-                    console.error('Error validando existencia', err),
-            });
-        this.subs.push(existsSub);
+        const submitSub = serviceCall.subscribe({
+            next: (r) => {
+                if (r.typeResponse === 'SUCCESS') {
+                    const toastLife = 2500; // ms
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Éxito',
+                        detail: r.message,
+                        life: toastLife,
+                    });
+                    console.log(
+                        this.isEditMode
+                            ? 'Curso actualizado'
+                            : 'Curso registrado',
+                        r.data
+                    );
+                    this.form.reset();
+                    this.selectedMateriales = [];
+                    // Esperar un momento para que el toast sea visible antes de navegar
+                    const navigateDelay = 1000; // ms
+                    setTimeout(() => {
+                        this.router.navigate([
+                            '/gestion-matricula-academica',
+                            'gestion-cursos',
+                        ]);
+                    }, navigateDelay);
+                } else {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: r.message,
+                    });
+                }
+                this.saving = false;
+            },
+            error: (err) => {
+                console.error(
+                    this.isEditMode
+                        ? 'Error actualizando curso'
+                        : 'Error registrando curso',
+                    err
+                );
+                const detail =
+                    err?.error?.message ||
+                    err?.message ||
+                    (this.isEditMode
+                        ? 'Error actualizando curso'
+                        : 'Error registrando curso');
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail,
+                });
+                this.saving = false;
+            },
+        });
+        this.subs.push(submitSub);
     }
 
     ngOnDestroy(): void {
@@ -496,5 +499,123 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.selectedMateriales = this.selectedMateriales.filter(
             (m) => m.nombre !== material.nombre
         );
+    }
+
+    /**
+     * Carga los datos del curso para edición
+     */
+    private loadCursoForEdit(id: number): void {
+        const loadSub = this.registrarCursoService.getCursoById(id).subscribe({
+            next: (resp) => {
+                if (resp && resp.typeResponse === 'SUCCESS' && resp.data) {
+                    this.cursoOriginal = resp.data;
+                    this.populateFormWithCursoData(resp.data);
+                } else {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: resp?.message || 'No se pudo cargar el curso',
+                    });
+                    this.router.navigate([
+                        '/gestion-matricula-academica',
+                        'gestion-cursos',
+                    ]);
+                }
+            },
+            error: (err) => {
+                console.error('Error cargando curso para edición', err);
+                const detail =
+                    err?.error?.message ||
+                    err?.message ||
+                    'Error cargando curso';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail,
+                });
+                this.router.navigate([
+                    '/gestion-matricula-academica',
+                    'gestion-cursos',
+                ]);
+            },
+        });
+        this.subs.push(loadSub);
+    }
+
+    /**
+     * Pobla el formulario con los datos del curso
+     */
+    private populateFormWithCursoData(curso: BackendCurso): void {
+        // Llenar formulario básico
+        this.form.patchValue({
+            grupo: curso.grupo,
+            horario: curso.horario || '',
+            salon: curso.salon || '',
+            observacion: curso.observacion || '',
+        });
+
+        // Establecer asignatura
+        if (curso.asignatura) {
+            this.asignatura = curso.asignatura;
+        }
+
+        // Cargar docentes asociados a la asignatura
+        if (curso.asignatura?.id) {
+            this.loadingDocentes = true;
+            const docentesSub = this.registrarCursoService
+                .listDocentesByAsignatura(curso.asignatura.id)
+                .pipe(finalize(() => (this.loadingDocentes = false)))
+                .subscribe({
+                    next: (resp) => {
+                        if (resp && resp.typeResponse === 'SUCCESS') {
+                            this.sourceDocentes = resp.data || [];
+
+                            // Mapear docentes seleccionados del curso
+                            if (curso.docentes && curso.docentes.length > 0) {
+                                // Buscar los docentes completos en la lista de disponibles usando los IDs del curso
+                                this.targetDocentes = curso.docentes
+                                    .map((cursoDocente) =>
+                                        this.sourceDocentes.find(
+                                            (disponibleDocente) =>
+                                                disponibleDocente.id ===
+                                                cursoDocente.id
+                                        )
+                                    )
+                                    .filter(
+                                        (docente) => docente !== undefined
+                                    ) as DocenteModel[];
+
+                                // Remover docentes seleccionados de la lista de disponibles
+                                this.sourceDocentes =
+                                    this.sourceDocentes.filter(
+                                        (docente) =>
+                                            !curso.docentes?.some(
+                                                (d) => d.id === docente.id
+                                            )
+                                    );
+                            } else {
+                                this.targetDocentes = [];
+                            }
+                        }
+                    },
+                    error: (err) => {
+                        console.error(
+                            'Error cargando docentes para edición',
+                            err
+                        );
+                    },
+                });
+            this.subs.push(docentesSub);
+        }
+
+        // Establecer materiales seleccionados
+        if (curso.materiales && curso.materiales.length > 0) {
+            this.selectedMateriales = curso.materiales.map((material) => ({
+                id: material.id,
+                nombre: material.nombre,
+                descripcion: material.descripcion,
+                enlace: material.enlace,
+            }));
+        }
     }
 }

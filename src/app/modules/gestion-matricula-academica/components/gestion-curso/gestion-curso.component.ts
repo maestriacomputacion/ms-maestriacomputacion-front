@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService, PrimeIcons } from 'primeng/api';
 import { CursoService } from '../../services/curso.service';
 import { CursoUI } from '../../models/curso.model';
@@ -15,10 +14,6 @@ import { PeriodoAcademico } from '../../models/periodo-academico.model';
 })
 export class GestionCursoComponent implements OnInit {
     cursos: CursoUI[] = [];
-    displayModal = false;
-    editMode = false;
-    editCursoId: number | null = null;
-    form: FormGroup;
 
     // Filtros
     periodos: Array<{ label: string; value: string }> = [];
@@ -31,20 +26,12 @@ export class GestionCursoComponent implements OnInit {
     asignaturaSeleccionada: string | null = null;
 
     constructor(
-        private readonly fb: FormBuilder,
         private readonly cursoService: CursoService,
         private readonly periodoService: PeriodoAcademicoService,
         private readonly router: Router,
         private readonly confirmationService: ConfirmationService,
         private readonly messageService: MessageService
-    ) {
-        this.form = this.fb.group({
-            grupo: ['', Validators.required],
-            asignatura: ['', Validators.required],
-            docente: ['', Validators.required],
-            fecha: ['', Validators.required],
-        });
-    }
+    ) {}
 
     ngOnInit() {
         // Cargar periodos para el filtro
@@ -104,33 +91,12 @@ export class GestionCursoComponent implements OnInit {
     }
 
     onEditarCurso(id: number): void {
-        const curso = this.cursos.find((c) => c.id === id);
-        if (!curso) return;
-        this.form.patchValue({
-            grupo: curso.grupo,
-            asignatura: curso.asignatura,
-            docente: curso.docente,
-            fecha: curso.fecha,
-        });
-        this.editMode = true;
-        this.editCursoId = id;
-        this.displayModal = true;
-    }
-    actualizarCurso(id: number, value: CursoUI): void {
-        const idx = this.cursos.findIndex((c) => c.id === id);
-        if (idx > -1) {
-            this.cursos[idx] = {
-                ...this.cursos[idx],
-                grupo: value.grupo,
-                asignatura: value.asignatura,
-                docente: value.docente,
-                fecha: value.fecha,
-            };
-        }
-    }
-
-    cancelarModal(): void {
-        this.displayModal = false;
+        // Navegar a la ruta de edición
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'editar-curso',
+            id,
+        ]);
     }
 
     /**

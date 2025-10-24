@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { CursoUI, AsignaturaModel, DocenteModel } from '../models/curso.model';
+import {
+    CursoUI,
+    AsignaturaModel,
+    DocenteModel,
+    BackendCurso,
+} from '../models/curso.model';
 import { matricula_academica } from 'src/environments/environment';
 
 export interface RegistrarCursoPayload {
@@ -55,6 +60,22 @@ export class RegistrarCursoService {
     ): Observable<ApiResponse<DocenteModel[]>> {
         return this.http.get<ApiResponse<DocenteModel[]>>(
             `${backendRegistrarCurso()}/asignaturas/docente/${asignaturaId}`
+        );
+    }
+
+    getCursoById(id: number): Observable<ApiResponse<BackendCurso>> {
+        return this.http.get<ApiResponse<BackendCurso>>(
+            `${backendRegistrarCurso()}/${id}`
+        );
+    }
+
+    actualizarCurso(
+        id: number,
+        payload: RegistrarCursoPayload
+    ): Observable<ApiResponse<CursoUI>> {
+        return this.http.put<ApiResponse<CursoUI>>(
+            `${backendRegistrarCurso()}/${id}`,
+            payload
         );
     }
 }

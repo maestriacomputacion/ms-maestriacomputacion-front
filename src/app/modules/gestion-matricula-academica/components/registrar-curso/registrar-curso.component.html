@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-panel [formGroup]="form">
   <p-header>
-    <b>REGISTRAR CURSO</b>
+    <b>{{ isEditMode ? 'EDITAR CURSO' : 'REGISTRAR CURSO' }}</b>
   </p-header>
 
   <!-- Sección Grupo -->
@@ -201,7 +201,7 @@
   </div>
 
   <div class="flex justify-content-end mt-4">
-    <button pButton label="Registrar Curso" class="p-button-primary mr-2"
+    <button pButton [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'" class="p-button-primary mr-2"
       [disabled]="form.invalid || saving || loadingMaterials || !targetDocentes || targetDocentes.length === 0"
       (click)="onSubmit()" [loading]="saving"></button>
     <button pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"></button>

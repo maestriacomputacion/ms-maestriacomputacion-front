@@ -7,36 +7,42 @@ import { RegistrarCursoComponent } from './components/registrar-curso/registrar-
 import { GestionMaterialApoyoComponent } from './components/gestion-material-apoyo/gestion-material-apoyo.component';
 import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-previa/generar-matricula-previa.component';
 
-const routes: Routes = [{
-    path:'',
-    // component:GestionPeriodoAcademicoComponent,
-    children: [
-        {
-            path: 'periodo-academico',
-            component: GestionPeriodoAcademicoComponent
-        },
-        {
-            path: 'gestion-cursos',
-            component: GestionCursoComponent
-        },
-        {
-            path: 'generar-cursos-ofertados',
-            component: GenerarCursosOfertadosComponent
-        },
-        {
-            path: 'registrar-curso',
-            component: RegistrarCursoComponent
-        },
-        {
-            path:'material-apoyo',
-            component: GestionMaterialApoyoComponent
-        },
-        {
-            path:'generar-matricula-previa',
-            component: GenerarMatriculaPreviaComponent
-        }
-    ]
-}];
+const routes: Routes = [
+    {
+        path: '',
+        // component:GestionPeriodoAcademicoComponent,
+        children: [
+            {
+                path: 'periodo-academico',
+                component: GestionPeriodoAcademicoComponent,
+            },
+            {
+                path: 'gestion-cursos',
+                component: GestionCursoComponent,
+            },
+            {
+                path: 'generar-cursos-ofertados',
+                component: GenerarCursosOfertadosComponent,
+            },
+            {
+                path: 'registrar-curso',
+                component: RegistrarCursoComponent,
+            },
+            {
+                path: 'editar-curso/:id',
+                component: RegistrarCursoComponent,
+            },
+            {
+                path: 'material-apoyo',
+                component: GestionMaterialApoyoComponent,
+            },
+            {
+                path: 'generar-matricula-previa',
+                component: GenerarMatriculaPreviaComponent,
+            },
+        ],
+    },
+];
 
 @NgModule({
     imports: [RouterModule.forChild(routes)],

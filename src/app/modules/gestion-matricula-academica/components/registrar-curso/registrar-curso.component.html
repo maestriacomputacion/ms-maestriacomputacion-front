@@ -80,7 +80,7 @@
           [sourceStyle]="{ height: '22rem' }" [targetStyle]="{ height: '22rem' }" [showSourceControls]="false"
           [showTargetControls]="false" [disabled]="loadingDocentes || saving">
           <ng-template let-docente pTemplate="item">
-            <div>{{ docente.nombre }} | {{ docente.codigo }}</div>
+            <div>{{ docente.nombre }} {{docente.apellido}} | {{ docente.codigo }}</div>
           </ng-template>
         </p-pickList>
         <div class="flex justify-content-center mt-3">

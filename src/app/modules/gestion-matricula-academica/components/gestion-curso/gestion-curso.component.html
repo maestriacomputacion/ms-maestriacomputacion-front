@@ -47,14 +47,14 @@
     <!-- Tabla -->
     <p-table #tableCursos [value]="cursos" [paginator]="true" [rows]="10" [totalRecords]="cursos?.length || 0"
         [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
-        styleClass="p-datatable-gridlines p-datatable-striped" [rowsPerPageOptions]="[10, 25, 50, 100]"
+        styleClass="p-datatable-gridlines p-datatable-striped" 
         [responsiveLayout]="'scroll'" [globalFilterFields]="['grupo', 'asignatura', 'docente', 'fecha']">
         <ng-template pTemplate="header">
             <tr>
-                <th scope="col">Grupo</th>
-                <th scope="col">Asignatura Asociada</th>
-                <th scope="col">Docentes</th>
-                <th scope="col">Opciones</th>
+                <th class="text-center" scope="col">Grupo</th>
+                <th class="text-center" scope="col">Asignatura Asociada</th>
+                <th class="text-center" scope="col">Docentes</th>
+                <th class="text-center" scope="col">Opciones</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-curso>
@@ -62,14 +62,17 @@
                 <td>{{ curso.grupo }}</td>
                 <td>{{ curso.asignatura }}</td>
                 <td>{{ curso.docente }}</td>
-                <td class="text-center">
-                    <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info mr-2"
-                        (click)="onVerCurso(curso)" title="Ver"></button>
-                    <button *ngIf="curso.periodoEstado === 'ACTIVO'" pButton pRipple icon="pi pi-pencil"
-                        class="p-button-rounded p-button-text p-button-warning mr-2" (click)="onEditarCurso(curso.id)"
-                        title="Editar"></button>
-                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-                        (click)="onEliminarCurso($event, curso.id)" title="Eliminar"></button>
+                <td class="text-left">
+                    <div class="flex align-items-center justify-content-start gap-2">
+                        <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info"
+                            (click)="onVerCurso(curso)" title="Ver"></button>
+                        <button *ngIf="curso.periodoEstado === 'ACTIVO'" pButton pRipple icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text p-button-warning" (click)="onEditarCurso(curso.id)"
+                            title="Editar"></button>
+                        <button pButton pRipple icon="pi pi-trash"
+                            class="p-button-rounded p-button-text p-button-danger"
+                            (click)="onEliminarCurso($event, curso.id)" title="Eliminar"></button>
+                    </div>
                     <p-confirmPopup></p-confirmPopup>
                 </td>
             </tr>

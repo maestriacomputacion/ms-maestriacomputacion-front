@@ -21,10 +21,12 @@ export interface DocenteModel {
     departamento?: string | null;
 }
 
+import { PeriodoAcademico } from './periodo-academico.model';
+
 export interface BackendCurso {
     id: number;
     grupo: string;
-    periodo?: any;
+    periodo?: PeriodoAcademico | null;
     periodoDescripcion?: string;
     asignatura: AsignaturaModel;
     docentes: DocenteModel[];

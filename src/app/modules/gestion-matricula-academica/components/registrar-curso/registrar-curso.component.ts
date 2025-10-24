@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
@@ -46,7 +47,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         private readonly fb: FormBuilder,
         private readonly materialApoyoService: MaterialApoyoService,
         private readonly registrarCursoService: RegistrarCursoService,
-        private readonly messageService: MessageService
+        private readonly messageService: MessageService,
+        private readonly router: Router
     ) {}
 
     private readonly subs: Subscription[] = [];
@@ -60,8 +62,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 '',
                 [Validators.required, Validators.pattern(/^[A-Za-z]$/)],
             ],
-            horario: [''],
-            salon: ['', [Validators.maxLength(200)]],
+            horario: ['', [Validators.maxLength(100)]],
+            salon: ['', [Validators.maxLength(50)]],
             observacion: ['', [Validators.maxLength(200)]],
         });
 
@@ -203,15 +205,22 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 .subscribe({
                     next: (r) => {
                         if (r.typeResponse === 'SUCCESS') {
-                            // mostrar toast con el message del ApiResponse
+                            // mostrar toast con el message del ApiResponse y mantenerlo un tiempo
+                            const toastLife = 2500; // ms
                             this.messageService.add({
                                 severity: 'success',
                                 summary: 'Éxito',
                                 detail: r.message,
+                                life: toastLife,
                             });
                             console.log('Curso registrado', r.data);
                             this.form.reset();
                             this.selectedMateriales = [];
+                            // Esperar un momento para que el toast sea visible antes de navegar
+                            const navigateDelay = 1000; // ms
+                            setTimeout(() => {
+                                this.router.navigate(['/gestion-matricula-academica', 'gestion-cursos']);
+                            }, navigateDelay);
                         } else {
                             // mostrar mensaje de error devuelto por la API
                             this.messageService.add({

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService, PrimeIcons } from 'primeng/api';
 import { CursoService } from '../../services/curso.service';
@@ -21,23 +21,22 @@ export class GestionCursoComponent implements OnInit {
     form: FormGroup;
 
     // Filtros
-    periodos: { label: string; value: string }[] = [];
+    periodos: Array<{ label: string; value: string }> = [];
     periodoSeleccionado: string | null = null;
 
-    areasFormacion: { label: string; value: string }[] = [];
+    areasFormacion: Array<{ label: string; value: string }> = [];
     areaSeleccionada: string | null = null;
 
-    asignaturas: { label: string; value: string }[] = [];
+    asignaturas: Array<{ label: string; value: string }> = [];
     asignaturaSeleccionada: string | null = null;
 
     constructor(
-        private readonly fb: FormBuilder,
-        private readonly cursoService: CursoService,
-        private readonly periodoService: PeriodoAcademicoService,
-        private readonly router: Router,
-        private readonly route: ActivatedRoute,
-        private readonly confirmationService: ConfirmationService,
-        private readonly messageService: MessageService
+    private readonly fb: FormBuilder,
+    private readonly cursoService: CursoService,
+    private readonly periodoService: PeriodoAcademicoService,
+    private readonly router: Router,
+    private readonly confirmationService: ConfirmationService,
+    private readonly messageService: MessageService
     ) {
         this.form = this.fb.group({
             grupo: ['', Validators.required],
@@ -96,7 +95,7 @@ export class GestionCursoComponent implements OnInit {
         return `${day}/${month}/${year}`;
     }
 
-    onAgregarCurso() {
+    onAgregarCurso(): void {
         // Navegar al formulario de registro
         this.router.navigate([
             '/gestion-matricula-academica',
@@ -104,7 +103,7 @@ export class GestionCursoComponent implements OnInit {
         ]);
     }
 
-    onEditarCurso(id: number) {
+    onEditarCurso(id: number): void {
         const curso = this.cursos.find((c) => c.id === id);
         if (!curso) return;
         this.form.patchValue({
@@ -117,8 +116,7 @@ export class GestionCursoComponent implements OnInit {
         this.editCursoId = id;
         this.displayModal = true;
     }
-
-    actualizarCurso(id: number, value: CursoUI) {
+    actualizarCurso(id: number, value: CursoUI): void {
         const idx = this.cursos.findIndex((c) => c.id === id);
         if (idx > -1) {
             this.cursos[idx] = {
@@ -131,18 +129,21 @@ export class GestionCursoComponent implements OnInit {
         }
     }
 
-    cancelarModal() {
+    cancelarModal(): void {
         this.displayModal = false;
     }
 
-    onEliminarCurso(eventOrId: any, maybeId?: number) {
+    /**
+     * Maneja la confirmación de eliminación. Se acepta llamada con (event, id)
+     * o con solo el id (por compatibilidad).
+     */
+    onEliminarCurso(eventOrId: Event | number, maybeId?: number): void {
         const id = typeof eventOrId === 'number' ? eventOrId : maybeId;
-        const target =
-            typeof eventOrId === 'object' ? eventOrId.target : undefined;
+        const target = typeof eventOrId === 'object' ? (eventOrId.target as any) : undefined;
         if (id === undefined || id === null) return;
 
         this.confirmationService.confirm({
-            target: target,
+            target,
             message: '¿Está seguro de que desea eliminar este curso?',
             icon: PrimeIcons.EXCLAMATION_TRIANGLE,
             acceptLabel: 'Sí, eliminar',
@@ -151,7 +152,7 @@ export class GestionCursoComponent implements OnInit {
         });
     }
 
-    private deleteCurso(id: number) {
+    private deleteCurso(id: number): void {
         this.cursoService.eliminarCurso(id).subscribe({
             next: (resp) => {
                 if (resp.typeResponse === 'SUCCESS') {

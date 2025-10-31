@@ -96,8 +96,8 @@
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">
       <p-table [value]="selectedMateriales" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [rowsPerPageOptions]="[10, 25, 50, 100]" [responsiveLayout]="'scroll'">
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} materiales"
+        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'">
         <ng-template pTemplate="header">
           <tr>
             <th scope="col">No</th>

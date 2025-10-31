@@ -42,14 +42,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     loadingMaterials: boolean = false;
 
     displayMaterialDialog: boolean = false;
-    // materiales seleccionados en el formulario
     selectedMateriales: MaterialApoyo[] = [];
-    // selección temporal dentro del diálogo
     tableSelection: MaterialApoyo[] = [];
 
-    // Propiedades para modo edición
     isEditMode: boolean = false;
-    // Modo sólo lectura (vista)
     isViewMode: boolean = false;
     cursoId: number | null = null;
     cursoOriginal: BackendCurso | null = null;
@@ -69,7 +65,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     loadingAsignaturasError = false;
 
     ngOnInit() {
-        // Verificar si estamos en modo edición o modo vista
+    // Verificar si estamos en modo edición o vista
         this.route.params.subscribe((params) => {
             const path = this.route.snapshot.routeConfig?.path || '';
             if (path.startsWith('ver-curso')) {
@@ -97,7 +93,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             observacion: ['', [Validators.maxLength(200)]],
         });
 
-        // Convertir grupo a una sola letra mayúscula
+    // Convertir grupo a una sola letra mayúscula
         const grupoControl = this.form.get('grupo');
         if (grupoControl) {
             grupoControl.valueChanges.subscribe((val: string) => {
@@ -110,7 +106,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             });
         }
 
-        // Cargar materiales desde el servicio
+    // Cargar materiales desde el servicio
         this.loadingMaterials = true;
         this.materialApoyoService
             .listMaterialApoyo()
@@ -125,7 +121,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                     console.error('Error cargando materiales de apoyo', err),
             });
 
-        // Validar existencia de curso cuando cambia el grupo (debounce)
+    // Validar existencia de curso cuando cambia el grupo (debounce)
         const grupoCtrl = this.form.get('grupo');
         if (grupoCtrl) {
             const s = (grupoCtrl.valueChanges as any)

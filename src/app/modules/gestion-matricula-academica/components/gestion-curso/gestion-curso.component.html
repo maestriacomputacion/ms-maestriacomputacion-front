@@ -18,7 +18,7 @@
                 <label for="areaFormacion" class="font-medium mb-1" style="white-space: nowrap">Area de
                     formación</label>
                 <p-dropdown id="areaFormacion" [options]="areasFormacion" [(ngModel)]="areaSeleccionada"
-                    (ngModelChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona el area"
+                    (ngModelChange)="onAreaChange($event)" [showClear]="true" placeholder="Selecciona el area"
                     class="w-12rem"></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">

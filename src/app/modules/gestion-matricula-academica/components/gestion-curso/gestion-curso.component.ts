@@ -15,7 +15,6 @@ import { PeriodoAcademico } from '../../models/periodo-academico.model';
 export class GestionCursoComponent implements OnInit {
     cursos: CursoUI[] = [];
 
-    // Filtros
     periodos: Array<{ label: string; value: string }> = [];
     periodoSeleccionado: string | null = null;
 
@@ -48,21 +47,13 @@ export class GestionCursoComponent implements OnInit {
             }
         });
         this.loadCursos();
+        // Cargar áreas de formación
         this.cursoService
             .getAreasFormacion()
             .subscribe(
                 (resp: ApiResponse<{ label: string; value: string }[]>) => {
                     if (resp.typeResponse === 'SUCCESS') {
                         this.areasFormacion = resp.data;
-                    }
-                }
-            );
-        this.cursoService
-            .getAsignaturas()
-            .subscribe(
-                (resp: ApiResponse<{ label: string; value: string }[]>) => {
-                    if (resp.typeResponse === 'SUCCESS') {
-                        this.asignaturas = resp.data;
                     }
                 }
             );
@@ -83,6 +74,29 @@ export class GestionCursoComponent implements OnInit {
     }
 
     onFilterChange(): void {
+        this.loadCursos();
+    }
+
+    /** Carga asignaturas cuando cambia el área seleccionada. */
+    onAreaChange(nuevaArea: string | null): void {
+        // Asegurar que `areaSeleccionada` refleja el nuevo valor
+        this.areaSeleccionada = nuevaArea;
+        // Cargar asignaturas si hay área, de lo contrario limpiar
+        if (this.areaSeleccionada) {
+            this.cursoService
+                .getAsignaturasByArea(this.areaSeleccionada)
+                .subscribe(
+                    (resp: ApiResponse<{ label: string; value: string }[]>) => {
+                        if (resp.typeResponse === 'SUCCESS') {
+                            this.asignaturas = resp.data;
+                        } else {
+                            this.asignaturas = [];
+                        }
+                    }
+                );
+        } else {
+            this.asignaturas = [];
+        }
         this.loadCursos();
     }
     private formatDateString(dateStr: string): string {

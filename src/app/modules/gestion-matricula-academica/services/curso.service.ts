@@ -156,12 +156,57 @@ export class CursoService {
     getAsignaturas(): Observable<
         ApiResponse<{ label: string; value: string }[]>
     > {
-        // Devolvemos lista vacía; el backend debe proveer valores reales.
-        return of({
-            typeResponse: 'SUCCESS',
-            message: 'Asignaturas no disponibles (vacío)',
-            data: [] as { label: string; value: string }[],
-            statusCode: 200,
-        });
+        const url = `${this.backend}/asignaturas`;
+        return this.http.get<ApiResponse<any[]>>(url).pipe(
+            map((resp) => ({
+                typeResponse: resp.typeResponse,
+                message: resp.message,
+                statusCode: resp.statusCode,
+                data: (resp.data || []).map((a: any) => ({
+                    label: a.nombre ?? '',
+                    value: String(a.id ?? ''),
+                })),
+            })),
+            catchError((err) => {
+                console.error('Error cargando asignaturas', err);
+                return of({
+                    typeResponse: 'SUCCESS',
+                    message: 'Asignaturas no disponibles (vacío)',
+                    data: [] as { label: string; value: string }[],
+                    statusCode: 200,
+                } as ApiResponse<{ label: string; value: string }[]>);
+            })
+        );
+    }
+
+    /** Obtiene asignaturas filtradas por área (opcional). */
+    getAsignaturasByArea(
+        idArea?: string | number | null
+    ): Observable<ApiResponse<{ label: string; value: string }[]>> {
+        const url = `${this.backend}/asignaturas`;
+        let params = new HttpParams();
+        if (idArea !== undefined && idArea !== null && `${idArea}` !== '') {
+            params = params.set('idArea', String(idArea));
+        }
+        return this.http.get<ApiResponse<any[]>>(url, { params }).pipe(
+            map((resp) => ({
+                typeResponse: resp.typeResponse,
+                message: resp.message,
+                statusCode: resp.statusCode,
+                data: (resp.data || []).map((a: any) => ({
+                    label: a.nombre ?? '',
+                    value: String(a.id ?? ''),
+                })),
+            })),
+            catchError((err) => {
+                console.error('Error cargando asignaturas por área', err);
+                return of({
+                    typeResponse: 'SUCCESS',
+                    message: 'Asignaturas no disponibles (fallback vacío)',
+                    data: [] as { label: string; value: string }[],
+                    statusCode: 200,
+                } as ApiResponse<{ label: string; value: string }[]>);
+            })
+        );
     }
 }

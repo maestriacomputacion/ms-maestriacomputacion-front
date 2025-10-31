@@ -481,6 +481,30 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         ]);
     }
 
+    /**
+     * Maneja la acción de cancelar el registro/edición del curso.
+     * Si el formulario tiene cambios, solicita confirmación al usuario.
+     */
+    onCancel(): void {
+        // Evitar navegación si se está guardando
+        if (this.saving) return;
+
+        // Si el formulario está modificado, confirmar la cancelación
+        const hayCambios = this.form && this.form.dirty;
+        if (hayCambios) {
+            const confirmar = confirm(
+                'Existen cambios sin guardar. Si continúa, se perderán los cambios. ¿Desea continuar?'
+            );
+            if (!confirmar) return;
+        }
+
+        // Navegar de regreso al listado de cursos
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'gestion-cursos',
+        ]);
+    }
+
     openMaterialDialog() {
         this.tableSelection = [...this.selectedMateriales];
         this.displayMaterialDialog = true;

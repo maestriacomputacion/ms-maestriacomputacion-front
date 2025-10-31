@@ -129,13 +129,28 @@ export class CursoService {
     getAreasFormacion(): Observable<
         ApiResponse<{ label: string; value: string }[]>
     > {
-        // Devolvemos lista vacía; el backend debe proveer valores reales.
-        return of({
-            typeResponse: 'SUCCESS',
-            message: 'Áreas de formación no disponibles (vacío)',
-            data: [] as { label: string; value: string }[],
-            statusCode: 200,
-        });
+        const url = `${this.backend}/asignaturas/area`;
+        return this.http.get<ApiResponse<any[]>>(url).pipe(
+            map((resp) => ({
+                typeResponse: resp.typeResponse,
+                message: resp.message,
+                statusCode: resp.statusCode,
+                data: (resp.data || []).map((a: any) => ({
+                    label: a.nombre ?? '',
+                    value: String(a.id ?? ''),
+                })),
+            })),
+            catchError((err) => {
+                console.error('Error cargando áreas de formación', err);
+                return of({
+                    typeResponse: 'SUCCESS',
+                    message:
+                        'Áreas de formación no disponibles (fallback vacío)',
+                    data: [] as { label: string; value: string }[],
+                    statusCode: 200,
+                } as ApiResponse<{ label: string; value: string }[]>);
+            })
+        );
     }
 
     getAsignaturas(): Observable<

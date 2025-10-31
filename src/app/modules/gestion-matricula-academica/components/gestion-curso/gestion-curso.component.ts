@@ -47,13 +47,7 @@ export class GestionCursoComponent implements OnInit {
                 );
             }
         });
-        this.cursoService
-            .getCursos()
-            .subscribe((resp: ApiResponse<CursoUI[]>) => {
-                if (resp.typeResponse === 'SUCCESS') {
-                    this.cursos = resp.data;
-                }
-            });
+        this.loadCursos();
         this.cursoService
             .getAreasFormacion()
             .subscribe(
@@ -74,6 +68,23 @@ export class GestionCursoComponent implements OnInit {
             );
     }
 
+    private loadCursos(): void {
+        this.cursoService
+            .getCursos({
+                idPeriodo: this.periodoSeleccionado,
+                idAsignatura: this.asignaturaSeleccionada,
+                idArea: this.areaSeleccionada,
+            })
+            .subscribe((resp: ApiResponse<CursoUI[]>) => {
+                if (resp.typeResponse === 'SUCCESS') {
+                    this.cursos = resp.data;
+                }
+            });
+    }
+
+    onFilterChange(): void {
+        this.loadCursos();
+    }
     private formatDateString(dateStr: string): string {
         if (!dateStr) return '';
         const parts = dateStr.split('T')[0].split('-');

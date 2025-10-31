@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
 import { CursoUI, BackendCurso } from '../models/curso.model';
 import { matricula_academica } from 'src/environments/environment';
+
+type OptionalId = string | number | null;
 
 @Injectable({ providedIn: 'root' })
 export class CursoService {
@@ -50,24 +52,59 @@ export class CursoService {
         return { grupo, asignatura, docente, fecha };
     }
 
-    getCursos(): Observable<ApiResponse<CursoUI[]>> {
-        return this.http.get<ApiResponse<BackendCurso[]>>(this.backend).pipe(
-            map((resp) => ({
-                typeResponse: resp.typeResponse,
-                message: resp.message,
-                statusCode: resp.statusCode,
-                data: (resp.data ?? []).map((item) => this.transformToUI(item)),
-            })),
-            // Fallback: devolver lista vacía en caso de error
-            catchError(() =>
-                of({
-                    typeResponse: 'SUCCESS',
-                    message: 'No se pudieron cargar cursos; fallback vacío',
-                    data: [] as CursoUI[],
-                    statusCode: 200,
-                } as ApiResponse<CursoUI[]>)
-            )
-        );
+    getCursos(params?: {
+        idPeriodo?: OptionalId;
+        idAsignatura?: OptionalId;
+        idArea?: OptionalId;
+    }): Observable<ApiResponse<CursoUI[]>> {
+        let httpParams = new HttpParams();
+        if (params) {
+            const { idPeriodo, idAsignatura, idArea } = params;
+            if (
+                idPeriodo !== undefined &&
+                idPeriodo !== null &&
+                `${idPeriodo}` !== ''
+            ) {
+                httpParams = httpParams.set('idPeriodo', String(idPeriodo));
+            }
+            if (
+                idAsignatura !== undefined &&
+                idAsignatura !== null &&
+                `${idAsignatura}` !== ''
+            ) {
+                httpParams = httpParams.set(
+                    'idAsignatura',
+                    String(idAsignatura)
+                );
+            }
+            if (idArea !== undefined && idArea !== null && `${idArea}` !== '') {
+                httpParams = httpParams.set('idArea', String(idArea));
+            }
+        }
+
+        return this.http
+            .get<ApiResponse<BackendCurso[]>>(this.backend, {
+                params: httpParams,
+            })
+            .pipe(
+                map((resp) => ({
+                    typeResponse: resp.typeResponse,
+                    message: resp.message,
+                    statusCode: resp.statusCode,
+                    data: (resp.data ?? []).map((item) =>
+                        this.transformToUI(item)
+                    ),
+                })),
+                // Fallback: devolver lista vacía en caso de error
+                catchError(() =>
+                    of({
+                        typeResponse: 'SUCCESS',
+                        message: 'No se pudieron cargar cursos; fallback vacío',
+                        data: [] as CursoUI[],
+                        statusCode: 200,
+                    } as ApiResponse<CursoUI[]>)
+                )
+            );
     }
     crearCurso(curso: Omit<CursoUI, 'id'>): Observable<ApiResponse<CursoUI>> {
         const payload = this.buildPayload(curso);

@@ -11,19 +11,22 @@
             <div class="flex align-items-center gap-2">
                 <label for="periodo" class="font-medium mb-1" style="white-space: nowrap">Periodo</label>
                 <p-dropdown id="periodo" [options]="periodos" [(ngModel)]="periodoSeleccionado"
-                    placeholder="Selecciona el periodo" class="w-12rem"></p-dropdown>
+                    (ngModelChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona el periodo"
+                    class="w-12rem"></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label for="areaFormacion" class="font-medium mb-1" style="white-space: nowrap">Area de
                     formación</label>
                 <p-dropdown id="areaFormacion" [options]="areasFormacion" [(ngModel)]="areaSeleccionada"
-                    placeholder="Selecciona el area" class="w-12rem"></p-dropdown>
+                    (ngModelChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona el area"
+                    class="w-12rem"></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label for="asignaturaInvestigacion" class="font-medium mb-1" style="white-space: nowrap">Asignatura de
                     investigación</label>
                 <p-dropdown id="asignaturaInvestigacion" [options]="asignaturas" [(ngModel)]="asignaturaSeleccionada"
-                    placeholder="Selecciona la asignatura" class="w-12rem"></p-dropdown>
+                    (ngModelChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona la asignatura"
+                    class="w-12rem"></p-dropdown>
             </div>
         </div>
     </div>
@@ -47,8 +50,8 @@
     <!-- Tabla -->
     <p-table #tableCursos [value]="cursos" [paginator]="true" [rows]="10" [totalRecords]="cursos?.length || 0"
         [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
-        styleClass="p-datatable-gridlines p-datatable-striped" 
-        [responsiveLayout]="'scroll'" [globalFilterFields]="['grupo', 'asignatura', 'docente', 'fecha']">
+        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'"
+        [globalFilterFields]="['grupo', 'asignatura', 'docente', 'fecha']">
         <ng-template pTemplate="header">
             <tr>
                 <th class="text-center" scope="col">Grupo</th>

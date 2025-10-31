@@ -93,11 +93,7 @@ export class GestionCursoComponent implements OnInit {
     onVerCurso(cursoOrId: CursoUI | number): void {
         const id = typeof cursoOrId === 'number' ? cursoOrId : cursoOrId?.id;
         if (id === undefined || id === null) return;
-        this.router.navigate([
-            '/gestion-matricula-academica',
-            'ver-curso',
-            id,
-        ]);
+        this.router.navigate(['/gestion-matricula-academica', 'ver-curso', id]);
     }
 
     onEditarCurso(id: number): void {

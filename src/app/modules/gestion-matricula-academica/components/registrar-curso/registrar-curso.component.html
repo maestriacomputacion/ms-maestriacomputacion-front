@@ -30,7 +30,8 @@
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
     <textarea id="salon" rows="1" pInputTextarea autoResize="autoResize" formControlName="salon" class="flex-1"
-      maxlength="50" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}" [disabled]="isViewMode"></textarea>
+      maxlength="50" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}"
+      [disabled]="isViewMode"></textarea>
   </div>
 
 
@@ -109,8 +110,9 @@
             <td>{{ rowIndex + 1 }}</td>
             <td>{{ material.nombre }}</td>
             <td class="text-center">
-              <button *ngIf="!isViewMode" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-                pTooltip="Quitar de la selección" (click)="removeSelectedMaterial(material)"></button>
+              <button *ngIf="!isViewMode" pButton pRipple icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-danger" pTooltip="Quitar de la selección"
+                (click)="removeSelectedMaterial(material)"></button>
               <span *ngIf="isViewMode">-</span>
             </td>
           </tr>
@@ -127,8 +129,8 @@
   </div>
 
   <!-- Dialogo para seleccionar materiales -->
-  <p-dialog *ngIf="!isViewMode" header="Seleccionar Materiales de Apoyo" [(visible)]="displayMaterialDialog" [modal]="true"
-    [style]="{ width: '60vw' }" [closable]="false">
+  <p-dialog *ngIf="!isViewMode" header="Seleccionar Materiales de Apoyo" [(visible)]="displayMaterialDialog"
+    [modal]="true" [style]="{ width: '60vw' }" [closable]="false">
     <p-table [value]="materialesApoyo" selectionMode="multiple" [(selection)]="tableSelection" [paginator]="true"
       [rows]="10">
       <ng-template pTemplate="header">
@@ -155,8 +157,8 @@
   </p-dialog>
 
   <!-- Dialogo para seleccionar asignatura -->
-  <p-dialog *ngIf="!isViewMode" header="Seleccionar Asignatura Activa" [(visible)]="displayAsignaturaDialog" [modal]="true"
-    [style]="{ width: '50vw' }" [closable]="false">
+  <p-dialog *ngIf="!isViewMode" header="Seleccionar Asignatura Activa" [(visible)]="displayAsignaturaDialog"
+    [modal]="true" [style]="{ width: '50vw' }" [closable]="false">
     <p-table [value]="asignaturas" [paginator]="true" [rows]="10">
       <ng-template pTemplate="header">
         <tr>
@@ -202,10 +204,13 @@
   </div>
 
   <div class="flex justify-content-end mt-4">
-    <button *ngIf="!isViewMode" pButton [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'" class="p-button-primary mr-2"
+    <button *ngIf="!isViewMode" pButton [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
+      class="p-button-primary mr-2"
       [disabled]="form.invalid || saving || loadingMaterials || !targetDocentes || targetDocentes.length === 0"
       (click)="onSubmit()" [loading]="saving"></button>
-    <button *ngIf="!isViewMode" pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"></button>
-    <button *ngIf="isViewMode" pButton label="Cerrar" class="p-button-secondary" type="button" (click)="onCloseView()"></button>
+    <button *ngIf="!isViewMode" pButton label="Cancelar" class="p-button-secondary" type="button"
+      [disabled]="saving"></button>
+    <button *ngIf="isViewMode" pButton label="Cerrar" class="p-button-secondary" type="button"
+      (click)="onCloseView()"></button>
   </div>
 </p-panel>

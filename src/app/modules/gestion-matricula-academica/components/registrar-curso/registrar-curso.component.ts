@@ -49,6 +49,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     // Propiedades para modo edición
     isEditMode: boolean = false;
+    // Modo sólo lectura (vista)
+    isViewMode: boolean = false;
     cursoId: number | null = null;
     cursoOriginal: BackendCurso | null = null;
 
@@ -67,10 +69,19 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     loadingAsignaturasError = false;
 
     ngOnInit() {
-        // Verificar si estamos en modo edición
+        // Verificar si estamos en modo edición o modo vista
         this.route.params.subscribe((params) => {
-            if (params['id']) {
+            const path = this.route.snapshot.routeConfig?.path || '';
+            if (path.startsWith('ver-curso')) {
+                this.isViewMode = true;
+                this.isEditMode = false;
+                if (params['id']) {
+                    this.cursoId = +params['id'];
+                    this.loadCursoForEdit(this.cursoId);
+                }
+            } else if (params['id']) {
                 this.isEditMode = true;
+                this.isViewMode = false;
                 this.cursoId = +params['id'];
                 this.loadCursoForEdit(this.cursoId);
             }
@@ -463,6 +474,13 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.subs.push(sub);
     }
 
+    onCloseView() {
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'gestion-cursos',
+        ]);
+    }
+
     openMaterialDialog() {
         this.tableSelection = [...this.selectedMateriales];
         this.displayMaterialDialog = true;
@@ -510,6 +528,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 if (resp && resp.typeResponse === 'SUCCESS' && resp.data) {
                     this.cursoOriginal = resp.data;
                     this.populateFormWithCursoData(resp.data);
+                    // Si estamos en modo solo lectura, deshabilitar el formulario
+                    if (this.isViewMode) {
+                        this.form.disable();
+                    }
                 } else {
                     this.messageService.add({
                         severity: 'error',

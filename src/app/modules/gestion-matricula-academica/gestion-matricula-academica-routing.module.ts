@@ -33,6 +33,10 @@ const routes: Routes = [
                 component: RegistrarCursoComponent,
             },
             {
+                path: 'ver-curso/:id',
+                component: RegistrarCursoComponent,
+            },
+            {
                 path: 'material-apoyo',
                 component: GestionMaterialApoyoComponent,
             },

@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-panel [formGroup]="form">
   <p-header>
-    <b>{{ isEditMode ? 'EDITAR CURSO' : 'REGISTRAR CURSO' }}</b>
+    <b>{{ isViewMode ? 'VER CURSO' : (isEditMode ? 'EDITAR CURSO' : 'REGISTRAR CURSO') }}</b>
   </p-header>
 
   <!-- Sección Grupo -->
@@ -11,7 +11,7 @@
         style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
       <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
         [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" [attr.aria-invalid]="grupo?.invalid"
-        [disabled]="saving" placeholder="Ej: A" />
+        [disabled]="saving || isViewMode" placeholder="Ej: A" />
     </div>
     <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem);" aria-live="assertive">
       <small *ngIf="cursoExistsMessage" class="p-error">{{ cursoExistsMessage }}</small>
@@ -23,14 +23,14 @@
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="horario" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Horario</label>
     <textarea id="horario" rows="1" pInputTextarea autoResize="autoResize" formControlName="horario" class="flex-1"
-      maxlength="100"></textarea>
+      maxlength="100" [disabled]="isViewMode"></textarea>
   </div>
 
   <!-- Sección Salón -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
     <textarea id="salon" rows="1" pInputTextarea autoResize="autoResize" formControlName="salon" class="flex-1"
-      maxlength="50" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}"></textarea>
+      maxlength="50" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}" [disabled]="isViewMode"></textarea>
   </div>
 
 
@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          <button pButton label="Asociar asignatura" class="w-auto p-button-sm"
+          <button *ngIf="!isViewMode" pButton label="Asociar asignatura" class="w-auto p-button-sm"
             (click)="openAsignaturaDialog()"></button>
         </div>
       </div>
@@ -73,18 +73,18 @@
         <div class="p-input-icon-left w-20rem mb-3">
           <i class="pi pi-search"></i>
           <input id="buscarDocente" pInputText type="text" class="w-full" placeholder="Buscar Docente"
-            [disabled]="loadingDocentes || saving" />
+            [disabled]="loadingDocentes || saving || isViewMode" />
         </div>
         <p-pickList [source]="sourceDocentes" [target]="targetDocentes" sourceHeader="Docentes Disponibles"
           targetHeader="Docentes Seleccionados" [responsive]="true" [dragdrop]="true" [breakpoint]="'1400px'"
           [sourceStyle]="{ height: '22rem' }" [targetStyle]="{ height: '22rem' }" [showSourceControls]="false"
-          [showTargetControls]="false" [disabled]="loadingDocentes || saving">
+          [showTargetControls]="false" [disabled]="loadingDocentes || saving || isViewMode">
           <ng-template let-docente pTemplate="item">
             <div>{{ docente.nombre }} {{docente.apellido}} | {{ docente.codigo }}</div>
           </ng-template>
         </p-pickList>
         <div class="flex justify-content-center mt-3">
-          <button pButton label="Registrar Material" class="p-button-primary w-auto p-button-sm"
+          <button *ngIf="!isViewMode" pButton label="Registrar Material" class="p-button-primary w-auto p-button-sm"
             style="min-width: unset; width: auto" (click)="openMaterialDialog()" [disabled]="saving || loadingMaterials"
             pTooltip="Abrir selector de materiales"></button>
         </div>
@@ -109,8 +109,9 @@
             <td>{{ rowIndex + 1 }}</td>
             <td>{{ material.nombre }}</td>
             <td class="text-center">
-              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
+              <button *ngIf="!isViewMode" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
                 pTooltip="Quitar de la selección" (click)="removeSelectedMaterial(material)"></button>
+              <span *ngIf="isViewMode">-</span>
             </td>
           </tr>
         </ng-template>
@@ -126,7 +127,7 @@
   </div>
 
   <!-- Dialogo para seleccionar materiales -->
-  <p-dialog header="Seleccionar Materiales de Apoyo" [(visible)]="displayMaterialDialog" [modal]="true"
+  <p-dialog *ngIf="!isViewMode" header="Seleccionar Materiales de Apoyo" [(visible)]="displayMaterialDialog" [modal]="true"
     [style]="{ width: '60vw' }" [closable]="false">
     <p-table [value]="materialesApoyo" selectionMode="multiple" [(selection)]="tableSelection" [paginator]="true"
       [rows]="10">
@@ -154,7 +155,7 @@
   </p-dialog>
 
   <!-- Dialogo para seleccionar asignatura -->
-  <p-dialog header="Seleccionar Asignatura Activa" [(visible)]="displayAsignaturaDialog" [modal]="true"
+  <p-dialog *ngIf="!isViewMode" header="Seleccionar Asignatura Activa" [(visible)]="displayAsignaturaDialog" [modal]="true"
     [style]="{ width: '50vw' }" [closable]="false">
     <p-table [value]="asignaturas" [paginator]="true" [rows]="10">
       <ng-template pTemplate="header">
@@ -201,9 +202,10 @@
   </div>
 
   <div class="flex justify-content-end mt-4">
-    <button pButton [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'" class="p-button-primary mr-2"
+    <button *ngIf="!isViewMode" pButton [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'" class="p-button-primary mr-2"
       [disabled]="form.invalid || saving || loadingMaterials || !targetDocentes || targetDocentes.length === 0"
       (click)="onSubmit()" [loading]="saving"></button>
-    <button pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"></button>
+    <button *ngIf="!isViewMode" pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"></button>
+    <button *ngIf="isViewMode" pButton label="Cerrar" class="p-button-secondary" type="button" (click)="onCloseView()"></button>
   </div>
 </p-panel>

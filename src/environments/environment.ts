@@ -48,7 +48,7 @@ export const gestion_trabajo_grado = {
 
 export const gestion_docentes_estudiantes = {
     production: false,
-    api_url: 'http://localhost:8082/api/',
+    api_url: 'http://localhost:8091/api/',
 };
 
 export const evaluacion_docente = {

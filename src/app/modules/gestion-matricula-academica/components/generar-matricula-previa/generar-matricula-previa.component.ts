@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
     MatriculaPreviaService,
@@ -7,6 +8,8 @@ import {
 } from '../../services/matricula-previa.service';
 import { ApiResponse } from '../../models/api-response.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
+import { Estudiante as EstudianteModel } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 
 @Component({
     selector: 'app-generar-matricula-previa',
@@ -19,12 +22,17 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     displayObservacionModal = false;
     observacionForm: FormGroup;
     asignaturaSeleccionadaId: number | null = null;
+    estudianteId: number | null = null;
+    loading: boolean = false;
 
     constructor(
         private readonly fb: FormBuilder,
         private readonly matriculaPreviaService: MatriculaPreviaService,
+        private readonly estudianteService: EstudianteService,
         private readonly messageService: MessageService,
-        private readonly confirmationService: ConfirmationService
+        private readonly confirmationService: ConfirmationService,
+        private readonly route: ActivatedRoute,
+        private readonly router: Router
     ) {
         this.observacionForm = this.fb.group({
             observacion: ['', Validators.required],
@@ -32,7 +40,15 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.cargarDatosEstudiante();
+        // Obtener el ID del estudiante desde la ruta si existe
+        this.route.params.subscribe((params) => {
+            if (params['id']) {
+                this.estudianteId = +params['id'];
+                this.cargarDatosEstudiantePorId(this.estudianteId);
+            } else {
+                this.cargarDatosEstudiante();
+            }
+        });
         this.cargarAsignaturas();
     }
 
@@ -44,6 +60,74 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                     this.estudiante = resp.data;
                 }
             });
+    }
+
+    cargarDatosEstudiantePorId(id: number) {
+        this.loading = true;
+        // Obtener datos del estudiante y su estado para tener información completa
+        this.estudianteService.getEstudiante(id).subscribe({
+            next: (estudianteData: EstudianteModel) => {
+                // Intentar obtener el estado del estudiante para tener nombres de director y co-director
+                this.estudianteService.getEstadoEstudiante(id).subscribe({
+                    next: (estadoEstudiante) => {
+                        // Transformar el modelo de Estudiante a Estudiante del servicio de matrícula previa
+                        this.estudiante = {
+                            codigo: estudianteData.codigo || '',
+                            nombre: estudianteData.persona?.nombre || '',
+                            apellidos: estudianteData.persona?.apellido || '',
+                            director:
+                                estadoEstudiante.director ||
+                                (estudianteData.idDirector
+                                    ? 'Director asignado'
+                                    : 'Sin director'),
+                            coDirector:
+                                estadoEstudiante.codirector ||
+                                (estudianteData.idCodirector
+                                    ? 'Co-Director asignado'
+                                    : 'Sin co-director'),
+                            semestreAcademico: String(
+                                estadoEstudiante.semestreAcademico ||
+                                    estudianteData.informacionMaestria
+                                        ?.semestreAcademico ||
+                                    0
+                            ),
+                        };
+                        this.loading = false;
+                    },
+                    error: () => {
+                        // Si falla obtener el estado, usar solo los datos básicos
+                        this.estudiante = {
+                            codigo: estudianteData.codigo || '',
+                            nombre: estudianteData.persona?.nombre || '',
+                            apellidos: estudianteData.persona?.apellido || '',
+                            director: estudianteData.idDirector
+                                ? 'Director asignado'
+                                : 'Sin director',
+                            coDirector: estudianteData.idCodirector
+                                ? 'Co-Director asignado'
+                                : 'Sin co-director',
+                            semestreAcademico: String(
+                                estudianteData.informacionMaestria
+                                    ?.semestreAcademico || 0
+                            ),
+                        };
+                        this.loading = false;
+                    },
+                });
+            },
+            error: (err) => {
+                console.error('Error cargando estudiante', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail:
+                        err?.error?.message ||
+                        err?.message ||
+                        'Error al cargar los datos del estudiante',
+                });
+                this.loading = false;
+            },
+        });
     }
 
     cargarAsignaturas() {

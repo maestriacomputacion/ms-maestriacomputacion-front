@@ -1,0 +1,64 @@
+<p-toast></p-toast>
+
+<p-panel>
+    <p-header>
+        <b>GESTIÓN DE ESTUDIANTES</b>
+    </p-header>
+
+    <!-- Buscador principal - Diseño minimalista siguiendo heurísticas de Nielsen -->
+    <div class="flex flex-row align-items-center justify-content-between mb-3 w-full">
+        <div class="w-full">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" class="w-full"
+                    placeholder="Buscar por código, nombre, identificación, correo, ciudad..." (input)="
+                        tableEstudiantes.filterGlobal(
+                            $event.target.value,
+                            'contains'
+                        )
+                    " />
+            </span>
+            <small class="text-500 block mt-1">
+                <i class="pi pi-info-circle mr-1"></i>
+                Busca en todos los campos: código, nombre completo, identificación, correos, teléfono y ciudad
+            </small>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <p-table #tableEstudiantes [value]="estudiantes" [paginator]="true" [rows]="10" [loading]="loading"
+        [totalRecords]="estudiantes?.length || 0" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'"
+        [globalFilterFields]="['codigo', 'persona.nombre', 'persona.apellido', 'persona.identificacion', 'persona.correoElectronico', 'correoUniversidad', 'ciudadResidencia', 'persona.telefono']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center" scope="col">Código</th>
+                <th class="text-center" scope="col">Nombre Completo</th>
+                <th class="text-center" scope="col">Identificación</th>
+                <th class="text-center" scope="col">Correo Electrónico</th>
+                <th class="text-center" scope="col">Semestre Académico</th>
+                <th class="text-center" scope="col">Opciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-estudiante>
+            <tr>
+                <td>{{ estudiante.codigo }}</td>
+                <td>{{ getNombreCompleto(estudiante) }}</td>
+                <td>{{ estudiante.persona?.identificacion }}</td>
+                <td>{{ estudiante.persona?.correoElectronico }}</td>
+                <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico ?? '—' }}</td>
+                <td class="text-left">
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning"
+                        (click)="onGenerarMatriculaPrevia(estudiante.id)" title="Generar Matrícula Previa">
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td [attr.colspan]="6">No se encontraron estudiantes</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

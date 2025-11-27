@@ -3,8 +3,13 @@
     <b>GENERAR MATRÍCULA PREVIA</b>
   </p-header>
 
+  <!-- Indicador de carga -->
+  <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 200px;">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
   <!-- Contenido principal en una sola línea -->
-  <div class="grid" *ngIf="estudiante">
+  <div class="grid" *ngIf="estudiante && !loading">
     <!-- Datos del Estudiante -->
     <div class="col-12 lg:col-4">
       <div class="surface-card border-round shadow-1 h-full">

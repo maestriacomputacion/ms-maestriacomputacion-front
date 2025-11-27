@@ -11,6 +11,7 @@ import { GestionMaterialApoyoComponent } from './components/gestion-material-apo
 import { MaterialApoyoService } from './services/material-apoyo.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-previa/generar-matricula-previa.component';
+import { GestionEstudianteComponent } from './components/gestion-estudiante/gestion-estudiante.component';
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-
         GenerarCursosOfertadosComponent,
         RegistrarCursoComponent,
         GestionMaterialApoyoComponent,
-        GenerarMatriculaPreviaComponent
+        GenerarMatriculaPreviaComponent,
+        GestionEstudianteComponent
     ],
     imports: [
         CommonModule,

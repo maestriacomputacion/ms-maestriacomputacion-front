@@ -70,7 +70,7 @@
                     <!-- Botón Guardar -->
                     <div class="flex justify-content-end mb-4">
                         <button type="button" pButton label="Guardar" icon="pi pi-save" class="p-button-primary"
-                            [disabled]="asignaturas.length === 0" (click)="onGuardarMatricula()">
+                            [disabled]="asignaturas.length === 0" (click)="onGuardarMatricula($event)">
                         </button>
                     </div>
 
@@ -100,6 +100,7 @@
                                         <button type="button" pButton icon="pi pi-trash"
                                             class="p-button-rounded p-button-text p-button-danger p-button-sm" (click)="
                                                 onEliminarAsignatura(
+                                                    $event,
                                                     asignatura.id
                                                 )
                                             " pTooltip="Eliminar"></button>
@@ -184,6 +185,7 @@
                                                         <button type="button" pButton pRipple label="Seleccionar"
                                                             class="p-button-rounded p-button-text p-button-sm" (click)="
                                                                 onAgregarCursoDesdeArea(
+                                                                    $event,
                                                                     item,
                                                                     area
                                                                 )
@@ -240,5 +242,5 @@
 
     <!-- Componentes de mensajes -->
     <p-toast></p-toast>
-    <p-confirmDialog></p-confirmDialog>
+    <p-confirmPopup></p-confirmPopup>
 </p-panel>

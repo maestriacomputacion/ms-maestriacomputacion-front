@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 
@@ -33,6 +34,8 @@ export class MatriculaPreviaService {
     // Lista inicial vacía — las asignaturas se agregarán al seleccionar desde las áreas
     private readonly asignaturasMatricular: AsignaturaMatricular[] = [];
 
+    constructor(private http: HttpClient) {}
+
     getEstudiante(): Observable<ApiResponse<Estudiante>> {
         return of({
             typeResponse: 'SUCCESS',
@@ -51,5 +54,13 @@ export class MatriculaPreviaService {
             data: this.asignaturasMatricular,
             statusCode: 200,
         });
+    }
+
+    matricularEstudiante(payload: {
+        estudianteId: number;
+        cursos: { cursoId: number; observacion: string }[];
+    }): Observable<ApiResponse<any>> {
+        const url = '/api/matriculas/estudiante';
+        return this.http.post<ApiResponse<any>>(url, payload);
     }
 }

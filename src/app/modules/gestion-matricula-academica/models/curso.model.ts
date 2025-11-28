@@ -44,4 +44,5 @@ export interface CursoUI {
     docente: string; // concatenado
     fecha: string; // fecha formateada
     periodoEstado?: string; // estado del periodo (e.g., 'ACTIVO'|'INACTIVO')
+    salon?: string | null; // salón asociado al curso
 }

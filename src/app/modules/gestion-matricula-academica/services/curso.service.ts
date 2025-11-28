@@ -44,6 +44,7 @@ export class CursoService {
                 item.periodo?.fechaInicio ?? ''
             ),
             periodoEstado: item.periodo?.estado ?? null,
+            salon: item.salon ?? null,
         };
     }
 

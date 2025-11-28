@@ -323,4 +323,50 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             },
         });
     }
+
+    onGuardarMatricula() {
+        if (!this.estudianteId || this.asignaturas.length === 0) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'Debe seleccionar al menos una asignatura para guardar.',
+            });
+            return;
+        }
+
+        const payload = {
+            estudianteId: this.estudianteId,
+            cursos: this.asignaturas.map((asignatura) => ({
+                cursoId: asignatura.id,
+                observacion: asignatura.observacion,
+            })),
+        };
+
+        this.matriculaPreviaService.matricularEstudiante(payload).subscribe({
+            next: (resp) => {
+                if (resp.typeResponse === 'SUCCESS') {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Éxito',
+                        detail: 'Matrícula guardada correctamente.',
+                    });
+                    this.asignaturas = [];
+                } else {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: resp.message || 'Error al guardar la matrícula.',
+                    });
+                }
+            },
+            error: (err) => {
+                console.error('Error al guardar matrícula', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Error al guardar la matrícula.',
+                });
+            },
+        });
+    }
 }

@@ -66,6 +66,14 @@
                     <h5 class="mb-3 font-semibold text-900">
                         Asignaturas a Matricular
                     </h5>
+
+                    <!-- Botón Guardar -->
+                    <div class="flex justify-content-end mb-4">
+                        <button type="button" pButton label="Guardar" icon="pi pi-save" class="p-button-primary"
+                            [disabled]="asignaturas.length === 0" (click)="onGuardarMatricula()">
+                        </button>
+                    </div>
+
                     <p-table [value]="asignaturas" styleClass="p-datatable-striped">
                         <ng-template pTemplate="header">
                             <tr>
@@ -161,8 +169,8 @@
                                         <ng-template pTemplate="header">
                                             <tr>
                                                 <th>Grupo</th>
-                                                <th>Periodo</th>
                                                 <th>Docentes</th>
+                                                <th>Salón</th>
                                                 <th class="text-center">
                                                     Opciones
                                                 </th>
@@ -171,10 +179,8 @@
                                         <ng-template pTemplate="body" let-item>
                                             <tr>
                                                 <td>{{ item.grupo ?? "-" }}</td>
-                                                <td>{{ item.fecha ?? "-" }}</td>
-                                                <td>
-                                                    {{ item.docente ?? "-" }}
-                                                </td>
+                                                <td>{{ item.docente ?? "-" }}</td>
+                                                <td>{{ item.salon ?? "-" }}</td>
                                                 <td class="text-center">
                                                     <button type="button" pButton pRipple label="Seleccionar"
                                                         class="p-button-rounded p-button-text p-button-sm" (click)="
@@ -200,39 +206,39 @@
             </p-tabView>
         </div>
     </div>
-</p-panel>
 
-<!-- Modal para Agregar Observación -->
-<p-dialog [(visible)]="displayObservacionModal" [modal]="true" [resizable]="false" [draggable]="false"
-    [style]="{ width: '500px' }" header="Agregar Observación">
-    <form [formGroup]="observacionForm" (ngSubmit)="onGuardarObservacion()">
-        <div class="grid">
-            <div class="col-12">
-                <div class="field">
-                    <label for="observacion" class="font-medium text-900 block mb-2">Observación <span
-                            class="text-red-500">*</span></label>
-                    <textarea id="observacion" pInputTextarea formControlName="observacion"
-                        placeholder="Ingrese la observación" class="w-full" rows="4">
-                    </textarea>
-                    <small class="p-error block mt-1" *ngIf="
-                            observacionForm.get('observacion')?.invalid &&
-                            observacionForm.get('observacion')?.touched
-                        ">
-                        La observación es requerida
-                    </small>
+    <!-- Modal para Agregar Observación -->
+    <p-dialog [(visible)]="displayObservacionModal" [modal]="true" [resizable]="false" [draggable]="false"
+        [style]=" { width: '500px' }" header="Agregar Observación">
+        <form [formGroup]="observacionForm" (ngSubmit)="onGuardarObservacion()">
+            <div class="grid">
+                <div class="col-12">
+                    <div class="field">
+                        <label for="observacion" class="font-medium text-900 block mb-2">Observación <span
+                                class="text-red-500">*</span></label>
+                        <textarea id="observacion" pInputTextarea formControlName="observacion"
+                            placeholder="Ingrese la observación" class="w-full" rows="4">
+                        </textarea>
+                        <small class="p-error block mt-1" *ngIf="
+                                observacionForm.get('observacion')?.invalid &&
+                                observacionForm.get('observacion')?.touched
+                            ">
+                            La observación es requerida
+                        </small>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="flex justify-content-end gap-2 mt-3">
-            <button type="button" pButton label="Cancelar" icon="pi pi-times" class="p-button-text"
-                (click)="onCancelarObservacion()"></button>
-            <button type="submit" pButton label="Guardar" icon="pi pi-check" class="p-button-primary"
-                [disabled]="observacionForm.invalid"></button>
-        </div>
-    </form>
-</p-dialog>
+            <div class="flex justify-content-end gap-2 mt-3">
+                <button type="button" pButton label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="onCancelarObservacion()"></button>
+                <button type="submit" pButton label="Guardar" icon="pi pi-check" class="p-button-primary"
+                    [disabled]="observacionForm.invalid"></button>
+            </div>
+        </form>
+    </p-dialog>
 
-<!-- Componentes de mensajes -->
-<p-toast></p-toast>
-<p-confirmDialog></p-confirmDialog>
+    <!-- Componentes de mensajes -->
+    <p-toast></p-toast>
+    <p-confirmDialog></p-confirmDialog>
+</p-panel>

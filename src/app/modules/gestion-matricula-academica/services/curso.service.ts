@@ -209,4 +209,32 @@ export class CursoService {
             })
         );
     }
+
+    /** Obtiene las asignaturas (raw) posibilitando acceso a campos como id, nombre, codigo, creditos, areaFormacion. */
+    getAsignaturasRawByArea(
+        idArea?: string | number | null
+    ): Observable<ApiResponse<any[]>> {
+        const url = `${this.backend}/asignaturas`;
+        let params = new HttpParams();
+        if (idArea !== undefined && idArea !== null && `${idArea}` !== '') {
+            params = params.set('idArea', String(idArea));
+        }
+        return this.http.get<ApiResponse<any[]>>(url, { params }).pipe(
+            map((resp) => ({
+                typeResponse: resp.typeResponse,
+                message: resp.message,
+                statusCode: resp.statusCode,
+                data: resp.data || [],
+            })),
+            catchError((err) => {
+                console.error('Error cargando asignaturas raw por área', err);
+                return of({
+                    typeResponse: 'SUCCESS',
+                    message: 'Asignaturas no disponibles (fallback vacío)',
+                    data: [] as any[],
+                    statusCode: 200,
+                } as ApiResponse<any[]>);
+            })
+        );
+    }
 }

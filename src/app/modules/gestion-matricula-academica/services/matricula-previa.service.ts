@@ -30,43 +30,8 @@ export class MatriculaPreviaService {
         semestreAcademico: '2025-1',
     };
 
-    private readonly asignaturasMatricular: AsignaturaMatricular[] = [
-        {
-            id: 1,
-            grupo: 'Grupo A',
-            nombreAsignatura: 'Metodología de la Investigación',
-            opciones: 'Matricular',
-            observacion: 'Curso requerido para el programa',
-        },
-        {
-            id: 2,
-            grupo: 'Grupo B',
-            nombreAsignatura: 'Seminario de Matemáticas',
-            opciones: 'Matricular',
-            observacion: 'Prerrequisito: Cálculo Avanzado',
-        },
-        {
-            id: 3,
-            grupo: 'Grupo A',
-            nombreAsignatura: 'Gestión de la Tecnología',
-            opciones: 'Matricular',
-            observacion: 'Curso fundamental del programa',
-        },
-        {
-            id: 4,
-            grupo: 'Grupo C',
-            nombreAsignatura: 'Electiva: Aprendizaje Profundo',
-            opciones: 'No Matricular',
-            observacion: 'Requisito: conocimientos de programación',
-        },
-        {
-            id: 5,
-            grupo: 'Grupo A',
-            nombreAsignatura: 'Trabajo de Grado 1',
-            opciones: 'Matricular',
-            observacion: 'Definir tema de investigación',
-        },
-    ];
+    // Lista inicial vacía — las asignaturas se agregarán al seleccionar desde las áreas
+    private readonly asignaturasMatricular: AsignaturaMatricular[] = [];
 
     getEstudiante(): Observable<ApiResponse<Estudiante>> {
         return of({

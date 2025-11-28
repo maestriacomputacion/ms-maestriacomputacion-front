@@ -10,6 +10,7 @@ import { ApiResponse } from '../../models/api-response.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 import { Estudiante as EstudianteModel } from 'src/app/modules/gestion-estudiantes/models/estudiante';
+import { CursoService } from '../../services/curso.service';
 
 @Component({
     selector: 'app-generar-matricula-previa',
@@ -19,6 +20,13 @@ import { Estudiante as EstudianteModel } from 'src/app/modules/gestion-estudiant
 export class GenerarMatriculaPreviaComponent implements OnInit {
     estudiante: Estudiante | null = null;
     asignaturas: AsignaturaMatricular[] = [];
+    areas: { label: string; value: string }[] = [];
+    cursosPorArea: Record<string, any[]> = {};
+    loadingCursosPorArea: Record<string, boolean> = {};
+    cursosPorAreaAgrupados: Record<
+        string,
+        { asignatura: string; cursos: any[] }[]
+    > = {};
     displayObservacionModal = false;
     observacionForm: FormGroup;
     asignaturaSeleccionadaId: number | null = null;
@@ -29,6 +37,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         private readonly fb: FormBuilder,
         private readonly matriculaPreviaService: MatriculaPreviaService,
         private readonly estudianteService: EstudianteService,
+        private readonly cursoService: CursoService,
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
         private readonly route: ActivatedRoute,
@@ -50,6 +59,116 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             }
         });
         this.cargarAsignaturas();
+        this.cargarAreasFormacion();
+    }
+
+    private cargarAreasFormacion(): void {
+        this.cursoService.getAreasFormacion().subscribe({
+            next: (resp) => {
+                if (resp?.typeResponse === 'SUCCESS') {
+                    this.areas = resp.data || [];
+                    // Cargar la primera área automáticamente para asegurar que la petición se realiza
+                    if (this.areas.length > 0) {
+                        const first = this.areas[0].value;
+                        this.cargarCursosPorArea(first);
+                    }
+                } else {
+                    this.areas = [];
+                }
+            },
+            error: (err) => {
+                console.error('Error cargando áreas de formación', err);
+                this.areas = [];
+            },
+        });
+    }
+
+    cargarCursosPorArea(idArea?: string | null): void {
+        if (!idArea) return;
+        // Si ya está cargado, no volver a pedir
+        if (this.cursosPorArea[idArea]?.length) {
+            return;
+        }
+
+        this.loadingCursosPorArea[idArea] = true;
+        this.cursoService.getCursos({ idArea }).subscribe({
+            next: (resp) => {
+                if (resp?.typeResponse === 'SUCCESS') {
+                    // `resp.data` viene ya transformado a CursoUI por el servicio
+                    const items = resp.data || [];
+                    this.cursosPorArea[idArea] = items;
+
+                    // Agrupar por nombre de asignatura para renderizar una tabla por asignatura
+                    const map: Record<
+                        string,
+                        { asignatura: string; cursos: any[] }
+                    > = {};
+                    for (const it of items) {
+                        const key = it.asignatura ?? 'Sin nombre';
+                        if (!map[key]) {
+                            map[key] = { asignatura: key, cursos: [] };
+                        }
+                        map[key].cursos.push(it);
+                    }
+                    this.cursosPorAreaAgrupados[idArea] = Object.values(map);
+                } else {
+                    this.cursosPorArea[idArea] = [];
+                    this.cursosPorAreaAgrupados[idArea] = [];
+                }
+                this.loadingCursosPorArea[idArea] = false;
+            },
+            error: (err) => {
+                console.error('Error cargando cursos por área', err);
+                this.cursosPorArea[idArea] = [];
+                this.loadingCursosPorArea[idArea] = false;
+            },
+        });
+    }
+
+    onTabChange(event: any): void {
+        try {
+            const idx = event?.index ?? 0;
+            const area = this.areas?.[idx];
+            if (area?.value) {
+                this.cargarCursosPorArea(area.value);
+            }
+        } catch (e) {
+            console.error('onTabChange error', e);
+        }
+    }
+
+    onAgregarCursoDesdeArea(
+        cursoItem: any,
+        area: { label: string; value: string } | null
+    ): void {
+        if (!cursoItem || !cursoItem.id) return;
+
+        const existe = this.asignaturas.find((a) => a.id === cursoItem.id);
+        if (existe) {
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Información',
+                detail: 'Este curso ya está en la lista de matricular',
+            });
+            return;
+        }
+
+        const areaLabel = area?.label ? ` {${area.label}}` : '';
+        const nueva = {
+            id: cursoItem.id,
+            grupo: cursoItem.grupo ?? '',
+            nombreAsignatura: (cursoItem.asignatura ?? '') + areaLabel,
+            docentes: cursoItem.docente ?? '',
+            opciones: 'Matricular',
+            observacion: '',
+        } as any;
+
+        this.asignaturas.push(nueva);
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Curso agregado a la lista de matricular',
+        });
     }
 
     cargarDatosEstudiante() {

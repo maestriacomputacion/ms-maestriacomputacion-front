@@ -1,0 +1,16 @@
+// Centrar solo la barra de pestañas (tabs), contenido ocupa 100% del ancho
+:host ::ng-deep .tabs-centrados {
+    .p-tabview-nav-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .p-tabview-panels {
+        width: 100%;
+    }
+
+    // Ocultar la barra de tinta (ink bar) del TabView
+    .p-tabview-ink-bar {
+        display: none;
+    }
+}

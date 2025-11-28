@@ -355,7 +355,8 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: resp.message || 'Error al guardar la matrícula.',
+                        detail:
+                            resp.message || 'Error al guardar la matrícula.',
                     });
                 }
             },

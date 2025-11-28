@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService, PrimeIcons } from 'primeng/api';
 import { CursoService } from '../../services/curso.service';
@@ -13,6 +13,8 @@ import { PeriodoAcademico } from '../../models/periodo-academico.model';
     styleUrls: ['./gestion-curso.component.scss'],
 })
 export class GestionCursoComponent implements OnInit {
+    @Input() estado: string | undefined;
+
     cursos: CursoUI[] = [];
 
     periodos: Array<{ label: string; value: string }> = [];
@@ -173,5 +175,9 @@ export class GestionCursoComponent implements OnInit {
                 });
             },
         });
+    }
+
+    onAgregarEstudiantes(cursoId: number): void {
+        console.log('Agregar estudiantes al curso ID:', cursoId);
     }
 }

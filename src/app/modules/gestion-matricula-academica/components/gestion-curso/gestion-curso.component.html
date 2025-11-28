@@ -8,7 +8,7 @@
     <!-- Filtros alineados verticalmente -->
     <div class="w-20rem">
         <div class="flex flex-column gap-3 mb-2">
-            <div class="flex align-items-center gap-2">
+            <div class="flex align-items-center gap-2" *ngIf="estado !== 'gestion-matricula-curso'">
                 <label for="periodo" class="font-medium mb-1" style="white-space: nowrap">Periodo</label>
                 <p-dropdown id="periodo" [options]="periodos" [(ngModel)]="periodoSeleccionado"
                     (ngModelChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona el periodo"
@@ -43,8 +43,8 @@
                     " />
             </span>
         </div>
-        <button pButton label="Agregar Curso" style="min-width: 150px; height: 40px"
-            (click)="onAgregarCurso()"></button>
+        <button *ngIf="estado !== 'gestion-matricula-curso'" pButton label="Agregar Curso"
+            style="min-width: 150px; height: 40px" (click)="onAgregarCurso()"></button>
     </div>
 
     <!-- Tabla -->
@@ -67,12 +67,13 @@
                 <td>{{ curso.docente }}</td>
                 <td class="text-left">
                     <div class="flex align-items-center justify-content-start gap-2">
-                        <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-text p-button-info"
-                            (click)="onVerCurso(curso)" title="Ver"></button>
-                        <button *ngIf="curso.periodoEstado === 'ACTIVO'" pButton pRipple icon="pi pi-pencil"
-                            class="p-button-rounded p-button-text p-button-warning" (click)="onEditarCurso(curso.id)"
-                            title="Editar"></button>
-                        <button pButton pRipple icon="pi pi-trash"
+                        <button *ngIf="estado === 'gestion-matricula-curso'" pButton pRipple icon="pi pi-user-plus"
+                            class="p-button-rounded p-button-text p-button-success"
+                            (click)="onAgregarEstudiantes(curso.id)" title="Agregar Estudiantes"></button>
+                        <button *ngIf="estado !== 'gestion-matricula-curso'" pButton pRipple icon="pi pi-eye"
+                            class="p-button-rounded p-button-text p-button-info" (click)="onVerCurso(curso)"
+                            title="Ver"></button>
+                        <button *ngIf="estado !== 'gestion-matricula-curso'" pButton pRipple icon="pi pi-trash"
                             class="p-button-rounded p-button-text p-button-danger"
                             (click)="onEliminarCurso($event, curso.id)" title="Eliminar"></button>
                     </div>

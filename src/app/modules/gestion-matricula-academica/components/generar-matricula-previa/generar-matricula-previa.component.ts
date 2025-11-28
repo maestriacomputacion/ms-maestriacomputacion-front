@@ -184,7 +184,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                 const nueva = {
                     id: cursoItem.id,
                     grupo: cursoItem.grupo ?? '',
-                    nombreAsignatura: nombreAsignatura + areaLabel,
+                    nombreAsignatura: nombreAsignatura,
                     docentes: cursoItem.docente ?? '',
                     opciones: 'Matricular',
                     observacion: '',

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
+import { matricula_academica } from 'src/environments/environment';
 
 export interface Estudiante {
     codigo: string;
@@ -60,7 +61,7 @@ export class MatriculaPreviaService {
         estudianteId: number;
         cursos: { cursoId: number; observacion: string }[];
     }): Observable<ApiResponse<any>> {
-        const url = '/api/matriculas/estudiante';
+        const url = `${matricula_academica.api_url}matriculas/estudiante`;
         return this.http.post<ApiResponse<any>>(url, payload);
     }
 }

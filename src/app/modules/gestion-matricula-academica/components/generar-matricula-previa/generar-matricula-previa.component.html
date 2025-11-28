@@ -80,6 +80,7 @@
                                 <th scope="col">Grupo</th>
                                 <th scope="col">Curso</th>
                                 <th scope="col">Docentes</th>
+                                <th scope="col">Observaciones</th>
                                 <th scope="col">Opciones</th>
                             </tr>
                         </ng-template>
@@ -89,6 +90,7 @@
                                 <td>{{ asignatura.grupo }}</td>
                                 <td>{{ asignatura.nombreAsignatura }}</td>
                                 <td>{{ asignatura.docentes || "-" }}</td>
+                                <td>{{ asignatura.observacion || "-" }}</td>
                                 <td>
                                     <div class="flex align-items-center gap-2">
                                         <button type="button" pButton icon="pi pi-comment"
@@ -111,7 +113,7 @@
 
                         <ng-template pTemplate="emptymessage">
                             <tr>
-                                <td colspan="4" class="text-center">
+                                <td colspan="5" class="text-center">
                                     No hay asignaturas registradas
                                 </td>
                             </tr>
@@ -165,7 +167,8 @@
                                             </div>
                                         </div>
                                         <p-table [value]="grupoAsig.cursos" styleClass="p-datatable-striped"
-                                            [responsiveLayout]="'scroll'" [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}">
+                                            [responsiveLayout]="'scroll'"
+                                            [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}">
                                             <ng-template pTemplate="header">
                                                 <tr>
                                                     <th style="width: 15%;">Grupo</th>
@@ -179,8 +182,12 @@
                                             <ng-template pTemplate="body" let-item>
                                                 <tr>
                                                     <td style="width: 15%;">{{ item.grupo ?? "-" }}</td>
-                                                    <td style="width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.docente ?? "-" }}</td>
-                                                    <td style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.salon ?? "-" }}</td>
+                                                    <td
+                                                        style="width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {{ item.docente ?? "-" }}</td>
+                                                    <td
+                                                        style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        {{ item.salon ?? "-" }}</td>
                                                     <td style="width: 20%;" class="text-center">
                                                         <button type="button" pButton pRipple label="Seleccionar"
                                                             class="p-button-rounded p-button-text p-button-sm" (click)="

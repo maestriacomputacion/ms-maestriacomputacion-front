@@ -7,7 +7,8 @@ import { RegistrarCursoComponent } from './components/registrar-curso/registrar-
 import { GestionMaterialApoyoComponent } from './components/gestion-material-apoyo/gestion-material-apoyo.component';
 import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-previa/generar-matricula-previa.component';
 import { GestionEstudianteComponent } from './components/gestion-estudiante/gestion-estudiante.component';
-import { GestionMatriculaCursoComponent } from './components/gestion-matricula-curso/gestion-matricula-curso.component';
+import { GestionMatriculaCursoComponent } from './components/gestion-matricula-curso/pages/gestion-matricula-curso.component';
+import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/realizar-matricula-estudiantes/realizar-matricula-estudiantes.component';
 
 const routes: Routes = [
     {
@@ -43,10 +44,6 @@ const routes: Routes = [
                 component: GestionMaterialApoyoComponent,
             },
             {
-                path: 'generar-matricula-previa',
-                component: GenerarMatriculaPreviaComponent,
-            },
-            {
                 path: 'generar-matricula-previa/:id',
                 component: GenerarMatriculaPreviaComponent,
             },
@@ -56,8 +53,12 @@ const routes: Routes = [
             },
             {
                 path: 'gestion-matricula-curso',
-                component: GestionMatriculaCursoComponent
-            }
+                component: GestionMatriculaCursoComponent,
+            },
+            {
+                path: 'realizar-matricula-curso/:id',
+                component: RealizarMatriculaEstudiantesComponent,
+            },
         ],
     },
 ];

@@ -46,3 +46,14 @@ export interface CursoUI {
     periodoEstado?: string; // estado del periodo (e.g., 'ACTIVO'|'INACTIVO')
     salon?: string | null; // salón asociado al curso
 }
+
+// Modelo detallado para vistas como matricular estudiantes
+export interface CursoDetalle {
+    id: number;
+    grupo: string;
+    asignatura: string;
+    periodo: string;
+    docentes: string;
+    horario: string;
+    salon: string;
+}

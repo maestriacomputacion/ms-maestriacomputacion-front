@@ -178,6 +178,11 @@ export class GestionCursoComponent implements OnInit {
     }
 
     onAgregarEstudiantes(cursoId: number): void {
-        console.log('Agregar estudiantes al curso ID:', cursoId);
+        console.log('Navegando al curso con ID:', cursoId);
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'realizar-matricula-curso',
+            cursoId,
+        ]);
     }
 }

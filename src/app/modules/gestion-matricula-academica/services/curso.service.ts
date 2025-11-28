@@ -107,6 +107,11 @@ export class CursoService {
                 )
             );
     }
+
+    getCursoById(id: number | string): Observable<ApiResponse<BackendCurso>> {
+        return this.http.get<ApiResponse<BackendCurso>>(`${this.backend}/${id}`);
+    }
+
     crearCurso(curso: Omit<CursoUI, 'id'>): Observable<ApiResponse<CursoUI>> {
         const payload = this.buildPayload(curso);
         return this.http.post<ApiResponse<CursoUI>>(this.backend, payload);

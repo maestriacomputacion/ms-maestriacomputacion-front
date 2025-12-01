@@ -61,7 +61,7 @@ export class MatriculaPreviaService {
         estudianteId: number;
         cursos: { cursoId: number; observacion: string }[];
     }): Observable<ApiResponse<any>> {
-        const url = `${matricula_academica.api_url}matriculas/estudiante`;
+        const url = `${matricula_academica.api_url}matricula/estudiante`;
         return this.http.post<ApiResponse<any>>(url, payload);
     }
 }

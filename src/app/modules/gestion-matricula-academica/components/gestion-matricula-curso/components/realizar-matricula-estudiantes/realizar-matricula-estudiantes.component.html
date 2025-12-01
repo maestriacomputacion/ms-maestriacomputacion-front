@@ -14,6 +14,7 @@
 </p-dialog>
 
 <p-toast></p-toast>
+<p-confirmPopup></p-confirmPopup>
 
 <p-panel>
   <p-header>
@@ -146,8 +147,12 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-estudiante>
-          <tr>
-            <td class="text-center">{{ estudiante.codigo }}</td>
+          <tr [ngClass]="{'bg-red-50': estudiante.motivoError}">
+            <td class="text-center">
+              {{ estudiante.codigo }}
+              <i *ngIf="estudiante.motivoError" class="pi pi-exclamation-circle ml-1"
+                style="color: #dc2626; cursor: help;" [pTooltip]="estudiante.motivoError" tooltipPosition="top"></i>
+            </td>
             <td>{{ estudiante.persona?.nombre }} {{ estudiante.persona?.apellido }}</td>
             <td>{{ estudiante.persona?.correoElectronico }}</td>
             <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico }}</td>
@@ -176,7 +181,7 @@
       <button pButton label="Cancelar" class="p-button-secondary" (click)="cancelarMatricula()"
         pTooltip="Descartar cambios y volver" tooltipPosition="top">
       </button>
-      <button pButton label="Finalizar matrícula" class="p-button-primary" (click)="finalizarMatricula()"
+      <button pButton label="Finalizar matrícula" class="p-button-primary" (click)="finalizarMatricula($event)"
         [disabled]="!estudiantesMatricular || estudiantesMatricular.length === 0"
         pTooltip="Guardar y completar el proceso de matrícula" tooltipPosition="top">
       </button>

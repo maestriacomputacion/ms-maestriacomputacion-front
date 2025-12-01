@@ -4,6 +4,10 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
 import { CursoUI, BackendCurso } from '../models/curso.model';
+import {
+    MatriculaEstudiantesRequest,
+    MatriculaResponseData,
+} from '../models/matricula.model';
 import { matricula_academica } from 'src/environments/environment';
 
 type OptionalId = string | number | null;
@@ -109,7 +113,9 @@ export class CursoService {
     }
 
     getCursoById(id: number | string): Observable<ApiResponse<BackendCurso>> {
-        return this.http.get<ApiResponse<BackendCurso>>(`${this.backend}/${id}`);
+        return this.http.get<ApiResponse<BackendCurso>>(
+            `${this.backend}/${id}`
+        );
     }
 
     crearCurso(curso: Omit<CursoUI, 'id'>): Observable<ApiResponse<CursoUI>> {
@@ -242,5 +248,12 @@ export class CursoService {
                 } as ApiResponse<any[]>);
             })
         );
+    }
+
+    matricularEstudiantes(
+        payload: MatriculaEstudiantesRequest
+    ): Observable<ApiResponse<MatriculaResponseData>> {
+        const url = `${matricula_academica.api_url}matricula/curso`;
+        return this.http.post<ApiResponse<MatriculaResponseData>>(url, payload);
     }
 }

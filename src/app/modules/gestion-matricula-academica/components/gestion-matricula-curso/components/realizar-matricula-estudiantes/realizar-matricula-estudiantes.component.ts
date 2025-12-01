@@ -1,9 +1,13 @@
 // ...existing code...
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { CursoService } from '../../../../services/curso.service';
 import { BackendCurso } from '../../../../models/curso.model';
+import {
+    MatriculaEstudiantesRequest,
+    MatriculaResponseData,
+} from '../../../../models/matricula.model';
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 
@@ -17,16 +21,25 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
     curso: BackendCurso | null = null;
     loading = false;
 
-    // Extiende el modelo para permitir observaciones locales
-    estudiantes: (EstudianteBase & { observaciones?: string })[] = [];
-    estudiantesFiltrados: (EstudianteBase & { observaciones?: string })[] = [];
+    // Extiende el modelo para permitir observaciones y motivos de error
+    estudiantes: (EstudianteBase & {
+        observaciones?: string;
+        motivoError?: string;
+    })[] = [];
+    estudiantesFiltrados: (EstudianteBase & {
+        observaciones?: string;
+        motivoError?: string;
+    })[] = [];
     public busquedaEstudiante: string = '';
-    estudiantesMatricular: (EstudianteBase & { observaciones?: string })[] = [];
+    estudiantesMatricular: (EstudianteBase & {
+        observaciones?: string;
+        motivoError?: string;
+    })[] = [];
 
     public displayObservacionModal: boolean = false;
     public observacionTemporal: string = '';
     public estudianteSeleccionadoObs:
-        | (EstudianteBase & { observaciones?: string })
+        | (EstudianteBase & { observaciones?: string; motivoError?: string })
         | null = null;
 
     constructor(
@@ -34,6 +47,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         private readonly router: Router,
         private readonly cursoService: CursoService,
         private readonly messageService: MessageService,
+        private readonly confirmationService: ConfirmationService,
         private readonly estudianteService: EstudianteService
     ) {}
 
@@ -186,9 +200,125 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         }
     }
 
-    finalizarMatricula(): void {
-        console.log('Finalizando matrícula');
-        // Aquí se puede implementar lógica para finalizar la matrícula
+    finalizarMatricula(event?: Event): void {
+        if (!this.cursoId) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No se encontró el ID del curso',
+            });
+            return;
+        }
+
+        if (!this.estudiantesMatricular?.length) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'Debe seleccionar al menos un estudiante',
+            });
+            return;
+        }
+
+        this.confirmationService.confirm({
+            target: event?.target as EventTarget,
+            message: `¿Está seguro de matricular ${this.estudiantesMatricular.length} estudiante(s) en este curso?`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí, matricular',
+            rejectLabel: 'Cancelar',
+            accept: () => {
+                this.procesarMatricula();
+            },
+        });
+    }
+
+    private procesarMatricula(): void {
+        const payload: MatriculaEstudiantesRequest = {
+            matriculaEstudianteCursos: this.estudiantesMatricular.map(
+                (est) => ({
+                    estudianteId: est.id!,
+                    cursos: [
+                        {
+                            cursoId: this.cursoId!,
+                            observacion: est.observaciones || '',
+                        },
+                    ],
+                })
+            ),
+        };
+
+        this.loading = true;
+        this.cursoService.matricularEstudiantes(payload).subscribe({
+            next: (resp) => {
+                this.loading = false;
+                if (resp.typeResponse === 'SUCCESS') {
+                    this.procesarRespuestaMatricula(resp.data, resp.message);
+                } else {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                            resp.message || 'Error al realizar la matrícula',
+                    });
+                }
+            },
+            error: (err) => {
+                this.loading = false;
+                console.error('Error en matrícula', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail:
+                        err?.error?.message ||
+                        err?.message ||
+                        'Error al procesar la matrícula',
+                });
+            },
+        });
+    }
+
+    private procesarRespuestaMatricula(
+        data: MatriculaResponseData,
+        mensaje: string
+    ): void {
+        const realizadas = data.matriculasRealizadas || [];
+        const noRealizadas = data.matriculasNoRealizadas || [];
+
+        // Actualizar motivos de error en la tabla
+        if (noRealizadas.length > 0) {
+            noRealizadas.forEach((matricula) => {
+                const estudiante = this.estudiantesMatricular.find(
+                    (e) => e.id === matricula.estudianteId
+                );
+                if (estudiante) {
+                    estudiante.motivoError = matricula.motivo;
+                }
+            });
+        }
+
+        // Mostrar mensaje general del backend
+        if (realizadas.length > 0 && noRealizadas.length === 0) {
+            // Todas exitosas
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Éxito',
+                detail: mensaje,
+                life: 5000,
+            });
+            setTimeout(() => {
+                this.router.navigate([
+                    '/gestion-matricula-academica',
+                    'gestion-matricula-curso',
+                ]);
+            }, 2000);
+        } else if (noRealizadas.length > 0) {
+            // Hay matrículas no realizadas (parcial o todas)
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: mensaje,
+                life: 6000,
+            });
+        }
     }
 
     cancelarMatricula(): void {

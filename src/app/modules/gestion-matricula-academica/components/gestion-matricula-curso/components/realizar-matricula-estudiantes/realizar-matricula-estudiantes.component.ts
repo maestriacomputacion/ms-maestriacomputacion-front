@@ -1,8 +1,11 @@
+// ...existing code...
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { CursoService } from '../../../../services/curso.service';
 import { BackendCurso } from '../../../../models/curso.model';
+import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
+import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 
 @Component({
     selector: 'app-realizar-matricula-estudiantes',
@@ -14,65 +17,24 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
     curso: BackendCurso | null = null;
     loading = false;
 
-    estudiantesMock = [
-        {
-            codigo: '2-121212',
-            nombres: 'Camilo Ruiz Daza',
-            correo: 'cruiz@unicauca.edu.co',
-            semestre: 2,
-        },
-        {
-            codigo: '2-121213',
-            nombres: 'Ana María Patiño',
-            correo: 'apatino@unicauca.edu.co',
-            semestre: 3,
-        },
-        {
-            codigo: '2-121214',
-            nombres: 'Juan Sebastián Muñoz',
-            correo: 'jsmunoz@unicauca.edu.co',
-            semestre: 1,
-        },
-        {
-            codigo: '2-121215',
-            nombres: 'Laura Vanessa López',
-            correo: 'lvlopez@unicauca.edu.co',
-            semestre: 2,
-        },
-    ];
+    // Extiende el modelo para permitir observaciones locales
+    estudiantes: (EstudianteBase & { observaciones?: string })[] = [];
+    estudiantesFiltrados: (EstudianteBase & { observaciones?: string })[] = [];
+    public busquedaEstudiante: string = '';
+    estudiantesMatricular: (EstudianteBase & { observaciones?: string })[] = [];
 
-    estudiantesMatricularMock = [
-        {
-            codigo: '2-121305',
-            nombres: 'Natalia Herrera Torres',
-            semestre: 1,
-            observaciones: 'Listo para matricular',
-        },
-        {
-            codigo: '2-121306',
-            nombres: 'Esteban Ruiz Bonilla',
-            semestre: 2,
-            observaciones: 'Documentación incompleta',
-        },
-        {
-            codigo: '2-121307',
-            nombres: 'Valentina Rojas Jiménez',
-            semestre: 3,
-            observaciones: 'Esperando aprobación del coordinador',
-        },
-        {
-            codigo: '2-121308',
-            nombres: 'David Alejandro Peña',
-            semestre: 4,
-            observaciones: 'Curso compatible con su plan de estudio',
-        },
-    ];
+    public displayObservacionModal: boolean = false;
+    public observacionTemporal: string = '';
+    public estudianteSeleccionadoObs:
+        | (EstudianteBase & { observaciones?: string })
+        | null = null;
 
     constructor(
         private readonly route: ActivatedRoute,
         private readonly router: Router,
         private readonly cursoService: CursoService,
-        private readonly messageService: MessageService
+        private readonly messageService: MessageService,
+        private readonly estudianteService: EstudianteService
     ) {}
 
     ngOnInit(): void {
@@ -81,6 +43,51 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
                 this.cursoId = +params['id'];
                 this.cargarCurso(this.cursoId);
             }
+        });
+        this.cargarEstudiantes();
+    }
+    cargarEstudiantes(): void {
+        this.loading = true;
+        this.estudianteService.listEstudiantes().subscribe({
+            next: (estudiantes: EstudianteBase[]) => {
+                this.estudiantes = estudiantes || [];
+                this.filtrarEstudiantes();
+                this.loading = false;
+            },
+            error: (err) => {
+                console.error('Error cargando estudiantes', err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail:
+                        err?.error?.message ||
+                        err?.message ||
+                        'Error al cargar los estudiantes',
+                });
+                this.loading = false;
+            },
+        });
+    }
+
+    filtrarEstudiantes(): void {
+        const texto = this.busquedaEstudiante.trim().toLowerCase();
+        if (!texto) {
+            this.estudiantesFiltrados = [...this.estudiantes];
+            return;
+        }
+        this.estudiantesFiltrados = this.estudiantes.filter((e) => {
+            const codigo = e.codigo?.toLowerCase() || '';
+            const nombre = (
+                e.persona?.nombre +
+                ' ' +
+                e.persona?.apellido
+            ).toLowerCase();
+            const correo = e.persona?.correoElectronico?.toLowerCase() || '';
+            return (
+                codigo.includes(texto) ||
+                nombre.includes(texto) ||
+                correo.includes(texto)
+            );
         });
     }
 
@@ -94,7 +101,9 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: resp.message || 'No se pudo cargar la información del curso',
+                        detail:
+                            resp.message ||
+                            'No se pudo cargar la información del curso',
                     });
                 }
                 this.loading = false;
@@ -112,13 +121,69 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
     }
 
     seleccionarEstudiante(codigo: string): void {
-        console.log('Seleccionando estudiante con código:', codigo);
-        // Aquí se puede implementar lógica para seleccionar estudiantes
+        const estudiante = this.estudiantes.find((e) => e.codigo === codigo);
+        if (!estudiante) return;
+        const yaSeleccionado = this.estudiantesMatricular.some(
+            (e) => e.codigo === codigo
+        );
+        if (yaSeleccionado) {
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Información',
+                detail: 'El estudiante ya está en la lista de matrícula',
+            });
+            return;
+        }
+        // Clonar para evitar referencias compartidas
+        this.estudiantesMatricular.push({ ...estudiante });
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Estudiante agregado a la lista de matrícula',
+        });
     }
 
     agregarObservacion(codigo: string): void {
-        console.log('Agregando observación al estudiante con código:', codigo);
-        // Aquí se puede implementar lógica para agregar observaciones
+        const estudiante = this.estudiantesMatricular.find(
+            (e) => e.codigo === codigo
+        );
+        if (!estudiante) return;
+        this.estudianteSeleccionadoObs = estudiante;
+        this.observacionTemporal = estudiante.observaciones || '';
+        this.displayObservacionModal = true;
+    }
+
+    guardarObservacion(): void {
+        if (this.estudianteSeleccionadoObs) {
+            this.estudianteSeleccionadoObs.observaciones =
+                this.observacionTemporal;
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Éxito',
+                detail: 'Observación guardada',
+            });
+        }
+        this.cerrarObservacionModal();
+    }
+
+    cerrarObservacionModal(): void {
+        this.displayObservacionModal = false;
+        this.estudianteSeleccionadoObs = null;
+        this.observacionTemporal = '';
+    }
+
+    quitarEstudiante(codigo: string): void {
+        const idx = this.estudiantesMatricular.findIndex(
+            (e) => e.codigo === codigo
+        );
+        if (idx !== -1) {
+            this.estudiantesMatricular.splice(idx, 1);
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Eliminado',
+                detail: 'Estudiante quitado de la lista',
+            });
+        }
     }
 
     finalizarMatricula(): void {
@@ -127,14 +192,19 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
     }
 
     cancelarMatricula(): void {
-        this.router.navigate(['/gestion-matricula-academica', 'gestion-matricula-curso']);
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'gestion-matricula-curso',
+        ]);
     }
 
     getDocentesFormateados(): string {
         if (!this.curso?.docentes?.length) return '-';
         return this.curso.docentes
             .map((d) => {
-                const nombreCompleto = `${d.nombre ?? ''} ${d.apellido ?? ''}`.trim();
+                const nombreCompleto = `${d.nombre ?? ''} ${
+                    d.apellido ?? ''
+                }`.trim();
                 return nombreCompleto || d.codigo || d.correoElectronico || '-';
             })
             .join(', ');

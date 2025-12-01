@@ -1,3 +1,18 @@
+<p-dialog header="Observación del estudiante" [(visible)]="displayObservacionModal" [modal]="true" [closable]="false"
+  [style]="{width: '400px'}">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="observacion">Observación</label>
+      <textarea id="observacion" pInputTextarea [(ngModel)]="observacionTemporal" rows="4" autoResize="true"
+        style="min-height: 80px;"></textarea>
+    </div>
+    <div class="flex justify-content-end gap-2 mt-3">
+      <button pButton label="Cancelar" class="p-button-secondary" (click)="cerrarObservacionModal()"></button>
+      <button pButton label="Guardar" class="p-button-primary" (click)="guardarObservacion()"></button>
+    </div>
+  </div>
+</p-dialog>
+
 <p-toast></p-toast>
 
 <p-panel>
@@ -72,8 +87,8 @@
         </span>
       </div>
 
-      <p-table [value]="estudiantesMock" [paginator]="true" [rows]="10" [totalRecords]="estudiantesMock.length"
-        [showCurrentPageReport]="true"
+      <p-table [value]="estudiantesFiltrados" [paginator]="true" [rows]="10"
+        [totalRecords]="estudiantesFiltrados?.length || 0" [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
         styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'">
         <ng-template pTemplate="header">
@@ -88,9 +103,9 @@
         <ng-template pTemplate="body" let-estudiante>
           <tr>
             <td class="text-center">{{ estudiante.codigo }}</td>
-            <td>{{ estudiante.nombres }}</td>
-            <td>{{ estudiante.correo }}</td>
-            <td class="text-center">{{ estudiante.semestre }}</td>
+            <td>{{ estudiante.persona?.nombre }} {{ estudiante.persona?.apellido }}</td>
+            <td>{{ estudiante.persona?.correoElectronico }}</td>
+            <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico }}</td>
             <td class="text-center">
               <button pButton label="Seleccionar" class="p-button-text p-button-primary"
                 (click)="seleccionarEstudiante(estudiante.codigo)" pTooltip="Agregar a la lista de matrícula"
@@ -111,19 +126,20 @@
     <div class="mb-4">
       <div class="flex justify-content-between align-items-center mb-3">
         <h3 class="text-xl font-semibold m-0">Estudiantes a matricular</h3>
-        <p-tag *ngIf="estudiantesMatricularMock.length > 0"
-          [value]="estudiantesMatricularMock.length + ' seleccionado(s)'" severity="success">
+        <p-tag *ngIf="estudiantesMatricular?.length > 0" [value]="estudiantesMatricular.length + ' seleccionado(s)'"
+          severity="success">
         </p-tag>
       </div>
 
-      <p-table [value]="estudiantesMatricularMock" [paginator]="true" [rows]="10"
-        [totalRecords]="estudiantesMatricularMock.length" [showCurrentPageReport]="true"
+      <p-table [value]="estudiantesMatricular" [paginator]="true" [rows]="10"
+        [totalRecords]="estudiantesMatricular?.length || 0" [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
         styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'">
         <ng-template pTemplate="header">
           <tr>
             <th class="text-center" scope="col">Código</th>
             <th class="text-center" scope="col">Nombres</th>
+            <th class="text-center" scope="col">Correo</th>
             <th class="text-center" scope="col">Semestre académico</th>
             <th class="text-center" scope="col">Opciones</th>
             <th class="text-center" scope="col">Observaciones</th>
@@ -132,11 +148,16 @@
         <ng-template pTemplate="body" let-estudiante>
           <tr>
             <td class="text-center">{{ estudiante.codigo }}</td>
-            <td>{{ estudiante.nombres }}</td>
-            <td class="text-center">{{ estudiante.semestre }}</td>
+            <td>{{ estudiante.persona?.nombre }} {{ estudiante.persona?.apellido }}</td>
+            <td>{{ estudiante.persona?.correoElectronico }}</td>
+            <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico }}</td>
             <td class="text-center">
-              <button pButton icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success"
-                (click)="agregarObservacion(estudiante.codigo)" pTooltip="Agregar observación" tooltipPosition="top">
+              <button pButton icon="pi pi-comment" class="p-button-rounded p-button-text p-button-info mr-2"
+                (click)="agregarObservacion(estudiante.codigo)" pTooltip="Agregar/Editar observación"
+                tooltipPosition="top">
+              </button>
+              <button pButton icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger"
+                (click)="quitarEstudiante(estudiante.codigo)" pTooltip="Quitar estudiante" tooltipPosition="top">
               </button>
             </td>
             <td>{{ estudiante.observaciones }}</td>
@@ -144,7 +165,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td [attr.colspan]="5" class="text-center">No se encontraron estudiantes</td>
+            <td [attr.colspan]="6" class="text-center">No se encontraron estudiantes</td>
           </tr>
         </ng-template>
       </p-table>
@@ -156,8 +177,8 @@
         pTooltip="Descartar cambios y volver" tooltipPosition="top">
       </button>
       <button pButton label="Finalizar matrícula" class="p-button-primary" (click)="finalizarMatricula()"
-        [disabled]="estudiantesMatricularMock.length === 0" pTooltip="Guardar y completar el proceso de matrícula"
-        tooltipPosition="top">
+        [disabled]="!estudiantesMatricular || estudiantesMatricular.length === 0"
+        pTooltip="Guardar y completar el proceso de matrícula" tooltipPosition="top">
       </button>
     </div>
   </div>

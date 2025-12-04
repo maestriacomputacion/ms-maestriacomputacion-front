@@ -86,4 +86,10 @@ export class PeriodoAcademicoService {
             { params }
         );
     }
+
+    getPeriodoActivo(): Observable<ApiResponse<PeriodoAcademico | null>> {
+        return this.http.get<ApiResponse<PeriodoAcademico | null>>(
+            backendPeriodoAcademico('activo')
+        );
+    }
 }

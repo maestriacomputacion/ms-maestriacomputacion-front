@@ -11,6 +11,7 @@ import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiant
 })
 export class GestionEstudianteComponent implements OnInit {
     estudiantes: Estudiante[] = [];
+    selectedEstudiantes: Estudiante[] = [];
     loading: boolean = false;
 
     constructor(
@@ -117,6 +118,20 @@ export class GestionEstudianteComponent implements OnInit {
                 });
             },
         });
+    }
+
+    /** Acción provisional para iniciar matrícula masiva con los estudiantes seleccionados. */
+    onMatriculaMasiva(): void {
+        if (!this.selectedEstudiantes || this.selectedEstudiantes.length === 0)
+            return;
+        // Navegar a la vista de matrícula masiva pasando la información seleccionada
+        const estudiantes = this.selectedEstudiantes.map((e) => ({ ...e }));
+        this.router.navigate(
+            ['/gestion-matricula-academica', 'matricula-masiva'],
+            {
+                state: { selectedEstudiantes: estudiantes },
+            }
+        );
     }
 
     getNombreCompleto(estudiante: Estudiante): string {

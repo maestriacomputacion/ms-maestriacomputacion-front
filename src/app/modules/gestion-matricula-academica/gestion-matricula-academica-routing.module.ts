@@ -9,6 +9,7 @@ import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-
 import { GestionEstudianteComponent } from './components/gestion-estudiante/gestion-estudiante.component';
 import { GestionMatriculaCursoComponent } from './components/gestion-matricula-curso/pages/gestion-matricula-curso.component';
 import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/realizar-matricula-estudiantes/realizar-matricula-estudiantes.component';
+import { MatriculaMasivaComponent } from './components/matricula-masiva/matricula-masiva.component';
 
 const routes: Routes = [
     {
@@ -58,6 +59,10 @@ const routes: Routes = [
             {
                 path: 'realizar-matricula-curso/:id',
                 component: RealizarMatriculaEstudiantesComponent,
+            },
+            {
+                path: 'matricula-masiva',
+                component: MatriculaMasivaComponent,
             },
         ],
     },

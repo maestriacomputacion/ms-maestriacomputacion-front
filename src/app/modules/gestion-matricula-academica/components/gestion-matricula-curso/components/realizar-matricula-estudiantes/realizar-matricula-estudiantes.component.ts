@@ -148,13 +148,59 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
             });
             return;
         }
-        // Clonar para evitar referencias compartidas
-        this.estudiantesMatricular.push({ ...estudiante });
-        this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Estudiante agregado a la lista de matrícula',
-        });
+        // Validar en backend antes de agregar
+        if (!this.cursoId) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'ID de curso no disponible para validar',
+            });
+            return;
+        }
+
+        this.loading = true;
+        this.cursoService
+            .validarMatricula(estudiante.id!, this.cursoId)
+            .subscribe({
+                next: (resp) => {
+                    this.loading = false;
+                    // Backend devuelve ApiResponse<boolean> en data
+                    if (
+                        resp?.typeResponse === 'SUCCESS' &&
+                        resp.data === true
+                    ) {
+                        // Clonar para evitar referencias compartidas
+                        this.estudiantesMatricular.push({ ...estudiante });
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Éxito',
+                            detail: 'Estudiante agregado a la lista de matrícula',
+                        });
+                    } else {
+                        // Mostrar mensaje del backend (mensaje general sobre por qué no puede matricularse)
+                        const motivo =
+                            resp?.message ||
+                            'No cumple requisitos para matricularse';
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: 'Validación',
+                            detail: motivo,
+                        });
+                    }
+                },
+                error: (err) => {
+                    this.loading = false;
+                    console.error('Error validando matrícula', err);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                            err?.error?.message ||
+                            err?.message ||
+                            'Error al validar matrícula',
+                    });
+                },
+            });
     }
 
     agregarObservacion(codigo: string): void {

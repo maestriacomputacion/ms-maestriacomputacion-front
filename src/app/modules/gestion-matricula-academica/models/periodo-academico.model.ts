@@ -4,6 +4,6 @@ export interface PeriodoAcademico {
     fechaFin: string;
     fechaFinMatricula: string;
     tagPeriodo: number;
-    descripcion: string;
+    descripcion?: string | null;
     estado?: string;
 }

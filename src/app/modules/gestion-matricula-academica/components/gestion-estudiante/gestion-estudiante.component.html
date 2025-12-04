@@ -7,7 +7,7 @@
 
     <!-- Buscador principal - Diseño minimalista siguiendo heurísticas de Nielsen -->
     <div class="flex flex-row align-items-center justify-content-between mb-3 w-full">
-        <div class="w-full">
+        <div class="mr-3" style="flex: 0 0 70%; max-width: 70%;">
             <span class="p-input-icon-left w-full">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" class="w-full"
@@ -23,16 +23,24 @@
                 Busca en todos los campos: código, nombre completo, identificación, correos, teléfono y ciudad
             </small>
         </div>
+
+        <div class="flex align-items-center">
+            <button *ngIf="selectedEstudiantes?.length" pButton pRipple icon="pi pi-users" label="Matrícula masiva"
+                class="p-button-primary p-button-sm" (click)="onMatriculaMasiva()" pTooltip="Iniciar matrícula masiva"
+                tooltipPosition="top">
+            </button>
+        </div>
     </div>
 
     <!-- Tabla -->
-    <p-table #tableEstudiantes [value]="estudiantes" [paginator]="true" [rows]="10" [loading]="loading"
-        [totalRecords]="estudiantes?.length || 0" [showCurrentPageReport]="true"
+    <p-table #tableEstudiantes [(selection)]="selectedEstudiantes" [value]="estudiantes" [paginator]="true" [rows]="10"
+        [loading]="loading" [totalRecords]="estudiantes?.length || 0" [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
         styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'"
         [globalFilterFields]="['codigo', 'persona.nombre', 'persona.apellido', 'persona.identificacion', 'persona.correoElectronico', 'correoUniversidad', 'ciudadResidencia', 'persona.telefono']">
         <ng-template pTemplate="header">
             <tr>
+                <th style="width:3rem" class="text-center"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
                 <th class="text-center" scope="col">Código</th>
                 <th class="text-center" scope="col">Nombre Completo</th>
                 <th class="text-center" scope="col">Identificación</th>
@@ -43,6 +51,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-estudiante>
             <tr>
+                <td class="text-center"><p-tableCheckbox [value]="estudiante"></p-tableCheckbox></td>
                 <td>{{ estudiante.codigo }}</td>
                 <td>{{ getNombreCompleto(estudiante) }}</td>
                 <td>{{ estudiante.persona?.identificacion }}</td>
@@ -57,7 +66,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage" let-columns>
             <tr>
-                <td [attr.colspan]="6">No se encontraron estudiantes</td>
+                <td [attr.colspan]="7">No se encontraron estudiantes</td>
             </tr>
         </ng-template>
     </p-table>

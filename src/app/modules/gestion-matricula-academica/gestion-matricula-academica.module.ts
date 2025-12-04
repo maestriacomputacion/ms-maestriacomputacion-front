@@ -14,6 +14,7 @@ import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-
 import { GestionEstudianteComponent } from './components/gestion-estudiante/gestion-estudiante.component';
 import { GestionMatriculaCursoComponent } from './components/gestion-matricula-curso/pages/gestion-matricula-curso.component';
 import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/realizar-matricula-estudiantes/realizar-matricula-estudiantes.component';
+import { MatriculaMasivaComponent } from './components/matricula-masiva/matricula-masiva.component';
 
 @NgModule({
     declarations: [
@@ -26,6 +27,7 @@ import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matr
         GestionEstudianteComponent,
         GestionMatriculaCursoComponent,
         RealizarMatriculaEstudiantesComponent,
+        MatriculaMasivaComponent,
     ],
     imports: [
         CommonModule,

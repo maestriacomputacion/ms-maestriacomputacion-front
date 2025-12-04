@@ -250,6 +250,22 @@ export class CursoService {
         );
     }
 
+    /**
+     * Valida si un estudiante puede matricularse en un curso.
+     * Endpoint: GET {matricula_academica.api_url}matricula/validar?estudianteId=..&cursoId=..
+     * Respuesta: ApiResponse<boolean> (data = true|false)
+     */
+    validarMatricula(
+        estudianteId: number,
+        cursoId: number
+    ): Observable<ApiResponse<boolean>> {
+        const url = `${matricula_academica.api_url}matricula/validar`;
+        let params = new HttpParams();
+        params = params.set('estudianteId', String(estudianteId));
+        params = params.set('cursoId', String(cursoId));
+        return this.http.get<ApiResponse<boolean>>(url, { params });
+    }
+
     matricularEstudiantes(
         payload: MatriculaEstudiantesRequest
     ): Observable<ApiResponse<MatriculaResponseData>> {

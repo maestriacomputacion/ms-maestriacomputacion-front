@@ -159,7 +159,9 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
 
         // Verificar si ya existe un curso de la misma asignatura
         const cursoMismaAsignatura = this.asignaturas.find(
-            (a) => a.nombreAsignatura?.includes(nombreAsignatura) && nombreAsignatura !== ''
+            (a) =>
+                a.nombreAsignatura?.includes(nombreAsignatura) &&
+                nombreAsignatura !== ''
         );
 
         if (cursoMismaAsignatura) {
@@ -173,31 +175,77 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             return;
         }
 
-        // No existe curso de esta asignatura, confirmar agregar
-        this.confirmationService.confirm({
-            target: event.target as EventTarget,
-            message: `¿Agregar grupo "${cursoItem.grupo}" de "${nombreAsignatura}"?`,
-            icon: 'pi pi-question-circle',
-            acceptLabel: 'Sí',
-            rejectLabel: 'No',
-            accept: () => {
-                const nueva = {
-                    id: cursoItem.id,
-                    grupo: cursoItem.grupo ?? '',
-                    nombreAsignatura: nombreAsignatura,
-                    docentes: cursoItem.docente ?? '',
-                    opciones: 'Matricular',
-                    observacion: '',
-                } as any;
+        // No existe curso de esta asignatura: validar en backend antes de confirmar agregar
+        if (!this.estudianteId) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'No se encontró el estudiante para validar la matrícula',
+            });
+            return;
+        }
 
-                this.asignaturas.push(nueva);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Curso agregado a la lista de matricular',
-                });
-            },
-        });
+        this.loading = true;
+        this.cursoService
+            .validarMatricula(this.estudianteId, cursoItem.id)
+            .subscribe({
+                next: (resp) => {
+                    this.loading = false;
+                    // Backend devuelve ApiResponse<boolean> en data
+                    if (
+                        resp?.typeResponse === 'SUCCESS' &&
+                        resp.data === true
+                    ) {
+                        // Mostrar confirmación antes de agregar
+                        this.confirmationService.confirm({
+                            target: event.target as EventTarget,
+                            message: `¿Agregar grupo "${cursoItem.grupo}" de "${nombreAsignatura}"?`,
+                            icon: 'pi pi-question-circle',
+                            acceptLabel: 'Sí',
+                            rejectLabel: 'No',
+                            accept: () => {
+                                const nueva = {
+                                    id: cursoItem.id,
+                                    grupo: cursoItem.grupo ?? '',
+                                    nombreAsignatura: nombreAsignatura,
+                                    docentes: cursoItem.docente ?? '',
+                                    opciones: 'Matricular',
+                                    observacion: '',
+                                } as any;
+
+                                this.asignaturas.push(nueva);
+                                this.messageService.add({
+                                    severity: 'success',
+                                    summary: 'Éxito',
+                                    detail: 'Curso agregado a la lista de matricular',
+                                });
+                            },
+                        });
+                    } else {
+                        // Mostrar el mensaje devuelto por el backend cuando no es válido
+                        const motivo =
+                            resp?.message ||
+                            'No es posible matricular en este curso';
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: 'Validación',
+                            detail: motivo,
+                        });
+                    }
+                },
+                error: (err) => {
+                    this.loading = false;
+                    console.error('Error validando curso', err);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                            err?.error?.message ||
+                            err?.message ||
+                            'Error al validar el curso',
+                    });
+                },
+            });
     }
 
     cargarDatosEstudiante() {
@@ -378,33 +426,36 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                     })),
                 };
 
-                this.matriculaPreviaService.matricularEstudiante(payload).subscribe({
-                    next: (resp) => {
-                        if (resp.typeResponse === 'SUCCESS') {
-                            this.messageService.add({
-                                severity: 'success',
-                                summary: 'Éxito',
-                                detail: 'Matrícula guardada correctamente.',
-                            });
-                            this.asignaturas = [];
-                        } else {
+                this.matriculaPreviaService
+                    .matricularEstudiante(payload)
+                    .subscribe({
+                        next: (resp) => {
+                            if (resp.typeResponse === 'SUCCESS') {
+                                this.messageService.add({
+                                    severity: 'success',
+                                    summary: 'Éxito',
+                                    detail: 'Matrícula guardada correctamente.',
+                                });
+                                this.asignaturas = [];
+                            } else {
+                                this.messageService.add({
+                                    severity: 'error',
+                                    summary: 'Error',
+                                    detail:
+                                        resp.message ||
+                                        'Error al guardar la matrícula.',
+                                });
+                            }
+                        },
+                        error: (err) => {
+                            console.error('Error al guardar matrícula', err);
                             this.messageService.add({
                                 severity: 'error',
                                 summary: 'Error',
-                                detail:
-                                    resp.message || 'Error al guardar la matrícula.',
+                                detail: 'Error al guardar la matrícula.',
                             });
-                        }
-                    },
-                    error: (err) => {
-                        console.error('Error al guardar matrícula', err);
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Error',
-                            detail: 'Error al guardar la matrícula.',
-                        });
-                    },
-                });
+                        },
+                    });
             },
         });
     }

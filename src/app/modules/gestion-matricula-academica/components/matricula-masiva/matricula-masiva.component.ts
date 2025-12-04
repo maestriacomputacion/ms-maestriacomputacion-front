@@ -4,6 +4,10 @@ import { PeriodoAcademicoService } from '../../services/periodo-academico.servic
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { CursoService } from '../../services/curso.service';
+import {
+    MatriculaMasivaService,
+    MatriculaBatchPayload,
+} from '../../services/matricula-masiva.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -30,8 +34,71 @@ export class MatriculaMasivaComponent implements OnInit {
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
         private readonly cursoService: CursoService,
+        private readonly matriculaMasivaService: MatriculaMasivaService,
         private readonly fb: FormBuilder
     ) {}
+    onMatricularMasiva(event: Event): void {
+        if (
+            this.selectedEstudiantes.length === 0 ||
+            this.cursosSeleccionados.length === 0
+        ) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'Debe seleccionar al menos un estudiante y un curso.',
+            });
+            return;
+        }
+
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            message: `¿Matricular ${this.selectedEstudiantes.length} estudiante(s) en ${this.cursosSeleccionados.length} curso(s)?`,
+            icon: 'pi pi-check',
+            acceptLabel: 'Sí',
+            rejectLabel: 'No',
+            accept: () => {
+                const payload: MatriculaBatchPayload = {
+                    matriculaEstudianteCursos: this.selectedEstudiantes.map(
+                        (est) => ({
+                            estudianteId: est.id,
+                            cursos: this.cursosSeleccionados.map((curso) => ({
+                                cursoId: curso.id,
+                            })),
+                        })
+                    ),
+                };
+                this.matriculaMasivaService.matricularBatch(payload).subscribe({
+                    next: (resp) => {
+                        if (resp?.typeResponse === 'SUCCESS') {
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: 'Éxito',
+                                detail:
+                                    resp?.message ||
+                                    'Matrícula masiva realizada correctamente.',
+                            });
+                            this.cursosSeleccionados = [];
+                        } else {
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: 'Error',
+                                detail:
+                                    resp?.message ||
+                                    'Error al realizar la matrícula masiva.',
+                            });
+                        }
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: 'No se pudo realizar la matrícula masiva.',
+                        });
+                    },
+                });
+            },
+        });
+    }
 
     ngOnInit(): void {
         // Obtener estudiantes desde navigation state o history.state

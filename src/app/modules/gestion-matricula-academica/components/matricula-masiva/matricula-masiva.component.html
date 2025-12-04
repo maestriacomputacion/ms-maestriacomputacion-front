@@ -118,6 +118,11 @@
                     <h5 class="mb-3 font-semibold text-900">
                         Cursos Seleccionados para Matrícula Masiva
                     </h5>
+                    <div class="flex justify-content-end mb-4">
+                        <button type="button" pButton label="Matricular" icon="pi pi-check" class="p-button-primary"
+                            [disabled]="selectedEstudiantes.length === 0 || cursosSeleccionados.length === 0"
+                            (click)="onMatricularMasiva($event)"></button>
+                    </div>
 
                     <p-table [value]="cursosSeleccionados" styleClass="p-datatable-striped">
                         <ng-template pTemplate="header">

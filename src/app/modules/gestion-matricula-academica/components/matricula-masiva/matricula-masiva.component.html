@@ -3,47 +3,51 @@
         <b>MATRÍCULA MASIVA</b>
     </p-header>
 
-    <!-- Contenido principal -->
-    <div class="grid">
-        <!-- Datos del Período Activo -->
-        <div class="col-12 lg:col-4">
-            <div class="surface-card border-round shadow-1 h-full">
+    <!-- Indicador de carga -->
+    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 200px">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+
+    <!-- Datos del Período Activo -->
+    <div class="grid mb-3" *ngIf="!loading">
+        <div class="col-12">
+            <div class="surface-card border-round shadow-1">
                 <div class="p-3">
                     <h5 class="mb-3 font-semibold text-900">
                         Período Académico
                     </h5>
-                    <div *ngIf="periodoActivo; else sinPeriodo" class="flex flex-column gap-3">
-                        <div>
+                    <div *ngIf="periodoActivo; else sinPeriodo" class="grid">
+                        <div class="col-12 md:col-6 lg:col-2">
                             <span class="font-medium text-600 text-sm">Periodo:</span>
                             <p class="text-900 mt-1 mb-0">
                                 {{ periodoActivo?.tagPeriodo }}
                             </p>
                         </div>
-                        <div>
+                        <div class="col-12 md:col-6 lg:col-2">
                             <span class="font-medium text-600 text-sm">Estado:</span>
                             <p class="text-900 mt-1 mb-0">
                                 {{ periodoActivo?.estado || '—' }}
                             </p>
                         </div>
-                        <div>
+                        <div class="col-12 md:col-6 lg:col-2">
                             <span class="font-medium text-600 text-sm">Fecha Inicio:</span>
                             <p class="text-900 mt-1 mb-0">
                                 {{ periodoActivo?.fechaInicio }}
                             </p>
                         </div>
-                        <div>
+                        <div class="col-12 md:col-6 lg:col-2">
                             <span class="font-medium text-600 text-sm">Fecha Fin:</span>
                             <p class="text-900 mt-1 mb-0">
                                 {{ periodoActivo?.fechaFin }}
                             </p>
                         </div>
-                        <div>
+                        <div class="col-12 md:col-6 lg:col-2">
                             <span class="font-medium text-600 text-sm">Fecha Fin Matrícula:</span>
                             <p class="text-900 mt-1 mb-0">
                                 {{ periodoActivo?.fechaFinMatricula }}
                             </p>
                         </div>
-                        <div>
+                        <div class="col-12 md:col-6 lg:col-2">
                             <span class="font-medium text-600 text-sm">Estudiantes Seleccionados:</span>
                             <p class="text-900 mt-1 mb-0">
                                 <strong>{{ selectedEstudiantes?.length || 0 }}</strong>
@@ -56,14 +60,19 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Contenido principal en dos columnas -->
+    <div class="grid" *ngIf="!loading">
         <!-- Tabla de estudiantes -->
-        <div class="col-12 lg:col-8">
+        <div class="col-12 lg:col-6">
             <div class="surface-card border-round shadow-1 h-full">
                 <div class="p-3">
                     <h5 class="mb-3 font-semibold text-900">
                         Estudiantes Seleccionados
                     </h5>
+
+                    <p-confirmPopup></p-confirmPopup>
 
                     <p-table [value]="selectedEstudiantes" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
                         currentPageReportTemplate="{first} - {last} de {totalRecords}" styleClass="p-datatable-striped"
@@ -74,6 +83,7 @@
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Correo</th>
                                 <th scope="col">Semestre</th>
+                                <th scope="col">Opciones</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-est>
@@ -82,11 +92,16 @@
                                 <td>{{ (est.persona?.nombre || '') + ' ' + (est.persona?.apellido || '') }}</td>
                                 <td>{{ est.persona?.correoElectronico || '—' }}</td>
                                 <td>{{ est.informacionMaestria?.semestreAcademico || '—' }}</td>
+                                <td>
+                                    <button type="button" pButton icon="pi pi-trash"
+                                        class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                                        (click)="confirmarQuitarEstudiante($event, est.id)"></button>
+                                </td>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="emptymessage">
                             <tr>
-                                <td [attr.colspan]="4" class="text-center">
+                                <td [attr.colspan]="5" class="text-center">
                                     No hay estudiantes seleccionados
                                 </td>
                             </tr>
@@ -95,5 +110,150 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tabla de Cursos Seleccionados -->
+        <div class="col-12 lg:col-6">
+            <div class="surface-card border-round shadow-1 h-full">
+                <div class="p-3">
+                    <h5 class="mb-3 font-semibold text-900">
+                        Cursos Seleccionados para Matrícula Masiva
+                    </h5>
+
+                    <p-table [value]="cursosSeleccionados" styleClass="p-datatable-striped">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th scope="col">Grupo</th>
+                                <th scope="col">Curso</th>
+                                <th scope="col">Docentes</th>
+                                <th scope="col">Salón</th>
+                                <th scope="col">Opciones</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-curso>
+                            <tr>
+                                <td>{{ curso.grupo }}</td>
+                                <td>{{ curso.nombreAsignatura }}</td>
+                                <td>{{ curso.docentes || "-" }}</td>
+                                <td>{{ curso.salon || "-" }}</td>
+                                <td>
+                                    <button type="button" pButton icon="pi pi-trash"
+                                        class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                                        (click)="onEliminarCursoSeleccionado($event, curso.id)"
+                                        pTooltip="Eliminar"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    No hay cursos seleccionados
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Cursos disponibles por área -->
+    <div class="grid mt-3" *ngIf="!loading">
+        <div class="col-12">
+            <div class="surface-card border-round shadow-1">
+                <div class="p-3">
+                    <h5 class="mb-3 font-semibold text-900">
+                        Cursos disponibles por área
+                    </h5>
+                    <small class="text-500 block mb-3">Seleccione un área para ver las asignaturas disponibles y
+                        agréguelas a la matrícula masiva.</small>
+
+                    <p-tabView *ngIf="areas?.length > 0" (onChange)="onTabChange($event)" styleClass="tabs-centrados">
+                        <p-tabPanel *ngFor="let area of areas" [header]="area.label">
+                            <div class="p-3" style="max-height: 600px; overflow-y: auto;">
+                                <div *ngIf="loadingCursosPorArea[area.value]" class="flex justify-content-center p-3">
+                                    <p-progressSpinner></p-progressSpinner>
+                                </div>
+
+                                <div *ngIf="!loadingCursosPorArea[area.value]">
+                                    <ng-container *ngIf="
+                                            (cursosPorArea[area.value] || []).length;
+                                            else sinCursos
+                                        ">
+                                        <ng-container *ngFor="
+                                                let grupoAsig of cursosPorAreaAgrupados[
+                                                    area.value
+                                                ]
+                                            ">
+                                            <div class="surface-card border-round mb-4 shadow-2 border-1 border-300">
+                                                <div class="p-3 surface-100 border-round-top">
+                                                    <div class="text-900 font-semibold text-lg">
+                                                        {{ grupoAsig.asignatura }}
+                                                    </div>
+                                                    <div class="text-500 text-sm">
+                                                        {{
+                                                        grupoAsig.cursos.length
+                                                        }}
+                                                        grupo{{
+                                                        grupoAsig.cursos.length > 1
+                                                        ? "s"
+                                                        : ""
+                                                        }}
+                                                    </div>
+                                                </div>
+                                                <p-table [value]="grupoAsig.cursos" styleClass="p-datatable-striped"
+                                                    [responsiveLayout]="'scroll'"
+                                                    [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}">
+                                                    <ng-template pTemplate="header">
+                                                        <tr>
+                                                            <th style="width: 15%;">Grupo</th>
+                                                            <th style="width: 40%;">Docentes</th>
+                                                            <th style="width: 25%;">Salón</th>
+                                                            <th style="width: 20%;" class="text-center">
+                                                                Opciones
+                                                            </th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-item>
+                                                        <tr>
+                                                            <td style="width: 15%;">{{ item.grupo ?? "-" }}</td>
+                                                            <td
+                                                                style="width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                {{ item.docente ?? "-" }}</td>
+                                                            <td
+                                                                style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                {{ item.salon ?? "-" }}</td>
+                                                            <td style="width: 20%;" class="text-center">
+                                                                <button type="button" pButton pRipple
+                                                                    label="Seleccionar"
+                                                                    class="p-button-rounded p-button-text p-button-sm"
+                                                                    (click)="
+                                                                        onAgregarCursoDesdeArea(
+                                                                            $event,
+                                                                            item,
+                                                                            area
+                                                                        )
+                                                                    "></button>
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-template #sinCursos>
+                                        <div class="p-3 text-center">
+                                            No hay cursos para esta área
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Componentes de mensajes -->
+    <p-toast></p-toast>
 </p-panel>

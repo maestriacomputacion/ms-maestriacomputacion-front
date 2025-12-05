@@ -61,7 +61,7 @@ export class MatriculaMasivaComponent implements OnInit {
         }
 
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
+            target: event.target,
             message: `¿Matricular ${this.selectedEstudiantes.length} estudiante(s) en ${this.cursosSeleccionados.length} curso(s)?`,
             icon: 'pi pi-check',
             acceptLabel: 'Sí',
@@ -130,15 +130,11 @@ export class MatriculaMasivaComponent implements OnInit {
 
     private obtenerEstudiantesSeleccionados(): void {
         const nav = this.router.getCurrentNavigation();
-        if (nav?.extras?.state && nav.extras.state['selectedEstudiantes']) {
-            this.selectedEstudiantes = nav.extras.state['selectedEstudiantes'];
-        } else if (
-            history &&
-            (history as any).state &&
-            (history as any).state.selectedEstudiantes
-        ) {
-            this.selectedEstudiantes =
-                (history as any).state.selectedEstudiantes || [];
+        if (nav?.extras?.state?.selectedEstudiantes) {
+            this.selectedEstudiantes = nav.extras.state.selectedEstudiantes;
+        } else if ((history as { state?: { selectedEstudiantes?: unknown } })?.state?.selectedEstudiantes) {
+            const estudiantes = (history as { state?: { selectedEstudiantes?: unknown } }).state?.selectedEstudiantes;
+            this.selectedEstudiantes = Array.isArray(estudiantes) ? estudiantes : [];
         } else {
             this.selectedEstudiantes = [];
         }
@@ -244,7 +240,7 @@ export class MatriculaMasivaComponent implements OnInit {
         cursoItem: any,
         area: { label: string; value: string } | null
     ): void {
-        if (!cursoItem || !cursoItem.id) return;
+        if (!cursoItem?.id) return;
 
         const existe = this.cursosSeleccionados.find(
             (c) => c.id === cursoItem.id
@@ -276,7 +272,7 @@ export class MatriculaMasivaComponent implements OnInit {
         }
 
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
+            target: event.target,
             message: `¿Agregar grupo "${cursoItem.grupo}" de "${cursoItem.asignatura}" a todos los estudiantes?`,
             icon: 'pi pi-question-circle',
             acceptLabel: 'Sí',
@@ -301,7 +297,7 @@ export class MatriculaMasivaComponent implements OnInit {
 
     onEliminarCursoSeleccionado(event: Event, id: number): void {
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
+            target: event.target,
             message: '¿Eliminar este curso de la lista?',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí',

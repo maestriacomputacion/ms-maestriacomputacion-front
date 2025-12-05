@@ -160,7 +160,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
 
         this.loading = true;
         this.cursoService
-            .validarMatricula(estudiante.id!, this.cursoId)
+            .validarMatricula(estudiante.id, this.cursoId)
             .subscribe({
                 next: (resp) => {
                     this.loading = false;
@@ -266,7 +266,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         }
 
         this.confirmationService.confirm({
-            target: event?.target as EventTarget,
+            target: event?.target,
             message: `¿Está seguro de matricular ${this.estudiantesMatricular.length} estudiante(s) en este curso?`,
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí, matricular',
@@ -281,10 +281,10 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         const payload: MatriculaEstudiantesRequest = {
             matriculaEstudianteCursos: this.estudiantesMatricular.map(
                 (est) => ({
-                    estudianteId: est.id!,
+                    estudianteId: est.id,
                     cursos: [
                         {
-                            cursoId: this.cursoId!,
+                            cursoId: this.cursoId,
                             observacion: est.observaciones || '',
                         },
                     ],
@@ -331,14 +331,14 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
 
         // Actualizar motivos de error en la tabla
         if (noRealizadas.length > 0) {
-            noRealizadas.forEach((matricula) => {
+            for (const matricula of noRealizadas) {
                 const estudiante = this.estudiantesMatricular.find(
                     (e) => e.id === matricula.estudianteId
                 );
                 if (estudiante) {
                     estudiante.motivoError = matricula.motivo;
                 }
-            });
+            }
         }
 
         // Mostrar mensaje general del backend

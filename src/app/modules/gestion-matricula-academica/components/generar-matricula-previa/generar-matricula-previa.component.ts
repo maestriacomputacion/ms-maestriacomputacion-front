@@ -142,7 +142,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         cursoItem: any,
         area: { label: string; value: string } | null
     ): void {
-        if (!cursoItem || !cursoItem.id) return;
+        if (!cursoItem?.id) return;
 
         const existe = this.asignaturas.find((a) => a.id === cursoItem.id);
         if (existe) {
@@ -154,7 +154,6 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             return;
         }
 
-        const areaLabel = area?.label ? ` {${area.label}}` : '';
         const nombreAsignatura = cursoItem.asignatura ?? '';
 
         // Verificar si ya existe un curso de la misma asignatura
@@ -198,7 +197,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                     ) {
                         // Mostrar confirmación antes de agregar
                         this.confirmationService.confirm({
-                            target: event.target as EventTarget,
+                            target: event.target,
                             message: `¿Agregar grupo "${cursoItem.grupo}" de "${nombreAsignatura}"?`,
                             icon: 'pi pi-question-circle',
                             acceptLabel: 'Sí',
@@ -378,7 +377,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
 
     onEliminarAsignatura(event: Event, id: number) {
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
+            target: event.target,
             message: '¿Eliminar esta asignatura?',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí',
@@ -412,7 +411,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         }
 
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
+            target: event.target,
             message: `¿Guardar matrícula con ${this.asignaturas.length} asignatura(s)?`,
             icon: 'pi pi-save',
             acceptLabel: 'Sí',

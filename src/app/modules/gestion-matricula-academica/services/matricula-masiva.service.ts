@@ -17,7 +17,7 @@ export interface MatriculaBatchPayload {
 export class MatriculaMasivaService {
     private readonly endpoint = `${matricula_academica.api_url}matricula/batch`;
 
-    constructor(private http: HttpClient) {}
+    constructor(private readonly http: HttpClient) {}
 
     matricularBatch(
         payload: MatriculaBatchPayload

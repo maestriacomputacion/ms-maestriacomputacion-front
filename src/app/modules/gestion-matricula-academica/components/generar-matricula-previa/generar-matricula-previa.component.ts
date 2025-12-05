@@ -430,12 +430,37 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                     .subscribe({
                         next: (resp) => {
                             if (resp.typeResponse === 'SUCCESS') {
+                                const realizadas = Array.isArray(resp.data)
+                                    ? resp.data
+                                    : [];
+
                                 this.messageService.add({
                                     severity: 'success',
                                     summary: 'Éxito',
-                                    detail: 'Matrícula guardada correctamente.',
+                                    detail:
+                                        resp.message ||
+                                        'Matrícula procesada correctamente.',
+                                    life: 3000,
                                 });
-                                this.asignaturas = [];
+
+                                const datosNavegacion = {
+                                    matriculasRealizadas: realizadas,
+                                    matriculasNoRealizadas: [],
+                                    origen: 'matricula-previa',
+                                };
+
+                                // Navegar a la vista de resultados
+                                setTimeout(() => {
+                                    this.router.navigate(
+                                        [
+                                            '/gestion-matricula-academica',
+                                            'resultado-matricula-masiva',
+                                        ],
+                                        {
+                                            state: datosNavegacion,
+                                        }
+                                    );
+                                }, 1000);
                             } else {
                                 this.messageService.add({
                                     severity: 'error',
@@ -451,7 +476,10 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                             this.messageService.add({
                                 severity: 'error',
                                 summary: 'Error',
-                                detail: 'Error al guardar la matrícula.',
+                                detail:
+                                    err?.error?.message ||
+                                    err?.message ||
+                                    'Error al guardar la matrícula.',
                             });
                         },
                     });

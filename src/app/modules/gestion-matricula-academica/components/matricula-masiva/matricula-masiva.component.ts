@@ -9,6 +9,8 @@ import {
     MatriculaBatchPayload,
 } from '../../services/matricula-masiva.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DialogService } from 'primeng/dynamicdialog';
+import { ResultadoMatriculaMasivaComponent } from '../resultado-matricula-masiva/resultado-matricula-masiva.component';
 
 @Component({
     selector: 'app-matricula-masiva',
@@ -27,6 +29,7 @@ export class MatriculaMasivaComponent implements OnInit {
     > = {};
     loading: boolean = false;
     cursosSeleccionados: any[] = [];
+    resultadoDialogRef: any;
 
     constructor(
         private readonly router: Router,
@@ -35,8 +38,16 @@ export class MatriculaMasivaComponent implements OnInit {
         private readonly confirmationService: ConfirmationService,
         private readonly cursoService: CursoService,
         private readonly matriculaMasivaService: MatriculaMasivaService,
-        private readonly fb: FormBuilder
+        private readonly fb: FormBuilder,
+        private readonly dialogService: DialogService
     ) {}
+
+    ngOnInit(): void {
+        this.obtenerEstudiantesSeleccionados();
+        this.cargarPeriodoAcademicoActivo();
+        this.cargarAreasFormacion();
+    }
+
     onMatricularMasiva(event: Event): void {
         if (
             this.selectedEstudiantes.length === 0 ||
@@ -78,6 +89,24 @@ export class MatriculaMasivaComponent implements OnInit {
                                     'Matrícula masiva realizada correctamente.',
                             });
                             this.cursosSeleccionados = [];
+                            const datosNavegacion = {
+                                matriculasRealizadas:
+                                    resp?.data?.matriculasRealizadas || [],
+                                matriculasNoRealizadas:
+                                    resp?.data?.matriculasNoRealizadas || [],
+                            };
+                            // Espera 1 segundo antes de navegar para mostrar el mensaje
+                            setTimeout(() => {
+                                this.router.navigate(
+                                    [
+                                        '/gestion-matricula-academica',
+                                        'resultado-matricula-masiva',
+                                    ],
+                                    {
+                                        state: datosNavegacion,
+                                    }
+                                );
+                            }, 1000);
                         } else {
                             this.messageService.add({
                                 severity: 'error',
@@ -100,8 +129,7 @@ export class MatriculaMasivaComponent implements OnInit {
         });
     }
 
-    ngOnInit(): void {
-        // Obtener estudiantes desde navigation state o history.state
+    private obtenerEstudiantesSeleccionados(): void {
         const nav = this.router.getCurrentNavigation();
         if (nav?.extras?.state && nav.extras.state['selectedEstudiantes']) {
             this.selectedEstudiantes = nav.extras.state['selectedEstudiantes'];
@@ -115,8 +143,9 @@ export class MatriculaMasivaComponent implements OnInit {
         } else {
             this.selectedEstudiantes = [];
         }
+    }
 
-        // Cargar periodo académico activo
+    private cargarPeriodoAcademicoActivo(): void {
         this.periodoService.getPeriodoActivo().subscribe({
             next: (resp) => {
                 if (resp?.typeResponse === 'SUCCESS' && resp.data) {
@@ -130,8 +159,7 @@ export class MatriculaMasivaComponent implements OnInit {
                     });
                 }
             },
-            error: (err) => {
-                console.error('Error obteniendo periodo activo', err);
+            error: () => {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
@@ -139,8 +167,6 @@ export class MatriculaMasivaComponent implements OnInit {
                 });
             },
         });
-
-        this.cargarAreasFormacion();
     }
 
     private cargarAreasFormacion(): void {

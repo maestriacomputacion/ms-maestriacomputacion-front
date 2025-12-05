@@ -8,9 +8,8 @@ import {
     MatriculaMasivaService,
     MatriculaBatchPayload,
 } from '../../services/matricula-masiva.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { DialogService } from 'primeng/dynamicdialog';
-import { ResultadoMatriculaMasivaComponent } from '../resultado-matricula-masiva/resultado-matricula-masiva.component';
 
 @Component({
     selector: 'app-matricula-masiva',

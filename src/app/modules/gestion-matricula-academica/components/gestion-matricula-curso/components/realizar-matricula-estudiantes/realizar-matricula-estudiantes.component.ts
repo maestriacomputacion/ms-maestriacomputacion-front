@@ -341,30 +341,35 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
             }
         }
 
-        // Mostrar mensaje general del backend
-        if (realizadas.length > 0 && noRealizadas.length === 0) {
-            // Todas exitosas
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Éxito',
-                detail: mensaje,
-                life: 5000,
-            });
-            setTimeout(() => {
-                this.router.navigate([
-                    '/gestion-matricula-academica',
-                    'gestion-matricula-curso',
-                ]);
-            }, 2000);
-        } else if (noRealizadas.length > 0) {
-            // Hay matrículas no realizadas (parcial o todas)
-            this.messageService.add({
-                severity: 'warn',
-                summary: 'Advertencia',
-                detail: mensaje,
-                life: 6000,
-            });
-        }
+        // Mostrar mensaje y navegar a resultado
+        this.messageService.add({
+            severity:
+                realizadas.length > 0 && noRealizadas.length === 0
+                    ? 'success'
+                    : 'warn',
+            summary:
+                realizadas.length > 0 && noRealizadas.length === 0
+                    ? 'Éxito'
+                    : 'Advertencia',
+            detail: mensaje,
+            life: 3000,
+        });
+
+        const datosNavegacion = {
+            matriculasRealizadas: realizadas,
+            matriculasNoRealizadas: noRealizadas,
+            origen: 'realizar-matricula',
+        };
+
+        // Navegar a la vista de resultados después de mostrar el mensaje
+        setTimeout(() => {
+            this.router.navigate(
+                ['/gestion-matricula-academica', 'resultado-matricula-masiva'],
+                {
+                    state: datosNavegacion,
+                }
+            );
+        }, 1000);
     }
 
     cancelarMatricula(): void {

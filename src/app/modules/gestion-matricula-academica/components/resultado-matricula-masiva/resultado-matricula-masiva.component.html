@@ -3,8 +3,13 @@
         <b>RESULTADO MATRÍCULA MASIVA</b>
     </p-header>
     <div class="grid">
+
         <div class="col-12 md:col-6">
+            <div class="text-500 mb-3">
+                <small>{{ resumen }} • Origen: <strong>{{ origenLabel }}</strong></small>
+            </div>
             <div class="surface-card border-round shadow-1 h-full">
+
                 <div class="p-3">
                     <h4 class="mb-3 font-semibold text-900 flex align-items-center gap-2">
                         <i class="pi pi-check-circle text-green-600"></i>
@@ -68,4 +73,13 @@
             </div>
         </div>
     </div>
+
+    <!-- Botón de finalizar -->
+    <div class="flex justify-content-end gap-2 mt-4">
+        <button pButton label="Finalizar" icon="pi pi-check" class="p-button-primary" (click)="finalizar($event)"
+            pTooltip="Volver al listado" tooltipPosition="top">
+        </button>
+    </div>
+
+    <p-confirmPopup></p-confirmPopup>
 </p-panel>

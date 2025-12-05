@@ -93,6 +93,7 @@ export class MatriculaMasivaComponent implements OnInit {
                                     resp?.data?.matriculasRealizadas || [],
                                 matriculasNoRealizadas:
                                     resp?.data?.matriculasNoRealizadas || [],
+                                origen: 'matricula-masiva',
                             };
                             // Espera 1 segundo antes de navegar para mostrar el mensaje
                             setTimeout(() => {
@@ -132,9 +133,16 @@ export class MatriculaMasivaComponent implements OnInit {
         const nav = this.router.getCurrentNavigation();
         if (nav?.extras?.state?.selectedEstudiantes) {
             this.selectedEstudiantes = nav.extras.state.selectedEstudiantes;
-        } else if ((history as { state?: { selectedEstudiantes?: unknown } })?.state?.selectedEstudiantes) {
-            const estudiantes = (history as { state?: { selectedEstudiantes?: unknown } }).state?.selectedEstudiantes;
-            this.selectedEstudiantes = Array.isArray(estudiantes) ? estudiantes : [];
+        } else if (
+            (history as { state?: { selectedEstudiantes?: unknown } })?.state
+                ?.selectedEstudiantes
+        ) {
+            const estudiantes = (
+                history as { state?: { selectedEstudiantes?: unknown } }
+            ).state?.selectedEstudiantes;
+            this.selectedEstudiantes = Array.isArray(estudiantes)
+                ? estudiantes
+                : [];
         } else {
             this.selectedEstudiantes = [];
         }

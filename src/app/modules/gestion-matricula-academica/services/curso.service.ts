@@ -31,10 +31,12 @@ export class CursoService {
     private transformToUI(item: BackendCurso): CursoUI {
         const docentes = (item.docentes || [])
             .map((d) => {
-                const nombreCompleto = `${d.nombre ?? ''} ${
-                    d.apellido ?? ''
-                }`.trim();
-                return nombreCompleto || d.codigo || d.correoElectronico || '';
+                const nombreCompleto = d.persona
+                    ? `${d.persona.nombre ?? ''} ${
+                          d.persona.apellido ?? ''
+                      }`.trim()
+                    : '';
+                return nombreCompleto || d.codigo || '';
             })
             .filter((v: string) => !!v)
             .join(', ');

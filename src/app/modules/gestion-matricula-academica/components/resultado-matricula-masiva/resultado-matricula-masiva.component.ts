@@ -81,4 +81,16 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
             },
         });
     }
+
+    getDocentesNombres(docentes: any[]): string {
+        if (!docentes || docentes.length === 0) return '-';
+        return docentes
+            .map((d) => {
+                if (d.persona?.nombre && d.persona?.apellido) {
+                    return `${d.persona.nombre} ${d.persona.apellido}`;
+                }
+                return d.codigo || '-';
+            })
+            .join(', ');
+    }
 }

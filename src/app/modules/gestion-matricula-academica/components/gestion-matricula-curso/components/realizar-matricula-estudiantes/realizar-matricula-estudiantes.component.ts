@@ -383,10 +383,12 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         if (!this.curso?.docentes?.length) return '-';
         return this.curso.docentes
             .map((d) => {
-                const nombreCompleto = `${d.nombre ?? ''} ${
-                    d.apellido ?? ''
-                }`.trim();
-                return nombreCompleto || d.codigo || d.correoElectronico || '-';
+                const nombreCompleto = d.persona
+                    ? `${d.persona.nombre ?? ''} ${
+                          d.persona.apellido ?? ''
+                      }`.trim()
+                    : '';
+                return nombreCompleto || d.codigo || '-';
             })
             .join(', ');
     }

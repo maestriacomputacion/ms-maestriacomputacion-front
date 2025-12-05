@@ -1,3 +1,5 @@
+import { Persona } from '../../gestion-estudiantes/models/persona';
+
 export interface CursoMatriculaDetalle {
     cursoId: number;
     observacion: string;
@@ -12,15 +14,63 @@ export interface MatriculaEstudiantesRequest {
     matriculaEstudianteCursos: EstudianteMatriculaCurso[];
 }
 
+export interface DocenteBasico {
+    id: number;
+    persona?: Persona;
+    codigo?: string;
+    facultad?: string;
+    departamento?: string;
+}
+
+export interface AsignaturaBasico {
+    id: number;
+    nombre: string;
+    codigo: string;
+    estado: boolean;
+    areaFormacion: number;
+    tipo?: string;
+    creditos: number;
+}
+
+export interface PeriodoBasico {
+    id: number;
+    fechaInicio: string;
+    fechaFin: string;
+    fechaFinMatricula: string;
+    tagPeriodo: number;
+    descripcion?: string;
+    estado: string;
+}
+
+export interface CursoDetallado {
+    id: number;
+    grupo: string;
+    periodo: PeriodoBasico;
+    periodoDescripcion?: string;
+    asignatura: AsignaturaBasico;
+    docentes: DocenteBasico[];
+    materiales: any[];
+    horario?: string;
+    salon?: string;
+    observacion?: string;
+}
+
 export interface MatriculaNoRealizada {
+    id?: number;
     estudianteId: number;
-    cursoId: number;
+    curso: CursoDetallado;
+    periodo?: PeriodoBasico;
     motivo: string;
+    observacion?: string;
 }
 
 export interface MatriculaRealizada {
+    id: number;
     estudianteId: number;
-    cursoId: number;
+    curso: CursoDetallado;
+    periodo: PeriodoBasico;
+    estado: string;
+    observacion: string;
 }
 
 export interface MatriculaResponseData {

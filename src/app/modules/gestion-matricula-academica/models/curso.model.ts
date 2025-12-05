@@ -1,3 +1,6 @@
+import { PeriodoAcademico } from './periodo-academico.model';
+import { Persona } from '../../gestion-estudiantes/models/persona';
+
 export interface AsignaturaModel {
     id: number;
     nombre: string;
@@ -10,18 +13,11 @@ export interface AsignaturaModel {
 
 export interface DocenteModel {
     id: number;
-    nombre?: string | null;
-    apellido?: string | null;
-    correoElectronico?: string | null;
-    telefono?: string | null;
-    genero?: string | null;
-    tipoIdentificacion?: any;
+    persona?: Persona;
     codigo?: string | null;
     facultad?: string | null;
     departamento?: string | null;
 }
-
-import { PeriodoAcademico } from './periodo-academico.model';
 
 export interface BackendCurso {
     id: number;

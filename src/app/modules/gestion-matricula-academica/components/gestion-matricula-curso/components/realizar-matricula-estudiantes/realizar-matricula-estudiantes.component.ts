@@ -333,7 +333,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         if (noRealizadas.length > 0) {
             for (const matricula of noRealizadas) {
                 const estudiante = this.estudiantesMatricular.find(
-                    (e) => e.id === matricula.estudianteId
+                    (e) => e.id === matricula.estudiante?.id
                 );
                 if (estudiante) {
                     estudiante.motivoError = matricula.motivo;

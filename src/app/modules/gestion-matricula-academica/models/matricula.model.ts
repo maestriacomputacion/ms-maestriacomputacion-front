@@ -1,4 +1,5 @@
 import { Persona } from '../../gestion-estudiantes/models/persona';
+import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
 
 export interface CursoMatriculaDetalle {
     cursoId: number;
@@ -57,7 +58,7 @@ export interface CursoDetallado {
 
 export interface MatriculaNoRealizada {
     id?: number;
-    estudianteId: number;
+    estudiante: Estudiante;
     curso: CursoDetallado;
     periodo?: PeriodoBasico;
     motivo: string;
@@ -66,7 +67,7 @@ export interface MatriculaNoRealizada {
 
 export interface MatriculaRealizada {
     id: number;
-    estudianteId: number;
+    estudiante: Estudiante;
     curso: CursoDetallado;
     periodo: PeriodoBasico;
     estado: string;

@@ -26,49 +26,50 @@
     <p-progressSpinner></p-progressSpinner>
   </div>
 
-  <!-- Información del curso -->
+  <!-- Información del curso (dentro de una card) -->
   <div class="mb-4" *ngIf="curso && !loading">
-    <p-card styleClass="border-none shadow-none">
+    <p-card styleClass="surface-card border-round shadow-1"
+      style="display: inline-block; width: auto; min-width: 320px;">
       <ng-template pTemplate="header">
         <div class="px-3 pt-3">
           <h3 class="text-xl font-semibold m-0">Información del curso</h3>
         </div>
       </ng-template>
 
-      <div class="px-3">
+      <div class="p-3">
         <div class="mb-2">
-          <span class="font-medium text-600">Asignatura:</span>
-          <span class="ml-2">{{ curso.asignatura?.nombre ?? '-' }}</span>
+          <span class="font-medium text-800">Asignatura:</span>
+          <span class="ml-2 text-900">{{ curso.asignatura?.nombre ?? '-' }}</span>
         </div>
 
         <div class="mb-2">
-          <span class="font-medium text-600">Grupo:</span>
-          <span class="ml-2">{{ curso.grupo ?? '-' }}</span>
+          <span class="font-medium text-800">Grupo:</span>
+          <span class="ml-2 text-900">{{ curso.grupo ?? '-' }}</span>
         </div>
 
         <div class="mb-2">
-          <span class="font-medium text-600">Periodo:</span>
-          <span class="ml-2">{{ getTagPeriodo() }}</span>
+          <span class="font-medium text-800">Periodo:</span>
+          <span class="ml-2 text-900">{{ getTagPeriodo() }}</span>
         </div>
 
         <div class="mb-2">
-          <span class="font-medium text-600">Fechas:</span>
-          <span class="ml-2">{{ getFechasPeriodo() }}</span>
+          <span class="font-medium text-800">Fechas:</span>
+          <span class="ml-2 text-900">{{ getFechasPeriodo() }}</span>
         </div>
 
         <div class="mb-2">
-          <span class="font-medium text-600">Docentes:</span>
-          <span class="ml-2">{{ getDocentesFormateados() }}</span>
+          <span class="font-medium text-800">Docentes:</span>
+          <span class="ml-2 text-900">{{ getDocentesFormateados() }}</span>
         </div>
 
         <div class="mb-2">
-          <span class="font-medium text-600">Horario:</span>
-          <span class="ml-2">{{ curso.horario ?? '-' }}</span>
+          <span class="font-medium text-800">Horario:</span>
+          <span class="ml-2 text-900">{{ curso.horario ?? '-' }}</span>
         </div>
 
         <div class="mb-2">
-          <span class="font-medium text-600">Salón:</span>
-          <span class="ml-2">{{ curso.salon ?? '-' }}</span>
+          <span class="font-medium text-800">Salón:</span>
+          <span class="ml-2 text-900">{{ curso.salon ?? '-' }}</span>
         </div>
       </div>
     </p-card>

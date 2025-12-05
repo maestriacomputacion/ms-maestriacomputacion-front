@@ -14,8 +14,8 @@
                         styleClass="p-datatable-striped" [responsiveLayout]="'scroll'">
                         <ng-template pTemplate="header">
                             <tr>
-                                <th>Estudiante ID</th>
-                                <th>Curso ID</th>
+                                <th scope="col">Estudiante ID</th>
+                                <th scope="col">Curso ID</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-matricula>
@@ -44,9 +44,9 @@
                         styleClass="p-datatable-striped" [responsiveLayout]="'scroll'">
                         <ng-template pTemplate="header">
                             <tr>
-                                <th>Estudiante ID</th>
-                                <th>Curso ID</th>
-                                <th>Motivo</th>
+                                <th scope="col">Estudiante ID</th>
+                                <th scope="col">Curso ID</th>
+                                <th scope="col">Motivo</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-matricula>

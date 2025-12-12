@@ -29,6 +29,8 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
         switch (this.origenNavegacion) {
             case 'matricula-masiva':
                 return 'Matrícula masiva';
+            case 'matricula-previa':
+                return 'Matrícula previa';
             case 'realizar-matricula':
                 return 'Matrícula por curso';
             default:
@@ -67,7 +69,10 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
             acceptLabel: 'Sí',
             rejectLabel: 'No',
             accept: () => {
-                if (this.origenNavegacion === 'matricula-masiva') {
+                if (
+                    this.origenNavegacion === 'matricula-masiva' ||
+                    this.origenNavegacion === 'matricula-previa'
+                ) {
                     this.router.navigate([
                         '/gestion-matricula-academica',
                         'gestion-estudiantes',

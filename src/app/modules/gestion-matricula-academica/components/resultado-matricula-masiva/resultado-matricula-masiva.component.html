@@ -1,6 +1,6 @@
 <p-panel>
     <p-header>
-        <b>RESULTADO MATRÍCULA MASIVA</b>
+        <b>RESULTADO MATRÍCULA</b>
     </p-header>
     <div class="text-500 mb-3">
         <small>{{ resumen }} • Origen: <strong>{{ origenLabel }}</strong></small>
@@ -92,8 +92,8 @@
 
     <!-- Botón de finalizar -->
     <div class="flex justify-content-end gap-2 mt-4">
-        <button pButton label="Finalizar" icon="pi pi-check" class="p-button-primary" (click)="finalizar($event)"
-            pTooltip="Volver al listado" tooltipPosition="top">
+        <button pButton label="Volver al listado" icon="pi pi-check" class="p-button-primary"
+            (click)="finalizar($event)" pTooltip="Volver al listado" tooltipPosition="top">
         </button>
     </div>
 

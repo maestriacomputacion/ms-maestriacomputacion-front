@@ -40,7 +40,8 @@
         [globalFilterFields]="['codigo', 'persona.nombre', 'persona.apellido', 'persona.identificacion', 'persona.correoElectronico', 'correoUniversidad', 'ciudadResidencia', 'persona.telefono']">
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:3rem" class="text-center" scope="col"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                <th style="width:3rem" class="text-center" scope="col"><p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
                 <th class="text-center" scope="col">Código</th>
                 <th class="text-center" scope="col">Nombre Completo</th>
                 <th class="text-center" scope="col">Identificación</th>
@@ -58,7 +59,7 @@
                 <td>{{ estudiante.persona?.correoElectronico }}</td>
                 <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico ?? '—' }}</td>
                 <td class="text-left">
-                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-warning"
+                    <button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-text p-button-warning"
                         (click)="onGenerarMatriculaPrevia(estudiante.id)" title="Generar Matrícula Previa">
                     </button>
                 </td>

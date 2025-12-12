@@ -182,7 +182,7 @@
       <button pButton label="Cancelar" class="p-button-secondary" (click)="cancelarMatricula()"
         pTooltip="Descartar cambios y volver" tooltipPosition="top">
       </button>
-      <button pButton label="Finalizar matrícula" class="p-button-primary" (click)="finalizarMatricula($event)"
+      <button pButton label="Matricular" class="p-button-primary" (click)="finalizarMatricula($event)"
         [disabled]="!estudiantesMatricular || estudiantesMatricular.length === 0"
         pTooltip="Guardar y completar el proceso de matrícula" tooltipPosition="top">
       </button>

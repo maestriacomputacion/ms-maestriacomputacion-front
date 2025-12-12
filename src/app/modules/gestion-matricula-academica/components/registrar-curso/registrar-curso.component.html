@@ -11,7 +11,7 @@
         style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
       <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
         [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" [attr.aria-invalid]="grupo?.invalid"
-        [disabled]="saving || isViewMode" placeholder="Ej: A" />
+        placeholder="Ej: A" />
     </div>
     <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem);" aria-live="assertive">
       <small *ngIf="cursoExistsMessage" class="p-error">{{ cursoExistsMessage }}</small>
@@ -23,15 +23,14 @@
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="horario" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Horario</label>
     <textarea id="horario" rows="1" pInputTextarea autoResize="autoResize" formControlName="horario" class="flex-1"
-      maxlength="100" [disabled]="isViewMode"></textarea>
+      maxlength="100"></textarea>
   </div>
 
   <!-- Sección Salón -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
     <textarea id="salon" rows="1" pInputTextarea autoResize="autoResize" formControlName="salon" class="flex-1"
-      maxlength="50" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}"
-      [disabled]="isViewMode"></textarea>
+      maxlength="50" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}"></textarea>
   </div>
 
 

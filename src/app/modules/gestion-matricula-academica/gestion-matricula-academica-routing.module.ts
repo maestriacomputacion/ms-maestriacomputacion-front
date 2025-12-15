@@ -11,6 +11,8 @@ import { GestionMatriculaCursoComponent } from './components/gestion-matricula-c
 import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/realizar-matricula-estudiantes/realizar-matricula-estudiantes.component';
 import { MatriculaMasivaComponent } from './components/matricula-masiva/matricula-masiva.component';
 import { ResultadoMatriculaMasivaComponent } from './components/resultado-matricula-masiva/resultado-matricula-masiva.component';
+import { VistaTutorComponent } from './components/vista-tutor/vista-tutor.component';
+import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
 
 const routes: Routes = [
     {
@@ -68,6 +70,14 @@ const routes: Routes = [
             {
                 path: 'resultado-matricula-masiva',
                 component: ResultadoMatriculaMasivaComponent,
+            },
+            {
+                path: 'vista-tutor',
+                component: VistaTutorComponent,
+            },
+            {
+                path: 'aprobar-matricula-estudiante/:id',
+                component: AprobarMatriculaEstudianteComponent,
             },
         ],
     },

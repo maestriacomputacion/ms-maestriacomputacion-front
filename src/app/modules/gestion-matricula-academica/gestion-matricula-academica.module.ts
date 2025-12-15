@@ -17,6 +17,8 @@ import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matr
 import { MatriculaMasivaComponent } from './components/matricula-masiva/matricula-masiva.component';
 import { ResultadoMatriculaMasivaComponent } from './components/resultado-matricula-masiva/resultado-matricula-masiva.component';
 import { CursosPorAreaTabsComponent } from './components/cursos-por-area-tabs/cursos-por-area-tabs.component';
+import { VistaTutorComponent } from './components/vista-tutor/vista-tutor.component';
+import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
 
 @NgModule({
     declarations: [
@@ -32,6 +34,8 @@ import { CursosPorAreaTabsComponent } from './components/cursos-por-area-tabs/cu
         MatriculaMasivaComponent,
         ResultadoMatriculaMasivaComponent,
         CursosPorAreaTabsComponent,
+        VistaTutorComponent,
+        AprobarMatriculaEstudianteComponent,
     ],
     imports: [
         CommonModule,

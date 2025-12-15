@@ -1,0 +1,97 @@
+<p-toast></p-toast>
+<p-confirmPopup></p-confirmPopup>
+
+<p-panel>
+    <p-header>
+        <b>APROBAR MATRÍCULAS DEL ESTUDIANTE</b>
+    </p-header>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 200px">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+
+    <div *ngIf="!loading">
+        <!-- Información del Estudiante -->
+        <div class="surface-card border-round shadow-1 p-3 mb-4">
+            <h5 class="mb-3 font-semibold text-900">
+                <i class="pi pi-user mr-2"></i>Información del Estudiante
+            </h5>
+            <div class="grid">
+                <div class="col-12 md:col-3">
+                    <span class="font-medium text-600 text-sm">Código:</span>
+                    <p class="text-900 mt-1 mb-0">{{ estudiante?.codigo }}</p>
+                </div>
+                <div class="col-12 md:col-3">
+                    <span class="font-medium text-600 text-sm">Nombre:</span>
+                    <p class="text-900 mt-1 mb-0">{{ getNombreCompleto() }}</p>
+                </div>
+                <div class="col-12 md:col-3">
+                    <span class="font-medium text-600 text-sm">Identificación:</span>
+                    <p class="text-900 mt-1 mb-0">{{ estudiante?.persona?.identificacion }}</p>
+                </div>
+                <div class="col-12 md:col-3">
+                    <span class="font-medium text-600 text-sm">Semestre:</span>
+                    <p class="text-900 mt-1 mb-0">{{ estudiante?.informacionMaestria?.semestreAcademico ?? '—' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Matrículas -->
+        <div class="surface-card border-round shadow-1 p-3">
+            <div class="flex align-items-center justify-content-between mb-3">
+                <h5 class="m-0 font-semibold text-900">
+                    <i class="pi pi-book mr-2"></i>Matrículas del Estudiante
+                </h5>
+            </div>
+
+            <p-table [value]="matriculas" styleClass="p-datatable-gridlines p-datatable-striped" 
+                [responsiveLayout]="'scroll'">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center" scope="col">ID</th>
+                        <th class="text-center" scope="col">Curso</th>
+                        <th class="text-center" scope="col">Asignatura</th>
+                        <th class="text-center" scope="col">Grupo</th>
+                        <th class="text-center" scope="col">Estado</th>
+                        <th class="text-center" scope="col">Opciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-matricula>
+                    <tr>
+                        <td class="text-center">{{ matricula.id }}</td>
+                        <td>{{ matricula.curso?.asignatura?.nombre }}</td>
+                        <td>{{ matricula.curso?.asignatura?.codigo }}</td>
+                        <td class="text-center">{{ matricula.curso?.grupo }}</td>
+                        <td class="text-center">
+                            <p-tag [value]="formatEstado(matricula.estado)"
+                                [severity]="getSeverityEstado(matricula.estado)"></p-tag>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex justify-content-center align-items-center gap-2">
+                                <button *ngIf="matricula.estado === 'PENDIENTE'" pButton pRipple 
+                                    icon="pi pi-check" class="p-button-rounded p-button-text p-button-success"
+                                    (click)="onAprobar($event, matricula)" title="Aprobar"></button>
+                                <button *ngIf="matricula.estado === 'PENDIENTE'" pButton pRipple 
+                                    icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger"
+                                    (click)="onRechazar($event, matricula)" title="Rechazar"></button>
+                                <span *ngIf="matricula.estado !== 'PENDIENTE'" class="text-500">—</span>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6" class="text-center">No se encontraron matrículas</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <!-- Botón Cancelar -->
+        <div class="flex justify-content-end mt-4">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" 
+                class="p-button-text" (click)="onVolver()"></button>
+        </div>
+    </div>
+</p-panel>

@@ -1,0 +1,93 @@
+<p-toast></p-toast>
+
+<p-panel>
+    <p-header>
+        <b>VISTA DEL TUTOR</b>
+    </p-header>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 200px">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+
+    <div *ngIf="!loading">
+        <!-- Información del Tutor -->
+        <div class="surface-card border-round shadow-1 p-3 mb-4">
+            <h5 class="mb-3 font-semibold text-900">
+                <i class="pi pi-user mr-2"></i>Información del Tutor
+            </h5>
+            <div class="grid">
+                <div class="col-12 md:col-4">
+                    <span class="font-medium text-600 text-sm">Nombre:</span>
+                    <p class="text-900 mt-1 mb-0">{{ getTutorNombreCompleto() }}</p>
+                </div>
+                <div class="col-12 md:col-4">
+                    <span class="font-medium text-600 text-sm">Correo:</span>
+                    <p class="text-900 mt-1 mb-0">{{ tutor.persona?.correoElectronico }}</p>
+                </div>
+                <div class="col-12 md:col-4">
+                    <span class="font-medium text-600 text-sm">Línea de Investigación:</span>
+                    <p class="text-900 mt-1 mb-0">{{ tutor.lineaInvestigacion }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Estudiantes -->
+        <div class="surface-card border-round shadow-1 p-3">
+            <div class="flex align-items-center justify-content-between mb-3">
+                <h5 class="m-0 font-semibold text-900">
+                    <i class="pi pi-users mr-2"></i>Estudiantes Asociados
+                </h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Buscar..."
+                        (input)="tableEstudiantes.filterGlobal($event.target.value, 'contains')" />
+                </span>
+            </div>
+
+            <p-table #tableEstudiantes [value]="estudiantes" [paginator]="true" [rows]="10"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+                styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'"
+                [globalFilterFields]="['codigo', 'persona.nombre', 'persona.apellido', 'persona.identificacion']">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center" scope="col">Código</th>
+                        <th class="text-center" scope="col">Nombre</th>
+                        <th class="text-center" scope="col">Identificación</th>
+                        <th class="text-center" scope="col">Semestre</th>
+                        <th class="text-center" scope="col">Total Materias</th>
+                        <th class="text-center" scope="col">Estado Matricula</th>
+                        <th class="text-center" scope="col">Opciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-estudiante>
+                    <tr>
+                        <td class="text-center">{{ estudiante.codigo }}</td>
+                        <td>{{ getNombreCompleto(estudiante) }}</td>
+                        <td class="text-center">{{ estudiante.persona?.identificacion }}</td>
+                        <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico ?? '—' }}</td>
+                        <td class="text-center">{{ estudiante.totalMaterias ?? 0 }}</td>
+                        <td class="text-center">
+                            <p-tag [value]="formatEstado(estudiante.informacionMaestria?.estadoMaestria)"
+                                [severity]="getSeverityEstado(estudiante.informacionMaestria?.estadoMaestria)"></p-tag>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex justify-content-center align-items-center">
+                                <button pButton pRipple icon="pi pi-book"
+                                    class="p-button-rounded p-button-text p-button-warning"
+                                    (click)="onVerEstudiante(estudiante)" title="Ver matrículas"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="7" class="text-center">No se encontraron estudiantes</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-panel>
+

@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
-
-interface TipoCorreo {
-    label: string;
-    descripcion: string;
-    icon: string;
-}
+import { TipoCorreo } from '../../models/correos.model';
 
 @Component({
     selector: 'app-tipo-correos',

@@ -1,13 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-interface CursoOfertadoReporte {
-    id: number;
-    grupo: string;
-    asignatura: string;
-    docente: string;
-    areaFormacion: string;
-    tipoAsignatura: string;
-}
+import { CursoOfertadoReporte } from '../../models/correos.model';
 
 @Component({
     selector: 'app-reporte-cursos-ofertados',

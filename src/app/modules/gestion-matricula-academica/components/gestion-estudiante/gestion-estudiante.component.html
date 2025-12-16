@@ -58,7 +58,7 @@
                 <td>{{ estudiante.persona?.identificacion }}</td>
                 <td>{{ estudiante.persona?.correoElectronico }}</td>
                 <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico ?? '—' }}</td>
-                <td class="text-left">
+                <td class="text-center">
                     <button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-text p-button-warning"
                         (click)="onGenerarMatriculaPrevia(estudiante.id)" title="Generar Matrícula Previa">
                     </button>

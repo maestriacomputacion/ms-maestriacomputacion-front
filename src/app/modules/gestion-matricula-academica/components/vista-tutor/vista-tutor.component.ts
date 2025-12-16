@@ -3,13 +3,7 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import { Persona } from 'src/app/modules/gestion-estudiantes/models/persona';
-
-// Interfaz para datos del tutor (basada en Persona y DocenteModel existentes)
-interface TutorInfo {
-    id: number;
-    persona: Persona;
-    lineaInvestigacion: string;
-}
+import { TutorInfo } from '../../models/tutor.model';
 
 @Component({
     selector: 'app-vista-tutor',

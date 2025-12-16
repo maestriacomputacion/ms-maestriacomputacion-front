@@ -8,17 +8,9 @@ import {
     MatriculaRealizada,
     CursoDetallado,
     PeriodoBasico,
+    MatriculaResumen,
 } from '../../models/matricula.model';
 import { BuscadorEstudiantesComponent } from 'src/app/shared/components/buscador-estudiantes/buscador-estudiantes.component';
-
-interface MatriculaResumen {
-    cursoId: number;
-    periodoDescripcion: string;
-    asignatura: string;
-    grupo: string;
-    estado: string;
-    cantidadEstudiantes: number;
-}
 
 @Component({
     selector: 'app-listado-matriculas',

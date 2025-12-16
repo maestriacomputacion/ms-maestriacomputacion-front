@@ -1,12 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-interface CursoCorreo {
-    id: number;
-    grupo: string;
-    asignatura: string;
-    docente: string;
-    tipo: string;
-}
+import { CursoCorreo } from '../../models/correos.model';
 
 @Component({
     selector: 'app-enviar-correo-matricula-final',

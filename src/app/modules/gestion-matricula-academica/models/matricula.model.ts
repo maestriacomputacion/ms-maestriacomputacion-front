@@ -78,3 +78,12 @@ export interface MatriculaResponseData {
     matriculasRealizadas: MatriculaRealizada[];
     matriculasNoRealizadas: MatriculaNoRealizada[];
 }
+
+export interface MatriculaResumen {
+    cursoId: number;
+    periodoDescripcion: string;
+    asignatura: string;
+    grupo: string;
+    estado: string;
+    cantidadEstudiantes: number;
+}

@@ -13,6 +13,7 @@ import { MatriculaMasivaComponent } from './components/matricula-masiva/matricul
 import { ResultadoMatriculaMasivaComponent } from './components/resultado-matricula-masiva/resultado-matricula-masiva.component';
 import { VistaTutorComponent } from './components/vista-tutor/vista-tutor.component';
 import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
+import { ListadoMatriculasComponent } from './components/listado-matriculas/listado-matriculas.component';
 
 const routes: Routes = [
     {
@@ -78,6 +79,10 @@ const routes: Routes = [
             {
                 path: 'aprobar-matricula-estudiante/:id',
                 component: AprobarMatriculaEstudianteComponent,
+            },
+            {
+                path: 'listado-matriculas',
+                component: ListadoMatriculasComponent,
             },
         ],
     },

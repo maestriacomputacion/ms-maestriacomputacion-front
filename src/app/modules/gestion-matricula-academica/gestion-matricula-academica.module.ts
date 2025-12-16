@@ -4,6 +4,7 @@ import { GestionPeriodoAcademicoComponent } from './components/gestion-periodo-a
 import { GestionMatriculaAcademicaRoutingModule } from './gestion-matricula-academica-routing.module';
 import { PrimenNgModule } from '../primen-ng/primen-ng.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { GestionCursoComponent } from './components/gestion-curso/gestion-curso.component';
 import { GenerarCursosOfertadosComponent } from './components/generar-cursos-ofertados/generar-cursos-ofertados.component';
 import { RegistrarCursoComponent } from './components/registrar-curso/registrar-curso.component';
@@ -19,6 +20,7 @@ import { ResultadoMatriculaMasivaComponent } from './components/resultado-matric
 import { CursosPorAreaTabsComponent } from './components/cursos-por-area-tabs/cursos-por-area-tabs.component';
 import { VistaTutorComponent } from './components/vista-tutor/vista-tutor.component';
 import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
+import { ListadoMatriculasComponent } from './components/listado-matriculas/listado-matriculas.component';
 
 @NgModule({
     declarations: [
@@ -36,11 +38,13 @@ import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matric
         CursosPorAreaTabsComponent,
         VistaTutorComponent,
         AprobarMatriculaEstudianteComponent,
+        ListadoMatriculasComponent,
     ],
     imports: [
         CommonModule,
         GestionMatriculaAcademicaRoutingModule,
         PrimenNgModule,
+        SharedModule,
         ReactiveFormsModule,
         FormsModule,
     ],

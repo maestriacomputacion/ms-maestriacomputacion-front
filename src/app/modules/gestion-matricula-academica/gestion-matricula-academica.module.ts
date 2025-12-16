@@ -24,6 +24,8 @@ import { ListadoMatriculasComponent } from './components/listado-matriculas/list
 import { ReporteCursosOfertadosComponent } from './components/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
 import { ReporteCentroPostgradosComponent } from './components/reporte-centro-postgrados/reporte-centro-postgrados.component';
 import { TipoCorreosComponent } from './components/tipo-correos/tipo-correos.component';
+import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-matricula-final/enviar-correo-matricula-final.component';
+import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
 
 @NgModule({
     declarations: [
@@ -33,6 +35,8 @@ import { TipoCorreosComponent } from './components/tipo-correos/tipo-correos.com
         ReporteCursosOfertadosComponent,
         ReporteCentroPostgradosComponent,
         TipoCorreosComponent,
+        EnviarCorreoMatriculaFinalComponent,
+        EnviarCorreoMatriculaFinalEstudianteComponent,
         RegistrarCursoComponent,
         GestionMaterialApoyoComponent,
         GenerarMatriculaPreviaComponent,

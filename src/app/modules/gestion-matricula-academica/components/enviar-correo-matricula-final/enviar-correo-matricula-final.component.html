@@ -1,0 +1,121 @@
+<p-panel>
+    <p-header>
+        <b>ENVIAR CORREO INFORMADO SOBRE LA MATRÍCULA FINAL</b>
+    </p-header>
+
+    <div class="flex flex-column gap-2 mb-3">
+        <div class="font-medium text-900">Descripción del correo a enviar</div>
+        <div class="text-700">
+            <b>Receptores del correo:</b> Estudiantes matriculados en los cursos
+            y directores de los estudiantes.
+        </div>
+        <div class="text-700">
+            <b>Contenido del correo:</b> El correo informa a cada estudiante y
+            director de cada estudiante sobre los cursos matriculados para el
+            periodo actual.
+        </div>
+    </div>
+
+    <div class="flex align-items-center flex-wrap gap-3 mb-3">
+        <label class="font-medium text-900" for="periodo">Digite un periodo</label>
+        <p-dropdown
+            inputId="periodo"
+            [options]="periodos"
+            [(ngModel)]="periodoSeleccionado"
+            class="w-6rem"
+        ></p-dropdown>
+        <p-dropdown
+            inputId="anio"
+            [options]="anios"
+            [(ngModel)]="anioSeleccionado"
+            placeholder="Año"
+            class="w-10rem"
+        ></p-dropdown>
+        <button pButton label="Consultar" icon="pi pi-search" class="p-button-primary"></button>
+    </div>
+
+    <div class="mb-3">
+        <div class="flex align-items-center gap-2 mb-2">
+            <span class="font-medium text-900">Filtrar por tipo de asignatura:</span>
+            <button
+                pButton
+                class="p-button-text p-button-sm"
+                icon="pi pi-filter-slash"
+                label="Limpiar"
+                (click)="limpiarFiltros()"
+                [disabled]="!tiposSeleccionados.length"
+            ></button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button
+                *ngFor="let tipo of tiposAsignatura"
+                type="button"
+                pButton
+                [label]="tipo.label"
+                class="p-button-sm"
+                [class.p-button-outlined]="!tiposSeleccionados.includes(tipo.value)"
+                (click)="toggleTipo(tipo.value)"
+            ></button>
+        </div>
+    </div>
+
+    <p-table
+        [value]="cursosFiltrados"
+        [paginator]="true"
+        [rows]="10"
+        [totalRecords]="cursosFiltrados.length"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [responsiveLayout]="'scroll'"
+        dataKey="id"
+        selectionMode="multiple"
+        [(selection)]="seleccion"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="grupo" class="text-center" scope="col">
+                    Grupo
+                    <p-sortIcon field="grupo"></p-sortIcon>
+                </th>
+                <th pSortableColumn="asignatura" scope="col">
+                    Asignatura Asociada
+                    <p-sortIcon field="asignatura"></p-sortIcon>
+                </th>
+                <th pSortableColumn="docente" scope="col">
+                    Docentes
+                    <p-sortIcon field="docente"></p-sortIcon>
+                </th>
+                <th class="text-center" scope="col">Seleccionar cursos</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-curso>
+            <tr>
+                <td class="text-center">{{ curso.grupo }}</td>
+                <td>{{ curso.asignatura }}</td>
+                <td>{{ curso.docente }}</td>
+                <td class="text-center">
+                    <p-tableCheckbox [value]="curso"></p-tableCheckbox>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4" class="text-center">
+                    No hay cursos para los filtros seleccionados
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <div class="flex justify-content-end mt-3">
+        <button
+            pButton
+            label="Enviar correo"
+            icon="pi pi-send"
+            class="p-button-primary"
+            [disabled]="!seleccion.length"
+            (click)="enviarCorreo()"
+        ></button>
+    </div>
+</p-panel>

@@ -1,0 +1,176 @@
+<p-panel>
+    <p-header>
+        <b>ENVIAR CORREO INFORMADO SOBRE LA MATRÍCULA FINAL PARA UN ESTUDIANTE</b>
+    </p-header>
+
+    <div class="flex flex-column gap-2 mb-4">
+        <div class="font-medium text-900">Descripción del correo a enviar</div>
+        <div class="text-700">
+            <b>Receptores del correo:</b> Estudiantes matriculados en los cursos
+            y directores de los estudiantes.
+        </div>
+        <div class="text-700">
+            <b>Contenido del correo:</b> El correo informa a cada estudiante y
+            director de cada estudiante sobre los cursos matriculados para el
+            periodo actual.
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <div class="font-medium text-900 mb-2">
+            Filtrar por tipo de asignatura:
+        </div>
+        <div class="w-6 min-w-min">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar estudiante"
+                    [value]="busqueda"
+                    (input)="onBuscar($event.target.value)"
+                />
+            </span>
+        </div>
+    </div>
+
+    <p-table
+        [value]="estudiantesFiltrados"
+        [paginator]="true"
+        [rows]="10"
+        [totalRecords]="estudiantesFiltrados.length"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [responsiveLayout]="'scroll'"
+        dataKey="id"
+        selectionMode="multiple"
+        [(selection)]="seleccion"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="codigo" scope="col" class="w-3">
+                    Código
+                    <p-sortIcon field="codigo"></p-sortIcon>
+                </th>
+                <th pSortableColumn="nombre" scope="col">
+                    Nombres
+                    <p-sortIcon field="nombre"></p-sortIcon>
+                </th>
+                <th pSortableColumn="correo" scope="col">
+                    Correo
+                    <p-sortIcon field="correo"></p-sortIcon>
+                </th>
+                <th scope="col" class="text-center w-3">Opciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-estudiante>
+            <tr>
+                <td>{{ estudiante.codigo }}</td>
+                <td>{{ estudiante.nombre }}</td>
+                <td>{{ estudiante.correo }}</td>
+                <td class="text-center">
+                    <button
+                        pButton
+                        icon="pi pi-trash"
+                        class="p-button-text p-button-danger p-button-sm"
+                        (click)="remover(estudiante)"
+                        pTooltip="Quitar de selección"
+                    ></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4" class="text-center">
+                    No hay estudiantes con ese filtro
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <div class="flex justify-content-between align-items-center mt-3">
+        <div class="text-700">
+            Seleccionados: {{ seleccion.length }} estudiantes
+        </div>
+        <button
+            pButton
+            label="Agregar a envío"
+            icon="pi pi-plus"
+            class="p-button-outlined"
+            [disabled]="!seleccion.length"
+            (click)="agregarAEnvio()"
+        ></button>
+    </div>
+
+    <div class="mt-5">
+        <div class="font-medium text-900 mb-2">
+            Estudiantes a enviar el correo:
+        </div>
+
+        <p-table
+            [value]="seleccionParaEnviar"
+            [paginator]="true"
+            [rows]="10"
+            [totalRecords]="seleccionParaEnviar.length"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+            styleClass="p-datatable-gridlines p-datatable-striped"
+            [responsiveLayout]="'scroll'"
+            dataKey="id"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="codigo" scope="col" class="w-3">
+                        Código
+                        <p-sortIcon field="codigo"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="nombre" scope="col">
+                        Nombres
+                        <p-sortIcon field="nombre"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="correo" scope="col">
+                        Correo
+                        <p-sortIcon field="correo"></p-sortIcon>
+                    </th>
+                    <th scope="col" class="text-center w-3">Opciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-estudiante>
+                <tr>
+                    <td>{{ estudiante.codigo }}</td>
+                    <td>{{ estudiante.nombre }}</td>
+                    <td>{{ estudiante.correo }}</td>
+                    <td class="text-center">
+                        <button
+                            pButton
+                            icon="pi pi-trash"
+                            class="p-button-text p-button-danger p-button-sm"
+                            (click)="removerEnvio(estudiante)"
+                            pTooltip="Quitar del envío"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4" class="text-center">
+                        No hay estudiantes seleccionados para el envío
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="flex justify-content-end mt-4">
+        <button
+            pButton
+            label="Enviar correo a estudiantes"
+            icon="pi pi-send"
+            class="p-button-primary"
+            [disabled]="!seleccionParaEnviar.length"
+            (click)="enviarCorreos()"
+        ></button>
+    </div>
+</p-panel>

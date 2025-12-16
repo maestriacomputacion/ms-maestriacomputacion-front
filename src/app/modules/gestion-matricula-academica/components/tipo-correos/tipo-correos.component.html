@@ -1,0 +1,37 @@
+<p-panel>
+    <p-header>
+        <b>TIPO DE CORREOS A ENVIAR</b>
+    </p-header>
+
+    <div class="surface-card border-1 border-200 border-round p-4">
+        <div class="flex align-items-center gap-2 mb-3">
+            <i class="pi pi-send text-primary text-xl"></i>
+            <div class="font-medium text-900">Selecciona la plantilla</div>
+        </div>
+
+        <div class="grid">
+            <div class="col-12 md:col-6" *ngFor="let tipo of tipos">
+                <div
+                    class="border-1 border-200 border-round p-3 flex flex-column gap-2 h-full"
+                >
+                    <div class="flex align-items-center gap-2">
+                        <i [class]="tipo.icon + ' text-primary'"></i>
+                        <div class="font-semibold text-900">
+                            {{ tipo.label }}
+                        </div>
+                    </div>
+                    <div class="text-600">{{ tipo.descripcion }}</div>
+                    <div class="flex justify-content-end">
+                        <button
+                            pButton
+                            label="Enviar correo"
+                            class="p-button-primary p-button-sm"
+                            icon="pi pi-envelope"
+                            (click)="seleccionar(tipo)"
+                        ></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-panel>

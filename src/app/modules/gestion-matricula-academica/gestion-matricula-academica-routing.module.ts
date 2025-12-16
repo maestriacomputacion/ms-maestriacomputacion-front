@@ -16,6 +16,7 @@ import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matric
 import { ListadoMatriculasComponent } from './components/listado-matriculas/listado-matriculas.component';
 import { ReporteCursosOfertadosComponent } from './components/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
 import { ReporteCentroPostgradosComponent } from './components/reporte-centro-postgrados/reporte-centro-postgrados.component';
+import { TipoCorreosComponent } from './components/tipo-correos/tipo-correos.component';
 
 const routes: Routes = [
     {
@@ -41,6 +42,10 @@ const routes: Routes = [
             {
                 path: 'reporte-centro-postgrados',
                 component: ReporteCentroPostgradosComponent,
+            },
+            {
+                path: 'tipo-correos',
+                component: TipoCorreosComponent,
             },
             {
                 path: 'registrar-curso',

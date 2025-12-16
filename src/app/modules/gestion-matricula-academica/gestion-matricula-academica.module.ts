@@ -23,6 +23,7 @@ import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matric
 import { ListadoMatriculasComponent } from './components/listado-matriculas/listado-matriculas.component';
 import { ReporteCursosOfertadosComponent } from './components/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
 import { ReporteCentroPostgradosComponent } from './components/reporte-centro-postgrados/reporte-centro-postgrados.component';
+import { TipoCorreosComponent } from './components/tipo-correos/tipo-correos.component';
 
 @NgModule({
     declarations: [
@@ -31,6 +32,7 @@ import { ReporteCentroPostgradosComponent } from './components/reporte-centro-po
         GenerarCursosOfertadosComponent,
         ReporteCursosOfertadosComponent,
         ReporteCentroPostgradosComponent,
+        TipoCorreosComponent,
         RegistrarCursoComponent,
         GestionMaterialApoyoComponent,
         GenerarMatriculaPreviaComponent,

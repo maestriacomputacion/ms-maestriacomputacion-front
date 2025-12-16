@@ -21,12 +21,16 @@ import { CursosPorAreaTabsComponent } from './components/cursos-por-area-tabs/cu
 import { VistaTutorComponent } from './components/vista-tutor/vista-tutor.component';
 import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
 import { ListadoMatriculasComponent } from './components/listado-matriculas/listado-matriculas.component';
+import { ReporteCursosOfertadosComponent } from './components/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
+import { ReporteCentroPostgradosComponent } from './components/reporte-centro-postgrados/reporte-centro-postgrados.component';
 
 @NgModule({
     declarations: [
         GestionPeriodoAcademicoComponent,
         GestionCursoComponent,
         GenerarCursosOfertadosComponent,
+        ReporteCursosOfertadosComponent,
+        ReporteCentroPostgradosComponent,
         RegistrarCursoComponent,
         GestionMaterialApoyoComponent,
         GenerarMatriculaPreviaComponent,

@@ -1,0 +1,130 @@
+<p-panel>
+    <p-header>
+        <b>REPORTE PARA EL CENTRO DE POSTGRADOS</b>
+    </p-header>
+
+    <form [formGroup]="reporteForm" class="flex flex-column gap-3">
+        <div class="flex align-items-center gap-2">
+            <i class="pi pi-file text-primary text-lg"></i>
+            <div class="text-600">
+                Completa los parámetros para generar el reporte solicitado.
+            </div>
+        </div>
+
+        <div class="surface-card border-1 border-200 border-round p-3">
+            <div class="font-bold text-900 mb-3">Parámetros globales</div>
+            <div class="grid">
+                <div class="col-12 md:col-6">
+                    <label
+                        for="consecutivo"
+                        class="font-medium text-900 block mb-2"
+                        >Consecutivo</label
+                    >
+                    <input
+                        id="consecutivo"
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        formControlName="consecutivo"
+                        placeholder="Ej: 2024-001"
+                    />
+                </div>
+                <div class="col-12 md:col-6">
+                    <label
+                        for="copia"
+                        class="font-medium text-900 block mb-2"
+                        >Copia a</label
+                    >
+                    <input
+                        id="copia"
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        formControlName="copia"
+                        placeholder="Correo o destinatario"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div class="surface-card border-1 border-200 border-round p-3">
+            <div class="font-bold text-900 mb-3">
+                Parámetros director centro de postgrados
+            </div>
+            <div class="grid">
+                <div class="col-12 md:col-6">
+                    <label
+                        for="destinatario"
+                        class="font-medium text-900 block mb-2"
+                        >Nombre de la persona a quien va dirigido el
+                        reporte</label
+                    >
+                    <input
+                        id="destinatario"
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        formControlName="destinatario"
+                        placeholder="Nombre completo"
+                    />
+                </div>
+                <div class="col-12 md:col-6">
+                    <label
+                        for="titulo"
+                        class="font-medium text-900 block mb-2"
+                        >Título profesional</label
+                    >
+                    <input
+                        id="titulo"
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        formControlName="titulo"
+                        placeholder="Ej: Ph.D. en Ingeniería"
+                    />
+                </div>
+                <div class="col-12 md:col-6">
+                    <label
+                        for="organizacion"
+                        class="font-medium text-900 block mb-2"
+                        >Organización</label
+                    >
+                    <input
+                        id="organizacion"
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        formControlName="organizacion"
+                        placeholder="Universidad o entidad"
+                    />
+                </div>
+                <div class="col-12 md:col-6">
+                    <label
+                        for="rol"
+                        class="font-medium text-900 block mb-2"
+                        >Rol de la organización</label
+                    >
+                    <input
+                        id="rol"
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        formControlName="rol"
+                        placeholder="Director, Coordinador, etc."
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-content-end">
+            <button
+                pButton
+                type="button"
+                label="Generar reporte"
+                icon="pi pi-file"
+                class="p-button-primary"
+                (click)="generarReporte()"
+            ></button>
+        </div>
+    </form>
+</p-panel>

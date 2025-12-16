@@ -14,6 +14,8 @@ import { ResultadoMatriculaMasivaComponent } from './components/resultado-matric
 import { VistaTutorComponent } from './components/vista-tutor/vista-tutor.component';
 import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
 import { ListadoMatriculasComponent } from './components/listado-matriculas/listado-matriculas.component';
+import { ReporteCursosOfertadosComponent } from './components/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
+import { ReporteCentroPostgradosComponent } from './components/reporte-centro-postgrados/reporte-centro-postgrados.component';
 
 const routes: Routes = [
     {
@@ -31,6 +33,14 @@ const routes: Routes = [
             {
                 path: 'generar-cursos-ofertados',
                 component: GenerarCursosOfertadosComponent,
+            },
+            {
+                path: 'reporte-cursos-ofertados',
+                component: ReporteCursosOfertadosComponent,
+            },
+            {
+                path: 'reporte-centro-postgrados',
+                component: ReporteCentroPostgradosComponent,
             },
             {
                 path: 'registrar-curso',

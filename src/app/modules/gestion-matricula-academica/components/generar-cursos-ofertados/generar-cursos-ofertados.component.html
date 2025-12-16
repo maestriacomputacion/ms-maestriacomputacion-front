@@ -7,58 +7,23 @@
     <div class="w-20rem">
         <div class="flex flex-column gap-3 mb-2">
             <div class="flex align-items-center gap-2">
-                <label
-                    for="periodoNumero"
-                    class="font-medium mb-1"
-                    style="white-space: nowrap"
-                    >Periodo</label
-                >
-                <input
-                    id="periodoNumero"
-                    type="number"
-                    min="1"
-                    max="2"
-                    pInputText
-                    class="w-5rem"
-                    [(ngModel)]="periodoNumero"
-                />
-                <p-dropdown
-                    id="periodoAnio"
-                    [options]="anios"
-                    [(ngModel)]="periodoAnio"
-                    placeholder="Año"
-                    class="w-full"
-                ></p-dropdown>
+                <label for="periodoNumero" class="font-medium mb-1" style="white-space: nowrap">Periodo</label>
+                <input id="periodoNumero" type="number" min="1" max="2" pInputText class="w-5rem"
+                    [(ngModel)]="periodoNumero" />
+                <p-dropdown id="periodoAnio" [options]="anios" [(ngModel)]="periodoAnio" placeholder="Año"
+                    class="w-full"></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
-                <label
-                    for="areaFormacion"
-                    class="font-medium mb-1"
-                    style="white-space: nowrap"
-                    >Area de formación</label
-                >
-                <p-dropdown
-                    id="areaFormacion"
-                    [options]="areasFormacion"
-                    [(ngModel)]="areaSeleccionada"
-                    placeholder="Selecciona el area"
-                    class="w-12rem"
-                ></p-dropdown>
+                <label for="areaFormacion" class="font-medium mb-1" style="white-space: nowrap">Area de
+                    formación</label>
+                <p-dropdown id="areaFormacion" [options]="areasFormacion" [(ngModel)]="areaSeleccionada"
+                    placeholder="Selecciona el area" class="w-12rem"></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
-                <label
-                    for="asignaturaInvestigacion"
-                    class="font-medium mb-1"
-                    style="white-space: nowrap"
-                    >Asignatura de investigación</label
-                >
-                <p-dropdown
-                    id="asignaturaInvestigacion"
-                    [options]="asignaturas"
-                    [(ngModel)]="asignaturaSeleccionada"
-                    placeholder="Selecciona la asignatura"
-                    class="w-12rem"
-                ></p-dropdown>
+                <label for="asignaturaInvestigacion" class="font-medium mb-1" style="white-space: nowrap">Asignatura de
+                    investigación</label>
+                <p-dropdown id="asignaturaInvestigacion" [options]="asignaturas" [(ngModel)]="asignaturaSeleccionada"
+                    placeholder="Selecciona la asignatura" class="w-12rem"></p-dropdown>
             </div>
         </div>
     </div>
@@ -66,34 +31,20 @@
     <div class="w-6 mb-3">
         <span class="p-input-icon-left w-full">
             <i class="pi pi-search"></i>
-            <input
-                pInputText
-                type="text"
-                class="w-full"
-                placeholder="Buscar Curso Ofertado"
-                (input)="
+            <input pInputText type="text" class="w-full" placeholder="Buscar Curso Ofertado" (input)="
                     tableCursosOfertados.filterGlobal(
                         $event.target.value,
                         'contains'
                     )
-                "
-            />
+                " />
         </span>
     </div>
 
     <!-- Tabla -->
-    <p-table
-        #tableCursosOfertados
-        [value]="cursosOfertados"
-        [paginator]="true"
-        [rows]="10"
-        [totalRecords]="200"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        styleClass="p-datatable-gridlines p-datatable-striped"
-        [responsiveLayout]="'scroll'"
-        [globalFilterFields]="['grupo', 'asignatura', 'docente', 'horario']"
-    >
+    <p-table #tableCursosOfertados [value]="cursosOfertados" [paginator]="true" [rows]="10" [totalRecords]="200"
+        [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'"
+        [globalFilterFields]="['grupo', 'asignatura', 'docente', 'horario']">
         <ng-template pTemplate="header">
             <tr>
                 <th scope="col">Grupo</th>
@@ -118,10 +69,6 @@
     </p-table>
 
     <div class="flex justify-content-end mt-3">
-        <button
-            pButton
-            label="Agregar Cursos"
-            style="min-width: 150px; height: 40px"
-        ></button>
+        <button pButton label="Agregar Cursos" style="min-width: 150px; height: 40px"></button>
     </div>
 </p-panel>

@@ -16,7 +16,7 @@
       <label for="grupo" class="font-medium mb-1 label-required"
         style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
       <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
-        [disabled]="isEditMode || isViewMode || saving" [ngClass]="{ 'p-invalid': grupo?.invalid && grupo?.touched }"
+        [ngClass]="{ 'p-invalid': grupo?.invalid && grupo?.touched }"
         [attr.aria-invalid]="grupo?.invalid" placeholder="Ej: A" />
     </div>
     <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem)" aria-live="assertive">

@@ -1,7 +1,13 @@
 <p-toast></p-toast>
 <p-panel [formGroup]="form">
   <p-header>
-    <b>{{ isViewMode ? 'VER CURSO' : (isEditMode ? 'EDITAR CURSO' : 'REGISTRAR CURSO') }}</b>
+    <b>{{
+      isViewMode
+      ? "VER CURSO"
+      : isEditMode
+      ? "EDITAR CURSO"
+      : "REGISTRAR CURSO"
+      }}</b>
   </p-header>
 
   <!-- Sección Grupo -->
@@ -10,14 +16,15 @@
       <label for="grupo" class="font-medium mb-1 label-required"
         style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
       <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
-        [ngClass]="{'p-invalid': grupo?.invalid && grupo?.touched}" [attr.aria-invalid]="grupo?.invalid"
-        placeholder="Ej: A" />
+        [disabled]="isEditMode || isViewMode || saving" [ngClass]="{ 'p-invalid': grupo?.invalid && grupo?.touched }"
+        [attr.aria-invalid]="grupo?.invalid" placeholder="Ej: A" />
     </div>
-    <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem);" aria-live="assertive">
-      <small *ngIf="cursoExistsMessage" class="p-error">{{ cursoExistsMessage }}</small>
+    <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem)" aria-live="assertive">
+      <small *ngIf="cursoExistsMessage" class="p-error">{{
+        cursoExistsMessage
+        }}</small>
     </div>
   </div>
-
 
   <!-- Sección Horario -->
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
@@ -30,9 +37,10 @@
   <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
     <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
     <textarea id="salon" rows="1" pInputTextarea autoResize="autoResize" formControlName="salon" class="flex-1"
-      maxlength="50" [ngClass]="{'p-invalid': salonControl?.invalid && salonControl?.touched}"></textarea>
+      maxlength="50" [ngClass]="{
+                'p-invalid': salonControl?.invalid && salonControl?.touched
+            }"></textarea>
   </div>
-
 
   <div class="p-fluid p-formgrid p-grid mt-5">
     <div class="p-field p-col-12">
@@ -46,13 +54,19 @@
                 <div class="flex flex-row p-mb-2">
                   <div class="font-bold mr-2">Código</div>
                   <div class="flex-grow-1">
-                    {{ asignatura?.codigo || 'Ninguna asignatura seleccionada' }}
+                    {{
+                    asignatura?.codigo ||
+                    "Ninguna asignatura seleccionada"
+                    }}
                   </div>
                 </div>
                 <div class="flex flex-row">
                   <div class="font-bold mr-2">Nombre</div>
                   <div class="flex-grow-1">
-                    {{ asignatura?.nombre || 'Seleccione una asignatura activa desde el modal' }}
+                    {{
+                    asignatura?.nombre ||
+                    "Seleccione una asignatura activa desde el modal"
+                    }}
                   </div>
                 </div>
               </div>
@@ -80,7 +94,10 @@
           [sourceStyle]="{ height: '22rem' }" [targetStyle]="{ height: '22rem' }" [showSourceControls]="false"
           [showTargetControls]="false" [disabled]="loadingDocentes || saving || isViewMode">
           <ng-template let-docente pTemplate="item">
-            <div>{{ docente.nombre }} {{docente.apellido}} | {{ docente.codigo }}</div>
+            <div>
+              {{ docente.nombre }} {{ docente.apellido }} |
+              {{ docente.codigo }}
+            </div>
           </ng-template>
         </p-pickList>
         <div class="flex justify-content-center mt-3">
@@ -134,7 +151,7 @@
       [rows]="10">
       <ng-template pTemplate="header">
         <tr>
-          <th scope="col" style="width:3rem"></th>
+          <th scope="col" style="width: 3rem"></th>
           <th scope="col">Nombre</th>
         </tr>
       </ng-template>
@@ -163,7 +180,7 @@
         <tr>
           <th scope="col">Código</th>
           <th scope="col">Nombre</th>
-          <th scope="col" style="width:8rem">Acción</th>
+          <th scope="col" style="width: 8rem">Acción</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-asign>
@@ -171,22 +188,27 @@
           <td>{{ asign.codigo }}</td>
           <td>{{ asign.nombre }}</td>
           <td class="text-center">
-            <button type="button" class="p-link" (click)="selectAsignatura(asign)"
-              style="color: #0d6efd;">Seleccionar</button>
+            <button type="button" class="p-link" (click)="selectAsignatura(asign)" style="color: #0d6efd">
+              Seleccionar
+            </button>
           </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td [attr.colspan]="2">No se encontraron asignaturas activas</td>
+          <td [attr.colspan]="2">
+            No se encontraron asignaturas activas
+          </td>
         </tr>
       </ng-template>
     </p-table>
     <p-footer>
       <div class="flex justify-content-end gap-2">
         <button pButton label="Cancelar" class="p-button-outlined" (click)="cancelAsignaturaSelection()"></button>
-        <button pButton label="Aceptar" class="p-button-primary" (click)="confirmAsignaturaSelection()"
-          [disabled]="!modalSelectedAsignaturas || modalSelectedAsignaturas.length === 0"></button>
+        <button pButton label="Aceptar" class="p-button-primary" (click)="confirmAsignaturaSelection()" [disabled]="
+                        !modalSelectedAsignaturas ||
+                        modalSelectedAsignaturas.length === 0
+                    "></button>
       </div>
     </p-footer>
   </p-dialog>
@@ -196,7 +218,7 @@
       <label for="observacion"><b>Observación: </b></label>
       <textarea id="observacion" rows="5" pInputTextarea autoResize="autoResize" maxlength="200"
         formControlName="observacion"></textarea>
-      <div class="text-right mt-1" style="margin-right: 0.5rem;">
+      <div class="text-right mt-1" style="margin-right: 0.5rem">
         <small>{{ observacionLength }} / 200</small>
       </div>
     </div>
@@ -204,9 +226,13 @@
 
   <div class="flex justify-content-end mt-4">
     <button *ngIf="!isViewMode" pButton [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
-      class="p-button-primary mr-2"
-      [disabled]="form.invalid || saving || loadingMaterials || !targetDocentes || targetDocentes.length === 0"
-      (click)="onSubmit()" [loading]="saving"></button>
+      class="p-button-primary mr-2" [disabled]="
+                form.invalid ||
+                saving ||
+                loadingMaterials ||
+                !targetDocentes ||
+                targetDocentes.length === 0
+            " (click)="onSubmit()" [loading]="saving"></button>
     <button *ngIf="!isViewMode" pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"
       (click)="onCancel()"></button>
     <button *ngIf="isViewMode" pButton label="Cerrar" class="p-button-secondary" type="button"

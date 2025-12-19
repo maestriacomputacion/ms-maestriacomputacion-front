@@ -93,6 +93,12 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             observacion: ['', [Validators.maxLength(200)]],
         });
 
+        // Si estamos en modo edición o vista, deshabilitar el control 'grupo'
+        if (this.isEditMode || this.isViewMode) {
+            const grupoCtrlAfter = this.form.get('grupo');
+            grupoCtrlAfter?.disable({ emitEvent: false });
+        }
+
         // Convertir grupo a una sola letra mayúscula
         const grupoControl = this.form.get('grupo');
         if (grupoControl) {
@@ -123,7 +129,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
         // Validar existencia de curso cuando cambia el grupo (debounce)
         const grupoCtrl = this.form.get('grupo');
-        if (grupoCtrl) {
+        // No subscribir a la validación de existencia si estamos en modo edición o vista
+        if (grupoCtrl && !this.isEditMode && !this.isViewMode) {
             const s = (grupoCtrl.valueChanges as any)
                 .pipe(
                     debounceTime(400),
@@ -353,9 +360,9 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             this.asignatura = this.modalSelectedAsignaturas[0];
             this.cursoExistsMessage = null;
             this.clearGrupoExistsErrorIfAny();
-            // Validar existencia inmediatamente si ya hay un grupo escrito
+            // Validar existencia inmediatamente si ya hay un grupo escrito (solo fuera de modo edición)
             const currentGrupo = this.form.get('grupo')?.value;
-            if (currentGrupo && currentGrupo.length > 0)
+            if (!this.isEditMode && currentGrupo && currentGrupo.length > 0)
                 this.validateGroupWithAsignatura(currentGrupo);
         }
         this.displayAsignaturaDialog = false;
@@ -373,9 +380,9 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.clearGrupoExistsErrorIfAny();
         this.displayAsignaturaDialog = false;
         // Cargar docentes asociados a la asignatura seleccionada
-        // Validar existencia inmediatamente si ya hay un grupo escrito
+        // Validar existencia inmediatamente si ya hay un grupo escrito (solo fuera de modo edición)
         const currentGrupo = this.form.get('grupo')?.value;
-        if (currentGrupo && currentGrupo.length > 0) {
+        if (!this.isEditMode && currentGrupo && currentGrupo.length > 0) {
             this.validateGroupWithAsignatura(currentGrupo);
         }
         if (asign?.id) {
@@ -595,6 +602,12 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             salon: curso.salon || '',
             observacion: curso.observacion || '',
         });
+
+        // Asegurar que 'grupo' permanezca inhabilitado en modo edición/vista
+        if (this.isEditMode || this.isViewMode) {
+            const grupoCtrl = this.form.get('grupo');
+            grupoCtrl?.disable({ emitEvent: false });
+        }
 
         // Establecer asignatura
         if (curso.asignatura) {

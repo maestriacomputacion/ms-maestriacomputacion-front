@@ -83,6 +83,10 @@ export class GestionCursoComponent implements OnInit {
     onAreaChange(nuevaArea: string | null): void {
         // Asegurar que `areaSeleccionada` refleja el nuevo valor
         this.areaSeleccionada = nuevaArea;
+        
+        // Limpiar asignatura seleccionada al cambiar de área
+        this.asignaturaSeleccionada = null;
+        
         // Cargar asignaturas si hay área, de lo contrario limpiar
         if (this.areaSeleccionada) {
             this.cursoService
@@ -94,12 +98,15 @@ export class GestionCursoComponent implements OnInit {
                         } else {
                             this.asignaturas = [];
                         }
+                        // Cargar cursos después de actualizar las asignaturas
+                        this.loadCursos();
                     }
                 );
         } else {
             this.asignaturas = [];
+            // Cargar cursos inmediatamente si no hay área
+            this.loadCursos();
         }
-        this.loadCursos();
     }
     private formatDateString(dateStr: string): string {
         if (!dateStr) return '';

@@ -51,6 +51,7 @@ export class CursoService {
             ),
             periodoEstado: item.periodo?.estado ?? null,
             salon: item.salon ?? null,
+            horario: item.horario ?? null,
         };
     }
 

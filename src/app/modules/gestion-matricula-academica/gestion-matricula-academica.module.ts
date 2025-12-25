@@ -6,7 +6,6 @@ import { PrimenNgModule } from '../primen-ng/primen-ng.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GestionCursoComponent } from './components/gestion-curso/gestion-curso.component';
-import { GenerarCursosOfertadosComponent } from './components/generar-cursos-ofertados/generar-cursos-ofertados.component';
 import { RegistrarCursoComponent } from './components/registrar-curso/registrar-curso.component';
 import { GestionMaterialApoyoComponent } from './components/gestion-material-apoyo/gestion-material-apoyo.component';
 import { MaterialApoyoService } from './services/material-apoyo.service';
@@ -31,7 +30,6 @@ import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/envi
     declarations: [
         GestionPeriodoAcademicoComponent,
         GestionCursoComponent,
-        GenerarCursosOfertadosComponent,
         ReporteCursosOfertadosComponent,
         ReporteCentroPostgradosComponent,
         TipoCorreosComponent,

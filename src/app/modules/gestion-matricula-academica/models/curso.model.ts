@@ -41,6 +41,7 @@ export interface CursoUI {
     fecha: string; // fecha formateada
     periodoEstado?: string; // estado del periodo (e.g., 'ACTIVO'|'INACTIVO')
     salon?: string | null; // salón asociado al curso
+    horario?: string | null; // horario del curso
 }
 
 // Modelo detallado para vistas como matricular estudiantes

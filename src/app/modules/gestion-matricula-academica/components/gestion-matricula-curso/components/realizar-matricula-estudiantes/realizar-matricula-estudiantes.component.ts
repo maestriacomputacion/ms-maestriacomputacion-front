@@ -1,7 +1,9 @@
-// ...existing code...
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { CursoService } from '../../../../services/curso.service';
 import { BackendCurso } from '../../../../models/curso.model';
 import {
@@ -11,36 +13,33 @@ import {
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 
+type EstudianteExtendido = EstudianteBase & {
+    observaciones?: string;
+    motivoError?: string;
+};
+
 @Component({
     selector: 'app-realizar-matricula-estudiantes',
     templateUrl: './realizar-matricula-estudiantes.component.html',
     styleUrls: ['./realizar-matricula-estudiantes.component.scss'],
 })
-export class RealizarMatriculaEstudiantesComponent implements OnInit {
+export class RealizarMatriculaEstudiantesComponent
+    implements OnInit, OnDestroy
+{
     cursoId: number | null = null;
     curso: BackendCurso | null = null;
     loading = false;
 
-    // Extiende el modelo para permitir observaciones y motivos de error
-    estudiantes: (EstudianteBase & {
-        observaciones?: string;
-        motivoError?: string;
-    })[] = [];
-    estudiantesFiltrados: (EstudianteBase & {
-        observaciones?: string;
-        motivoError?: string;
-    })[] = [];
-    public busquedaEstudiante: string = '';
-    estudiantesMatricular: (EstudianteBase & {
-        observaciones?: string;
-        motivoError?: string;
-    })[] = [];
+    estudiantes: EstudianteExtendido[] = [];
+    estudiantesFiltrados: EstudianteExtendido[] = [];
+    busquedaEstudiante = '';
+    estudiantesMatricular: EstudianteExtendido[] = [];
 
-    public displayObservacionModal: boolean = false;
-    public observacionTemporal: string = '';
-    public estudianteSeleccionadoObs:
-        | (EstudianteBase & { observaciones?: string; motivoError?: string })
-        | null = null;
+    displayObservacionModal = false;
+    observacionTemporal = '';
+    estudianteSeleccionadoObs: EstudianteExtendido | null = null;
+
+    private readonly destroy$ = new Subject<void>();
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -52,7 +51,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.route.params.subscribe((params) => {
+        this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
             if (params['id']) {
                 this.cursoId = +params['id'];
                 this.cargarCurso(this.cursoId);
@@ -60,27 +59,10 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         });
         this.cargarEstudiantes();
     }
-    cargarEstudiantes(): void {
-        this.loading = true;
-        this.estudianteService.listEstudiantes().subscribe({
-            next: (estudiantes: EstudianteBase[]) => {
-                this.estudiantes = estudiantes || [];
-                this.filtrarEstudiantes();
-                this.loading = false;
-            },
-            error: (err) => {
-                console.error('Error cargando estudiantes', err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail:
-                        err?.error?.message ||
-                        err?.message ||
-                        'Error al cargar los estudiantes',
-                });
-                this.loading = false;
-            },
-        });
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     filtrarEstudiantes(): void {
@@ -89,14 +71,12 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
             this.estudiantesFiltrados = [...this.estudiantes];
             return;
         }
-        this.estudiantesFiltrados = this.estudiantes.filter((e) => {
-            const codigo = e.codigo?.toLowerCase() || '';
-            const nombre = (
-                e.persona?.nombre +
-                ' ' +
-                e.persona?.apellido
-            ).toLowerCase();
-            const correo = e.persona?.correoElectronico?.toLowerCase() || '';
+        this.estudiantesFiltrados = this.estudiantes.filter((estudiante) => {
+            const codigo = estudiante.codigo?.toLowerCase() || '';
+            const nombre =
+                `${estudiante.persona?.nombre} ${estudiante.persona?.apellido}`.toLowerCase();
+            const correo =
+                estudiante.persona?.correoElectronico?.toLowerCase() || '';
             return (
                 codigo.includes(texto) ||
                 nombre.includes(texto) ||
@@ -105,42 +85,11 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         });
     }
 
-    cargarCurso(id: number): void {
-        this.loading = true;
-        this.cursoService.getCursoById(id).subscribe({
-            next: (resp) => {
-                if (resp.typeResponse === 'SUCCESS') {
-                    this.curso = resp.data;
-                } else {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail:
-                            resp.message ||
-                            'No se pudo cargar la información del curso',
-                    });
-                }
-                this.loading = false;
-            },
-            error: (err) => {
-                console.error('Error cargando curso', err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Error al cargar la información del curso',
-                });
-                this.loading = false;
-            },
-        });
-    }
-
     seleccionarEstudiante(codigo: string): void {
         const estudiante = this.estudiantes.find((e) => e.codigo === codigo);
         if (!estudiante) return;
-        const yaSeleccionado = this.estudiantesMatricular.some(
-            (e) => e.codigo === codigo
-        );
-        if (yaSeleccionado) {
+
+        if (this.estudianteYaSeleccionado(codigo)) {
             this.messageService.add({
                 severity: 'info',
                 summary: 'Información',
@@ -148,7 +97,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
             });
             return;
         }
-        // Validar en backend antes de agregar
+
         if (!this.cursoId) {
             this.messageService.add({
                 severity: 'error',
@@ -158,49 +107,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
             return;
         }
 
-        this.loading = true;
-        this.cursoService
-            .validarMatricula(estudiante.id, this.cursoId)
-            .subscribe({
-                next: (resp) => {
-                    this.loading = false;
-                    // Backend devuelve ApiResponse<boolean> en data
-                    if (
-                        resp?.typeResponse === 'SUCCESS' &&
-                        resp.data === true
-                    ) {
-                        // Clonar para evitar referencias compartidas
-                        this.estudiantesMatricular.push({ ...estudiante });
-                        this.messageService.add({
-                            severity: 'success',
-                            summary: 'Éxito',
-                            detail: 'Estudiante agregado a la lista de matrícula',
-                        });
-                    } else {
-                        // Mostrar mensaje del backend (mensaje general sobre por qué no puede matricularse)
-                        const motivo =
-                            resp?.message ||
-                            'No cumple requisitos para matricularse';
-                        this.messageService.add({
-                            severity: 'warn',
-                            summary: 'Validación',
-                            detail: motivo,
-                        });
-                    }
-                },
-                error: (err) => {
-                    this.loading = false;
-                    console.error('Error validando matrícula', err);
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail:
-                            err?.error?.message ||
-                            err?.message ||
-                            'Error al validar matrícula',
-                    });
-                },
-            });
+        this.validarYAgregarEstudiante(estudiante);
     }
 
     agregarObservacion(codigo: string): void {
@@ -208,6 +115,7 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
             (e) => e.codigo === codigo
         );
         if (!estudiante) return;
+
         this.estudianteSeleccionadoObs = estudiante;
         this.observacionTemporal = estudiante.observaciones || '';
         this.displayObservacionModal = true;
@@ -266,26 +174,158 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         }
 
         this.confirmationService.confirm({
-            target: event?.target,
+            target: event?.target as HTMLElement,
             message: `¿Está seguro de matricular ${this.estudiantesMatricular.length} estudiante(s) en este curso?`,
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí, matricular',
             rejectLabel: 'Cancelar',
-            accept: () => {
-                this.procesarMatricula();
-            },
+            accept: () => this.procesarMatricula(),
         });
+    }
+
+    cancelarMatricula(): void {
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'gestion-matricula-curso',
+        ]);
+    }
+
+    getDocentesFormateados(): string {
+        if (!this.curso?.docentes?.length) return '-';
+        return this.curso.docentes
+            .map((docente) => {
+                const nombreCompleto = docente.persona
+                    ? `${docente.persona.nombre ?? ''} ${
+                          docente.persona.apellido ?? ''
+                      }`.trim()
+                    : '';
+                return nombreCompleto || docente.codigo || '-';
+            })
+            .join(', ');
+    }
+
+    getTagPeriodo(): string {
+        return this.curso?.periodo?.tagPeriodo?.toString() ?? '-';
+    }
+
+    getFechasPeriodo(): string {
+        if (!this.curso?.periodo) return '-';
+        const fechaInicio = this.formatDate(this.curso.periodo.fechaInicio);
+        const fechaFin = this.formatDate(this.curso.periodo.fechaFin);
+        return `${fechaInicio} - ${fechaFin}`;
+    }
+
+    private cargarEstudiantes(): void {
+        this.loading = true;
+        this.estudianteService
+            .listEstudiantes()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (estudiantes: EstudianteBase[]) => {
+                    this.estudiantes = estudiantes || [];
+                    this.filtrarEstudiantes();
+                    this.loading = false;
+                },
+                error: (err) => {
+                    console.error('Error cargando estudiantes', err);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                            err?.error?.message ??
+                            err?.message ??
+                            'Error al cargar los estudiantes',
+                    });
+                    this.loading = false;
+                },
+            });
+    }
+
+    private cargarCurso(id: number): void {
+        this.loading = true;
+        this.cursoService
+            .getCursoById(id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.curso = response.data;
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail:
+                                response.message ||
+                                'No se pudo cargar la información del curso',
+                        });
+                    }
+                    this.loading = false;
+                },
+                error: (err) => {
+                    console.error('Error cargando curso', err);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Error al cargar la información del curso',
+                    });
+                    this.loading = false;
+                },
+            });
+    }
+
+    private validarYAgregarEstudiante(estudiante: EstudianteExtendido): void {
+        this.loading = true;
+        this.cursoService
+            .validarMatricula(estudiante.id, this.cursoId!)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    this.loading = false;
+                    if (
+                        response?.typeResponse === 'SUCCESS' &&
+                        response.data === true
+                    ) {
+                        this.estudiantesMatricular.push({ ...estudiante });
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Éxito',
+                            detail: 'Estudiante agregado a la lista de matrícula',
+                        });
+                    } else {
+                        const motivo =
+                            response?.message ||
+                            'No cumple requisitos para matricularse';
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: 'Validación',
+                            detail: motivo,
+                        });
+                    }
+                },
+                error: (err) => {
+                    this.loading = false;
+                    console.error('Error validando matrícula', err);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                            err?.error?.message ??
+                            err?.message ??
+                            'Error al validar matrícula',
+                    });
+                },
+            });
     }
 
     private procesarMatricula(): void {
         const payload: MatriculaEstudiantesRequest = {
             matriculaEstudianteCursos: this.estudiantesMatricular.map(
-                (est) => ({
-                    estudianteId: est.id,
+                (estudiante) => ({
+                    estudianteId: estudiante.id,
                     cursos: [
                         {
                             cursoId: this.cursoId,
-                            observacion: est.observaciones || '',
+                            observacion: estudiante.observaciones || '',
                         },
                     ],
                 })
@@ -293,33 +333,40 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         };
 
         this.loading = true;
-        this.cursoService.matricularEstudiantes(payload).subscribe({
-            next: (resp) => {
-                this.loading = false;
-                if (resp.typeResponse === 'SUCCESS') {
-                    this.procesarRespuestaMatricula(resp.data, resp.message);
-                } else {
+        this.cursoService
+            .matricularEstudiantes(payload)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    this.loading = false;
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.procesarRespuestaMatricula(
+                            response.data,
+                            response.message
+                        );
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail:
+                                response.message ||
+                                'Error al realizar la matrícula',
+                        });
+                    }
+                },
+                error: (err) => {
+                    this.loading = false;
+                    console.error('Error en matrícula', err);
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
                         detail:
-                            resp.message || 'Error al realizar la matrícula',
+                            err?.error?.message ??
+                            err?.message ??
+                            'Error al procesar la matrícula',
                     });
-                }
-            },
-            error: (err) => {
-                this.loading = false;
-                console.error('Error en matrícula', err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail:
-                        err?.error?.message ||
-                        err?.message ||
-                        'Error al procesar la matrícula',
-                });
-            },
-        });
+                },
+            });
     }
 
     private procesarRespuestaMatricula(
@@ -329,19 +376,8 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
         const realizadas = data.matriculasRealizadas || [];
         const noRealizadas = data.matriculasNoRealizadas || [];
 
-        // Actualizar motivos de error en la tabla
-        if (noRealizadas.length > 0) {
-            for (const matricula of noRealizadas) {
-                const estudiante = this.estudiantesMatricular.find(
-                    (e) => e.id === matricula.estudiante?.id
-                );
-                if (estudiante) {
-                    estudiante.motivoError = matricula.motivo;
-                }
-            }
-        }
+        this.actualizarMotivosError(noRealizadas);
 
-        // Mostrar mensaje y navegar a resultado
         this.messageService.add({
             severity:
                 realizadas.length > 0 && noRealizadas.length === 0
@@ -361,47 +397,29 @@ export class RealizarMatriculaEstudiantesComponent implements OnInit {
             origen: 'realizar-matricula',
         };
 
-        // Navegar a la vista de resultados después de mostrar el mensaje
         setTimeout(() => {
             this.router.navigate(
                 ['/gestion-matricula-academica', 'resultado-matricula-masiva'],
-                {
-                    state: datosNavegacion,
-                }
+                { state: datosNavegacion }
             );
         }, 1000);
     }
 
-    cancelarMatricula(): void {
-        this.router.navigate([
-            '/gestion-matricula-academica',
-            'gestion-matricula-curso',
-        ]);
+    private actualizarMotivosError(noRealizadas: any[]): void {
+        if (noRealizadas.length > 0) {
+            for (const matricula of noRealizadas) {
+                const estudiante = this.estudiantesMatricular.find(
+                    (e) => e.id === matricula.estudiante?.id
+                );
+                if (estudiante) {
+                    estudiante.motivoError = matricula.motivo;
+                }
+            }
+        }
     }
 
-    getDocentesFormateados(): string {
-        if (!this.curso?.docentes?.length) return '-';
-        return this.curso.docentes
-            .map((d) => {
-                const nombreCompleto = d.persona
-                    ? `${d.persona.nombre ?? ''} ${
-                          d.persona.apellido ?? ''
-                      }`.trim()
-                    : '';
-                return nombreCompleto || d.codigo || '-';
-            })
-            .join(', ');
-    }
-
-    getTagPeriodo(): string {
-        return this.curso?.periodo?.tagPeriodo?.toString() ?? '-';
-    }
-
-    getFechasPeriodo(): string {
-        if (!this.curso?.periodo) return '-';
-        const fechaInicio = this.formatDate(this.curso.periodo.fechaInicio);
-        const fechaFin = this.formatDate(this.curso.periodo.fechaFin);
-        return `${fechaInicio} - ${fechaFin}`;
+    private estudianteYaSeleccionado(codigo: string): boolean {
+        return this.estudiantesMatricular.some((e) => e.codigo === codigo);
     }
 
     private formatDate(dateStr: string | null | undefined): string {

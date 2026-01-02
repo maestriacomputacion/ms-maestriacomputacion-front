@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
     FormBuilder,
     FormGroup,
@@ -7,6 +7,9 @@ import {
     ValidatorFn,
 } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { ApiResponse } from '../../models/api-response.model';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
@@ -16,23 +19,27 @@ import { PeriodoAcademico } from '../../models/periodo-academico.model';
     templateUrl: './gestion-periodo-academico.component.html',
     styleUrls: ['./gestion-periodo-academico.component.scss'],
 })
-export class GestionPeriodoAcademicoComponent implements OnInit {
+export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     periodos: PeriodoAcademico[] = [];
     displayModal = false;
     editMode = false;
     editPeriodoId: string | null = null;
-    fechasValidasBackend = true; // Para controlar si las fechas son válidas según el backend
-    mensajeValidacionBackend = ''; // Para almacenar el mensaje de validación del backend
+    fechasValidasBackend = true;
+    mensajeValidacionBackend = '';
     form: FormGroup;
-    tagPeriodoOptions = [
+    
+    readonly tagPeriodoOptions = [
         { label: '1', value: 1 },
         { label: '2', value: 2 },
     ];
-    estadoOptions = [
+    
+    readonly estadoOptions = [
         { label: 'ACTIVO', value: 'ACTIVO' },
         { label: 'INACTIVO', value: 'INACTIVO' },
         { label: 'FINALIZADO', value: 'FINALIZADO' },
     ];
+
+    private readonly destroy$ = new Subject<void>();
 
     constructor(
         private readonly periodoService: PeriodoAcademicoService,
@@ -52,55 +59,19 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
             { validators: this.fechaFinMatriculaEntreFechasValidator() }
         );
 
-        // Suscribirse a cambios en fechaInicio y fechaFin para validar
-        this.form.get('fechaInicio')?.valueChanges.subscribe(() => {
-            this.validarFechasConBackend();
-        });
-
-        this.form.get('fechaFin')?.valueChanges.subscribe(() => {
-            this.validarFechasConBackend();
-        });
+        this.setupFormListeners();
     }
 
-    ngOnInit() {
-        this.periodoService
-            .getPeriodos()
-            .subscribe((resp: ApiResponse<PeriodoAcademico[]>) => {
-                if (resp.typeResponse === 'SUCCESS') {
-                    this.periodos = resp.data;
-                } else {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail:
-                            resp.message ??
-                            'No se pudo obtener la información de periodos.',
-                    });
-                }
-            });
+    ngOnInit(): void {
+        this.loadPeriodos();
     }
 
-    fechaFinMatriculaEntreFechasValidator(): ValidatorFn {
-        return (group: AbstractControl) => {
-            const inicio = group.get('fechaInicio')?.value;
-            const fin = group.get('fechaFin')?.value;
-            const finMatricula = group.get('fechaFinMatricula')?.value;
-            if (inicio && fin && finMatricula) {
-                const inicioDate = new Date(inicio);
-                const finDate = new Date(fin);
-                const finMatriculaDate = new Date(finMatricula);
-                if (
-                    finMatriculaDate < inicioDate ||
-                    finMatriculaDate > finDate
-                ) {
-                    return { fechaFinMatriculaFueraRango: true };
-                }
-            }
-            return null;
-        };
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
-    get fechaFinMatriculaInvalida() {
+    get fechaFinMatriculaInvalida(): boolean {
         return (
             this.form.hasError('fechaFinMatriculaFueraRango') &&
             (this.form.get('fechaFinMatricula')?.dirty ||
@@ -108,62 +79,34 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         );
     }
 
-    get mostrarValidacionBackend() {
+    get mostrarValidacionBackend(): boolean {
         return (
             !this.fechasValidasBackend &&
-            this.mensajeValidacionBackend &&
+            !!this.mensajeValidacionBackend &&
             (this.form.get('fechaInicio')?.touched ||
                 this.form.get('fechaFin')?.touched)
         );
     }
 
-    validarFechasConBackend() {
-        const fechaInicio = this.form.get('fechaInicio')?.value;
-        const fechaFin = this.form.get('fechaFin')?.value;
-
-        if (fechaInicio && fechaFin) {
-            const fechaInicioStr = this.formatDateToString(fechaInicio);
-            const fechaFinStr = this.formatDateToString(fechaFin);
-
-            this.periodoService
-                .validarFechasPeriodo(fechaInicioStr, fechaFinStr)
-                .subscribe({
-                    next: (resp) => {
-                        // Actualizar el estado de validación basado en el data
-                        this.fechasValidasBackend = resp.data;
-
-                        // Si la validación es false, almacenar el mensaje
-                        if (!resp.data) {
-                            this.mensajeValidacionBackend = resp.message;
-                        } else {
-                            this.mensajeValidacionBackend = '';
-                        }
-                    },
-                    error: (err) => {
-                        console.error('Error al validar fechas:', err);
-                        this.fechasValidasBackend = false;
-                        this.mensajeValidacionBackend =
-                            'Error al validar las fechas con el servidor.';
-                    },
-                });
-        } else {
-            this.fechasValidasBackend = true; // Si no hay fechas, no hay error de validación backend
-            this.mensajeValidacionBackend = '';
-        }
+    get fechasValidas(): boolean {
+        const fechaInicio = this.formatDateToString(this.form.get('fechaInicio')?.value);
+        const fechaFin = this.formatDateToString(this.form.get('fechaFin')?.value);
+        if (!fechaInicio || !fechaFin) return false;
+        return fechaInicio < fechaFin && this.fechasValidasBackend;
     }
 
-    onAgregarPeriodo() {
+    onAgregarPeriodo(): void {
         this.form.reset();
         this.editMode = false;
         this.editPeriodoId = null;
-        this.fechasValidasBackend = true; // Resetear validación del backend
-        this.mensajeValidacionBackend = ''; // Resetear mensaje de validación
+        this.resetValidacionBackend();
         this.displayModal = true;
     }
 
-    onEditarPeriodo(id: string) {
+    onEditarPeriodo(id: string): void {
         const periodo = this.periodos.find((p) => p.id === id);
         if (!periodo) return;
+        
         this.form.patchValue({
             fechaInicio: periodo.fechaInicio,
             fechaFin: periodo.fechaFin,
@@ -174,227 +117,22 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         });
         this.editMode = true;
         this.editPeriodoId = id;
-        this.fechasValidasBackend = true; // Resetear validación del backend para edición
-        this.mensajeValidacionBackend = ''; // Resetear mensaje de validación
+        this.resetValidacionBackend();
         this.displayModal = true;
     }
 
-    registrarPeriodo() {
-        if (!this.form.valid || !this.fechasValidas) {
-            this.form.markAllAsTouched();
-            // No mostrar messageService aquí, las validaciones se muestran como advertencias en el formulario
-            return;
-        }
-        const value = this.form.value;
-        const fechaInicio = this.formatDateToString(value.fechaInicio);
-        const fechaFin = this.formatDateToString(value.fechaFin);
-        const fechaFinMatricula = this.formatDateToString(
-            value.fechaFinMatricula
-        );
-        const tagPeriodo = value.tagPeriodo;
-        const estado = value.estado;
-        if (this.editMode && this.editPeriodoId) {
-            this.periodoService
-                .actualizarPeriodo(this.editPeriodoId, {
-                    fechaInicio,
-                    fechaFin,
-                    fechaFinMatricula,
-                    tagPeriodo,
-                    descripcion: value.descripcion,
-                    estado,
-                })
-                .subscribe({
-                    next: (resp) => {
-                        this.messageService.add({
-                            severity:
-                                resp.typeResponse === 'SUCCESS'
-                                    ? 'success'
-                                    : 'error',
-                            summary:
-                                resp.typeResponse === 'SUCCESS'
-                                    ? 'Éxito'
-                                    : 'Error',
-                            detail: resp.message,
-                        });
-                        if (resp.typeResponse === 'SUCCESS') {
-                            this.periodoService
-                                .getPeriodos()
-                                .subscribe(
-                                    (resp: ApiResponse<PeriodoAcademico[]>) => {
-                                        if (resp.typeResponse === 'SUCCESS') {
-                                            this.periodos = resp.data;
-                                        }
-                                    }
-                                );
-                            this.displayModal = false;
-                        }
-                    },
-                    error: (err) => {
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Error',
-                            detail:
-                                err?.error?.message ??
-                                'No se pudo actualizar el periodo académico.',
-                        });
-                    },
-                });
-        } else {
-            // Usar el servicio para crear el periodo en el backend
-            this.periodoService
-                .crearPeriodo({
-                    fechaInicio,
-                    fechaFin,
-                    fechaFinMatricula,
-                    tagPeriodo,
-                    descripcion: value.descripcion,
-                    estado,
-                })
-                .subscribe({
-                    next: (resp) => {
-                        this.messageService.add({
-                            severity:
-                                resp.typeResponse === 'SUCCESS'
-                                    ? 'success'
-                                    : 'error',
-                            summary:
-                                resp.typeResponse === 'SUCCESS'
-                                    ? 'Éxito'
-                                    : 'Error',
-                            detail: resp.message,
-                        });
-                        if (resp.typeResponse === 'SUCCESS') {
-                            this.periodoService
-                                .getPeriodos()
-                                .subscribe(
-                                    (resp: ApiResponse<PeriodoAcademico[]>) => {
-                                        if (resp.typeResponse === 'SUCCESS') {
-                                            this.periodos = resp.data;
-                                        }
-                                    }
-                                );
-                            this.displayModal = false;
-                        }
-                    },
-                    error: (err) => {
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Error',
-                            detail:
-                                err?.error?.message ??
-                                'No se pudo registrar el periodo académico.',
-                        });
-                    },
-                });
-        }
-    }
-
-    agregarPeriodo(
-        fechaInicio: string,
-        fechaFin: string,
-        fechaFinMatricula: string,
-        tagPeriodo: number,
-        descripcion: string
-    ) {
-        const nuevoId = this.generarIdPeriodo(fechaInicio, fechaFin);
-        this.periodos.push({
-            id: nuevoId,
-            fechaInicio,
-            fechaFin,
-            fechaFinMatricula,
-            tagPeriodo,
-            descripcion,
-        });
-    }
-
-    actualizarPeriodo(
-        id: string,
-        fechaInicio: string,
-        fechaFin: string,
-        fechaFinMatricula: string,
-        tagPeriodo: number,
-        descripcion: string
-    ) {
-        const idx = this.periodos.findIndex((p) => p.id === id);
-        if (idx > -1) {
-            this.periodos[idx] = {
-                ...this.periodos[idx],
-                fechaInicio,
-                fechaFin,
-                fechaFinMatricula,
-                tagPeriodo,
-                descripcion,
-            };
-        }
-    }
-
-    formatDateToString(date: any): string {
-        if (!date) return '';
-        if (typeof date === 'string') return date;
-        const d = new Date(date);
-        const month = (d.getMonth() + 1).toString().padStart(2, '0');
-        const day = d.getDate().toString().padStart(2, '0');
-        return `${d.getFullYear()}-${month}-${day}`;
-    }
-
-    generarIdPeriodo(fechaInicio: string, fechaFin: string): string {
-        const anio = new Date(fechaInicio).getFullYear();
-        const mes = new Date(fechaInicio).getMonth() < 6 ? '1' : '2';
-        return `${anio}-${mes}`;
-    }
-
-    cancelarModal() {
-        this.displayModal = false;
-    }
-
-    onEliminarPeriodo(event: Event, id: string) {
+    onEliminarPeriodo(event: Event, id: string): void {
         this.confirmationService.confirm({
-            target: event.target,
+            target: event.target as HTMLElement,
             message: '¿Está seguro que desea eliminar este periodo académico?',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí',
             rejectLabel: 'No',
-            accept: () => {
-                this.periodoService.eliminarPeriodo(id).subscribe({
-                    next: (resp) => {
-                        this.messageService.add({
-                            severity:
-                                resp.typeResponse === 'SUCCESS'
-                                    ? 'success'
-                                    : 'error',
-                            summary:
-                                resp.typeResponse === 'SUCCESS'
-                                    ? 'Éxito'
-                                    : 'Error',
-                            detail: resp.message,
-                        });
-                        if (resp.typeResponse === 'SUCCESS') {
-                            this.periodoService
-                                .getPeriodos()
-                                .subscribe(
-                                    (resp: ApiResponse<PeriodoAcademico[]>) => {
-                                        if (resp.typeResponse === 'SUCCESS') {
-                                            this.periodos = resp.data;
-                                        }
-                                    }
-                                );
-                        }
-                    },
-                    error: (err) => {
-                        this.messageService.add({
-                            severity: 'error',
-                            summary: 'Error',
-                            detail:
-                                err?.error?.message ??
-                                'No se pudo eliminar el periodo académico.',
-                        });
-                    },
-                });
-            },
+            accept: () => this.eliminarPeriodo(id),
         });
     }
 
-    onPrecargarCursos(event: Event, periodoId: string) {
+    onPrecargarCursos(event: Event, periodoId: string): void {
         const periodo = this.periodos.find((p) => p.id === periodoId);
         if (!periodo) {
             this.messageService.add({
@@ -406,22 +144,15 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         }
 
         this.confirmationService.confirm({
-            target: event.target,
+            target: event.target as HTMLElement,
             message: `¿Está seguro que desea precargar los cursos para el periodo ${periodo.tagPeriodo} (${periodo.fechaInicio} - ${periodo.fechaFin})?`,
             header: 'Confirmar Precarga de Cursos',
             icon: 'pi pi-info-circle',
             acceptLabel: 'Sí, precargar',
             rejectLabel: 'Cancelar',
             accept: () => {
-                console.log(
-                    'Precargando cursos para el periodo:',
-                    periodoId,
-                    periodo
-                );
-
-                // TODO: Implementar la lógica de precarga de cursos
+                // _TODO: Implementar la lógica de precarga de cursos
                 // this.periodoService.precargarCursos(periodoId).subscribe({...});
-
                 this.messageService.add({
                     severity: 'info',
                     summary: 'Proceso iniciado',
@@ -431,15 +162,186 @@ export class GestionPeriodoAcademicoComponent implements OnInit {
         });
     }
 
-    get fechasValidas(): boolean {
-        const fechaInicio = this.formatDateToString(
-            this.form.get('fechaInicio')?.value
-        );
-        const fechaFin = this.formatDateToString(
-            this.form.get('fechaFin')?.value
-        );
-        if (!fechaInicio || !fechaFin) return false;
-        // Validar tanto la lógica local como la validación del backend
-        return fechaInicio < fechaFin && this.fechasValidasBackend;
+    registrarPeriodo(): void {
+        if (!this.form.valid || !this.fechasValidas) {
+            this.form.markAllAsTouched();
+            return;
+        }
+
+        const value = this.form.value;
+        const periodoData = {
+            fechaInicio: this.formatDateToString(value.fechaInicio),
+            fechaFin: this.formatDateToString(value.fechaFin),
+            fechaFinMatricula: this.formatDateToString(value.fechaFinMatricula),
+            tagPeriodo: value.tagPeriodo,
+            descripcion: value.descripcion,
+            estado: value.estado,
+        };
+
+        if (this.editMode && this.editPeriodoId) {
+            this.actualizarPeriodoBackend(this.editPeriodoId, periodoData);
+        } else {
+            this.crearPeriodoBackend(periodoData);
+        }
+    }
+
+    cancelarModal(): void {
+        this.displayModal = false;
+    }
+
+    formatDateToString(date: any): string {
+        if (!date) return '';
+        if (typeof date === 'string') return date;
+        const d = new Date(date);
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const day = d.getDate().toString().padStart(2, '0');
+        return `${d.getFullYear()}-${month}-${day}`;
+    }
+
+    private setupFormListeners(): void {
+        this.form.get('fechaInicio')?.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.validarFechasConBackend());
+
+        this.form.get('fechaFin')?.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.validarFechasConBackend());
+    }
+
+    private loadPeriodos(): void {
+        this.periodoService.getPeriodos()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((response: ApiResponse<PeriodoAcademico[]>) => {
+                if (response.typeResponse === 'SUCCESS') {
+                    this.periodos = response.data;
+                } else {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: response.message ?? 'No se pudo obtener la información de periodos.',
+                    });
+                }
+            });
+    }
+
+    private validarFechasConBackend(): void {
+        const fechaInicio = this.form.get('fechaInicio')?.value;
+        const fechaFin = this.form.get('fechaFin')?.value;
+
+        if (fechaInicio && fechaFin) {
+            const fechaInicioStr = this.formatDateToString(fechaInicio);
+            const fechaFinStr = this.formatDateToString(fechaFin);
+
+            this.periodoService.validarFechasPeriodo(fechaInicioStr, fechaFinStr)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                    next: (response) => {
+                        this.fechasValidasBackend = response.data;
+                        this.mensajeValidacionBackend = response.data ? '' : response.message;
+                    },
+                    error: (err) => {
+                        console.error('Error al validar fechas:', err);
+                        this.fechasValidasBackend = false;
+                        this.mensajeValidacionBackend = 'Error al validar las fechas con el servidor.';
+                    },
+                });
+        } else {
+            this.resetValidacionBackend();
+        }
+    }
+
+    private crearPeriodoBackend(periodoData: any): void {
+        this.periodoService.crearPeriodo(periodoData)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    this.handlePeriodoResponse(response, 'registrar');
+                },
+                error: (err) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: err?.error?.message ?? 'No se pudo registrar el periodo académico.',
+                    });
+                },
+            });
+    }
+
+    private actualizarPeriodoBackend(id: string, periodoData: any): void {
+        this.periodoService.actualizarPeriodo(id, periodoData)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    this.handlePeriodoResponse(response, 'actualizar');
+                },
+                error: (err) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: err?.error?.message ?? 'No se pudo actualizar el periodo académico.',
+                    });
+                },
+            });
+    }
+
+    private eliminarPeriodo(id: string): void {
+        this.periodoService.eliminarPeriodo(id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    this.messageService.add({
+                        severity: response.typeResponse === 'SUCCESS' ? 'success' : 'error',
+                        summary: response.typeResponse === 'SUCCESS' ? 'Éxito' : 'Error',
+                        detail: response.message,
+                    });
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.loadPeriodos();
+                    }
+                },
+                error: (err) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: err?.error?.message ?? 'No se pudo eliminar el periodo académico.',
+                    });
+                },
+            });
+    }
+
+    private handlePeriodoResponse(response: ApiResponse<any>, accion: string): void {
+        this.messageService.add({
+            severity: response.typeResponse === 'SUCCESS' ? 'success' : 'error',
+            summary: response.typeResponse === 'SUCCESS' ? 'Éxito' : 'Error',
+            detail: response.message,
+        });
+        
+        if (response.typeResponse === 'SUCCESS') {
+            this.loadPeriodos();
+            this.displayModal = false;
+        }
+    }
+
+    private resetValidacionBackend(): void {
+        this.fechasValidasBackend = true;
+        this.mensajeValidacionBackend = '';
+    }
+
+    private fechaFinMatriculaEntreFechasValidator(): ValidatorFn {
+        return (group: AbstractControl) => {
+            const inicio = group.get('fechaInicio')?.value;
+            const fin = group.get('fechaFin')?.value;
+            const finMatricula = group.get('fechaFinMatricula')?.value;
+            
+            if (inicio && fin && finMatricula) {
+                const inicioDate = new Date(inicio);
+                const finDate = new Date(fin);
+                const finMatriculaDate = new Date(finMatricula);
+                
+                if (finMatriculaDate < inicioDate || finMatriculaDate > finDate) {
+                    return { fechaFinMatriculaFueraRango: true };
+                }
+            }
+            return null;
+        };
     }
 }

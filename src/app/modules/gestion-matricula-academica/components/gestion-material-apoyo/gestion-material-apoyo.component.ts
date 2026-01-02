@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ConfirmationService, MessageService, PrimeIcons } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { BreadcrumbService } from 'src/app/core/components/breadcrumb/app.breadcrumb.service';
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
-import { Subscription } from 'rxjs';
 import { mapResponseException } from 'src/app/core/utils/exception-util';
 
 @Component({
@@ -12,18 +14,18 @@ import { mapResponseException } from 'src/app/core/utils/exception-util';
     styleUrls: ['./gestion-material-apoyo.component.scss'],
 })
 export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
-    loading: boolean = false;
+    loading = false;
     materialesApoyo: MaterialApoyo[] = [];
-    displayDialog: boolean = false;
+    displayDialog = false;
     materialApoyo: MaterialApoyo = this.initializeMaterialApoyo();
-    isNewMaterial: boolean = true;
-    submitted: boolean = false;
+    isNewMaterial = true;
+    submitted = false;
 
-    readonly MAX_DESCRIPTION: number = 255;
-    descriptionLength: number = 0;
-    private descriptionTruncatedNotified: boolean = false;
-
-    private readonly subscriptions: Subscription[] = [];
+    readonly MAX_DESCRIPTION = 255;
+    descriptionLength = 0;
+    
+    private descriptionTruncatedNotified = false;
+    private readonly destroy$ = new Subject<void>();
 
     constructor(
         private readonly breadcrumbService: BreadcrumbService,
@@ -37,28 +39,20 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         this.listMaterialApoyo();
     }
 
-    // Actualiza el contador de caracteres y asegura maxlength
-    onDescripcionChange(value: string = '') {
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    onDescripcionChange(value: string = ''): void {
         if (value.length > this.MAX_DESCRIPTION) {
-            // recortar y actualizar el modelo
-            this.materialApoyo.descripcion = value.substring(
-                0,
-                this.MAX_DESCRIPTION
-            );
+            this.materialApoyo.descripcion = value.substring(0, this.MAX_DESCRIPTION);
             this.descriptionLength = this.MAX_DESCRIPTION;
 
-            // notificar al usuario sólo una vez por recorte continuo
             if (!this.descriptionTruncatedNotified) {
-                // Notificar recorte al usuario
-                this.messageService.add({
-                    severity: 'warn',
-                    summary: 'Aviso',
-                    detail: `El texto fue recortado a ${this.MAX_DESCRIPTION} caracteres.`,
-                    life: 3000,
-                });
+                this.mostrarAdvertenciaRecorte();
                 this.descriptionTruncatedNotified = true;
 
-                // resetear la notificación después de 2s para permitir futuras notificaciones
                 setTimeout(() => {
                     this.descriptionTruncatedNotified = false;
                 }, 2000);
@@ -69,79 +63,21 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         }
     }
 
-    // Maneja el evento paste para detectar pegado de texto mayor al máximo permitido
-    onDescripcionPaste(event: ClipboardEvent) {
-        const clipboardData =
-            event.clipboardData || (globalThis as any).clipboardData;
+    onDescripcionPaste(event: ClipboardEvent): void {
+        const clipboardData = event.clipboardData || (globalThis as any).clipboardData;
         const pastedText = clipboardData ? clipboardData.getData('text') : '';
-        if (!pastedText) {
-            return;
-        }
+        if (!pastedText) return;
 
-        // Si el texto pegado excede el límite, evitamos que el navegador lo pegue completo
         if (pastedText.length > this.MAX_DESCRIPTION) {
             event.preventDefault();
-            // Pegar solo la porción permitida y actualizar modelo/contador
             const toPaste = pastedText.substring(0, this.MAX_DESCRIPTION);
             this.materialApoyo.descripcion = toPaste;
             this.descriptionLength = toPaste.length;
-
-            // notificar al usuario
-            this.messageService.add({
-                severity: 'warn',
-                summary: 'Aviso',
-                detail: `El texto fue recortado a ${this.MAX_DESCRIPTION} caracteres.`,
-                life: 3000,
-            });
+            this.mostrarAdvertenciaRecorte();
         }
     }
 
-    ngOnDestroy(): void {
-        for (const subscription of this.subscriptions) {
-            if (subscription && !subscription.closed) {
-                subscription.unsubscribe();
-            }
-        }
-    }
-
-    setBreadcrumb() {
-        this.breadcrumbService.setItems([
-            { label: 'Gestión' },
-            { label: 'Matrícula Académica' },
-            { label: 'Material de Apoyo' },
-        ]);
-    }
-
-    initializeMaterialApoyo(): MaterialApoyo {
-        return {
-            nombre: '',
-            descripcion: '',
-            enlace: '',
-            estado: 'ACTIVO',
-        };
-    }
-
-    listMaterialApoyo() {
-        this.loading = true;
-
-        const subscription = this.materialApoyoService
-            .listMaterialApoyo()
-            .subscribe({
-                next: (response) => {
-                    if (response.typeResponse === 'SUCCESS') {
-                        this.materialesApoyo = response.data;
-                    }
-                },
-                error: (err) =>
-                    this.handleError(err, 'Error al cargar material de apoyo'),
-                complete: () => {
-                    this.loading = false;
-                },
-            });
-        this.subscriptions.push(subscription);
-    }
-
-    showDialog() {
+    showDialog(): void {
         this.materialApoyo = this.initializeMaterialApoyo();
         this.isNewMaterial = true;
         this.displayDialog = true;
@@ -149,36 +85,25 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         this.descriptionLength = this.materialApoyo.descripcion?.length || 0;
     }
 
-    onEditar(id: number) {
-        const subscription = this.materialApoyoService
-            .getMaterialApoyo(id)
+    onEditar(id: number): void {
+        this.materialApoyoService.getMaterialApoyo(id)
+            .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (data) => {
                     this.materialApoyo = { ...data };
                     this.isNewMaterial = false;
                     this.displayDialog = true;
                     this.submitted = false;
-                    this.descriptionLength =
-                        this.materialApoyo.descripcion?.length || 0;
+                    this.descriptionLength = this.materialApoyo.descripcion?.length || 0;
                 },
-                error: (err) =>
-                    this.handleError(
-                        err,
-                        'Error al cargar el material de apoyo'
-                    ),
+                error: (err) => this.handleError(err, 'Error al cargar el material de apoyo'),
             });
-        this.subscriptions.push(subscription);
     }
 
-    onSave() {
+    onSave(): void {
         this.submitted = true;
 
-        if (
-            !this.materialApoyo.nombre ||
-            this.materialApoyo.nombre.trim() === '' ||
-            !this.materialApoyo.enlace ||
-            this.materialApoyo.enlace.trim() === ''
-        ) {
+        if (!this.isFormValid()) {
             return;
         }
 
@@ -189,16 +114,15 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         }
     }
 
-    onCancel() {
+    onCancel(): void {
         this.displayDialog = false;
         this.submitted = false;
     }
 
-    onDelete(event: any, id: number) {
+    onDelete(event: Event, id: number): void {
         this.confirmationService.confirm({
-            target: event.target!,
-            message:
-                '¿Está seguro de que desea eliminar este material de apoyo?',
+            target: event.target as HTMLElement,
+            message: '¿Está seguro de que desea eliminar este material de apoyo?',
             icon: PrimeIcons.EXCLAMATION_TRIANGLE,
             acceptLabel: 'Sí, eliminar',
             rejectLabel: 'No',
@@ -206,15 +130,50 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         });
     }
 
-    abrirEnlace(enlace: string) {
+    abrirEnlace(enlace: string): void {
         if (enlace) {
             window.open(enlace, '_blank');
         }
     }
 
-    private createMaterialApoyo() {
-        const subscription = this.materialApoyoService
-            .createMaterialApoyo(this.materialApoyo)
+    private setBreadcrumb(): void {
+        this.breadcrumbService.setItems([
+            { label: 'Gestión' },
+            { label: 'Matrícula Académica' },
+            { label: 'Material de Apoyo' },
+        ]);
+    }
+
+    private initializeMaterialApoyo(): MaterialApoyo {
+        return {
+            nombre: '',
+            descripcion: '',
+            enlace: '',
+            estado: 'ACTIVO',
+        };
+    }
+
+    private listMaterialApoyo(): void {
+        this.loading = true;
+
+        this.materialApoyoService.listMaterialApoyo()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.materialesApoyo = response.data;
+                    }
+                },
+                error: (err) => this.handleError(err, 'Error al cargar material de apoyo'),
+                complete: () => {
+                    this.loading = false;
+                },
+            });
+    }
+
+    private createMaterialApoyo(): void {
+        this.materialApoyoService.createMaterialApoyo(this.materialApoyo)
+            .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
                     if (response.typeResponse === 'SUCCESS') {
@@ -227,18 +186,13 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                         this.listMaterialApoyo();
                     }
                 },
-                error: (err) =>
-                    this.handleError(
-                        err,
-                        'Error al crear el material de apoyo'
-                    ),
+                error: (err) => this.handleError(err, 'Error al crear el material de apoyo'),
             });
-        this.subscriptions.push(subscription);
     }
 
-    private updateMaterialApoyo() {
-        const subscription = this.materialApoyoService
-            .updateMaterialApoyo(this.materialApoyo.id || 0, this.materialApoyo)
+    private updateMaterialApoyo(): void {
+        this.materialApoyoService.updateMaterialApoyo(this.materialApoyo.id || 0, this.materialApoyo)
+            .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
                     if (response.typeResponse === 'SUCCESS') {
@@ -251,18 +205,13 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                         this.listMaterialApoyo();
                     }
                 },
-                error: (err) =>
-                    this.handleError(
-                        err,
-                        'Error al actualizar el material de apoyo'
-                    ),
+                error: (err) => this.handleError(err, 'Error al actualizar el material de apoyo'),
             });
-        this.subscriptions.push(subscription);
     }
 
-    private deleteMaterialApoyo(id: number) {
-        const subscription = this.materialApoyoService
-            .deleteMaterialApoyo(id)
+    private deleteMaterialApoyo(id: number): void {
+        this.materialApoyoService.deleteMaterialApoyo(id)
+            .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
                     if (response.typeResponse === 'SUCCESS') {
@@ -274,16 +223,29 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                         this.listMaterialApoyo();
                     }
                 },
-                error: (err) =>
-                    this.handleError(
-                        err,
-                        'Error al eliminar el material de apoyo'
-                    ),
+                error: (err) => this.handleError(err, 'Error al eliminar el material de apoyo'),
             });
-        this.subscriptions.push(subscription);
     }
 
-    private handleError(error: any, defaultMessage: string) {
+    private isFormValid(): boolean {
+        return !!(
+            this.materialApoyo.nombre &&
+            this.materialApoyo.nombre.trim() !== '' &&
+            this.materialApoyo.enlace &&
+            this.materialApoyo.enlace.trim() !== ''
+        );
+    }
+
+    private mostrarAdvertenciaRecorte(): void {
+        this.messageService.add({
+            severity: 'warn',
+            summary: 'Aviso',
+            detail: `El texto fue recortado a ${this.MAX_DESCRIPTION} caracteres.`,
+            life: 3000,
+        });
+    }
+
+    private handleError(error: any, defaultMessage: string): void {
         const errorMsg = mapResponseException(error) || defaultMessage;
         this.messageService.add({
             severity: 'error',

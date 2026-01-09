@@ -9,14 +9,16 @@ import { TipoCorreo } from '../../models/correos.model';
 export class TipoCorreosComponent {
     tipos: TipoCorreo[] = [
         {
-            label: 'Correo de cursos matriculados',
-            descripcion: 'Notifica al estudiante los cursos en los que fue matriculado.',
+            label: 'Notificar matrícula a estudiantes y tutor',
+            descripcion:
+                'Notifica al estudiante y al tutor sobre los cursos en los que fue matriculado.',
             icon: 'pi pi-envelope',
         },
         {
-            label: 'Correo de cursos actualizados',
-            descripcion: 'Informa cambios en su matrícula o ajustes recientes.',
-            icon: 'pi pi-refresh',
+            label: 'Enviar prematrícula a tutor',
+            descripcion:
+                'Envía la prematrícula al tutor para su revisión y aprobación.',
+            icon: 'pi pi-send',
         },
     ];
 

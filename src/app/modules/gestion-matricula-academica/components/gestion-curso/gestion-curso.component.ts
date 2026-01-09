@@ -38,9 +38,14 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
-        this.loadPeriodos();
-        this.loadCursos();
         this.loadAreasFormacion();
+
+        if (this.estado === 'gestion-matricula-curso') {
+            this.loadPeriodoActivoYCursos();
+        } else {
+            this.loadPeriodos();
+            this.loadCursos();
+        }
     }
 
     ngOnDestroy(): void {
@@ -49,40 +54,72 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     }
 
     private loadPeriodos(): void {
-        this.periodoService.getPeriodos()
+        this.periodoService
+            .getPeriodos()
             .pipe(takeUntil(this.destroy$))
             .subscribe((response) => {
                 if (response.typeResponse === 'SUCCESS') {
-                    this.periodos = (response.data || []).map((periodo: PeriodoAcademico) => ({
-                        label: `${this.formatDateString(periodo.fechaInicio)} - ${this.formatDateString(periodo.fechaFin)}`,
-                        value: String(periodo.id),
-                    }));
+                    const periodos = response.data || [];
+
+                    this.periodos = periodos.map(
+                        (periodo: PeriodoAcademico) => ({
+                            label: `${this.formatDateString(
+                                periodo.fechaInicio
+                            )} - ${this.formatDateString(periodo.fechaFin)}`,
+                            value: String(periodo.id),
+                        })
+                    );
                 }
+            });
+    }
+
+    private loadPeriodoActivoYCursos(): void {
+        this.periodoService
+            .getPeriodoActivo()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS' && response.data) {
+                        this.periodoSeleccionado = String(response.data.id);
+                        this.loadCursos();
+                    } else {
+                        console.warn('No hay periodo activo');
+                        this.loadCursos();
+                    }
+                },
+                error: (err) => {
+                    console.error('Error obteniendo periodo activo', err);
+                    this.loadCursos();
+                },
             });
     }
 
     private loadAreasFormacion(): void {
-        this.cursoService.getAreasFormacion()
+        this.cursoService
+            .getAreasFormacion()
             .pipe(takeUntil(this.destroy$))
-            .subscribe((response: ApiResponse<{ label: string; value: string }[]>) => {
-                if (response.typeResponse === 'SUCCESS') {
-                    this.areasFormacion = response.data;
+            .subscribe(
+                (response: ApiResponse<{ label: string; value: string }[]>) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.areasFormacion = response.data;
+                    }
                 }
-            });
+            );
     }
 
     private loadCursos(): void {
-        this.cursoService.getCursos({
-            idPeriodo: this.periodoSeleccionado,
-            idAsignatura: this.asignaturaSeleccionada,
-            idArea: this.areaSeleccionada,
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((response: ApiResponse<CursoUI[]>) => {
-            if (response.typeResponse === 'SUCCESS') {
-                this.cursos = response.data;
-            }
-        });
+        this.cursoService
+            .getCursos({
+                idPeriodo: this.periodoSeleccionado,
+                idAsignatura: this.asignaturaSeleccionada,
+                idArea: this.areaSeleccionada,
+            })
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((response: ApiResponse<CursoUI[]>) => {
+                if (response.typeResponse === 'SUCCESS') {
+                    this.cursos = response.data;
+                }
+            });
     }
 
     onFilterChange(): void {
@@ -91,16 +128,25 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
 
     /** Carga asignaturas cuando cambia el área seleccionada. */
     onAreaChange(nuevaArea: string | null): void {
-        this.areaSeleccionada = nuevaArea;
         this.asignaturaSeleccionada = null;
 
-        if (this.areaSeleccionada) {
-            this.cursoService.getAsignaturasByArea(this.areaSeleccionada)
+        if (nuevaArea) {
+            this.cursoService
+                .getAsignaturasByArea(nuevaArea)
                 .pipe(takeUntil(this.destroy$))
-                .subscribe((response: ApiResponse<{ label: string; value: string }[]>) => {
-                    this.asignaturas = response.typeResponse === 'SUCCESS' ? response.data : [];
-                    this.loadCursos();
-                });
+                .subscribe(
+                    (
+                        response: ApiResponse<
+                            { label: string; value: string }[]
+                        >
+                    ) => {
+                        this.asignaturas =
+                            response.typeResponse === 'SUCCESS'
+                                ? response.data
+                                : [];
+                        this.loadCursos();
+                    }
+                );
         } else {
             this.asignaturas = [];
             this.loadCursos();
@@ -116,7 +162,10 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     }
 
     onAgregarCurso(): void {
-        this.router.navigate(['/gestion-matricula-academica', 'registrar-curso']);
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'registrar-curso',
+        ]);
     }
 
     onVerCurso(cursoOrId: CursoUI | number): void {
@@ -125,18 +174,16 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
         this.router.navigate(['/gestion-matricula-academica', 'ver-curso', id]);
     }
 
-    onEditarCurso(id: number): void {
-        this.router.navigate(['/gestion-matricula-academica', 'editar-curso', id]);
-    }
-
     /**
-     * Maneja la confirmación de eliminación. Se acepta llamada con (event, id)
-     * o con solo el id (por compatibilidad).
+     * Maneja la confirmación de eliminación.
      */
     onEliminarCurso(eventOrId: Event | number, maybeId?: number): void {
         const id = typeof eventOrId === 'number' ? eventOrId : maybeId;
-        const target = typeof eventOrId === 'object' ? (eventOrId.target as HTMLElement) : undefined;
-        
+        const target =
+            typeof eventOrId === 'object'
+                ? (eventOrId.target as HTMLElement)
+                : undefined;
+
         if (id === undefined || id === null) return;
 
         this.confirmationService.confirm({
@@ -150,7 +197,8 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     }
 
     private deleteCurso(id: number): void {
-        this.cursoService.eliminarCurso(id)
+        this.cursoService
+            .eliminarCurso(id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -160,7 +208,9 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
                             summary: 'Éxito',
                             detail: response.message,
                         });
-                        this.cursos = this.cursos.filter((curso) => curso.id !== id);
+                        this.cursos = this.cursos.filter(
+                            (curso) => curso.id !== id
+                        );
                     }
                 },
                 error: (err) => {
@@ -174,6 +224,10 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     }
 
     onAgregarEstudiantes(cursoId: number): void {
-        this.router.navigate(['/gestion-matricula-academica', 'realizar-matricula-curso', cursoId]);
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'realizar-matricula-curso',
+            cursoId,
+        ]);
     }
 }

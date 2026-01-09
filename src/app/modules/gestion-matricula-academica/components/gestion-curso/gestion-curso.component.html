@@ -11,21 +11,21 @@
             <div class="flex align-items-center gap-2" *ngIf="estado !== 'gestion-matricula-curso'">
                 <label for="periodo" class="font-medium mb-1" style="white-space: nowrap">Periodo</label>
                 <p-dropdown id="periodo" [options]="periodos" [(ngModel)]="periodoSeleccionado"
-                    (ngModelChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona el periodo"
+                    (onChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona el periodo"
                     class="w-12rem"></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label for="areaFormacion" class="font-medium mb-1" style="white-space: nowrap">Area de
                     formación</label>
                 <p-dropdown id="areaFormacion" [options]="areasFormacion" [(ngModel)]="areaSeleccionada"
-                    (ngModelChange)="onAreaChange($event)" [showClear]="true" placeholder="Selecciona el area"
+                    (onChange)="onAreaChange($event.value)" [showClear]="true" placeholder="Selecciona el area"
                     class="w-12rem"></p-dropdown>
             </div>
-            <div class="flex align-items-center gap-2">
+            <div class="flex align-items-center gap-2" *ngIf="areaSeleccionada">
                 <label for="asignaturaInvestigacion" class="font-medium mb-1" style="white-space: nowrap">Asignatura de
                     investigación</label>
                 <p-dropdown id="asignaturaInvestigacion" [options]="asignaturas" [(ngModel)]="asignaturaSeleccionada"
-                    (ngModelChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona la asignatura"
+                    (onChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona la asignatura"
                     class="w-12rem"></p-dropdown>
             </div>
         </div>

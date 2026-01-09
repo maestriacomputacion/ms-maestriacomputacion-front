@@ -28,7 +28,7 @@ export const menuItems: MenuItem[] = [
             {
                 label: 'EXPERTOS',
                 icon: 'pi pi-user',
-                routerLink:'/expertos',
+                routerLink: '/expertos',
             },
             {
                 label: 'ASIGNATURAS',
@@ -50,21 +50,21 @@ export const menuItems: MenuItem[] = [
                 icon: 'pi pi-fw pi-inbox',
                 routerLink: '/certificado-votacion',
             },
-                {
-                label:'LÍNEAS INVESTIGACIÓN',
+            {
+                label: 'LÍNEAS INVESTIGACIÓN',
                 icon: 'pi pi-fw pi-clone',
-                items:[
+                items: [
                     {
                         label: 'Categorías',
                         icon: 'pi pi-fw pi-bars',
-                        routerLink:'/gestion-lineas-investigacion/categorias'
+                        routerLink: '/gestion-lineas-investigacion/categorias',
                     },
                     {
                         label: 'Lienas de Investigación',
                         icon: 'pi pi-fw pi-clone',
-                        routerLink:'/gestion-lineas-investigacion/lineas'
-                    }
-                ]
+                        routerLink: '/gestion-lineas-investigacion/lineas',
+                    },
+                ],
             },
             {
                 label: 'CUESTIONARIO DE EVALUACIÓN',
@@ -81,20 +81,108 @@ export const menuItems: MenuItem[] = [
                         routerLink: '/gestion-evaluacion-docente/cuestionarios',
                     },
                 ],
-            }
+            },
         ],
     },
     {
-        label: 'MATRICULAS',
+        label: 'GESTIÓN MATRÍCULAS',
         icon: 'pi pi-fw pi-id-card',
         items: [
+            {
+                label: 'Tipos de Matrícula',
+                icon: 'pi pi-fw pi-id-card',
+                items: [
+                    {
+                        label: 'Matricula por Curso',
+                        icon: 'pi pi-fw pi-id-card',
+                        routerLink:
+                            '/gestion-matricula-academica/gestion-matricula-curso',
+                    },
+                    {
+                        label: 'Matricula por Estudiante o Masiva',
+                        icon: 'pi pi-fw pi-id-card',
+                        routerLink:
+                            '/gestion-matricula-academica/gestion-estudiantes',
+                    },
+                ],
+            },
+            {
+                label: 'Listado de Matrículas',
+                icon: 'pi pi-fw pi-list',
+                routerLink: '/gestion-matricula-academica/listado-matriculas',
+            },
+            {
+                label: 'Reportes de Matrícula',
+                icon: 'pi pi-fw pi-chart-bar',
+                items: [
+                    {
+                        label: 'Reporte matricula estudiantes',
+                        icon: 'pi pi-fw pi-chart-bar',
+                        routerLink: '/gestion-matricula-academica/reporte-matricula-estudiantes',
+                    },
+                    {
+                        label: 'Notificación de matricula a estudiantes',
+                        icon: 'pi pi-fw pi-envelope',
+                        routerLink: '/gestion-matricula-academica/notificacion-estudiate',
+                    },
+                ]
+            },
+            {
+                label: 'Tutor',
+                icon: 'pi pi-fw pi-user',
+                items: [
+                    {
+                        label: 'Notificación de prematricula a tutor',
+                        icon: 'pi pi-fw pi-envelope',
+                        routerLink: '/gestion-matricula-academica/notificacion-prematricula-tutor',
+                    }
+                ],
+            },
+
+        ],
+    },
+    {
+        label: 'GESTIÓN ACADÉMICA',
+        icon: 'pi pi-fw pi-book',
+        items: [
+            {
+                label: 'Periodo Académico',
+                icon: 'pi pi-fw pi-calendar',
+                routerLink: '/gestion-matricula-academica/periodo-academico',
+            },
+            {
+                label: 'Gestión de Cursos',
+                icon: 'pi pi-fw pi-book',
+                routerLink: '/gestion-matricula-academica/gestion-cursos',
+            },
+            {
+                label: 'Material de Apoyo',
+                icon: 'pi pi-fw pi-file',
+                routerLink: '/gestion-matricula-academica/material-apoyo',
+            },
+            {
+                label: 'Reportes',
+                icon: 'pi pi-fw pi-chart-bar',
+                items: [
+                    {
+                        label: 'Reporte Cursos Ofertados',
+                        icon: 'pi pi-fw pi-chart-bar',
+                        routerLink: '/gestion-matricula-academica/reporte-cursos-ofertados',
+                    },
+                    {
+                        label: 'Reporte Centro Postgrados',
+                        icon: 'pi pi-fw pi-chart-line',
+                        routerLink: '/gestion-matricula-academica/reporte-centro-postgrados',
+                    },
+                ]
+            },
             {
                 label: 'Evaluación Docente',
                 icon: 'pi pi-fw pi-id-card',
                 routerLink: '/gestion-matricula-evaluacion',
             },
-            
         ],
+
     },
     {
         label: 'SOLICITUDES',
@@ -134,6 +222,6 @@ export const menuItems: MenuItem[] = [
     {
         label: 'LOGIN',
         icon: 'pi pi-fw pi-user',
-        command: () => {},
+        command: () => { },
     },
 ];

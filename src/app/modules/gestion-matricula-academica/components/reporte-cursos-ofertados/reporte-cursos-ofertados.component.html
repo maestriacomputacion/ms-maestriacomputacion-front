@@ -3,35 +3,7 @@
         <b>GENERAR REPORTE SOBRE CURSOS OFERTADOS</b>
     </p-header>
 
-    <div class="flex align-items-center flex-wrap gap-3 mb-4">
-        <div class="flex align-items-center gap-2">
-            <label class="font-medium text-900" for="periodoNumero"
-                >Periodo</label
-            >
-            <p-dropdown
-                inputId="periodoNumero"
-                [options]="periodos"
-                [(ngModel)]="periodoNumero"
-                placeholder="Periodo"
-                class="w-5rem"
-            ></p-dropdown>
-            <p-dropdown
-                inputId="periodoAnio"
-                [options]="anios"
-                [(ngModel)]="periodoAnio"
-                placeholder="Año"
-                class="w-10rem"
-            ></p-dropdown>
-        </div>
-        <div class="flex align-items-center">
-            <button
-                pButton
-                label="Consultar"
-                icon="pi pi-search"
-                class="p-button-primary"
-            ></button>
-        </div>
-    </div>
+    <!-- Se elimina la selección de periodo y botón Consultar según requerimiento -->
 
     <div class="mb-4">
         <div class="flex align-items-center flex-wrap gap-2 mb-2">
@@ -153,22 +125,10 @@
         ></button>
         <button
             pButton
-            label="Reporte por área"
-            class="p-button-primary"
-            icon="pi pi-list"
-        ></button>
-        <button
-            pButton
             label="Reporte seleccionado"
             class="p-button-primary"
             icon="pi pi-check-square"
             [disabled]="!seleccionCursos.length"
-        ></button>
-        <button
-            pButton
-            label="Descargar Excel"
-            class="p-button-primary"
-            icon="pi pi-download"
         ></button>
     </div>
 </p-panel>

@@ -41,7 +41,7 @@ const routes: Routes = [
                 component: ReporteCentroPostgradosComponent,
             },
             {
-                path: 'tipo-correos',
+                path: 'notificacion-estudiate',
                 component: TipoCorreosComponent,
             },
             {

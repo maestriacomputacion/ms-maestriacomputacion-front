@@ -23,6 +23,7 @@ export interface CursoOfertadoReporte {
     id: number;
     grupo: string;
     asignatura: string;
+    idAsignatura?: number;
     docente: string;
     areaFormacion: string;
     tipoAsignatura: string;

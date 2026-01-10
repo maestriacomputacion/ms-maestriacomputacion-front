@@ -27,12 +27,12 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     fechasValidasBackend = true;
     mensajeValidacionBackend = '';
     form: FormGroup;
-    
+
     readonly tagPeriodoOptions = [
         { label: '1', value: 1 },
         { label: '2', value: 2 },
     ];
-    
+
     readonly estadoOptions = [
         { label: 'ACTIVO', value: 'ACTIVO' },
         { label: 'INACTIVO', value: 'INACTIVO' },
@@ -89,8 +89,12 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     }
 
     get fechasValidas(): boolean {
-        const fechaInicio = this.formatDateToString(this.form.get('fechaInicio')?.value);
-        const fechaFin = this.formatDateToString(this.form.get('fechaFin')?.value);
+        const fechaInicio = this.formatDateToString(
+            this.form.get('fechaInicio')?.value
+        );
+        const fechaFin = this.formatDateToString(
+            this.form.get('fechaFin')?.value
+        );
         if (!fechaInicio || !fechaFin) return false;
         return fechaInicio < fechaFin && this.fechasValidasBackend;
     }
@@ -106,7 +110,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     onEditarPeriodo(id: string): void {
         const periodo = this.periodos.find((p) => p.id === id);
         if (!periodo) return;
-        
+
         this.form.patchValue({
             fechaInicio: periodo.fechaInicio,
             fechaFin: periodo.fechaFin,
@@ -199,17 +203,20 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     }
 
     private setupFormListeners(): void {
-        this.form.get('fechaInicio')?.valueChanges
-            .pipe(takeUntil(this.destroy$))
+        this.form
+            .get('fechaInicio')
+            ?.valueChanges.pipe(takeUntil(this.destroy$))
             .subscribe(() => this.validarFechasConBackend());
 
-        this.form.get('fechaFin')?.valueChanges
-            .pipe(takeUntil(this.destroy$))
+        this.form
+            .get('fechaFin')
+            ?.valueChanges.pipe(takeUntil(this.destroy$))
             .subscribe(() => this.validarFechasConBackend());
     }
 
     private loadPeriodos(): void {
-        this.periodoService.getPeriodos()
+        this.periodoService
+            .getPeriodos()
             .pipe(takeUntil(this.destroy$))
             .subscribe((response: ApiResponse<PeriodoAcademico[]>) => {
                 if (response.typeResponse === 'SUCCESS') {
@@ -218,7 +225,9 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: response.message ?? 'No se pudo obtener la información de periodos.',
+                        detail:
+                            response.message ??
+                            'No se pudo obtener la información de periodos.',
                     });
                 }
             });
@@ -232,17 +241,21 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             const fechaInicioStr = this.formatDateToString(fechaInicio);
             const fechaFinStr = this.formatDateToString(fechaFin);
 
-            this.periodoService.validarFechasPeriodo(fechaInicioStr, fechaFinStr)
+            this.periodoService
+                .validarFechasPeriodo(fechaInicioStr, fechaFinStr)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (response) => {
                         this.fechasValidasBackend = response.data;
-                        this.mensajeValidacionBackend = response.data ? '' : response.message;
+                        this.mensajeValidacionBackend = response.data
+                            ? ''
+                            : response.message;
                     },
                     error: (err) => {
                         console.error('Error al validar fechas:', err);
                         this.fechasValidasBackend = false;
-                        this.mensajeValidacionBackend = 'Error al validar las fechas con el servidor.';
+                        this.mensajeValidacionBackend =
+                            'Error al validar las fechas con el servidor.';
                     },
                 });
         } else {
@@ -251,7 +264,8 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     }
 
     private crearPeriodoBackend(periodoData: any): void {
-        this.periodoService.crearPeriodo(periodoData)
+        this.periodoService
+            .crearPeriodo(periodoData)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -261,14 +275,17 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: err?.error?.message ?? 'No se pudo registrar el periodo académico.',
+                        detail:
+                            err?.error?.message ??
+                            'No se pudo registrar el periodo académico.',
                     });
                 },
             });
     }
 
     private actualizarPeriodoBackend(id: string, periodoData: any): void {
-        this.periodoService.actualizarPeriodo(id, periodoData)
+        this.periodoService
+            .actualizarPeriodo(id, periodoData)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -278,20 +295,29 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: err?.error?.message ?? 'No se pudo actualizar el periodo académico.',
+                        detail:
+                            err?.error?.message ??
+                            'No se pudo actualizar el periodo académico.',
                     });
                 },
             });
     }
 
     private eliminarPeriodo(id: string): void {
-        this.periodoService.eliminarPeriodo(id)
+        this.periodoService
+            .eliminarPeriodo(id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
                     this.messageService.add({
-                        severity: response.typeResponse === 'SUCCESS' ? 'success' : 'error',
-                        summary: response.typeResponse === 'SUCCESS' ? 'Éxito' : 'Error',
+                        severity:
+                            response.typeResponse === 'SUCCESS'
+                                ? 'success'
+                                : 'error',
+                        summary:
+                            response.typeResponse === 'SUCCESS'
+                                ? 'Éxito'
+                                : 'Error',
                         detail: response.message,
                     });
                     if (response.typeResponse === 'SUCCESS') {
@@ -302,19 +328,24 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: err?.error?.message ?? 'No se pudo eliminar el periodo académico.',
+                        detail:
+                            err?.error?.message ??
+                            'No se pudo eliminar el periodo académico.',
                     });
                 },
             });
     }
 
-    private handlePeriodoResponse(response: ApiResponse<any>, accion: string): void {
+    private handlePeriodoResponse(
+        response: ApiResponse<any>,
+        accion: string
+    ): void {
         this.messageService.add({
             severity: response.typeResponse === 'SUCCESS' ? 'success' : 'error',
             summary: response.typeResponse === 'SUCCESS' ? 'Éxito' : 'Error',
             detail: response.message,
         });
-        
+
         if (response.typeResponse === 'SUCCESS') {
             this.loadPeriodos();
             this.displayModal = false;
@@ -331,13 +362,16 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             const inicio = group.get('fechaInicio')?.value;
             const fin = group.get('fechaFin')?.value;
             const finMatricula = group.get('fechaFinMatricula')?.value;
-            
+
             if (inicio && fin && finMatricula) {
                 const inicioDate = new Date(inicio);
                 const finDate = new Date(fin);
                 const finMatriculaDate = new Date(finMatricula);
-                
-                if (finMatriculaDate < inicioDate || finMatriculaDate > finDate) {
+
+                if (
+                    finMatriculaDate < inicioDate ||
+                    finMatriculaDate > finDate
+                ) {
                     return { fechaFinMatriculaFueraRango: true };
                 }
             }

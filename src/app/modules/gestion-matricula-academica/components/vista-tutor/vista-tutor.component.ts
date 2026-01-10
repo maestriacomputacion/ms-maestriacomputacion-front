@@ -107,7 +107,10 @@ export class VistaTutorComponent implements OnInit {
     }
 
     getNombreCompleto(estudiante: Estudiante): string {
-        return `${estudiante.persona?.nombre ?? ''} ${estudiante.persona?.apellido ?? ''}`.trim() || 'Sin nombre';
+        return (
+            `${estudiante.persona?.nombre ?? ''} ${estudiante.persona?.apellido ?? ''}`.trim() ||
+            'Sin nombre'
+        );
     }
 
     getTutorNombreCompleto(): string {
@@ -116,7 +119,11 @@ export class VistaTutorComponent implements OnInit {
 
     onVerEstudiante(estudiante: Estudiante): void {
         if (estudiante.id) {
-            this.router.navigate(['/gestion-matricula-academica', 'aprobar-matricula-estudiante', estudiante.id]);
+            this.router.navigate([
+                '/gestion-matricula-academica',
+                'aprobar-matricula-estudiante',
+                estudiante.id,
+            ]);
         }
     }
 

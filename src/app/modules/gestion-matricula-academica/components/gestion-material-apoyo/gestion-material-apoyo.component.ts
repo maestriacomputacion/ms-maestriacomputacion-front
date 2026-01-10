@@ -23,7 +23,7 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
 
     readonly MAX_DESCRIPTION = 255;
     descriptionLength = 0;
-    
+
     private descriptionTruncatedNotified = false;
     private readonly destroy$ = new Subject<void>();
 
@@ -46,7 +46,10 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
 
     onDescripcionChange(value: string = ''): void {
         if (value.length > this.MAX_DESCRIPTION) {
-            this.materialApoyo.descripcion = value.substring(0, this.MAX_DESCRIPTION);
+            this.materialApoyo.descripcion = value.substring(
+                0,
+                this.MAX_DESCRIPTION
+            );
             this.descriptionLength = this.MAX_DESCRIPTION;
 
             if (!this.descriptionTruncatedNotified) {
@@ -64,7 +67,8 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
     }
 
     onDescripcionPaste(event: ClipboardEvent): void {
-        const clipboardData = event.clipboardData || (globalThis as any).clipboardData;
+        const clipboardData =
+            event.clipboardData || (globalThis as any).clipboardData;
         const pastedText = clipboardData ? clipboardData.getData('text') : '';
         if (!pastedText) return;
 
@@ -86,7 +90,8 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
     }
 
     onEditar(id: number): void {
-        this.materialApoyoService.getMaterialApoyo(id)
+        this.materialApoyoService
+            .getMaterialApoyo(id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (data) => {
@@ -94,9 +99,14 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                     this.isNewMaterial = false;
                     this.displayDialog = true;
                     this.submitted = false;
-                    this.descriptionLength = this.materialApoyo.descripcion?.length || 0;
+                    this.descriptionLength =
+                        this.materialApoyo.descripcion?.length || 0;
                 },
-                error: (err) => this.handleError(err, 'Error al cargar el material de apoyo'),
+                error: (err) =>
+                    this.handleError(
+                        err,
+                        'Error al cargar el material de apoyo'
+                    ),
             });
     }
 
@@ -122,7 +132,8 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
     onDelete(event: Event, id: number): void {
         this.confirmationService.confirm({
             target: event.target as HTMLElement,
-            message: '¿Está seguro de que desea eliminar este material de apoyo?',
+            message:
+                '¿Está seguro de que desea eliminar este material de apoyo?',
             icon: PrimeIcons.EXCLAMATION_TRIANGLE,
             acceptLabel: 'Sí, eliminar',
             rejectLabel: 'No',
@@ -156,7 +167,8 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
     private listMaterialApoyo(): void {
         this.loading = true;
 
-        this.materialApoyoService.listMaterialApoyo()
+        this.materialApoyoService
+            .listMaterialApoyo()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -164,7 +176,8 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                         this.materialesApoyo = response.data;
                     }
                 },
-                error: (err) => this.handleError(err, 'Error al cargar material de apoyo'),
+                error: (err) =>
+                    this.handleError(err, 'Error al cargar material de apoyo'),
                 complete: () => {
                     this.loading = false;
                 },
@@ -172,7 +185,8 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
     }
 
     private createMaterialApoyo(): void {
-        this.materialApoyoService.createMaterialApoyo(this.materialApoyo)
+        this.materialApoyoService
+            .createMaterialApoyo(this.materialApoyo)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -186,12 +200,17 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                         this.listMaterialApoyo();
                     }
                 },
-                error: (err) => this.handleError(err, 'Error al crear el material de apoyo'),
+                error: (err) =>
+                    this.handleError(
+                        err,
+                        'Error al crear el material de apoyo'
+                    ),
             });
     }
 
     private updateMaterialApoyo(): void {
-        this.materialApoyoService.updateMaterialApoyo(this.materialApoyo.id || 0, this.materialApoyo)
+        this.materialApoyoService
+            .updateMaterialApoyo(this.materialApoyo.id || 0, this.materialApoyo)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -205,12 +224,17 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                         this.listMaterialApoyo();
                     }
                 },
-                error: (err) => this.handleError(err, 'Error al actualizar el material de apoyo'),
+                error: (err) =>
+                    this.handleError(
+                        err,
+                        'Error al actualizar el material de apoyo'
+                    ),
             });
     }
 
     private deleteMaterialApoyo(id: number): void {
-        this.materialApoyoService.deleteMaterialApoyo(id)
+        this.materialApoyoService
+            .deleteMaterialApoyo(id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -223,7 +247,11 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
                         this.listMaterialApoyo();
                     }
                 },
-                error: (err) => this.handleError(err, 'Error al eliminar el material de apoyo'),
+                error: (err) =>
+                    this.handleError(
+                        err,
+                        'Error al eliminar el material de apoyo'
+                    ),
             });
     }
 

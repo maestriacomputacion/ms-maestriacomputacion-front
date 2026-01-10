@@ -6,41 +6,75 @@
     </p-header>
 
     <!-- Buscador principal - Diseño minimalista siguiendo heurísticas de Nielsen -->
-    <div class="flex flex-row align-items-center justify-content-between mb-3 w-full">
+    <div
+        class="flex flex-row align-items-center justify-content-between mb-3 w-full"
+    >
         <div class="mr-3 flex-1 min-w-0">
             <span class="p-input-icon-left w-full">
                 <i class="pi pi-search"></i>
-                <input pInputText type="text" class="w-full"
-                    placeholder="Buscar por código, nombre, identificación, correo, ciudad..." (input)="
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar por código, nombre, identificación, correo, ciudad..."
+                    (input)="
                         tableEstudiantes.filterGlobal(
                             $event.target.value,
                             'contains'
                         )
-                    " />
+                    "
+                />
             </span>
             <small class="text-500 block mt-1">
                 <i class="pi pi-info-circle mr-1"></i>
-                Busca en todos los campos: código, nombre completo, identificación, correos, teléfono y ciudad
+                Busca en todos los campos: código, nombre completo,
+                identificación, correos, teléfono y ciudad
             </small>
         </div>
 
         <div class="flex align-items-center">
-            <button *ngIf="selectedEstudiantes?.length" pButton pRipple icon="pi pi-users" label="Matrícula masiva"
-                class="p-button-primary p-button-sm" (click)="onMatriculaMasiva()" pTooltip="Iniciar matrícula masiva"
-                tooltipPosition="top">
-            </button>
+            <button
+                *ngIf="selectedEstudiantes?.length"
+                pButton
+                pRipple
+                icon="pi pi-users"
+                label="Matrícula masiva"
+                class="p-button-primary p-button-sm"
+                (click)="onMatriculaMasiva()"
+                pTooltip="Iniciar matrícula masiva"
+                tooltipPosition="top"
+            ></button>
         </div>
     </div>
 
     <!-- Tabla -->
-    <p-table #tableEstudiantes [(selection)]="selectedEstudiantes" [value]="estudiantes" [paginator]="true" [rows]="10"
-        [loading]="loading" [totalRecords]="estudiantes?.length || 0" [showCurrentPageReport]="true"
+    <p-table
+        #tableEstudiantes
+        [(selection)]="selectedEstudiantes"
+        [value]="estudiantes"
+        [paginator]="true"
+        [rows]="10"
+        [loading]="loading"
+        [totalRecords]="estudiantes?.length || 0"
+        [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
-        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'"
-        [globalFilterFields]="['codigo', 'persona.nombre', 'persona.apellido', 'persona.identificacion', 'persona.correoElectronico', 'correoUniversidad', 'ciudadResidencia', 'persona.telefono']">
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [responsiveLayout]="'scroll'"
+        [globalFilterFields]="[
+            'codigo',
+            'persona.nombre',
+            'persona.apellido',
+            'persona.identificacion',
+            'persona.correoElectronico',
+            'correoUniversidad',
+            'ciudadResidencia',
+            'persona.telefono'
+        ]"
+    >
         <ng-template pTemplate="header">
             <tr>
-                <th class="text-center w-2rem" scope="col"><p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                <th class="text-center w-2rem" scope="col">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
                 <th class="text-center" scope="col">Código</th>
                 <th class="text-center" scope="col">Nombre Completo</th>
@@ -52,17 +86,27 @@
         </ng-template>
         <ng-template pTemplate="body" let-estudiante>
             <tr>
-                <td class="text-center w-2rem"><p-tableCheckbox [value]="estudiante"></p-tableCheckbox></td>
+                <td class="text-center w-2rem">
+                    <p-tableCheckbox [value]="estudiante"></p-tableCheckbox>
+                </td>
                 <td>{{ estudiante.codigo }}</td>
                 <td>{{ getNombreCompleto(estudiante) }}</td>
                 <td>{{ estudiante.persona?.identificacion }}</td>
                 <td>{{ estudiante.persona?.correoElectronico }}</td>
-                <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico ?? '—' }}</td>
                 <td class="text-center">
-                    <button pButton pRipple icon="pi pi-book"
+                    {{
+                        estudiante.informacionMaestria?.semestreAcademico ?? "—"
+                    }}
+                </td>
+                <td class="text-center">
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-book"
                         class="p-button-rounded p-button-text p-button-sm p-button-warning"
-                        (click)="onGenerarMatriculaPrevia(estudiante.id)" title="Generar Matrícula Previa">
-                    </button>
+                        (click)="onGenerarMatriculaPrevia(estudiante.id)"
+                        title="Generar Matrícula Previa"
+                    ></button>
                 </td>
             </tr>
         </ng-template>

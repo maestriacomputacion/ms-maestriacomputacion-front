@@ -81,9 +81,19 @@ export interface MatriculaResponseData {
 
 export interface MatriculaResumen {
     cursoId: number;
+    periodoId?: number;
     periodoDescripcion: string;
     asignatura: string;
     grupo: string;
     estado: string;
     cantidadEstudiantes: number;
+}
+
+export interface MatriculaResumenBackend {
+    idCurso: number;
+    asignatura: string;
+    grupo: string;
+    periodo: PeriodoBasico;
+    estado: string;
+    cantidadEstudiante: number;
 }

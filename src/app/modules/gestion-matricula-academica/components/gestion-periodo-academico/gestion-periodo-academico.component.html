@@ -9,27 +9,53 @@
             <div class="flex align-items-end h-full">
                 <span class="p-input-icon-left w-full">
                     <i class="pi pi-search"></i>
-                    <input pInputText type="text" class="w-full" placeholder="Buscar periodo" (input)="
+                    <input
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        placeholder="Buscar periodo"
+                        (input)="
                             tablePeriodos.filterGlobal(
                                 $event.target.value,
                                 'contains'
                             )
-                        " />
+                        "
+                    />
                 </span>
             </div>
         </div>
         <div class="col-6">
             <div class="w-full text-right">
-                <button pButton pRipple icon="pi pi-plus" label="Agregar periodo" class="p-button-primary p-button-sm mb-2"
-                    (click)="onAgregarPeriodo()"></button>
+                <button
+                    pButton
+                    pRipple
+                    icon="pi pi-plus"
+                    label="Agregar periodo"
+                    class="p-button-primary p-button-sm mb-2"
+                    (click)="onAgregarPeriodo()"
+                ></button>
             </div>
         </div>
     </div>
     <!-- Tabla Periodos -->
-    <p-table #tablePeriodos [value]="periodos" [paginator]="true" [rows]="7"
-        [globalFilterFields]="['id', 'fechaInicio', 'fechaFin', 'fechaFinMatricula', 'tagPeriodo', 'descripcion', 'estado']"
-        [showCurrentPageReport]="true" currentPageReportTemplate="{first} - {last} de {totalRecords}"
-        styleClass="p-datatable-gridlines p-datatable-striped">
+    <p-table
+        #tablePeriodos
+        [value]="periodos"
+        [paginator]="true"
+        [rows]="7"
+        [globalFilterFields]="[
+            'id',
+            'fechaInicio',
+            'fechaFin',
+            'fechaFinMatricula',
+            'tagPeriodo',
+            'descripcion',
+            'estado'
+        ]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="{first} - {last} de {totalRecords}"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+    >
         <ng-template pTemplate="header">
             <tr>
                 <th scope="col">ID</th>
@@ -53,21 +79,39 @@
                 <td>{{ periodo.estado }}</td>
                 <td class="text-center">
                     <div *ngIf="periodo.estado !== 'FINALIZADO'">
-                        <button pButton pRipple icon="pi pi-book"
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-book"
                             class="p-button-rounded p-button-text p-button-sm p-button-info mr-2"
                             pTooltip="Precargar cursos"
-                            tooltipPosition="top" (click)="onPrecargarCursos($event, periodo.id)"></button>
-                        <button pButton pRipple icon="pi pi-pencil"
+                            tooltipPosition="top"
+                            (click)="onPrecargarCursos($event, periodo.id)"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-pencil"
                             class="p-button-rounded p-button-text p-button-sm p-button-warning mr-2"
                             pTooltip="Editar periodo"
-                            tooltipPosition="top" (click)="onEditarPeriodo(periodo.id)"></button>
-                        <button pButton pRipple icon="pi pi-trash"
+                            tooltipPosition="top"
+                            (click)="onEditarPeriodo(periodo.id)"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-trash"
                             class="p-button-rounded p-button-text p-button-sm p-button-danger"
                             pTooltip="Eliminar periodo"
-                            tooltipPosition="top" (click)="onEliminarPeriodo($event, periodo.id)"></button>
+                            tooltipPosition="top"
+                            (click)="onEliminarPeriodo($event, periodo.id)"
+                        ></button>
                         <p-confirmPopup></p-confirmPopup>
                     </div>
-                    <div *ngIf="periodo.estado === 'FINALIZADO'" class="text-muted">
+                    <div
+                        *ngIf="periodo.estado === 'FINALIZADO'"
+                        class="text-muted"
+                    >
                         <span class="text-xs">Periodo finalizado</span>
                     </div>
                 </td>
@@ -81,69 +125,176 @@
     </p-table>
 
     <!-- Modal para agregar periodo académico -->
-    <p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false" styleClass="w-25rem">
+    <p-dialog
+        [(visible)]="displayModal"
+        [modal]="true"
+        [closable]="false"
+        styleClass="w-25rem"
+    >
         <ng-template pTemplate="header">
             <span class="text-xl font-bold">
                 {{
-                editMode ? "Editar periodo académico" : "Periodo académico"
+                    editMode ? "Editar periodo académico" : "Periodo académico"
                 }}
             </span>
         </ng-template>
         <form [formGroup]="form" (ngSubmit)="registrarPeriodo()">
             <div class="field mb-3 flex align-items-center gap-3">
-                <label for="fechaInicio" class="text-nowrap w-9rem label-required white-space-nowrap">Fecha
-                    Inicio:</label>
-                <p-calendar id="fechaInicio" formControlName="fechaInicio" [showIcon]="true" appendTo="body"
-                    dateFormat="yy-mm-dd" class="flex-1"
-                    [ngClass]="{'ng-invalid ng-dirty': form.get('fechaInicio').invalid && form.get('fechaInicio').touched}"></p-calendar>
+                <label
+                    for="fechaInicio"
+                    class="text-nowrap w-9rem label-required white-space-nowrap"
+                    >Fecha Inicio:</label
+                >
+                <p-calendar
+                    id="fechaInicio"
+                    formControlName="fechaInicio"
+                    [showIcon]="true"
+                    appendTo="body"
+                    dateFormat="yy-mm-dd"
+                    class="flex-1"
+                    [ngClass]="{
+                        'ng-invalid ng-dirty':
+                            form.get('fechaInicio').invalid &&
+                            form.get('fechaInicio').touched
+                    }"
+                ></p-calendar>
             </div>
             <div class="field mb-3 flex align-items-center gap-3">
-                <label for="fechaFin" class="text-nowrap w-9rem label-required white-space-nowrap">Fecha Fin:</label>
-                <p-calendar id="fechaFin" formControlName="fechaFin" [showIcon]="true" appendTo="body"
-                    dateFormat="yy-mm-dd" class="flex-1"
-                    [ngClass]="{'ng-invalid ng-dirty': form.get('fechaFin').invalid && form.get('fechaFin').touched}"></p-calendar>
+                <label
+                    for="fechaFin"
+                    class="text-nowrap w-9rem label-required white-space-nowrap"
+                    >Fecha Fin:</label
+                >
+                <p-calendar
+                    id="fechaFin"
+                    formControlName="fechaFin"
+                    [showIcon]="true"
+                    appendTo="body"
+                    dateFormat="yy-mm-dd"
+                    class="flex-1"
+                    [ngClass]="{
+                        'ng-invalid ng-dirty':
+                            form.get('fechaFin').invalid &&
+                            form.get('fechaFin').touched
+                    }"
+                ></p-calendar>
             </div>
-            <div *ngIf="mostrarValidacionBackend" class="p-error text-xs mb-2 ml-6">
+            <div
+                *ngIf="mostrarValidacionBackend"
+                class="p-error text-xs mb-2 ml-6"
+            >
                 {{ mensajeValidacionBackend }}
             </div>
             <div class="field mb-3 flex align-items-center gap-3">
-                <label for="fechaFinMatricula" class="text-nowrap w-9rem label-required white-space-nowrap">Fecha fin
-                    matrícula:</label>
-                <p-calendar id="fechaFinMatricula" formControlName="fechaFinMatricula" [showIcon]="true" appendTo="body"
-                    dateFormat="yy-mm-dd" class="flex-1"
-                    [ngClass]="{'ng-invalid ng-dirty': form.get('fechaFinMatricula').invalid && form.get('fechaFinMatricula').touched}"></p-calendar>
+                <label
+                    for="fechaFinMatricula"
+                    class="text-nowrap w-9rem label-required white-space-nowrap"
+                    >Fecha fin matrícula:</label
+                >
+                <p-calendar
+                    id="fechaFinMatricula"
+                    formControlName="fechaFinMatricula"
+                    [showIcon]="true"
+                    appendTo="body"
+                    dateFormat="yy-mm-dd"
+                    class="flex-1"
+                    [ngClass]="{
+                        'ng-invalid ng-dirty':
+                            form.get('fechaFinMatricula').invalid &&
+                            form.get('fechaFinMatricula').touched
+                    }"
+                ></p-calendar>
             </div>
-            <div *ngIf="fechaFinMatriculaInvalida" class="p-error text-xs mb-2 ml-6">
-                La fecha fin matrícula debe estar entre la fecha de inicio y la fecha de fin del periodo.
+            <div
+                *ngIf="fechaFinMatriculaInvalida"
+                class="p-error text-xs mb-2 ml-6"
+            >
+                La fecha fin matrícula debe estar entre la fecha de inicio y la
+                fecha de fin del periodo.
             </div>
 
             <div class="field mb-3 flex align-items-center gap-3">
-                <label for="periodoTag" class="text-nowrap w-9rem label-required">Periodo:</label>
-                <p-dropdown id="tagPeriodo" formControlName="tagPeriodo" [options]="tagPeriodoOptions"
-                    optionLabel="label" optionValue="value" placeholder="Seleccione" class="flex-1"
-                    [ngClass]="{'ng-invalid ng-dirty': form.get('tagPeriodo').invalid && form.get('tagPeriodo').touched}"></p-dropdown>
+                <label
+                    for="periodoTag"
+                    class="text-nowrap w-9rem label-required"
+                    >Periodo:</label
+                >
+                <p-dropdown
+                    id="tagPeriodo"
+                    formControlName="tagPeriodo"
+                    [options]="tagPeriodoOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione"
+                    class="flex-1"
+                    [ngClass]="{
+                        'ng-invalid ng-dirty':
+                            form.get('tagPeriodo').invalid &&
+                            form.get('tagPeriodo').touched
+                    }"
+                ></p-dropdown>
             </div>
-            <div *ngIf="editMode" class="field mb-3 flex align-items-center gap-3">
-                <label for="estado" class="text-nowrap w-9rem label-required">Estado:</label>
-                <p-dropdown id="estado" formControlName="estado" [options]="estadoOptions" optionLabel="label"
-                    optionValue="value" placeholder="Seleccione" class="flex-1"
-                    [ngClass]="{'ng-invalid ng-dirty': form.get('estado').invalid && form.get('estado').touched}"></p-dropdown>
+            <div
+                *ngIf="editMode"
+                class="field mb-3 flex align-items-center gap-3"
+            >
+                <label for="estado" class="text-nowrap w-9rem label-required"
+                    >Estado:</label
+                >
+                <p-dropdown
+                    id="estado"
+                    formControlName="estado"
+                    [options]="estadoOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Seleccione"
+                    class="flex-1"
+                    [ngClass]="{
+                        'ng-invalid ng-dirty':
+                            form.get('estado').invalid &&
+                            form.get('estado').touched
+                    }"
+                ></p-dropdown>
             </div>
             <div class="field mb-3">
                 <label for="descripcion">Descripción: </label>
-                <textarea id="descripcion" pInputTextarea formControlName="descripcion" rows="4" class="w-full"
+                <textarea
+                    id="descripcion"
+                    pInputTextarea
+                    formControlName="descripcion"
+                    rows="4"
+                    class="w-full"
                     maxlength="200"
-                    [ngClass]="{'ng-invalid ng-dirty': form.get('descripcion').invalid && form.get('descripcion').touched}"></textarea>
+                    [ngClass]="{
+                        'ng-invalid ng-dirty':
+                            form.get('descripcion').invalid &&
+                            form.get('descripcion').touched
+                    }"
+                ></textarea>
                 <div class="text-right text-xs mt-1 text-500">
-                    {{ form.get('descripcion')?.value?.length || 0 }}/200 caracteres
+                    {{ form.get("descripcion")?.value?.length || 0 }}/200
+                    caracteres
                 </div>
             </div>
             <div class="flex justify-content-end gap-2">
-                <button pButton pRipple type="button" label="Cancelar" class="p-button-secondary p-button-outlined"
-                    (click)="cancelarModal()"></button>
-                <button pButton pRipple type="submit" [label]="
+                <button
+                    pButton
+                    pRipple
+                    type="button"
+                    label="Cancelar"
+                    class="p-button-secondary p-button-outlined"
+                    (click)="cancelarModal()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    type="submit"
+                    [label]="
                         editMode ? 'Actualizar periodo' : 'Registrar periodo'
-                    " class="p-button-primary" [disabled]="!form.valid || !fechasValidas"></button>
+                    "
+                    class="p-button-primary"
+                    [disabled]="!form.valid || !fechasValidas"
+                ></button>
             </div>
         </form>
     </p-dialog>

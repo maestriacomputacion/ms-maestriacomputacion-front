@@ -1,241 +1,407 @@
 <p-toast></p-toast>
 <p-panel [formGroup]="form">
-  <p-header>
-    <b>{{
-      isViewMode
-      ? "VER CURSO"
-      : isEditMode
-      ? "EDITAR CURSO"
-      : "REGISTRAR CURSO"
-      }}</b>
-  </p-header>
+    <p-header>
+        <b>{{
+            isViewMode
+                ? "VER CURSO"
+                : isEditMode
+                  ? "EDITAR CURSO"
+                  : "REGISTRAR CURSO"
+        }}</b>
+    </p-header>
 
-  <!-- Sección Grupo -->
-  <div class="mt-3" style="max-width: 22rem">
-    <div class="flex items-center gap-3">
-      <label for="grupo" class="font-medium mb-1 label-required"
-        style="white-space: nowrap; min-width: 5.5rem">Grupo</label>
-      <input id="grupo" type="text" pInputText formControlName="grupo" class="flex-1" maxlength="1"
-        [ngClass]="{ 'p-invalid': grupo?.invalid && grupo?.touched }" [attr.aria-invalid]="grupo?.invalid"
-        placeholder="Ej: A" />
+    <!-- Sección Grupo -->
+    <div class="mt-3" style="max-width: 22rem">
+        <div class="flex items-center gap-3">
+            <label
+                for="grupo"
+                class="font-medium mb-1 label-required"
+                style="white-space: nowrap; min-width: 5.5rem"
+                >Grupo</label
+            >
+            <input
+                id="grupo"
+                type="text"
+                pInputText
+                formControlName="grupo"
+                class="flex-1"
+                maxlength="1"
+                [ngClass]="{ 'p-invalid': grupo?.invalid && grupo?.touched }"
+                [attr.aria-invalid]="grupo?.invalid"
+                placeholder="Ej: A"
+            />
+        </div>
+        <div
+            class="mt-1"
+            style="margin-left: calc(5.5rem + 0.75rem)"
+            aria-live="assertive"
+        >
+            <small *ngIf="cursoExistsMessage" class="p-error">{{
+                cursoExistsMessage
+            }}</small>
+        </div>
     </div>
-    <div class="mt-1" style="margin-left: calc(5.5rem + 0.75rem)" aria-live="assertive">
-      <small *ngIf="cursoExistsMessage" class="p-error">{{
-        cursoExistsMessage
-        }}</small>
+
+    <!-- Sección Horario -->
+    <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
+        <label
+            for="horario"
+            class="font-medium mb-1"
+            style="white-space: nowrap; min-width: 5.5rem"
+            >Horario</label
+        >
+        <textarea
+            id="horario"
+            rows="1"
+            pInputTextarea
+            autoResize="autoResize"
+            formControlName="horario"
+            class="flex-1"
+            maxlength="100"
+        ></textarea>
     </div>
-  </div>
 
-  <!-- Sección Horario -->
-  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
-    <label for="horario" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Horario</label>
-    <textarea id="horario" rows="1" pInputTextarea autoResize="autoResize" formControlName="horario" class="flex-1"
-      maxlength="100"></textarea>
-  </div>
-
-  <!-- Sección Salón -->
-  <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
-    <label for="salon" class="font-medium mb-1" style="white-space: nowrap; min-width: 5.5rem">Salon</label>
-    <textarea id="salon" rows="1" pInputTextarea autoResize="autoResize" formControlName="salon" class="flex-1"
-      maxlength="50" [ngClass]="{
+    <!-- Sección Salón -->
+    <div class="flex items-center gap-3 mt-3" style="max-width: 22rem">
+        <label
+            for="salon"
+            class="font-medium mb-1"
+            style="white-space: nowrap; min-width: 5.5rem"
+            >Salon</label
+        >
+        <textarea
+            id="salon"
+            rows="1"
+            pInputTextarea
+            autoResize="autoResize"
+            formControlName="salon"
+            class="flex-1"
+            maxlength="50"
+            [ngClass]="{
                 'p-invalid': salonControl?.invalid && salonControl?.touched
-            }"></textarea>
-  </div>
+            }"
+        ></textarea>
+    </div>
 
-  <div class="p-fluid p-formgrid p-grid mt-5">
-    <div class="p-field p-col-12">
-      <label for="asignaturaAsociada" class="font-medium mb-2 label-required"><b>Asignatura Asociada: </b></label>
-      <div style="margin-left: 13.5rem">
-        <!-- Ajusta este valor según el largo del label -->
-        <div class="flex align-items-center mt-2 justify-content-between" style="gap: 1rem">
-          <div class="p-card p-component flex-grow-1 flex-basis-0 min-w-0">
-            <div class="p-card-body p-p-0">
-              <div class="p-card-content p-p-3">
-                <div class="flex flex-row p-mb-2">
-                  <div class="font-bold mr-2">Código</div>
-                  <div class="flex-grow-1">
-                    {{
-                    asignatura?.codigo ||
-                    "Ninguna asignatura seleccionada"
-                    }}
-                  </div>
+    <div class="p-fluid p-formgrid p-grid mt-5">
+        <div class="p-field p-col-12">
+            <label
+                for="asignaturaAsociada"
+                class="font-medium mb-2 label-required"
+                ><b>Asignatura Asociada: </b></label
+            >
+            <div style="margin-left: 13.5rem">
+                <!-- Ajusta este valor según el largo del label -->
+                <div
+                    class="flex align-items-center mt-2 justify-content-between"
+                    style="gap: 1rem"
+                >
+                    <div
+                        class="p-card p-component flex-grow-1 flex-basis-0 min-w-0"
+                    >
+                        <div class="p-card-body p-p-0">
+                            <div class="p-card-content p-p-3">
+                                <div class="flex flex-row p-mb-2">
+                                    <div class="font-bold mr-2">Código</div>
+                                    <div class="flex-grow-1">
+                                        {{
+                                            asignatura?.codigo ||
+                                                "Ninguna asignatura seleccionada"
+                                        }}
+                                    </div>
+                                </div>
+                                <div class="flex flex-row">
+                                    <div class="font-bold mr-2">Nombre</div>
+                                    <div class="flex-grow-1">
+                                        {{
+                                            asignatura?.nombre ||
+                                                "Seleccione una asignatura activa desde el modal"
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        *ngIf="!isViewMode"
+                        pButton
+                        label="Asociar asignatura"
+                        class="w-auto p-button-sm"
+                        (click)="openAsignaturaDialog()"
+                    ></button>
                 </div>
-                <div class="flex flex-row">
-                  <div class="font-bold mr-2">Nombre</div>
-                  <div class="flex-grow-1">
-                    {{
-                    asignatura?.nombre ||
-                    "Seleccione una asignatura activa desde el modal"
-                    }}
-                  </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-fluid p-formgrid p-grid mt-5">
+        <div class="p-field p-col-12">
+            <label for="buscarDocente" class="label-required"
+                ><b>Docentes que dictan el curso: </b></label
+            >
+            <div style="margin-left: 16.5rem">
+                <!-- Ajusta este valor según el largo del label -->
+                <div class="p-input-icon-left w-20rem mb-3">
+                    <i class="pi pi-search"></i>
+                    <input
+                        id="buscarDocente"
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        placeholder="Buscar Docente"
+                        [disabled]="loadingDocentes || saving || isViewMode"
+                    />
                 </div>
-              </div>
+                <p-pickList
+                    [source]="sourceDocentes"
+                    [target]="targetDocentes"
+                    sourceHeader="Docentes Disponibles"
+                    targetHeader="Docentes Seleccionados"
+                    [responsive]="true"
+                    [dragdrop]="true"
+                    [breakpoint]="'1400px'"
+                    [sourceStyle]="{ height: '22rem' }"
+                    [targetStyle]="{ height: '22rem' }"
+                    [showSourceControls]="false"
+                    [showTargetControls]="false"
+                    [disabled]="loadingDocentes || saving || isViewMode"
+                >
+                    <ng-template let-docente pTemplate="item">
+                        <div>
+                            {{ docente.persona.nombre }}
+                            {{ docente.persona.apellido }} |
+                            {{ docente.codigo }}
+                        </div>
+                    </ng-template>
+                </p-pickList>
+                <div class="flex justify-content-center mt-3">
+                    <button
+                        *ngIf="!isViewMode"
+                        pButton
+                        label="Registrar Material"
+                        class="p-button-primary w-auto p-button-sm"
+                        style="min-width: unset; width: auto"
+                        (click)="openMaterialDialog()"
+                        [disabled]="saving || loadingMaterials"
+                        pTooltip="Abrir selector de materiales"
+                    ></button>
+                </div>
             </div>
-          </div>
-          <button *ngIf="!isViewMode" pButton label="Asociar asignatura" class="w-auto p-button-sm"
-            (click)="openAsignaturaDialog()"></button>
         </div>
-      </div>
     </div>
-  </div>
 
-  <div class="p-fluid p-formgrid p-grid mt-5">
-    <div class="p-field p-col-12">
-      <label for="buscarDocente" class="label-required"><b>Docentes que dictan el curso: </b></label>
-      <div style="margin-left: 16.5rem">
-        <!-- Ajusta este valor según el largo del label -->
-        <div class="p-input-icon-left w-20rem mb-3">
-          <i class="pi pi-search"></i>
-          <input id="buscarDocente" pInputText type="text" class="w-full" placeholder="Buscar Docente"
-            [disabled]="loadingDocentes || saving || isViewMode" />
+    <div class="p-fluid p-formgrid p-grid mt-5">
+        <div class="p-field p-col-12">
+            <p-table
+                [value]="selectedMateriales"
+                [paginator]="true"
+                [rows]="10"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} materiales"
+                styleClass="p-datatable-gridlines p-datatable-striped"
+                [responsiveLayout]="'scroll'"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">Nombre del apoyo</th>
+                        <th scope="col">Acción</th>
+                    </tr>
+                </ng-template>
+                <ng-template
+                    pTemplate="body"
+                    let-material
+                    let-rowIndex="rowIndex"
+                >
+                    <tr>
+                        <td>{{ rowIndex + 1 }}</td>
+                        <td>{{ material.nombre }}</td>
+                        <td class="text-center">
+                            <button
+                                *ngIf="!isViewMode"
+                                pButton
+                                pRipple
+                                icon="pi pi-trash"
+                                class="p-button-rounded p-button-text p-button-danger"
+                                pTooltip="Quitar de la selección"
+                                (click)="removeSelectedMaterial(material)"
+                            ></button>
+                            <span *ngIf="isViewMode">-</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="3">
+                            No se encontraron materiales seleccionados
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
         </div>
-        <p-pickList [source]="sourceDocentes" [target]="targetDocentes" sourceHeader="Docentes Disponibles"
-          targetHeader="Docentes Seleccionados" [responsive]="true" [dragdrop]="true" [breakpoint]="'1400px'"
-          [sourceStyle]="{ height: '22rem' }" [targetStyle]="{ height: '22rem' }" [showSourceControls]="false"
-          [showTargetControls]="false" [disabled]="loadingDocentes || saving || isViewMode">
-          <ng-template let-docente pTemplate="item">
-            <div>
-              {{ docente.persona.nombre }} {{ docente.persona.apellido }} |
-              {{ docente.codigo }}
+    </div>
+
+    <!-- Dialogo para seleccionar materiales -->
+    <p-dialog
+        *ngIf="!isViewMode"
+        header="Seleccionar Materiales de Apoyo"
+        [(visible)]="displayMaterialDialog"
+        [modal]="true"
+        [style]="{ width: '60vw' }"
+        [closable]="false"
+    >
+        <p-table
+            [value]="materialesApoyo"
+            selectionMode="multiple"
+            [(selection)]="tableSelection"
+            [paginator]="true"
+            [rows]="10"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th scope="col" style="width: 3rem"></th>
+                    <th scope="col">Nombre</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-material>
+                <tr [pSelectableRow]="material">
+                    <td>
+                        <p-tableCheckbox [value]="material"></p-tableCheckbox>
+                    </td>
+                    <td>{{ material.nombre }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-footer>
+            <div class="flex justify-content-end gap-2">
+                <button
+                    pButton
+                    label="Cancelar"
+                    class="p-button-outlined"
+                    (click)="cancelMaterialSelection()"
+                ></button>
+                <button
+                    pButton
+                    label="Aceptar"
+                    class="p-button-primary"
+                    (click)="confirmMaterialSelection()"
+                ></button>
             </div>
-          </ng-template>
-        </p-pickList>
-        <div class="flex justify-content-center mt-3">
-          <button *ngIf="!isViewMode" pButton label="Registrar Material" class="p-button-primary w-auto p-button-sm"
-            style="min-width: unset; width: auto" (click)="openMaterialDialog()" [disabled]="saving || loadingMaterials"
-            pTooltip="Abrir selector de materiales"></button>
-        </div>
-      </div>
-    </div>
-  </div>
+        </p-footer>
+    </p-dialog>
 
-  <div class="p-fluid p-formgrid p-grid mt-5">
-    <div class="p-field p-col-12">
-      <p-table [value]="selectedMateriales" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} materiales"
-        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'">
-        <ng-template pTemplate="header">
-          <tr>
-            <th scope="col">No</th>
-            <th scope="col">Nombre del apoyo</th>
-            <th scope="col">Acción</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-material let-rowIndex="rowIndex">
-          <tr>
-            <td>{{ rowIndex + 1 }}</td>
-            <td>{{ material.nombre }}</td>
-            <td class="text-center">
-              <button *ngIf="!isViewMode" pButton pRipple icon="pi pi-trash"
-                class="p-button-rounded p-button-text p-button-danger" pTooltip="Quitar de la selección"
-                (click)="removeSelectedMaterial(material)"></button>
-              <span *ngIf="isViewMode">-</span>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td [attr.colspan]="3">
-              No se encontraron materiales seleccionados
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  </div>
-
-  <!-- Dialogo para seleccionar materiales -->
-  <p-dialog *ngIf="!isViewMode" header="Seleccionar Materiales de Apoyo" [(visible)]="displayMaterialDialog"
-    [modal]="true" [style]="{ width: '60vw' }" [closable]="false">
-    <p-table [value]="materialesApoyo" selectionMode="multiple" [(selection)]="tableSelection" [paginator]="true"
-      [rows]="10">
-      <ng-template pTemplate="header">
-        <tr>
-          <th scope="col" style="width: 3rem"></th>
-          <th scope="col">Nombre</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-material>
-        <tr [pSelectableRow]="material">
-          <td>
-            <p-tableCheckbox [value]="material"></p-tableCheckbox>
-          </td>
-          <td>{{ material.nombre }}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-    <p-footer>
-      <div class="flex justify-content-end gap-2">
-        <button pButton label="Cancelar" class="p-button-outlined" (click)="cancelMaterialSelection()"></button>
-        <button pButton label="Aceptar" class="p-button-primary" (click)="confirmMaterialSelection()"></button>
-      </div>
-    </p-footer>
-  </p-dialog>
-
-  <!-- Dialogo para seleccionar asignatura -->
-  <p-dialog *ngIf="!isViewMode" header="Seleccionar Asignatura Activa" [(visible)]="displayAsignaturaDialog"
-    [modal]="true" [style]="{ width: '50vw' }" [closable]="false">
-    <p-table [value]="asignaturas" [paginator]="true" [rows]="10">
-      <ng-template pTemplate="header">
-        <tr>
-          <th scope="col">Código</th>
-          <th scope="col">Nombre</th>
-          <th scope="col" style="width: 8rem">Acción</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-asign>
-        <tr>
-          <td>{{ asign.codigo }}</td>
-          <td>{{ asign.nombre }}</td>
-          <td class="text-center">
-            <button type="button" class="p-link" (click)="selectAsignatura(asign)" style="color: #0d6efd">
-              Seleccionar
-            </button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td [attr.colspan]="2">
-            No se encontraron asignaturas activas
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-    <p-footer>
-      <div class="flex justify-content-end gap-2">
-        <button pButton label="Cancelar" class="p-button-outlined" (click)="cancelAsignaturaSelection()"></button>
-        <button pButton label="Aceptar" class="p-button-primary" (click)="confirmAsignaturaSelection()" [disabled]="
+    <!-- Dialogo para seleccionar asignatura -->
+    <p-dialog
+        *ngIf="!isViewMode"
+        header="Seleccionar Asignatura Activa"
+        [(visible)]="displayAsignaturaDialog"
+        [modal]="true"
+        [style]="{ width: '50vw' }"
+        [closable]="false"
+    >
+        <p-table [value]="asignaturas" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col" style="width: 8rem">Acción</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-asign>
+                <tr>
+                    <td>{{ asign.codigo }}</td>
+                    <td>{{ asign.nombre }}</td>
+                    <td class="text-center">
+                        <button
+                            type="button"
+                            class="p-link"
+                            (click)="selectAsignatura(asign)"
+                            style="color: #0d6efd"
+                        >
+                            Seleccionar
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="2">
+                        No se encontraron asignaturas activas
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-footer>
+            <div class="flex justify-content-end gap-2">
+                <button
+                    pButton
+                    label="Cancelar"
+                    class="p-button-outlined"
+                    (click)="cancelAsignaturaSelection()"
+                ></button>
+                <button
+                    pButton
+                    label="Aceptar"
+                    class="p-button-primary"
+                    (click)="confirmAsignaturaSelection()"
+                    [disabled]="
                         !modalSelectedAsignaturas ||
                         modalSelectedAsignaturas.length === 0
-                    "></button>
-      </div>
-    </p-footer>
-  </p-dialog>
+                    "
+                ></button>
+            </div>
+        </p-footer>
+    </p-dialog>
 
-  <div class="p-fluid p-formgrid p-grid mt-5">
-    <div class="p-field p-col-12">
-      <label for="observacion"><b>Observación: </b></label>
-      <textarea id="observacion" rows="5" pInputTextarea autoResize="autoResize" maxlength="200"
-        formControlName="observacion"></textarea>
-      <div class="text-right mt-1" style="margin-right: 0.5rem">
-        <small>{{ observacionLength }} / 200</small>
-      </div>
+    <div class="p-fluid p-formgrid p-grid mt-5">
+        <div class="p-field p-col-12">
+            <label for="observacion"><b>Observación: </b></label>
+            <textarea
+                id="observacion"
+                rows="5"
+                pInputTextarea
+                autoResize="autoResize"
+                maxlength="200"
+                formControlName="observacion"
+            ></textarea>
+            <div class="text-right mt-1" style="margin-right: 0.5rem">
+                <small>{{ observacionLength }} / 200</small>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="flex justify-content-end mt-4">
-    <button *ngIf="!isViewMode" pButton [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
-      class="p-button-primary mr-2" [disabled]="
+    <div class="flex justify-content-end mt-4">
+        <button
+            *ngIf="!isViewMode"
+            pButton
+            [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
+            class="p-button-primary mr-2"
+            [disabled]="
                 form.invalid ||
                 saving ||
                 loadingMaterials ||
                 !targetDocentes ||
                 targetDocentes.length === 0
-            " (click)="onSubmit()" [loading]="saving"></button>
-    <button *ngIf="!isViewMode" pButton label="Cancelar" class="p-button-secondary" type="button" [disabled]="saving"
-      (click)="onCancel()"></button>
-    <button *ngIf="isViewMode" pButton label="Cerrar" class="p-button-secondary" type="button"
-      (click)="onCloseView()"></button>
-  </div>
+            "
+            (click)="onSubmit()"
+            [loading]="saving"
+        ></button>
+        <button
+            *ngIf="!isViewMode"
+            pButton
+            label="Cancelar"
+            class="p-button-secondary"
+            type="button"
+            [disabled]="saving"
+            (click)="onCancel()"
+        ></button>
+        <button
+            *ngIf="isViewMode"
+            pButton
+            label="Cerrar"
+            class="p-button-secondary"
+            type="button"
+            (click)="onCloseView()"
+        ></button>
+    </div>
 </p-panel>

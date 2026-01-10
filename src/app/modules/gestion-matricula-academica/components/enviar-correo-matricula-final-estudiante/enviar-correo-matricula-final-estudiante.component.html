@@ -1,6 +1,9 @@
 <p-panel>
     <p-header>
-        <b>ENVIAR CORREO INFORMADO SOBRE LA MATRÍCULA FINAL PARA UN ESTUDIANTE</b>
+        <b
+            >ENVIAR CORREO INFORMADO SOBRE LA MATRÍCULA FINAL PARA UN
+            ESTUDIANTE</b
+        >
     </p-header>
 
     <div class="flex flex-column gap-2 mb-4">
@@ -145,12 +148,12 @@
                     <td>{{ estudiante.nombre }}</td>
                     <td>{{ estudiante.correo }}</td>
                     <td class="text-center">
-                    <button
-                        pButton
-                        pRipple
-                        icon="pi pi-trash"
-                        class="p-button-text p-button-danger p-button-sm"
-                        (click)="removerEnvio(estudiante)"
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-trash"
+                            class="p-button-text p-button-danger p-button-sm"
+                            (click)="removerEnvio(estudiante)"
                             pTooltip="Quitar del envío"
                         ></button>
                     </td>

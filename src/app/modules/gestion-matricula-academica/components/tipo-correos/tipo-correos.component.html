@@ -4,10 +4,11 @@
     </p-header>
 
     <div class="surface-card border-1 border-200 border-round p-4">
-
         <div class="grid">
             <div class="col-12 md:col-6" *ngFor="let tipo of tipos">
-                <div class="border-1 border-200 border-round p-3 flex flex-column gap-2 h-full">
+                <div
+                    class="border-1 border-200 border-round p-3 flex flex-column gap-2 h-full"
+                >
                     <div class="flex align-items-center gap-2">
                         <i [class]="tipo.icon + ' text-primary'"></i>
                         <div class="font-semibold text-900">
@@ -16,8 +17,14 @@
                     </div>
                     <div class="text-600">{{ tipo.descripcion }}</div>
                     <div class="flex justify-content-end">
-                        <button pButton pRipple label="Enviar correo" class="p-button-primary p-button-sm"
-                            icon="pi pi-envelope" (click)="seleccionar(tipo)"></button>
+                        <button
+                            pButton
+                            pRipple
+                            label="Enviar correo"
+                            class="p-button-primary p-button-sm"
+                            icon="pi pi-envelope"
+                            (click)="seleccionar(tipo)"
+                        ></button>
                     </div>
                 </div>
             </div>

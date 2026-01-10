@@ -3,20 +3,27 @@
         <b>RESULTADO MATRÍCULA</b>
     </p-header>
     <div class="text-500 mb-3">
-        <small>{{ resumen }} • Origen: <strong>{{ origenLabel }}</strong></small>
+        <small
+            >{{ resumen }} • Origen: <strong>{{ origenLabel }}</strong></small
+        >
     </div>
     <div class="grid">
-
         <div class="col-12 md:col-6">
             <div class="surface-card border-round shadow-1 h-full">
-
                 <div class="p-3">
-                    <h4 class="mb-3 font-semibold text-900 flex align-items-center gap-2">
+                    <h4
+                        class="mb-3 font-semibold text-900 flex align-items-center gap-2"
+                    >
                         <i class="pi pi-check-circle text-green-600"></i>
                         Matrículas Realizadas
                     </h4>
-                    <p-table [value]="matriculasRealizadas" [paginator]="true" [rows]="10"
-                        styleClass="p-datatable-striped" [responsiveLayout]="'scroll'">
+                    <p-table
+                        [value]="matriculasRealizadas"
+                        [paginator]="true"
+                        [rows]="10"
+                        styleClass="p-datatable-striped"
+                        [responsiveLayout]="'scroll'"
+                    >
                         <ng-template pTemplate="header">
                             <tr>
                                 <th scope="col">Código</th>
@@ -29,18 +36,37 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-matricula>
                             <tr>
-                                <td>{{ matricula.estudiante?.codigo || '-' }}</td>
-                                <td>{{ matricula.estudiante?.persona?.nombre }} {{
-                                    matricula.estudiante?.persona?.apellido }}</td>
-                                <td>{{ matricula.curso?.asignatura?.nombre || '-' }}</td>
-                                <td>{{ matricula.curso?.grupo || '-' }}</td>
-                                <td>{{ getDocentesNombres(matricula.curso?.docentes) }}</td>
-                                <td>{{ matricula.observacion || '-' }}</td>
+                                <td>
+                                    {{ matricula.estudiante?.codigo || "-" }}
+                                </td>
+                                <td>
+                                    {{ matricula.estudiante?.persona?.nombre }}
+                                    {{
+                                        matricula.estudiante?.persona?.apellido
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        matricula.curso?.asignatura?.nombre ||
+                                            "-"
+                                    }}
+                                </td>
+                                <td>{{ matricula.curso?.grupo || "-" }}</td>
+                                <td>
+                                    {{
+                                        getDocentesNombres(
+                                            matricula.curso?.docentes
+                                        )
+                                    }}
+                                </td>
+                                <td>{{ matricula.observacion || "-" }}</td>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="emptymessage">
                             <tr>
-                                <td colspan="6" class="text-center">No se realizaron matrículas</td>
+                                <td colspan="6" class="text-center">
+                                    No se realizaron matrículas
+                                </td>
                             </tr>
                         </ng-template>
                     </p-table>
@@ -50,12 +76,19 @@
         <div class="col-12 md:col-6">
             <div class="surface-card border-round shadow-1 h-full">
                 <div class="p-3">
-                    <h4 class="mb-3 font-semibold text-900 flex align-items-center gap-2">
+                    <h4
+                        class="mb-3 font-semibold text-900 flex align-items-center gap-2"
+                    >
                         <i class="pi pi-times-circle text-red-600"></i>
                         Matrículas No Realizadas
                     </h4>
-                    <p-table [value]="matriculasNoRealizadas" [paginator]="true" [rows]="10"
-                        styleClass="p-datatable-striped" [responsiveLayout]="'scroll'">
+                    <p-table
+                        [value]="matriculasNoRealizadas"
+                        [paginator]="true"
+                        [rows]="10"
+                        styleClass="p-datatable-striped"
+                        [responsiveLayout]="'scroll'"
+                    >
                         <ng-template pTemplate="header">
                             <tr>
                                 <th scope="col">Código</th>
@@ -68,12 +101,29 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-matricula>
                             <tr>
-                                <td>{{ matricula.estudiante?.codigo || '-' }}</td>
-                                <td>{{ matricula.estudiante?.persona?.nombre }} {{
-                                    matricula.estudiante?.persona?.apellido }}</td>
-                                <td>{{ matricula.curso?.asignatura?.nombre || '-' }}</td>
-                                <td>{{ matricula.curso?.grupo || '-' }}</td>
-                                <td>{{ getDocentesNombres(matricula.curso?.docentes) }}</td>
+                                <td>
+                                    {{ matricula.estudiante?.codigo || "-" }}
+                                </td>
+                                <td>
+                                    {{ matricula.estudiante?.persona?.nombre }}
+                                    {{
+                                        matricula.estudiante?.persona?.apellido
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        matricula.curso?.asignatura?.nombre ||
+                                            "-"
+                                    }}
+                                </td>
+                                <td>{{ matricula.curso?.grupo || "-" }}</td>
+                                <td>
+                                    {{
+                                        getDocentesNombres(
+                                            matricula.curso?.docentes
+                                        )
+                                    }}
+                                </td>
                                 <td class="max-w-20rem white-space-normal">
                                     {{ matricula.motivo }}
                                 </td>
@@ -81,7 +131,9 @@
                         </ng-template>
                         <ng-template pTemplate="emptymessage">
                             <tr>
-                                <td colspan="6" class="text-center">Todas las matrículas fueron realizadas</td>
+                                <td colspan="6" class="text-center">
+                                    Todas las matrículas fueron realizadas
+                                </td>
                             </tr>
                         </ng-template>
                     </p-table>
@@ -92,9 +144,16 @@
 
     <!-- Botón de finalizar -->
     <div class="flex justify-content-end gap-2 mt-4">
-        <button pButton pRipple label="Volver al listado" icon="pi pi-check" class="p-button-primary"
-            (click)="finalizar($event)" pTooltip="Volver al listado" tooltipPosition="top">
-        </button>
+        <button
+            pButton
+            pRipple
+            label="Volver al listado"
+            icon="pi pi-check"
+            class="p-button-primary"
+            (click)="finalizar($event)"
+            pTooltip="Volver al listado"
+            tooltipPosition="top"
+        ></button>
     </div>
 
     <p-confirmPopup></p-confirmPopup>

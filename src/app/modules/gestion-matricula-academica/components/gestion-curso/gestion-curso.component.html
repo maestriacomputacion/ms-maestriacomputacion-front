@@ -8,50 +8,101 @@
     <!-- Filtros alineados verticalmente -->
     <div class="w-20rem">
         <div class="flex flex-column gap-3 mb-2">
-            <div class="flex align-items-center gap-2" *ngIf="estado !== 'gestion-matricula-curso'">
-                <label for="periodo" class="font-medium mb-1 white-space-nowrap">Periodo</label>
-                <p-dropdown id="periodo" [options]="periodos" [(ngModel)]="periodoSeleccionado"
-                    (onChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona el periodo"
-                    class="w-12rem"></p-dropdown>
+            <div
+                class="flex align-items-center gap-2"
+                *ngIf="estado !== 'gestion-matricula-curso'"
+            >
+                <label for="periodo" class="font-medium mb-1 white-space-nowrap"
+                    >Periodo</label
+                >
+                <p-dropdown
+                    id="periodo"
+                    [options]="periodos"
+                    [(ngModel)]="periodoSeleccionado"
+                    (onChange)="onFilterChange()"
+                    [showClear]="true"
+                    placeholder="Selecciona el periodo"
+                    class="w-12rem"
+                ></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
-                <label for="areaFormacion" class="font-medium mb-1 white-space-nowrap">Area de
-                    formación</label>
-                <p-dropdown id="areaFormacion" [options]="areasFormacion" [(ngModel)]="areaSeleccionada"
-                    (onChange)="onAreaChange($event.value)" [showClear]="true" placeholder="Selecciona el area"
-                    class="w-12rem"></p-dropdown>
+                <label
+                    for="areaFormacion"
+                    class="font-medium mb-1 white-space-nowrap"
+                    >Area de formación</label
+                >
+                <p-dropdown
+                    id="areaFormacion"
+                    [options]="areasFormacion"
+                    [(ngModel)]="areaSeleccionada"
+                    (onChange)="onAreaChange($event.value)"
+                    [showClear]="true"
+                    placeholder="Selecciona el area"
+                    class="w-12rem"
+                ></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2" *ngIf="areaSeleccionada">
-                <label for="asignaturaInvestigacion" class="font-medium mb-1 white-space-nowrap">Asignatura de
-                    investigación</label>
-                <p-dropdown id="asignaturaInvestigacion" [options]="asignaturas" [(ngModel)]="asignaturaSeleccionada"
-                    (onChange)="onFilterChange()" [showClear]="true" placeholder="Selecciona la asignatura"
-                    class="w-12rem"></p-dropdown>
+                <label
+                    for="asignaturaInvestigacion"
+                    class="font-medium mb-1 white-space-nowrap"
+                    >Asignatura de investigación</label
+                >
+                <p-dropdown
+                    id="asignaturaInvestigacion"
+                    [options]="asignaturas"
+                    [(ngModel)]="asignaturaSeleccionada"
+                    (onChange)="onFilterChange()"
+                    [showClear]="true"
+                    placeholder="Selecciona la asignatura"
+                    class="w-12rem"
+                ></p-dropdown>
             </div>
         </div>
     </div>
     <!-- Buscador y botón en la misma línea, ocupando el ancho -->
-    <div class="flex flex-row align-items-center justify-content-between mb-3 w-full">
+    <div
+        class="flex flex-row align-items-center justify-content-between mb-3 w-full"
+    >
         <div class="w-6">
             <span class="p-input-icon-left w-full">
                 <i class="pi pi-search"></i>
-                <input pInputText type="text" class="w-full" placeholder="Buscar Curso" (input)="
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar Curso"
+                    (input)="
                         tableCursos.filterGlobal(
                             $event.target.value,
                             'contains'
                         )
-                    " />
+                    "
+                />
             </span>
         </div>
-        <button *ngIf="estado !== 'gestion-matricula-curso'" pButton pRipple label="Agregar Curso"
-            class="p-button-primary p-button-sm" (click)="onAgregarCurso()"></button>
+        <button
+            *ngIf="estado !== 'gestion-matricula-curso'"
+            pButton
+            pRipple
+            label="Agregar Curso"
+            class="p-button-primary p-button-sm"
+            (click)="onAgregarCurso()"
+        ></button>
     </div>
 
     <!-- Tabla -->
-    <p-table #tableCursos [value]="cursos" [paginator]="true" [rows]="10" [totalRecords]="cursos?.length || 0"
-        [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
-        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'"
-        [globalFilterFields]="['grupo', 'asignatura', 'docente', 'fecha']">
+    <p-table
+        #tableCursos
+        [value]="cursos"
+        [paginator]="true"
+        [rows]="10"
+        [totalRecords]="cursos?.length || 0"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [responsiveLayout]="'scroll'"
+        [globalFilterFields]="['grupo', 'asignatura', 'docente', 'fecha']"
+    >
         <ng-template pTemplate="header">
             <tr>
                 <th class="text-center" scope="col">Grupo</th>
@@ -66,18 +117,38 @@
                 <td>{{ curso.grupo }}</td>
                 <td>{{ curso.asignatura }}</td>
                 <td>{{ curso.docente }}</td>
-                <td>{{ curso.horario || '-' }}</td>
+                <td>{{ curso.horario || "-" }}</td>
                 <td class="text-center">
-                    <div class="flex align-items-center justify-content-center gap-2">
-                        <button *ngIf="estado === 'gestion-matricula-curso'" pButton pRipple icon="pi pi-user-plus"
+                    <div
+                        class="flex align-items-center justify-content-center gap-2"
+                    >
+                        <button
+                            *ngIf="estado === 'gestion-matricula-curso'"
+                            pButton
+                            pRipple
+                            icon="pi pi-user-plus"
                             class="p-button-rounded p-button-text p-button-sm p-button-success"
-                            (click)="onAgregarEstudiantes(curso.id)" title="Agregar Estudiantes"></button>
-                        <button *ngIf="estado !== 'gestion-matricula-curso'" pButton pRipple icon="pi pi-eye"
-                            class="p-button-rounded p-button-text p-button-sm p-button-info" (click)="onVerCurso(curso)"
-                            title="Ver"></button>
-                        <button *ngIf="estado !== 'gestion-matricula-curso'" pButton pRipple icon="pi pi-trash"
+                            (click)="onAgregarEstudiantes(curso.id)"
+                            title="Agregar Estudiantes"
+                        ></button>
+                        <button
+                            *ngIf="estado !== 'gestion-matricula-curso'"
+                            pButton
+                            pRipple
+                            icon="pi pi-eye"
+                            class="p-button-rounded p-button-text p-button-sm p-button-info"
+                            (click)="onVerCurso(curso)"
+                            title="Ver"
+                        ></button>
+                        <button
+                            *ngIf="estado !== 'gestion-matricula-curso'"
+                            pButton
+                            pRipple
+                            icon="pi pi-trash"
                             class="p-button-rounded p-button-text p-button-sm p-button-danger"
-                            (click)="onEliminarCurso($event, curso.id)" title="Eliminar"></button>
+                            (click)="onEliminarCurso($event, curso.id)"
+                            title="Eliminar"
+                        ></button>
                     </div>
                     <p-confirmPopup></p-confirmPopup>
                 </td>

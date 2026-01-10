@@ -260,13 +260,16 @@ export class RealizarMatriculaEstudiantesComponent
                             summary: 'Error',
                             detail:
                                 response.message ||
-                            'No se pudo cargar la lista de estudiantes a matricular',
+                                'No se pudo cargar la lista de estudiantes a matricular',
                         });
                     }
                     this.loading = false;
                 },
                 error: (err) => {
-                    console.error('Error cargando estudiantes a matricular', err);
+                    console.error(
+                        'Error cargando estudiantes a matricular',
+                        err
+                    );
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',

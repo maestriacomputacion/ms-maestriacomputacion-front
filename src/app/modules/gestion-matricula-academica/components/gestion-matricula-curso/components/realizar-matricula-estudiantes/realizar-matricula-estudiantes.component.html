@@ -1,194 +1,309 @@
-<p-dialog header="Observación del estudiante" [(visible)]="displayObservacionModal" [modal]="true" [closable]="false"
-  styleClass="w-25rem">
-  <div class="p-fluid">
-    <div class="field">
-      <label for="observacion">Observación</label>
-      <textarea id="observacion" pInputTextarea [(ngModel)]="observacionTemporal" rows="4" autoResize="true"
-        class="h-6rem"></textarea>
+<p-dialog
+    header="Observación del estudiante"
+    [(visible)]="displayObservacionModal"
+    [modal]="true"
+    [closable]="false"
+    styleClass="w-25rem"
+>
+    <div class="p-fluid">
+        <div class="field">
+            <label for="observacion">Observación</label>
+            <textarea
+                id="observacion"
+                pInputTextarea
+                [(ngModel)]="observacionTemporal"
+                rows="4"
+                autoResize="true"
+                class="h-6rem"
+            ></textarea>
+        </div>
+        <div class="flex justify-content-end gap-2 mt-3">
+            <button
+                pButton
+                pRipple
+                label="Cancelar"
+                class="p-button-secondary p-button-outlined"
+                (click)="cerrarObservacionModal()"
+            ></button>
+            <button
+                pButton
+                pRipple
+                label="Guardar"
+                class="p-button-primary"
+                (click)="guardarObservacion()"
+            ></button>
+        </div>
     </div>
-    <div class="flex justify-content-end gap-2 mt-3">
-      <button pButton pRipple label="Cancelar" class="p-button-secondary p-button-outlined"
-        (click)="cerrarObservacionModal()"></button>
-      <button pButton pRipple label="Guardar" class="p-button-primary" (click)="guardarObservacion()"></button>
-    </div>
-  </div>
 </p-dialog>
 
 <p-toast></p-toast>
 <p-confirmPopup></p-confirmPopup>
 
 <p-panel>
-  <p-header>
-    <b>Matricular estudiantes</b>
-  </p-header>
+    <p-header>
+        <b>Matricular estudiantes</b>
+    </p-header>
 
-  <!-- Indicador de carga -->
-  <div *ngIf="loading" class="flex justify-content-center align-items-center h-8rem">
-    <p-progressSpinner></p-progressSpinner>
-  </div>
-
-  <!-- Información del curso (dentro de una card) -->
-  <div class="mb-4" *ngIf="curso && !loading">
-    <p-card styleClass="surface-card border-round shadow-1 inline-block w-20rem">
-      <ng-template pTemplate="header">
-        <div class="px-3 pt-3">
-          <h3 class="text-xl font-semibold m-0">Información del curso</h3>
-        </div>
-      </ng-template>
-
-      <div class="p-3">
-        <div class="mb-2">
-          <span class="font-medium text-800">Asignatura:</span>
-          <span class="ml-2 text-900">{{ curso.asignatura?.nombre ?? '-' }}</span>
-        </div>
-
-        <div class="mb-2">
-          <span class="font-medium text-800">Grupo:</span>
-          <span class="ml-2 text-900">{{ curso.grupo ?? '-' }}</span>
-        </div>
-
-        <div class="mb-2">
-          <span class="font-medium text-800">Periodo:</span>
-          <span class="ml-2 text-900">{{ getTagPeriodo() }}</span>
-        </div>
-
-        <div class="mb-2">
-          <span class="font-medium text-800">Fechas:</span>
-          <span class="ml-2 text-900">{{ getFechasPeriodo() }}</span>
-        </div>
-
-        <div class="mb-2">
-          <span class="font-medium text-800">Docentes:</span>
-          <span class="ml-2 text-900">{{ getDocentesFormateados() }}</span>
-        </div>
-
-        <div class="mb-2">
-          <span class="font-medium text-800">Horario:</span>
-          <span class="ml-2 text-900">{{ curso.horario ?? '-' }}</span>
-        </div>
-
-        <div class="mb-2">
-          <span class="font-medium text-800">Salón:</span>
-          <span class="ml-2 text-900">{{ curso.salon ?? '-' }}</span>
-        </div>
-      </div>
-    </p-card>
-  </div>
-
-  <div *ngIf="!loading">
-    <!-- Tabla para seleccionar estudiantes -->
-    <div class="mb-4">
-      <h3 class="text-xl font-semibold mb-3">Seleccionar estudiantes</h3>
-
-      <!-- Buscador -->
-      <div class="mb-3 flex gap-2 w-28rem">
-        <span class="p-input-icon-left flex-grow-1">
-          <i class="pi pi-search"></i>
-          <input type="text" pInputText placeholder="Buscar por código, nombre o correo..." class="w-full"
-            [(ngModel)]="busquedaEstudiante" (input)="filtrarEstudiantes()">
-        </span>
-      </div>
-
-      <p-table [value]="estudiantesFiltrados" [paginator]="true" [rows]="10"
-        [totalRecords]="estudiantesFiltrados?.length || 0" [showCurrentPageReport]="true"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
-        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'">
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="text-center" scope="col">Código</th>
-            <th class="text-center" scope="col">Nombres</th>
-            <th class="text-center" scope="col">Correo</th>
-            <th class="text-center" scope="col">Semestre académico</th>
-            <th class="text-center" scope="col">Opciones</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-estudiante>
-          <tr>
-            <td class="text-center">{{ estudiante.codigo }}</td>
-            <td>{{ estudiante.persona?.nombre }} {{ estudiante.persona?.apellido }}</td>
-            <td>{{ estudiante.persona?.correoElectronico }}</td>
-            <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico }}</td>
-            <td class="text-center">
-              <button pButton pRipple label="Seleccionar" class="p-button-text p-button-sm"
-                (click)="seleccionarEstudiante(estudiante.codigo)" pTooltip="Agregar a la lista de matrícula"
-                tooltipPosition="top">
-              </button>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td [attr.colspan]="5" class="text-center">No se encontraron estudiantes</td>
-          </tr>
-        </ng-template>
-      </p-table>
+    <!-- Indicador de carga -->
+    <div
+        *ngIf="loading"
+        class="flex justify-content-center align-items-center h-8rem"
+    >
+        <p-progressSpinner></p-progressSpinner>
     </div>
 
-    <!-- Tabla de estudiantes a matricular -->
-    <div class="mb-4">
-      <div class="flex justify-content-between align-items-center mb-3">
-        <h3 class="text-xl font-semibold m-0">Estudiantes a matricular</h3>
-        <p-tag *ngIf="estudiantesMatricular?.length > 0" [value]="estudiantesMatricular.length + ' seleccionado(s)'"
-          severity="success">
-        </p-tag>
-      </div>
+    <!-- Información del curso (dentro de una card) -->
+    <div class="mb-4" *ngIf="curso && !loading">
+        <p-card
+            styleClass="surface-card border-round shadow-1 inline-block w-20rem"
+        >
+            <ng-template pTemplate="header">
+                <div class="px-3 pt-3">
+                    <h3 class="text-xl font-semibold m-0">
+                        Información del curso
+                    </h3>
+                </div>
+            </ng-template>
 
-      <p-table [value]="estudiantesMatricular" [paginator]="true" [rows]="10"
-        [totalRecords]="estudiantesMatricular?.length || 0" [showCurrentPageReport]="true"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
-        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'">
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="text-center" scope="col">Código</th>
-            <th class="text-center" scope="col">Nombres</th>
-            <th class="text-center" scope="col">Correo</th>
-            <th class="text-center" scope="col">Semestre académico</th>
-            <th class="text-center" scope="col">Opciones</th>
-            <th class="text-center" scope="col">Observaciones</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-estudiante>
-          <tr [ngClass]="{'bg-red-50': estudiante.motivoError}">
-            <td class="text-center">
-              {{ estudiante.codigo }}
-              <i *ngIf="estudiante.motivoError" class="pi pi-exclamation-circle ml-1 text-red-600 cursor-pointer"
-                [pTooltip]="estudiante.motivoError" tooltipPosition="top"></i>
-            </td>
-            <td>{{ estudiante.persona?.nombre }} {{ estudiante.persona?.apellido }}</td>
-            <td>{{ estudiante.persona?.correoElectronico }}</td>
-            <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico }}</td>
-            <td class="text-center">
-              <button pButton pRipple icon="pi pi-comment"
-                class="p-button-rounded p-button-text p-button-sm p-button-info mr-2"
-                (click)="agregarObservacion(estudiante.codigo)" pTooltip="Agregar/Editar observación"
-                tooltipPosition="top">
-              </button>
-              <button pButton pRipple icon="pi pi-times"
-                class="p-button-rounded p-button-text p-button-sm p-button-danger"
-                (click)="quitarEstudiante(estudiante.codigo)" pTooltip="Quitar estudiante" tooltipPosition="top">
-              </button>
-            </td>
-            <td>{{ estudiante.observaciones }}</td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td [attr.colspan]="6" class="text-center">No se encontraron estudiantes</td>
-          </tr>
-        </ng-template>
-      </p-table>
+            <div class="p-3">
+                <div class="mb-2">
+                    <span class="font-medium text-800">Asignatura:</span>
+                    <span class="ml-2 text-900">{{
+                        curso.asignatura?.nombre ?? "-"
+                    }}</span>
+                </div>
+
+                <div class="mb-2">
+                    <span class="font-medium text-800">Grupo:</span>
+                    <span class="ml-2 text-900">{{ curso.grupo ?? "-" }}</span>
+                </div>
+
+                <div class="mb-2">
+                    <span class="font-medium text-800">Periodo:</span>
+                    <span class="ml-2 text-900">{{ getTagPeriodo() }}</span>
+                </div>
+
+                <div class="mb-2">
+                    <span class="font-medium text-800">Fechas:</span>
+                    <span class="ml-2 text-900">{{ getFechasPeriodo() }}</span>
+                </div>
+
+                <div class="mb-2">
+                    <span class="font-medium text-800">Docentes:</span>
+                    <span class="ml-2 text-900">{{
+                        getDocentesFormateados()
+                    }}</span>
+                </div>
+
+                <div class="mb-2">
+                    <span class="font-medium text-800">Horario:</span>
+                    <span class="ml-2 text-900">{{
+                        curso.horario ?? "-"
+                    }}</span>
+                </div>
+
+                <div class="mb-2">
+                    <span class="font-medium text-800">Salón:</span>
+                    <span class="ml-2 text-900">{{ curso.salon ?? "-" }}</span>
+                </div>
+            </div>
+        </p-card>
     </div>
 
-    <!-- Botones de acción -->
-    <div class="flex justify-content-end gap-2 mt-3">
-      <button pButton pRipple label="Cancelar" class="p-button-secondary p-button-outlined"
-        (click)="cancelarMatricula()"
-        pTooltip="Descartar cambios y volver" tooltipPosition="top">
-      </button>
-      <button pButton pRipple label="Matricular" class="p-button-primary" (click)="finalizarMatricula($event)"
-        [disabled]="!estudiantesMatricular || estudiantesMatricular.length === 0"
-        pTooltip="Guardar y completar el proceso de matrícula" tooltipPosition="top">
-      </button>
+    <div *ngIf="!loading">
+        <!-- Tabla para seleccionar estudiantes -->
+        <div class="mb-4">
+            <h3 class="text-xl font-semibold mb-3">Seleccionar estudiantes</h3>
+
+            <!-- Buscador -->
+            <div class="mb-3 flex gap-2 w-28rem">
+                <span class="p-input-icon-left flex-grow-1">
+                    <i class="pi pi-search"></i>
+                    <input
+                        type="text"
+                        pInputText
+                        placeholder="Buscar por código, nombre o correo..."
+                        class="w-full"
+                        [(ngModel)]="busquedaEstudiante"
+                        (input)="filtrarEstudiantes()"
+                    />
+                </span>
+            </div>
+
+            <p-table
+                [value]="estudiantesFiltrados"
+                [paginator]="true"
+                [rows]="10"
+                [totalRecords]="estudiantesFiltrados?.length || 0"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+                styleClass="p-datatable-gridlines p-datatable-striped"
+                [responsiveLayout]="'scroll'"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center" scope="col">Código</th>
+                        <th class="text-center" scope="col">Nombres</th>
+                        <th class="text-center" scope="col">Correo</th>
+                        <th class="text-center" scope="col">
+                            Semestre académico
+                        </th>
+                        <th class="text-center" scope="col">Opciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-estudiante>
+                    <tr>
+                        <td class="text-center">{{ estudiante.codigo }}</td>
+                        <td>
+                            {{ estudiante.persona?.nombre }}
+                            {{ estudiante.persona?.apellido }}
+                        </td>
+                        <td>{{ estudiante.persona?.correoElectronico }}</td>
+                        <td class="text-center">
+                            {{
+                                estudiante.informacionMaestria
+                                    ?.semestreAcademico
+                            }}
+                        </td>
+                        <td class="text-center">
+                            <button
+                                pButton
+                                pRipple
+                                label="Seleccionar"
+                                class="p-button-text p-button-sm"
+                                (click)="
+                                    seleccionarEstudiante(estudiante.codigo)
+                                "
+                                pTooltip="Agregar a la lista de matrícula"
+                                tooltipPosition="top"
+                            ></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="5" class="text-center">
+                            No se encontraron estudiantes
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <!-- Tabla de estudiantes a matricular -->
+        <div class="mb-4">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <h3 class="text-xl font-semibold m-0">
+                    Estudiantes a matricular
+                </h3>
+                <p-tag
+                    *ngIf="estudiantesMatricular?.length > 0"
+                    [value]="estudiantesMatricular.length + ' seleccionado(s)'"
+                    severity="success"
+                >
+                </p-tag>
+            </div>
+
+            <p-table
+                [value]="estudiantesMatricular"
+                [paginator]="true"
+                [rows]="10"
+                [totalRecords]="estudiantesMatricular?.length || 0"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
+                styleClass="p-datatable-gridlines p-datatable-striped"
+                [responsiveLayout]="'scroll'"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center" scope="col">Código</th>
+                        <th class="text-center" scope="col">Nombres</th>
+                        <th class="text-center" scope="col">Correo</th>
+                        <th class="text-center" scope="col">
+                            Semestre académico
+                        </th>
+                        <th class="text-center" scope="col">Opciones</th>
+                        <th class="text-center" scope="col">Observaciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-estudiante>
+                    <tr [ngClass]="{ 'bg-red-50': estudiante.motivoError }">
+                        <td class="text-center">
+                            {{ estudiante.codigo }}
+                            <i
+                                *ngIf="estudiante.motivoError"
+                                class="pi pi-exclamation-circle ml-1 text-red-600 cursor-pointer"
+                                [pTooltip]="estudiante.motivoError"
+                                tooltipPosition="top"
+                            ></i>
+                        </td>
+                        <td>
+                            {{ estudiante.persona?.nombre }}
+                            {{ estudiante.persona?.apellido }}
+                        </td>
+                        <td>{{ estudiante.persona?.correoElectronico }}</td>
+                        <td class="text-center">
+                            {{
+                                estudiante.informacionMaestria
+                                    ?.semestreAcademico
+                            }}
+                        </td>
+                        <td class="text-center">
+                            <button
+                                pButton
+                                pRipple
+                                icon="pi pi-comment"
+                                class="p-button-rounded p-button-text p-button-sm p-button-info mr-2"
+                                (click)="agregarObservacion(estudiante.codigo)"
+                                pTooltip="Agregar/Editar observación"
+                                tooltipPosition="top"
+                            ></button>
+                            <button
+                                pButton
+                                pRipple
+                                icon="pi pi-times"
+                                class="p-button-rounded p-button-text p-button-sm p-button-danger"
+                                (click)="quitarEstudiante(estudiante.codigo)"
+                                pTooltip="Quitar estudiante"
+                                tooltipPosition="top"
+                            ></button>
+                        </td>
+                        <td>{{ estudiante.observaciones }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="6" class="text-center">
+                            No se encontraron estudiantes
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex justify-content-end gap-2 mt-3">
+            <button
+                pButton
+                pRipple
+                label="Cancelar"
+                class="p-button-secondary p-button-outlined"
+                (click)="cancelarMatricula()"
+                pTooltip="Descartar cambios y volver"
+                tooltipPosition="top"
+            ></button>
+            <button
+                pButton
+                pRipple
+                label="Matricular"
+                class="p-button-primary"
+                (click)="finalizarMatricula($event)"
+                [disabled]="
+                    !estudiantesMatricular || estudiantesMatricular.length === 0
+                "
+                pTooltip="Guardar y completar el proceso de matrícula"
+                tooltipPosition="top"
+            ></button>
+        </div>
     </div>
-  </div>
 </p-panel>

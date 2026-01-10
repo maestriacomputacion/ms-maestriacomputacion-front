@@ -109,9 +109,13 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         const payload = this.construirPayload();
         this.saving = true;
 
-        const serviceCall = this.isEditMode && this.cursoId
-            ? this.registrarCursoService.actualizarCurso(this.cursoId, payload)
-            : this.registrarCursoService.registrarCurso(payload);
+        const serviceCall =
+            this.isEditMode && this.cursoId
+                ? this.registrarCursoService.actualizarCurso(
+                      this.cursoId,
+                      payload
+                  )
+                : this.registrarCursoService.registrarCurso(payload);
 
         const submitSub = serviceCall.subscribe({
             next: (response) => {
@@ -128,11 +132,17 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             },
             error: (err) => {
                 console.error(
-                    this.isEditMode ? 'Error actualizando curso' : 'Error registrando curso',
+                    this.isEditMode
+                        ? 'Error actualizando curso'
+                        : 'Error registrando curso',
                     err
                 );
-                const detail = err?.error?.message || err?.message ||
-                    (this.isEditMode ? 'Error actualizando curso' : 'Error registrando curso');
+                const detail =
+                    err?.error?.message ||
+                    err?.message ||
+                    (this.isEditMode
+                        ? 'Error actualizando curso'
+                        : 'Error registrando curso');
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
@@ -145,7 +155,9 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     openAsignaturaDialog(): void {
-        this.modalSelectedAsignaturas = this.asignatura ? [this.asignatura] : [];
+        this.modalSelectedAsignaturas = this.asignatura
+            ? [this.asignatura]
+            : [];
         this.displayAsignaturaDialog = true;
 
         if (!this.asignaturas || this.asignaturas.length === 0) {
@@ -196,7 +208,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     onCloseView(): void {
-        this.router.navigate(['/gestion-matricula-academica', 'gestion-cursos']);
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'gestion-cursos',
+        ]);
     }
 
     onCancel(): void {
@@ -210,7 +225,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             if (!confirmar) return;
         }
 
-        this.router.navigate(['/gestion-matricula-academica', 'gestion-cursos']);
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'gestion-cursos',
+        ]);
     }
 
     openMaterialDialog(): void {
@@ -236,7 +254,9 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
         const id = (material as any).id;
         if (typeof id === 'number') {
-            this.selectedMateriales = this.selectedMateriales.filter((m) => m.id !== id);
+            this.selectedMateriales = this.selectedMateriales.filter(
+                (m) => m.id !== id
+            );
             return;
         }
 
@@ -246,29 +266,30 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     private detectarModoYCargarCurso(): void {
-        this.route.params
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((params) => {
-                const path = this.route.snapshot.routeConfig?.path || '';
-                if (path.startsWith('ver-curso')) {
-                    this.isViewMode = true;
-                    this.isEditMode = false;
-                    if (params['id']) {
-                        this.cursoId = +params['id'];
-                        this.loadCursoForEdit(this.cursoId);
-                    }
-                } else if (params['id']) {
-                    this.isEditMode = true;
-                    this.isViewMode = false;
+        this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+            const path = this.route.snapshot.routeConfig?.path || '';
+            if (path.startsWith('ver-curso')) {
+                this.isViewMode = true;
+                this.isEditMode = false;
+                if (params['id']) {
                     this.cursoId = +params['id'];
                     this.loadCursoForEdit(this.cursoId);
                 }
-            });
+            } else if (params['id']) {
+                this.isEditMode = true;
+                this.isViewMode = false;
+                this.cursoId = +params['id'];
+                this.loadCursoForEdit(this.cursoId);
+            }
+        });
     }
 
     private inicializarFormulario(): void {
         this.form = this.fb.group({
-            grupo: ['', [Validators.required, Validators.pattern(/^[A-Za-z]$/)]],
+            grupo: [
+                '',
+                [Validators.required, Validators.pattern(/^[A-Za-z]$/)],
+            ],
             horario: ['', [Validators.maxLength(100)]],
             salon: ['', [Validators.maxLength(50)]],
             observacion: ['', [Validators.maxLength(200)]],
@@ -298,7 +319,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     private cargarMaterialesApoyo(): void {
         this.loadingMaterials = true;
-        this.materialApoyoService.listMaterialApoyo()
+        this.materialApoyoService
+            .listMaterialApoyo()
             .pipe(
                 takeUntil(this.destroy$),
                 finalize(() => (this.loadingMaterials = false))
@@ -309,7 +331,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         this.materialesApoyo = response.data || [];
                     }
                 },
-                error: (err) => console.error('Error cargando materiales de apoyo', err),
+                error: (err) =>
+                    console.error('Error cargando materiales de apoyo', err),
             });
     }
 
@@ -328,13 +351,21 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                             !!this.asignatura.id
                     ),
                     switchMap((value: string) => {
-                        const asignaturaId = this.asignatura ? this.asignatura.id || 0 : 0;
-                        return this.registrarCursoService.exists(value, asignaturaId);
+                        const asignaturaId = this.asignatura
+                            ? this.asignatura.id || 0
+                            : 0;
+                        return this.registrarCursoService.exists(
+                            value,
+                            asignaturaId
+                        );
                     })
                 )
                 .subscribe({
                     next: (response) => {
-                        if (response?.typeResponse === 'SUCCESS' && response?.data === true) {
+                        if (
+                            response?.typeResponse === 'SUCCESS' &&
+                            response?.data === true
+                        ) {
                             const detail = response.message || null;
                             this.cursoExistsMessage = detail;
                             grupoControl.setErrors({ exists: true });
@@ -350,7 +381,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         }
                     },
                     error: (err) => {
-                        const detail = err?.error?.message || err?.message || null;
+                        const detail =
+                            err?.error?.message || err?.message || null;
                         this.cursoExistsMessage = detail;
                         if (detail) {
                             this.messageService.add({
@@ -367,7 +399,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     private cargarAsignaturas(): void {
         this.loadingAsignaturas = true;
-        const sub = this.registrarCursoService.listAsignaturas()
+        const sub = this.registrarCursoService
+            .listAsignaturas()
             .pipe(
                 takeUntil(this.destroy$),
                 finalize(() => (this.loadingAsignaturas = false))
@@ -380,12 +413,17 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         this.messageService.add({
                             severity: 'warn',
                             summary: 'Atención',
-                            detail: response?.message || 'No se pudieron cargar asignaturas',
+                            detail:
+                                response?.message ||
+                                'No se pudieron cargar asignaturas',
                         });
                     }
                 },
                 error: (err) => {
-                    const detail = err?.error?.message ?? err?.message ?? 'Error cargando asignaturas';
+                    const detail =
+                        err?.error?.message ??
+                        err?.message ??
+                        'Error cargando asignaturas';
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
@@ -399,7 +437,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     private cargarDocentesPorAsignatura(asignaturaId: number): void {
         this.loadingDocentes = true;
-        const sub = this.registrarCursoService.listDocentesByAsignatura(asignaturaId)
+        const sub = this.registrarCursoService
+            .listDocentesByAsignatura(asignaturaId)
             .pipe(
                 takeUntil(this.destroy$),
                 finalize(() => (this.loadingDocentes = false))
@@ -413,12 +452,17 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         this.messageService.add({
                             severity: 'warn',
                             summary: 'Atención',
-                            detail: response?.message || 'No se encontraron docentes',
+                            detail:
+                                response?.message ||
+                                'No se encontraron docentes',
                         });
                     }
                 },
                 error: (err) => {
-                    const detail = err?.error?.message ?? err?.message ?? 'Error cargando docentes';
+                    const detail =
+                        err?.error?.message ??
+                        err?.message ??
+                        'Error cargando docentes';
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
@@ -442,11 +486,15 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         if (!grupoValue || !this.asignatura) return;
         const asignaturaId = this.asignatura.id || 0;
         const grupoControl = this.form.get('grupo');
-        const sub = this.registrarCursoService.exists(grupoValue, asignaturaId)
+        const sub = this.registrarCursoService
+            .exists(grupoValue, asignaturaId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
-                    if (response?.typeResponse === 'SUCCESS' && response.data === true) {
+                    if (
+                        response?.typeResponse === 'SUCCESS' &&
+                        response.data === true
+                    ) {
                         const detail = response.message || null;
                         this.cursoExistsMessage = detail;
                         grupoControl?.setErrors({ exists: true });
@@ -455,7 +503,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         if (grupoControl) {
                             const errors = grupoControl.errors || {};
                             if (errors.exists) delete errors.exists;
-                            if (Object.keys(errors).length === 0) grupoControl.setErrors(null);
+                            if (Object.keys(errors).length === 0)
+                                grupoControl.setErrors(null);
                             else grupoControl.setErrors(errors);
                         }
                     }
@@ -476,7 +525,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     private loadCursoForEdit(id: number): void {
-        const loadSub = this.registrarCursoService.getCursoById(id)
+        const loadSub = this.registrarCursoService
+            .getCursoById(id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -490,20 +540,31 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         this.messageService.add({
                             severity: 'error',
                             summary: 'Error',
-                            detail: response?.message || 'No se pudo cargar el curso',
+                            detail:
+                                response?.message ||
+                                'No se pudo cargar el curso',
                         });
-                        this.router.navigate(['/gestion-matricula-academica', 'gestion-cursos']);
+                        this.router.navigate([
+                            '/gestion-matricula-academica',
+                            'gestion-cursos',
+                        ]);
                     }
                 },
                 error: (err) => {
                     console.error('Error cargando curso para edición', err);
-                    const detail = err?.error?.message ?? err?.message ?? 'Error cargando curso';
+                    const detail =
+                        err?.error?.message ??
+                        err?.message ??
+                        'Error cargando curso';
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
                         detail,
                     });
-                    this.router.navigate(['/gestion-matricula-academica', 'gestion-cursos']);
+                    this.router.navigate([
+                        '/gestion-matricula-academica',
+                        'gestion-cursos',
+                    ]);
                 },
             });
         this.subs.push(loadSub);
@@ -542,7 +603,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     private cargarDocentesYAsignarSeleccionados(curso: BackendCurso): void {
         if (!curso.asignatura?.id) return;
-        
+
         this.loadingDocentes = true;
         const docentesSub = this.registrarCursoService
             .listDocentesByAsignatura(curso.asignatura.id)
@@ -560,14 +621,20 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                                 .map((cursoDocente) =>
                                     this.sourceDocentes.find(
                                         (disponibleDocente) =>
-                                            disponibleDocente.id === cursoDocente.id
+                                            disponibleDocente.id ===
+                                            cursoDocente.id
                                     )
                                 )
-                                .filter((docente): docente is DocenteModel => docente !== undefined);
+                                .filter(
+                                    (docente): docente is DocenteModel =>
+                                        docente !== undefined
+                                );
 
                             this.sourceDocentes = this.sourceDocentes.filter(
                                 (docente) =>
-                                    !curso.docentes?.some((d) => d.id === docente.id)
+                                    !curso.docentes?.some(
+                                        (d) => d.id === docente.id
+                                    )
                             );
                         } else {
                             this.targetDocentes = [];
@@ -607,10 +674,13 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         });
         this.form.reset();
         this.selectedMateriales = [];
-        
+
         const navigateDelay = 1000;
         setTimeout(() => {
-            this.router.navigate(['/gestion-matricula-academica', 'gestion-cursos']);
+            this.router.navigate([
+                '/gestion-matricula-academica',
+                'gestion-cursos',
+            ]);
         }, navigateDelay);
     }
 }

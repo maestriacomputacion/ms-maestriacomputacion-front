@@ -17,7 +17,9 @@
     </div>
 
     <div class="flex align-items-center flex-wrap gap-3 mb-3">
-        <label class="font-medium text-900" for="periodo">Digite un periodo</label>
+        <label class="font-medium text-900" for="periodo"
+            >Digite un periodo</label
+        >
         <p-dropdown
             inputId="periodo"
             [options]="periodos"
@@ -31,12 +33,20 @@
             placeholder="Año"
             class="w-10rem"
         ></p-dropdown>
-        <button pButton pRipple label="Consultar" icon="pi pi-search" class="p-button-primary"></button>
+        <button
+            pButton
+            pRipple
+            label="Consultar"
+            icon="pi pi-search"
+            class="p-button-primary"
+        ></button>
     </div>
 
     <div class="mb-3">
         <div class="flex align-items-center gap-2 mb-2">
-            <span class="font-medium text-900">Filtrar por tipo de asignatura:</span>
+            <span class="font-medium text-900"
+                >Filtrar por tipo de asignatura:</span
+            >
             <button
                 pButton
                 pRipple
@@ -55,7 +65,9 @@
                 pRipple
                 [label]="tipo.label"
                 class="p-button-sm"
-                [class.p-button-outlined]="!tiposSeleccionados.includes(tipo.value)"
+                [class.p-button-outlined]="
+                    !tiposSeleccionados.includes(tipo.value)
+                "
                 (click)="toggleTipo(tipo.value)"
             ></button>
         </div>

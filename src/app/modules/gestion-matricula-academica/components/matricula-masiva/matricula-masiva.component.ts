@@ -25,7 +25,10 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
     areas: { label: string; value: string }[] = [];
     cursosPorArea: Record<string, any[]> = {};
     loadingCursosPorArea: Record<string, boolean> = {};
-    cursosPorAreaAgrupados: Record<string, { asignatura: string; cursos: any[] }[]> = {};
+    cursosPorAreaAgrupados: Record<
+        string,
+        { asignatura: string; cursos: any[] }[]
+    > = {};
     loading = false;
     cursosSeleccionados: any[] = [];
     resultadoDialogRef: any;
@@ -55,7 +58,10 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
     }
 
     onMatricularMasiva(event: Event): void {
-        if (this.selectedEstudiantes.length === 0 || this.cursosSeleccionados.length === 0) {
+        if (
+            this.selectedEstudiantes.length === 0 ||
+            this.cursosSeleccionados.length === 0
+        ) {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Advertencia',
@@ -100,7 +106,9 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
 
         const nombreAsignatura = cursoItem.asignatura ?? '';
         const cursoMismaAsignatura = this.cursosSeleccionados.find(
-            (c) => c.nombreAsignatura?.includes(nombreAsignatura) && nombreAsignatura !== ''
+            (c) =>
+                c.nombreAsignatura?.includes(nombreAsignatura) &&
+                nombreAsignatura !== ''
         );
 
         if (cursoMismaAsignatura) {
@@ -124,7 +132,9 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
             acceptLabel: 'Sí',
             rejectLabel: 'No',
             accept: () => {
-                this.cursosSeleccionados = this.cursosSeleccionados.filter((c) => c.id !== id);
+                this.cursosSeleccionados = this.cursosSeleccionados.filter(
+                    (c) => c.id !== id
+                );
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Éxito',
@@ -137,7 +147,8 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
     confirmarQuitarEstudiante(event: Event, id: string): void {
         this.confirmationService.confirm({
             target: event.target as HTMLElement,
-            message: '¿Está seguro que desea quitar este estudiante de la lista?',
+            message:
+                '¿Está seguro que desea quitar este estudiante de la lista?',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí',
             rejectLabel: 'No',
@@ -151,14 +162,16 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         }
 
         this.loadingCursosPorArea[idArea] = true;
-        this.cursoService.getCursos({ idArea })
+        this.cursoService
+            .getCursos({ idArea })
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
                     if (response?.typeResponse === 'SUCCESS') {
                         const items = response.data || [];
                         this.cursosPorArea[idArea] = items;
-                        this.cursosPorAreaAgrupados[idArea] = this.agruparCursosPorAsignatura(items);
+                        this.cursosPorAreaAgrupados[idArea] =
+                            this.agruparCursosPorAsignatura(items);
                     } else {
                         this.cursosPorArea[idArea] = [];
                         this.cursosPorAreaAgrupados[idArea] = [];
@@ -174,23 +187,34 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
     }
 
     regresar(): void {
-        this.router.navigate(['/gestion-matricula-academica', 'gestion-estudiantes']);
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'gestion-estudiantes',
+        ]);
     }
 
     private obtenerEstudiantesSeleccionados(): void {
         const nav = this.router.getCurrentNavigation();
         if (nav?.extras?.state?.selectedEstudiantes) {
             this.selectedEstudiantes = nav.extras.state.selectedEstudiantes;
-        } else if ((history as { state?: { selectedEstudiantes?: unknown } })?.state?.selectedEstudiantes) {
-            const estudiantes = (history as { state?: { selectedEstudiantes?: unknown } }).state?.selectedEstudiantes;
-            this.selectedEstudiantes = Array.isArray(estudiantes) ? estudiantes : [];
+        } else if (
+            (history as { state?: { selectedEstudiantes?: unknown } })?.state
+                ?.selectedEstudiantes
+        ) {
+            const estudiantes = (
+                history as { state?: { selectedEstudiantes?: unknown } }
+            ).state?.selectedEstudiantes;
+            this.selectedEstudiantes = Array.isArray(estudiantes)
+                ? estudiantes
+                : [];
         } else {
             this.selectedEstudiantes = [];
         }
     }
 
     private cargarPeriodoAcademicoActivo(): void {
-        this.periodoService.getPeriodoActivo()
+        this.periodoService
+            .getPeriodoActivo()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -200,7 +224,9 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                         this.messageService.add({
                             severity: 'warn',
                             summary: 'Aviso',
-                            detail: response?.message || 'No se encontró periodo activo',
+                            detail:
+                                response?.message ||
+                                'No se encontró periodo activo',
                         });
                     }
                 },
@@ -215,7 +241,8 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
     }
 
     private cargarAreasFormacion(): void {
-        this.cursoService.getAreasFormacion()
+        this.cursoService
+            .getAreasFormacion()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -237,15 +264,18 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
 
     private procesarMatriculaMasiva(): void {
         const payload: MatriculaBatchPayload = {
-            matriculaEstudianteCursos: this.selectedEstudiantes.map((estudiante) => ({
-                estudianteId: estudiante.id,
-                cursos: this.cursosSeleccionados.map((curso) => ({
-                    cursoId: curso.id,
-                })),
-            })),
+            matriculaEstudianteCursos: this.selectedEstudiantes.map(
+                (estudiante) => ({
+                    estudianteId: estudiante.id,
+                    cursos: this.cursosSeleccionados.map((curso) => ({
+                        cursoId: curso.id,
+                    })),
+                })
+            ),
         };
 
-        this.matriculaMasivaService.matricularBatch(payload)
+        this.matriculaMasivaService
+            .matricularBatch(payload)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -253,19 +283,26 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                         this.messageService.add({
                             severity: 'success',
                             summary: 'Éxito',
-                            detail: response?.message || 'Matrícula masiva realizada correctamente.',
+                            detail:
+                                response?.message ||
+                                'Matrícula masiva realizada correctamente.',
                         });
                         this.cursosSeleccionados = [];
-                        
+
                         const datosNavegacion = {
-                            matriculasRealizadas: response?.data?.matriculasRealizadas || [],
-                            matriculasNoRealizadas: response?.data?.matriculasNoRealizadas || [],
+                            matriculasRealizadas:
+                                response?.data?.matriculasRealizadas || [],
+                            matriculasNoRealizadas:
+                                response?.data?.matriculasNoRealizadas || [],
                             origen: 'matricula-masiva',
                         };
 
                         setTimeout(() => {
                             this.router.navigate(
-                                ['/gestion-matricula-academica', 'resultado-matricula-masiva'],
+                                [
+                                    '/gestion-matricula-academica',
+                                    'resultado-matricula-masiva',
+                                ],
                                 { state: datosNavegacion }
                             );
                         }, 1000);
@@ -273,7 +310,9 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                         this.messageService.add({
                             severity: 'error',
                             summary: 'Error',
-                            detail: response?.message || 'Error al realizar la matrícula masiva.',
+                            detail:
+                                response?.message ||
+                                'Error al realizar la matrícula masiva.',
                         });
                     }
                 },
@@ -312,7 +351,9 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         });
     }
 
-    private agruparCursosPorAsignatura(items: any[]): { asignatura: string; cursos: any[] }[] {
+    private agruparCursosPorAsignatura(
+        items: any[]
+    ): { asignatura: string; cursos: any[] }[] {
         const map: Record<string, { asignatura: string; cursos: any[] }> = {};
         for (const item of items) {
             const key = item.asignatura ?? 'Sin nombre';
@@ -329,6 +370,8 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
     }
 
     private onQuitarEstudiante(id: string): void {
-        this.selectedEstudiantes = this.selectedEstudiantes.filter((e) => e.id !== id);
+        this.selectedEstudiantes = this.selectedEstudiantes.filter(
+            (e) => e.id !== id
+        );
     }
 }

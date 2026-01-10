@@ -1,29 +1,54 @@
-<p-tabView *ngIf="areas?.length > 0" (onChange)="onTabChange($event)" styleClass="tabs-centrados">
+<p-tabView
+    *ngIf="areas?.length > 0"
+    (onChange)="onTabChange($event)"
+    styleClass="tabs-centrados"
+>
     <p-tabPanel *ngFor="let area of areas" [header]="area.label">
         <div class="p-3 max-h-30rem overflow-auto">
-            <div *ngIf="loadingCursosPorArea[area.value]" class="flex justify-content-center p-3">
+            <div
+                *ngIf="loadingCursosPorArea[area.value]"
+                class="flex justify-content-center p-3"
+            >
                 <p-progressSpinner></p-progressSpinner>
             </div>
 
             <div *ngIf="!loadingCursosPorArea[area.value]">
-                <ng-container *ngIf="(cursosPorArea[area.value] || []).length; else sinCursos">
-                    <ng-container *ngFor="let grupoAsig of cursosPorAreaAgrupados[area.value]">
-                        <div class="surface-card border-round mb-4 shadow-2 border-1 border-300">
+                <ng-container
+                    *ngIf="
+                        (cursosPorArea[area.value] || []).length;
+                        else sinCursos
+                    "
+                >
+                    <ng-container
+                        *ngFor="
+                            let grupoAsig of cursosPorAreaAgrupados[area.value]
+                        "
+                    >
+                        <div
+                            class="surface-card border-round mb-4 shadow-2 border-1 border-300"
+                        >
                             <div class="p-3 surface-100 border-round-top">
                                 <div class="text-900 font-semibold text-lg">
                                     {{ grupoAsig.asignatura }}
                                 </div>
                                 <div class="text-500 text-sm">
                                     {{ grupoAsig.cursos.length }}
-                                    grupo{{ grupoAsig.cursos.length > 1 ? "s" : "" }}
+                                    grupo{{
+                                        grupoAsig.cursos.length > 1 ? "s" : ""
+                                    }}
                                 </div>
                             </div>
-                            <p-table [value]="grupoAsig.cursos" styleClass="p-datatable-striped"
-                                [responsiveLayout]="'scroll'">
+                            <p-table
+                                [value]="grupoAsig.cursos"
+                                styleClass="p-datatable-striped"
+                                [responsiveLayout]="'scroll'"
+                            >
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th scope="col" class="w-2">Grupo</th>
-                                        <th scope="col" class="w-4">Docentes</th>
+                                        <th scope="col" class="w-4">
+                                            Docentes
+                                        </th>
                                         <th scope="col" class="w-3">Salón</th>
                                         <th scope="col" class="w-2 text-center">
                                             Opciones
@@ -32,17 +57,34 @@
                                 </ng-template>
                                 <ng-template pTemplate="body" let-item>
                                     <tr>
-                                        <td class="w-2">{{ item.grupo ?? "-" }}</td>
-                                        <td class="w-4 white-space-nowrap overflow-hidden text-overflow-ellipsis">
+                                        <td class="w-2">
+                                            {{ item.grupo ?? "-" }}
+                                        </td>
+                                        <td
+                                            class="w-4 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+                                        >
                                             {{ item.docente ?? "-" }}
                                         </td>
-                                        <td class="w-3 white-space-nowrap overflow-hidden text-overflow-ellipsis">
+                                        <td
+                                            class="w-3 white-space-nowrap overflow-hidden text-overflow-ellipsis"
+                                        >
                                             {{ item.salon ?? "-" }}
                                         </td>
                                         <td class="w-2 text-center">
-                                            <button type="button" pButton pRipple label="Seleccionar"
+                                            <button
+                                                type="button"
+                                                pButton
+                                                pRipple
+                                                label="Seleccionar"
                                                 class="p-button-rounded p-button-text p-button-sm"
-                                                (click)="onSeleccionarCurso($event, item, area)"></button>
+                                                (click)="
+                                                    onSeleccionarCurso(
+                                                        $event,
+                                                        item,
+                                                        area
+                                                    )
+                                                "
+                                            ></button>
                                         </td>
                                     </tr>
                                 </ng-template>

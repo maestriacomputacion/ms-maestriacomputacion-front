@@ -58,12 +58,33 @@ export class AprobarMatriculaEstudianteComponent implements OnInit {
                     curso: {
                         id: 101,
                         grupo: 'A',
-                        periodo: { id: 1, fechaInicio: '2025-01-15', fechaFin: '2025-06-15', fechaFinMatricula: '2025-01-30', tagPeriodo: 1, estado: 'ACTIVO' },
-                        asignatura: { id: 1, nombre: 'Arquitectura de Software', codigo: 'AS101', estado: true, areaFormacion: 1, creditos: 4 },
+                        periodo: {
+                            id: 1,
+                            fechaInicio: '2025-01-15',
+                            fechaFin: '2025-06-15',
+                            fechaFinMatricula: '2025-01-30',
+                            tagPeriodo: 1,
+                            estado: 'ACTIVO',
+                        },
+                        asignatura: {
+                            id: 1,
+                            nombre: 'Arquitectura de Software',
+                            codigo: 'AS101',
+                            estado: true,
+                            areaFormacion: 1,
+                            creditos: 4,
+                        },
                         docentes: [],
                         materiales: [],
                     },
-                    periodo: { id: 1, fechaInicio: '2025-01-15', fechaFin: '2025-06-15', fechaFinMatricula: '2025-01-30', tagPeriodo: 1, estado: 'ACTIVO' },
+                    periodo: {
+                        id: 1,
+                        fechaInicio: '2025-01-15',
+                        fechaFin: '2025-06-15',
+                        fechaFinMatricula: '2025-01-30',
+                        tagPeriodo: 1,
+                        estado: 'ACTIVO',
+                    },
                     estado: 'PENDIENTE',
                     observacion: '',
                 },
@@ -73,12 +94,33 @@ export class AprobarMatriculaEstudianteComponent implements OnInit {
                     curso: {
                         id: 102,
                         grupo: 'B',
-                        periodo: { id: 1, fechaInicio: '2025-01-15', fechaFin: '2025-06-15', fechaFinMatricula: '2025-01-30', tagPeriodo: 1, estado: 'ACTIVO' },
-                        asignatura: { id: 2, nombre: 'Investigación I', codigo: 'INV101', estado: true, areaFormacion: 2, creditos: 4 },
+                        periodo: {
+                            id: 1,
+                            fechaInicio: '2025-01-15',
+                            fechaFin: '2025-06-15',
+                            fechaFinMatricula: '2025-01-30',
+                            tagPeriodo: 1,
+                            estado: 'ACTIVO',
+                        },
+                        asignatura: {
+                            id: 2,
+                            nombre: 'Investigación I',
+                            codigo: 'INV101',
+                            estado: true,
+                            areaFormacion: 2,
+                            creditos: 4,
+                        },
                         docentes: [],
                         materiales: [],
                     },
-                    periodo: { id: 1, fechaInicio: '2025-01-15', fechaFin: '2025-06-15', fechaFinMatricula: '2025-01-30', tagPeriodo: 1, estado: 'ACTIVO' },
+                    periodo: {
+                        id: 1,
+                        fechaInicio: '2025-01-15',
+                        fechaFin: '2025-06-15',
+                        fechaFinMatricula: '2025-01-30',
+                        tagPeriodo: 1,
+                        estado: 'ACTIVO',
+                    },
                     estado: 'PENDIENTE',
                     observacion: '',
                 },
@@ -88,12 +130,33 @@ export class AprobarMatriculaEstudianteComponent implements OnInit {
                     curso: {
                         id: 103,
                         grupo: 'A',
-                        periodo: { id: 1, fechaInicio: '2025-01-15', fechaFin: '2025-06-15', fechaFinMatricula: '2025-01-30', tagPeriodo: 1, estado: 'ACTIVO' },
-                        asignatura: { id: 3, nombre: 'Minería de Datos', codigo: 'MD101', estado: true, areaFormacion: 1, creditos: 4 },
+                        periodo: {
+                            id: 1,
+                            fechaInicio: '2025-01-15',
+                            fechaFin: '2025-06-15',
+                            fechaFinMatricula: '2025-01-30',
+                            tagPeriodo: 1,
+                            estado: 'ACTIVO',
+                        },
+                        asignatura: {
+                            id: 3,
+                            nombre: 'Minería de Datos',
+                            codigo: 'MD101',
+                            estado: true,
+                            areaFormacion: 1,
+                            creditos: 4,
+                        },
                         docentes: [],
                         materiales: [],
                     },
-                    periodo: { id: 1, fechaInicio: '2025-01-15', fechaFin: '2025-06-15', fechaFinMatricula: '2025-01-30', tagPeriodo: 1, estado: 'ACTIVO' },
+                    periodo: {
+                        id: 1,
+                        fechaInicio: '2025-01-15',
+                        fechaFin: '2025-06-15',
+                        fechaFinMatricula: '2025-01-30',
+                        tagPeriodo: 1,
+                        estado: 'ACTIVO',
+                    },
                     estado: 'APROBADA',
                     observacion: '',
                 },
@@ -104,7 +167,10 @@ export class AprobarMatriculaEstudianteComponent implements OnInit {
     }
 
     getNombreCompleto(): string {
-        return `${this.estudiante?.persona?.nombre ?? ''} ${this.estudiante?.persona?.apellido ?? ''}`.trim() || 'Sin nombre';
+        return (
+            `${this.estudiante?.persona?.nombre ?? ''} ${this.estudiante?.persona?.apellido ?? ''}`.trim() ||
+            'Sin nombre'
+        );
     }
 
     onVolver(): void {

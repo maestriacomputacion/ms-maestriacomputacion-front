@@ -1,92 +1,193 @@
 <p-toast></p-toast>
 
 <p-panel>
-  <p-header>
-    <b>LISTADO DE MATRÍCULAS</b>
-  </p-header>
+    <p-header>
+        <b>LISTADO DE MATRÍCULAS</b>
+    </p-header>
 
-  <div class="w-28rem">
-    <div class="flex flex-column gap-3 mb-2">
-      <div class="flex align-items-center gap-2">
-        <label for="periodo" class="font-medium mb-1 white-space-nowrap w-8rem">Periodo</label>
-        <p-dropdown id="periodo" [options]="periodosOptions" [(ngModel)]="selectedPeriodo" (onChange)="aplicarFiltros()"
-          [showClear]="true" placeholder="Selecciona el periodo" class="w-full flex-1"></p-dropdown>
-      </div>
-      <div class="flex align-items-center gap-2">
-        <label for="asignatura" class="font-medium mb-1 white-space-nowrap w-8rem">Asignatura</label>
-        <p-dropdown id="asignatura" [options]="asignaturasOptions" [(ngModel)]="selectedAsignatura"
-          (onChange)="aplicarFiltros()" [showClear]="true" placeholder="Selecciona la asignatura"
-          class="w-full flex-1"></p-dropdown>
-      </div>
-      <div class="flex align-items-center gap-2">
-        <label for="estado" class="font-medium mb-1 white-space-nowrap w-8rem">Estado</label>
-        <p-dropdown id="estado" [options]="estadoOptions" [(ngModel)]="selectedEstado" (onChange)="aplicarFiltros()"
-          [showClear]="true" placeholder="Todos" class="w-full flex-1"></p-dropdown>
-      </div>
-      <div class="flex align-items-center gap-2">
-        <label for="estudiante" class="font-medium mb-1 white-space-nowrap w-8rem">Estudiante</label>
-        <div class="flex align-items-center gap-2 w-full flex-1">
-          <input id="estudiante" pInputText type="text" class="w-full flex-1" [readonly]="true"
-            [placeholder]="selectedEstudiante?.codigo ? (selectedEstudiante?.codigo + ' - ' + (selectedEstudiante?.nombre || '')) : 'Seleccione estudiante'" />
-          <button pButton pRipple icon="pi pi-search" class="p-button-text p-button-sm"
-            (click)="abrirBuscadorEstudiantes()"
-            pTooltip="Buscar estudiante" tooltipPosition="top"></button>
-          <button pButton pRipple icon="pi pi-times" class="p-button-text p-button-sm p-button-danger"
-            (click)="selectedEstudiante=null; aplicarFiltros()" pTooltip="Limpiar" tooltipPosition="top"></button>
+    <div class="w-28rem">
+        <div class="flex flex-column gap-3 mb-2">
+            <div class="flex align-items-center gap-2">
+                <label
+                    for="periodo"
+                    class="font-medium mb-1 white-space-nowrap w-8rem"
+                    >Periodo</label
+                >
+                <p-dropdown
+                    id="periodo"
+                    [options]="periodosOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [(ngModel)]="selectedPeriodoId"
+                    (onChange)="onPeriodoChange()"
+                    [showClear]="false"
+                    placeholder="Selecciona el periodo"
+                    class="w-full flex-1"
+                ></p-dropdown>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <label
+                    for="asignatura"
+                    class="font-medium mb-1 white-space-nowrap w-8rem"
+                    >Asignatura</label
+                >
+                <p-dropdown
+                    id="asignatura"
+                    [options]="asignaturasOptions"
+                    [(ngModel)]="selectedAsignatura"
+                    (onChange)="aplicarFiltros()"
+                    [showClear]="true"
+                    placeholder="Selecciona la asignatura"
+                    class="w-full flex-1"
+                ></p-dropdown>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <label
+                    for="estado"
+                    class="font-medium mb-1 white-space-nowrap w-8rem"
+                    >Estado</label
+                >
+                <p-dropdown
+                    id="estado"
+                    [options]="estadoOptions"
+                    [(ngModel)]="selectedEstado"
+                    (onChange)="aplicarFiltros()"
+                    [showClear]="true"
+                    placeholder="Todos"
+                    class="w-full flex-1"
+                ></p-dropdown>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <label
+                    for="estudiante"
+                    class="font-medium mb-1 white-space-nowrap w-8rem"
+                    >Estudiante</label
+                >
+                <div class="flex align-items-center gap-2 w-full flex-1">
+                    <input
+                        id="estudiante"
+                        pInputText
+                        type="text"
+                        class="w-full flex-1"
+                        [readonly]="true"
+                        [placeholder]="
+                            selectedEstudiante?.codigo
+                                ? selectedEstudiante?.codigo +
+                                  ' - ' +
+                                  (selectedEstudiante?.nombre || '')
+                                : 'Seleccione estudiante'
+                        "
+                    />
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-search"
+                        class="p-button-text p-button-sm"
+                        (click)="abrirBuscadorEstudiantes()"
+                        pTooltip="Buscar estudiante"
+                        tooltipPosition="top"
+                    ></button>
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-times"
+                        class="p-button-text p-button-sm p-button-danger"
+                        (click)="selectedEstudiante = null; aplicarFiltros()"
+                        pTooltip="Limpiar"
+                        tooltipPosition="top"
+                    ></button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <div class="flex flex-row align-items-center justify-content-between mb-3 w-full">
-    <div class="w-6">
-      <span class="p-input-icon-left w-full">
-        <i class="pi pi-search"></i>
-        <input pInputText type="text" class="w-full" placeholder="Buscar por periodo, asignatura o grupo"
-          [(ngModel)]="globalSearch" (input)="aplicarFiltros()" />
-      </span>
+    <div
+        class="flex flex-row align-items-center justify-content-between mb-3 w-full"
+    >
+        <div class="w-6">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar por periodo, asignatura o grupo"
+                    [(ngModel)]="globalSearch"
+                    (input)="aplicarFiltros()"
+                />
+            </span>
+        </div>
+        <div class="flex gap-2">
+            <button
+                pButton
+                pRipple
+                label="Limpiar filtros"
+                class="p-button-text p-button-sm"
+                icon="pi pi-filter-slash"
+                (click)="limpiarFiltros()"
+            ></button>
+        </div>
     </div>
-    <div class="flex gap-2">
-      <button pButton pRipple label="Limpiar filtros" class="p-button-text p-button-sm" icon="pi pi-filter-slash"
-        (click)="limpiarFiltros()"></button>
-    </div>
-  </div>
 
-  <p-table [value]="resumenFiltrado" [paginator]="true" [rows]="10" [totalRecords]="resumenFiltrado?.length || 0"
-    [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
-    styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'">
-    <ng-template pTemplate="header">
-      <tr>
-        <th class="text-center" scope="col">Periodo</th>
-        <th class="text-center" scope="col">Asignatura</th>
-        <th class="text-center" scope="col">Grupo</th>
-        <th class="text-center" scope="col">Estado Curso</th>
-        <th class="text-center" scope="col">Cantidad de estudiantes</th>
-        <th class="text-center" scope="col">Opciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-item>
-      <tr>
-        <td class="text-center">{{ item.periodoDescripcion }}</td>
-        <td>{{ item.asignatura }}</td>
-        <td class="text-center">{{ item.grupo }}</td>
-        <td class="text-center">
-          <p-tag [value]="item.estado"
-            [severity]="item.estado === 'APROBADA' ? 'success' : item.estado === 'PENDIENTE' ? 'warning' : item.estado === 'RECHAZADA' ? 'danger' : 'info'"></p-tag>
-        </td>
-        <td class="text-center">{{ item.cantidadEstudiantes }}</td>
-        <td class="text-center">
-          <button pButton pRipple icon="pi pi-arrow-right" class="p-button-rounded p-button-text p-button-sm"
-            pTooltip="Ir a gestión de matrícula"
-            tooltipPosition="top"
-            (click)="irAGestionMatriculaCurso()"></button>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="6" class="text-center">No se encontraron matrículas</td>
-      </tr>
-    </ng-template>
-  </p-table>
+    <p-table
+        [value]="resumenFiltrado"
+        [paginator]="true"
+        [rows]="10"
+        [totalRecords]="resumenFiltrado?.length || 0"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [responsiveLayout]="'scroll'"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center" scope="col">Periodo</th>
+                <th class="text-center" scope="col">Asignatura</th>
+                <th class="text-center" scope="col">Grupo</th>
+                <th class="text-center" scope="col">Estado Curso</th>
+                <th class="text-center" scope="col">Cantidad de estudiantes</th>
+                <th class="text-center" scope="col">Opciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td class="text-center">{{ item.periodoDescripcion }}</td>
+                <td>{{ item.asignatura }}</td>
+                <td class="text-center">{{ item.grupo }}</td>
+                <td class="text-center">
+                    <p-tag
+                        [value]="item.estado"
+                        [severity]="
+                            item.estado === 'APROBADA'
+                                ? 'success'
+                                : item.estado === 'PENDIENTE'
+                                  ? 'warning'
+                                  : item.estado === 'RECHAZADA'
+                                    ? 'danger'
+                                    : 'info'
+                        "
+                    ></p-tag>
+                </td>
+                <td class="text-center">{{ item.cantidadEstudiantes }}</td>
+                <td class="text-center">
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-arrow-right"
+                        class="p-button-rounded p-button-text p-button-sm"
+                        pTooltip="Ir a gestión de matrícula"
+                        tooltipPosition="top"
+                        (click)="irAGestionMatriculaCurso()"
+                    ></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6" class="text-center">
+                    No se encontraron matrículas
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </p-panel>

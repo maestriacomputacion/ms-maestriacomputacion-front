@@ -31,7 +31,7 @@ export class MaterialApoyoService {
                                 descripcion: item.descripcion,
                                 enlace: item.enlace,
                                 estado: item.estado,
-                            } as MaterialApoyo)
+                            }) as MaterialApoyo
                     ),
                 }))
             );

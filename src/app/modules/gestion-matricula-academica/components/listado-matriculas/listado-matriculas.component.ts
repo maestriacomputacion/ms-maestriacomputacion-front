@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { CursoService } from '../../services/curso.service';
+import { MatriculaService } from '../../services/matricula.service';
 import { ApiResponse } from '../../models/api-response.model';
 import {
-    MatriculaRealizada,
-    CursoDetallado,
     PeriodoBasico,
     MatriculaResumen,
+    MatriculaResumenBackend,
 } from '../../models/matricula.model';
 import { BuscadorEstudiantesComponent } from 'src/app/shared/components/buscador-estudiantes/buscador-estudiantes.component';
 
@@ -27,9 +27,10 @@ export class ListadoMatriculasComponent implements OnInit {
         { label: 'Aprobada', value: 'APROBADA' },
         { label: 'Pendiente', value: 'PENDIENTE' },
         { label: 'Rechazada', value: 'RECHAZADA' },
+        { label: 'Activa', value: 'ACTIVO' },
     ];
 
-    selectedPeriodo: string | null = null;
+    selectedPeriodoId: string | null = null;
     selectedAsignatura: string | null = null;
     selectedEstado: string | null = null;
     selectedEstudiante: {
@@ -38,8 +39,7 @@ export class ListadoMatriculasComponent implements OnInit {
         nombre?: string;
     } | null = null;
 
-    matriculas: MatriculaRealizada[] = [];
-    cursosBackend: CursoDetallado[] = [];
+    resumenMatriculas: MatriculaResumen[] = [];
     resumenFiltrado: MatriculaResumen[] = [];
     globalSearch: string = '';
 
@@ -48,25 +48,37 @@ export class ListadoMatriculasComponent implements OnInit {
     constructor(
         private readonly periodoService: PeriodoAcademicoService,
         private readonly cursoService: CursoService,
+        private readonly matriculaService: MatriculaService,
         private readonly router: Router,
         private readonly dialogService: DialogService
     ) {}
 
     ngOnInit(): void {
         this.cargarFiltrosBase();
-        this.cargarDatosMock();
-        this.aplicarFiltros();
     }
 
     cargarFiltrosBase(): void {
         this.periodoService.getPeriodos().subscribe({
             next: (resp: ApiResponse<any[]>) => {
-                this.periodosOptions = [{ label: 'Todos', value: '' }].concat(
-                    (resp.data || []).map((p) => ({
-                        label: this.formatearPeriodoLabel(p),
-                        value: p.descripcion || `Periodo ${p.tagPeriodo}`,
-                    }))
+                const periodos = resp.data || [];
+                this.periodosOptions = periodos.map((p) => ({
+                    label: this.formatearPeriodoLabel(p),
+                    value: String(p.id),
+                }));
+                const periodoActivo = periodos.find(
+                    (p) => p.estado === 'ACTIVO'
                 );
+                const periodoDefaultId = periodoActivo
+                    ? String(periodoActivo.id)
+                    : periodos.length > 0
+                      ? String(periodos[0].id)
+                      : null;
+                if (periodoDefaultId) {
+                    setTimeout(() => {
+                        this.selectedPeriodoId = periodoDefaultId;
+                        this.cargarMatriculasPorPeriodo(periodoDefaultId);
+                    }, 0);
+                }
             },
         });
 
@@ -82,219 +94,50 @@ export class ListadoMatriculasComponent implements OnInit {
         });
     }
 
-    cargarDatosMock(): void {
-        const periodoBase: PeriodoBasico = {
-            id: 1,
-            fechaInicio: '2025-01-15',
-            fechaFin: '2025-06-15',
-            fechaFinMatricula: '2025-01-30',
-            tagPeriodo: 1,
-            descripcion: '2025-1',
-            estado: 'ACTIVO',
-        };
-
-        const cursoA: CursoDetallado = {
-            id: 101,
-            grupo: 'A',
-            periodo: periodoBase,
-            periodoDescripcion: '2025-1',
-            asignatura: {
-                id: 1,
-                nombre: 'Arquitectura de Software',
-                codigo: 'ARQS01',
-                estado: true,
-                areaFormacion: 1,
-                creditos: 3,
-            },
-            docentes: [],
-            materiales: [],
-        };
-
-        const cursoB: CursoDetallado = {
-            id: 102,
-            grupo: 'B',
-            periodo: periodoBase,
-            periodoDescripcion: '2025-1',
-            asignatura: {
-                id: 2,
-                nombre: 'Investigación I',
-                codigo: 'INV01',
-                estado: true,
-                areaFormacion: 1,
-                creditos: 3,
-            },
-            docentes: [],
-            materiales: [],
-        };
-
-        const cursoC: CursoDetallado = {
-            id: 103,
-            grupo: 'A',
-            periodo: periodoBase,
-            periodoDescripcion: '2025-1',
-            asignatura: {
-                id: 3,
-                nombre: 'Minería de Datos',
-                codigo: 'MD01',
-                estado: true,
-                areaFormacion: 1,
-                creditos: 3,
-            },
-            docentes: [],
-            materiales: [],
-        };
-
-        const estudiantes = [
-            { id: 1, codigo: 'MC2024001', nombre: 'Ana María González' },
-            { id: 2, codigo: 'MC2024002', nombre: 'Juan Pérez' },
-            { id: 3, codigo: 'MC2024003', nombre: 'Luisa Martínez' },
-        ];
-
-        this.matriculas = [
-            {
-                id: 1,
-                estudiante: {
-                    id: estudiantes[0].id,
-                    codigo: estudiantes[0].codigo,
-                    persona: { nombre: 'Ana María', apellido: 'González' },
-                },
-                curso: cursoA,
-                periodo: periodoBase,
-                estado: 'APROBADA',
-                observacion: '',
-            },
-            {
-                id: 2,
-                estudiante: {
-                    id: estudiantes[1].id,
-                    codigo: estudiantes[1].codigo,
-                    persona: { nombre: 'Juan', apellido: 'Pérez' },
-                },
-                curso: cursoA,
-                periodo: periodoBase,
-                estado: 'APROBADA',
-                observacion: '',
-            },
-            {
-                id: 3,
-                estudiante: {
-                    id: estudiantes[2].id,
-                    codigo: estudiantes[2].codigo,
-                    persona: { nombre: 'Luisa', apellido: 'Martínez' },
-                },
-                curso: cursoA,
-                periodo: periodoBase,
-                estado: 'PENDIENTE',
-                observacion: '',
-            },
-            {
-                id: 4,
-                estudiante: {
-                    id: estudiantes[0].id,
-                    codigo: estudiantes[0].codigo,
-                    persona: { nombre: 'Ana María', apellido: 'González' },
-                },
-                curso: cursoB,
-                periodo: periodoBase,
-                estado: 'RECHAZADA',
-                observacion: '',
-            },
-            {
-                id: 5,
-                estudiante: {
-                    id: estudiantes[1].id,
-                    codigo: estudiantes[1].codigo,
-                    persona: { nombre: 'Juan', apellido: 'Pérez' },
-                },
-                curso: cursoB,
-                periodo: periodoBase,
-                estado: 'PENDIENTE',
-                observacion: '',
-            },
-            {
-                id: 6,
-                estudiante: {
-                    id: estudiantes[2].id,
-                    codigo: estudiantes[2].codigo,
-                    persona: { nombre: 'Luisa', apellido: 'Martínez' },
-                },
-                curso: cursoC,
-                periodo: periodoBase,
-                estado: 'APROBADA',
-                observacion: '',
-            },
-        ];
-
-        this.cursosBackend = [cursoA, cursoB, cursoC];
-    }
-
     aplicarFiltros(): void {
-        const grouped = this.agruparMatriculas();
-        let data = this.construirResumen(grouped);
+        let data = [...this.resumenMatriculas];
         data = this.aplicarFiltrosPeriodo(data);
         data = this.aplicarFiltrosAsignatura(data);
         data = this.aplicarFiltrosEstado(data);
-        data = this.aplicarFiltrosEstudiante(data, grouped);
         data = this.aplicarBusquedaGlobal(data);
         this.resumenFiltrado = data;
     }
 
-    private agruparMatriculas(): Map<
-        number,
-        {
-            resumen: MatriculaResumen;
-            estados: Set<string>;
-            estudiantes: Set<number>;
-        }
-    > {
-        const grouped = new Map<
-            number,
-            {
-                resumen: MatriculaResumen;
-                estados: Set<string>;
-                estudiantes: Set<number>;
-            }
-        >();
-        for (const m of this.matriculas) {
-            const key = m.curso?.id || 0;
-            if (!grouped.has(key)) {
-                grouped.set(key, {
-                    resumen: {
-                        cursoId: key,
-                        periodoDescripcion: m.curso?.periodoDescripcion || '—',
-                        asignatura: m.curso?.asignatura?.nombre || '—',
-                        grupo: m.curso?.grupo || '—',
-                        estado: m.estado || '—',
-                        cantidadEstudiantes: 0,
-                    },
-                    estados: new Set<string>(),
-                    estudiantes: new Set<number>(),
-                });
-            }
-            const item = grouped.get(key);
-            if (!item) continue;
-            item.resumen.cantidadEstudiantes += 1;
-            if (m.estado) item.estados.add(m.estado);
-            const estId = (m.estudiante as any)?.id;
-            if (estId) item.estudiantes.add(estId);
-        }
-        return grouped;
+    private cargarMatriculasPorPeriodo(periodoId: string): void {
+        this.loading = true;
+        this.matriculaService.getMatriculasResumen(periodoId).subscribe({
+            next: (resp: ApiResponse<MatriculaResumenBackend[]>) => {
+                if (resp?.typeResponse === 'SUCCESS') {
+                    this.resumenMatriculas = (resp.data || []).map((item) =>
+                        this.mapToResumen(item)
+                    );
+                } else {
+                    this.resumenMatriculas = [];
+                }
+                this.aplicarFiltros();
+                this.loading = false;
+            },
+            error: (err) => {
+                console.error('Error cargando matrículas', err);
+                this.resumenMatriculas = [];
+                this.aplicarFiltros();
+                this.loading = false;
+            },
+        });
     }
 
-    private construirResumen(
-        grouped: Map<
-            number,
-            {
-                resumen: MatriculaResumen;
-                estados: Set<string>;
-                estudiantes: Set<number>;
-            }
-        >
-    ): MatriculaResumen[] {
-        return Array.from(grouped.values()).map(({ resumen, estados }) => ({
-            ...resumen,
-            estado: estados.size > 1 ? 'MIXTO' : Array.from(estados)[0] || '—',
-        }));
+    private mapToResumen(item: MatriculaResumenBackend): MatriculaResumen {
+        const descripcion =
+            item.periodo?.descripcion || `Periodo ${item.periodo?.tagPeriodo}`;
+        return {
+            cursoId: item.idCurso,
+            periodoId: item.periodo?.id,
+            periodoDescripcion: descripcion,
+            asignatura: item.asignatura,
+            grupo: item.grupo,
+            estado: item.estado,
+            cantidadEstudiantes: item.cantidadEstudiante,
+        };
     }
 
     private formatearPeriodoLabel(periodo: PeriodoBasico): string {
@@ -310,9 +153,9 @@ export class ListadoMatriculasComponent implements OnInit {
     private aplicarFiltrosPeriodo(
         data: MatriculaResumen[]
     ): MatriculaResumen[] {
-        if (!this.selectedPeriodo || this.selectedPeriodo === '') return data;
-        return data.filter((d) =>
-            d.periodoDescripcion?.includes(this.selectedPeriodo || '')
+        if (!this.selectedPeriodoId) return data;
+        return data.filter(
+            (d) => String(d.periodoId) === this.selectedPeriodoId
         );
     }
 
@@ -334,28 +177,6 @@ export class ListadoMatriculasComponent implements OnInit {
         return data.filter((d) => d.estado === this.selectedEstado);
     }
 
-    private aplicarFiltrosEstudiante(
-        data: MatriculaResumen[],
-        grouped: Map<
-            number,
-            {
-                resumen: MatriculaResumen;
-                estados: Set<string>;
-                estudiantes: Set<number>;
-            }
-        >
-    ): MatriculaResumen[] {
-        if (!this.selectedEstudiante?.id) return data;
-        return data.filter((d) => {
-            const original = Array.from(grouped.values()).find(
-                (v) => v.resumen.cursoId === d.cursoId
-            );
-            return original
-                ? original.estudiantes.has(this.selectedEstudiante!.id!)
-                : false;
-        });
-    }
-
     private aplicarBusquedaGlobal(
         data: MatriculaResumen[]
     ): MatriculaResumen[] {
@@ -371,7 +192,6 @@ export class ListadoMatriculasComponent implements OnInit {
     }
 
     limpiarFiltros(): void {
-        this.selectedPeriodo = null;
         this.selectedAsignatura = null;
         this.selectedEstado = null;
         this.selectedEstudiante = null;
@@ -404,10 +224,15 @@ export class ListadoMatriculasComponent implements OnInit {
         return found?.label || String(value);
     }
 
+    onPeriodoChange(): void {
+        if (this.selectedPeriodoId) {
+            this.cargarMatriculasPorPeriodo(this.selectedPeriodoId);
+        }
+    }
+
     irAGestionMatriculaCurso(): void {
         this.router.navigate([
             '/gestion-matricula-academica/gestion-matricula-curso',
         ]);
     }
-
 }

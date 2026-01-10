@@ -8,7 +8,7 @@
         >
     </div>
     <div class="grid">
-        <div class="col-12 md:col-6">
+        <div class="col-12 lg:col-6">
             <div class="surface-card border-round shadow-1 h-full">
                 <div class="p-3">
                     <h4
@@ -73,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 md:col-6">
+        <div class="col-12 lg:col-6">
             <div class="surface-card border-round shadow-1 h-full">
                 <div class="p-3">
                     <h4
@@ -133,6 +133,79 @@
                             <tr>
                                 <td colspan="6" class="text-center">
                                     Todas las matrículas fueron realizadas
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+        <div
+            class="col-12 md:col-11 md:col-offset-1 lg:col-10 lg:col-offset-1 xl:col-8 xl:col-offset-2"
+        >
+            <div class="surface-card border-round shadow-1 h-full">
+                <div class="p-3">
+                    <h4
+                        class="mb-3 font-semibold text-900 flex align-items-center gap-2"
+                    >
+                        <i class="pi pi-trash text-orange-500"></i>
+                        Matrículas Eliminadas
+                    </h4>
+                    <p-table
+                        [value]="matriculasEliminadas"
+                        [paginator]="true"
+                        [rows]="10"
+                        styleClass="p-datatable-striped"
+                        [responsiveLayout]="'scroll'"
+                    >
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th scope="col">Código</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Asignatura</th>
+                                <th scope="col">Grupo</th>
+                                <th scope="col">Docentes</th>
+                                <th scope="col">Motivo</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-matricula>
+                            <tr>
+                                <td>
+                                    {{ matricula.estudiante?.codigo || "-" }}
+                                </td>
+                                <td>
+                                    {{ matricula.estudiante?.persona?.nombre }}
+                                    {{
+                                        matricula.estudiante?.persona?.apellido
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        matricula.curso?.asignatura?.nombre ||
+                                            "-"
+                                    }}
+                                </td>
+                                <td>{{ matricula.curso?.grupo || "-" }}</td>
+                                <td>
+                                    {{
+                                        getDocentesNombres(
+                                            matricula.curso?.docentes
+                                        )
+                                    }}
+                                </td>
+                                <td class="max-w-20rem white-space-normal">
+                                    {{
+                                        matricula.motivo ||
+                                            matricula.observacion ||
+                                            "-"
+                                    }}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    No se eliminaron matrículas
                                 </td>
                             </tr>
                         </ng-template>

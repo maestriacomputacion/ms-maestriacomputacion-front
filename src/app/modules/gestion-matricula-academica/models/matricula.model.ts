@@ -74,9 +74,20 @@ export interface MatriculaRealizada {
     observacion: string;
 }
 
+export interface MatriculaEliminada {
+    id?: number;
+    estudiante: Estudiante;
+    curso: CursoDetallado;
+    periodo?: PeriodoBasico;
+    motivo?: string;
+    observacion?: string;
+    fechaEliminacion?: string;
+}
+
 export interface MatriculaResponseData {
     matriculasRealizadas: MatriculaRealizada[];
     matriculasNoRealizadas: MatriculaNoRealizada[];
+    matriculasEliminadas?: MatriculaEliminada[];
 }
 
 export interface MatriculaResumen {

@@ -74,7 +74,7 @@
                                 <td>{{ matricula.curso?.asignatura?.nombre || '-' }}</td>
                                 <td>{{ matricula.curso?.grupo || '-' }}</td>
                                 <td>{{ getDocentesNombres(matricula.curso?.docentes) }}</td>
-                                <td style="max-width: 320px; white-space: pre-line; word-break: break-word;">
+                                <td class="max-w-20rem white-space-normal">
                                     {{ matricula.motivo }}
                                 </td>
                             </tr>
@@ -92,7 +92,7 @@
 
     <!-- Botón de finalizar -->
     <div class="flex justify-content-end gap-2 mt-4">
-        <button pButton label="Volver al listado" icon="pi pi-check" class="p-button-primary"
+        <button pButton pRipple label="Volver al listado" icon="pi pi-check" class="p-button-primary"
             (click)="finalizar($event)" pTooltip="Volver al listado" tooltipPosition="top">
         </button>
     </div>

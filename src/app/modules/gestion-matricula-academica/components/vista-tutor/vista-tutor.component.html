@@ -6,7 +6,7 @@
     </p-header>
 
     <!-- Indicador de carga -->
-    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 200px">
+    <div *ngIf="loading" class="flex justify-content-center align-items-center h-12rem">
         <p-progressSpinner></p-progressSpinner>
     </div>
 
@@ -75,7 +75,7 @@
                         <td class="text-center">
                             <div class="flex justify-content-center align-items-center">
                                 <button pButton pRipple icon="pi pi-book"
-                                    class="p-button-rounded p-button-text p-button-warning"
+                                    class="p-button-rounded p-button-text p-button-sm p-button-warning"
                                     (click)="onVerEstudiante(estudiante)" title="Ver matrículas"></button>
                             </div>
                         </td>

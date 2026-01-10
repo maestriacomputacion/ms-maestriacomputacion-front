@@ -12,6 +12,7 @@
             >
             <button
                 pButton
+                pRipple
                 class="p-button-text p-button-sm"
                 icon="pi pi-filter-slash"
                 label="Limpiar filtros"
@@ -24,6 +25,7 @@
                 *ngFor="let tipo of tiposAsignatura"
                 type="button"
                 pButton
+                pRipple
                 [label]="tipo.label"
                 class="p-button-sm"
                 [class.p-button-outlined]="
@@ -119,12 +121,14 @@
     >
         <button
             pButton
+            pRipple
             label="Reporte general"
             class="p-button-primary"
             icon="pi pi-file"
         ></button>
         <button
             pButton
+            pRipple
             label="Reporte seleccionado"
             class="p-button-primary"
             icon="pi pi-check-square"

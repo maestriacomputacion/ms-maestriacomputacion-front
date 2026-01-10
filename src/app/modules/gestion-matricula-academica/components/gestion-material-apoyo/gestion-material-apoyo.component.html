@@ -21,7 +21,8 @@
     <div class="col-1"></div>
     <div class="col-6">
       <div class="w-full text-right">
-        <button pButton label="Registrar Material" (click)="showDialog()"></button>
+        <button pButton pRipple label="Registrar Material" class="p-button-primary p-button-sm"
+          (click)="showDialog()"></button>
       </div>
     </div>
   </div>
@@ -44,12 +45,15 @@
         <td class="text-center">{{ rowIndex + 1 }}</td>
         <td>{{ material.nombre }}</td>
         <td class="text-center">
-          <button pButton pTooltip="Ver Material" type="button" icon="pi pi-external-link"
-            class="p-button-rounded p-button-text p-button-info" (click)="abrirEnlace(material.enlace)"></button>
-          <button pButton pTooltip="Editar" type="button" icon="pi pi-pencil"
-            class="p-button-rounded p-button-text p-button-warning" (click)="onEditar(material.id)"></button>
-          <button pButton pTooltip="Eliminar" type="button" icon="pi pi-trash"
-            class="p-button-rounded p-button-text p-button-danger" (click)="onDelete($event, material.id)"></button>
+          <button pButton pRipple pTooltip="Ver Material" type="button" icon="pi pi-external-link"
+            class="p-button-rounded p-button-text p-button-sm p-button-info"
+            (click)="abrirEnlace(material.enlace)"></button>
+          <button pButton pRipple pTooltip="Editar" type="button" icon="pi pi-pencil"
+            class="p-button-rounded p-button-text p-button-sm p-button-warning"
+            (click)="onEditar(material.id)"></button>
+          <button pButton pRipple pTooltip="Eliminar" type="button" icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-sm p-button-danger"
+            (click)="onDelete($event, material.id)"></button>
           <p-confirmPopup></p-confirmPopup>
         </td>
       </tr>
@@ -65,8 +69,8 @@
 </p-panel>
 
 <p-dialog header="{{ isNewMaterial ? 'Registrar Material de Apoyo' : 'Editar Material de Apoyo' }}"
-  [(visible)]="displayDialog" [modal]="true" [closable]="false" [responsive]="true" [style]="{ width: '50vw' }"
-  [breakpoint]="768">
+  [(visible)]="displayDialog" [modal]="true" [closable]="false" [responsive]="true"
+  styleClass="w-full md:w-30rem lg:w-40rem" [breakpoint]="768">
   <div class="p-fluid">
     <div class="field">
       <label for="nombre" class="label-required">Nombre del Material: </label>
@@ -101,8 +105,9 @@
     </div>
   </div>
   <p-footer>
-    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-outlined" (click)="onCancel()"></button>
-    <button pButton label="Guardar" icon="pi pi-check" [disabled]="!materialApoyo.nombre || !materialApoyo.enlace"
-      (click)="onSave()"></button>
+    <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-secondary p-button-outlined"
+      (click)="onCancel()"></button>
+    <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary"
+      [disabled]="!materialApoyo.nombre || !materialApoyo.enlace" (click)="onSave()"></button>
   </p-footer>
 </p-dialog>

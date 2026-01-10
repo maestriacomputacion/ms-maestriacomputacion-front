@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
@@ -10,8 +10,9 @@ import {
     MatriculaEstudiantesRequest,
     MatriculaResponseData,
 } from '../../../../models/matricula.model';
-import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
+import { MatriculaEstudiantesService } from '../../../../services/matricula-estudiantes.service';
+import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 
 type EstudianteExtendido = EstudianteBase & {
     observaciones?: string;
@@ -47,7 +48,9 @@ export class RealizarMatriculaEstudiantesComponent
         private readonly cursoService: CursoService,
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
-        private readonly estudianteService: EstudianteService
+        private readonly estudianteService: EstudianteService,
+        @Inject(MatriculaEstudiantesService)
+        private readonly matriculaEstudiantesService: MatriculaEstudiantesService
     ) {}
 
     ngOnInit(): void {
@@ -55,6 +58,7 @@ export class RealizarMatriculaEstudiantesComponent
             if (params['id']) {
                 this.cursoId = +params['id'];
                 this.cargarCurso(this.cursoId);
+                this.cargarEstudiantesMatricular(this.cursoId);
             }
         });
         this.cargarEstudiantes();
@@ -235,6 +239,41 @@ export class RealizarMatriculaEstudiantesComponent
                             err?.error?.message ??
                             err?.message ??
                             'Error al cargar los estudiantes',
+                    });
+                    this.loading = false;
+                },
+            });
+    }
+
+    private cargarEstudiantesMatricular(cursoId: number): void {
+        this.loading = true;
+        this.matriculaEstudiantesService
+            .getEstudiantesByCurso(cursoId)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.estudiantesMatricular = response.data || [];
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail:
+                                response.message ||
+                            'No se pudo cargar la lista de estudiantes a matricular',
+                        });
+                    }
+                    this.loading = false;
+                },
+                error: (err) => {
+                    console.error('Error cargando estudiantes a matricular', err);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                            err?.error?.message ??
+                            err?.message ??
+                            'Error al cargar los estudiantes a matricular',
                     });
                     this.loading = false;
                 },

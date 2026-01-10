@@ -1,6 +1,6 @@
 <p-tabView *ngIf="areas?.length > 0" (onChange)="onTabChange($event)" styleClass="tabs-centrados">
     <p-tabPanel *ngFor="let area of areas" [header]="area.label">
-        <div class="p-3" style="max-height: 600px; overflow-y: auto;">
+        <div class="p-3 max-h-30rem overflow-auto">
             <div *ngIf="loadingCursosPorArea[area.value]" class="flex justify-content-center p-3">
                 <p-progressSpinner></p-progressSpinner>
             </div>
@@ -19,29 +19,27 @@
                                 </div>
                             </div>
                             <p-table [value]="grupoAsig.cursos" styleClass="p-datatable-striped"
-                                [responsiveLayout]="'scroll'" [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}">
+                                [responsiveLayout]="'scroll'">
                                 <ng-template pTemplate="header">
                                     <tr>
-                                        <th scope="col" style="width: 15%;">Grupo</th>
-                                        <th scope="col" style="width: 40%;">Docentes</th>
-                                        <th scope="col" style="width: 25%;">Salón</th>
-                                        <th scope="col" style="width: 20%;" class="text-center">
+                                        <th scope="col" class="w-2">Grupo</th>
+                                        <th scope="col" class="w-4">Docentes</th>
+                                        <th scope="col" class="w-3">Salón</th>
+                                        <th scope="col" class="w-2 text-center">
                                             Opciones
                                         </th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-item>
                                     <tr>
-                                        <td style="width: 15%;">{{ item.grupo ?? "-" }}</td>
-                                        <td
-                                            style="width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        <td class="w-2">{{ item.grupo ?? "-" }}</td>
+                                        <td class="w-4 white-space-nowrap overflow-hidden text-overflow-ellipsis">
                                             {{ item.docente ?? "-" }}
                                         </td>
-                                        <td
-                                            style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        <td class="w-3 white-space-nowrap overflow-hidden text-overflow-ellipsis">
                                             {{ item.salon ?? "-" }}
                                         </td>
-                                        <td style="width: 20%;" class="text-center">
+                                        <td class="w-2 text-center">
                                             <button type="button" pButton pRipple label="Seleccionar"
                                                 class="p-button-rounded p-button-text p-button-sm"
                                                 (click)="onSeleccionarCurso($event, item, area)"></button>

@@ -4,7 +4,7 @@
     </p-header>
 
     <!-- Indicador de carga -->
-    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 200px">
+    <div *ngIf="loading" class="flex justify-content-center align-items-center h-12rem">
         <p-progressSpinner></p-progressSpinner>
     </div>
 
@@ -69,7 +69,8 @@
 
                     <!-- Botón Guardar -->
                     <div class="flex justify-content-end mb-4">
-                        <button type="button" pButton label="Matricular" icon="pi pi-save" class="p-button-primary"
+                        <button type="button" pButton pRipple label="Matricular" icon="pi pi-save"
+                            class="p-button-primary"
                             [disabled]="asignaturas.length === 0" (click)="onGuardarMatricula($event)">
                         </button>
                     </div>
@@ -93,13 +94,13 @@
                                 <td>{{ asignatura.observacion || "-" }}</td>
                                 <td>
                                     <div class="flex align-items-center gap-2">
-                                        <button type="button" pButton icon="pi pi-comment"
+                                        <button type="button" pButton pRipple icon="pi pi-comment"
                                             class="p-button-rounded p-button-text p-button-sm" (click)="
                                                 onAgregarObservacion(
                                                     asignatura.id
                                                 )
                                             " pTooltip="Agregar Observación"></button>
-                                        <button type="button" pButton icon="pi pi-trash"
+                                        <button type="button" pButton pRipple icon="pi pi-trash"
                                             class="p-button-rounded p-button-text p-button-danger p-button-sm" (click)="
                                                 onEliminarAsignatura(
                                                     $event,
@@ -142,7 +143,7 @@
 
     <!-- Modal para Agregar Observación -->
     <p-dialog [(visible)]="displayObservacionModal" [modal]="true" [resizable]="false" [draggable]="false"
-        [style]=" { width: '500px' }" header="Agregar Observación">
+        styleClass="w-30rem" header="Agregar Observación">
         <form [formGroup]="observacionForm" (ngSubmit)="onGuardarObservacion()">
             <div class="grid">
                 <div class="col-12">
@@ -163,9 +164,10 @@
             </div>
 
             <div class="flex justify-content-end gap-2 mt-3">
-                <button type="button" pButton label="Cancelar" icon="pi pi-times" class="p-button-text"
+                <button type="button" pButton pRipple label="Cancelar" icon="pi pi-times"
+                    class="p-button-secondary p-button-outlined"
                     (click)="onCancelarObservacion()"></button>
-                <button type="submit" pButton label="Guardar" icon="pi pi-check" class="p-button-primary"
+                <button type="submit" pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary"
                     [disabled]="observacionForm.invalid"></button>
             </div>
         </form>

@@ -4,7 +4,7 @@
     </p-header>
 
     <!-- Indicador de carga -->
-    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 200px">
+    <div *ngIf="loading" class="flex justify-content-center align-items-center h-12rem">
         <p-progressSpinner></p-progressSpinner>
     </div>
 
@@ -93,7 +93,7 @@
                                 <td>{{ est.persona?.correoElectronico || '—' }}</td>
                                 <td>{{ est.informacionMaestria?.semestreAcademico || '—' }}</td>
                                 <td>
-                                    <button type="button" pButton icon="pi pi-trash"
+                                    <button type="button" pButton pRipple icon="pi pi-trash"
                                         class="p-button-rounded p-button-text p-button-danger p-button-sm"
                                         (click)="confirmarQuitarEstudiante($event, est.id)"></button>
                                 </td>
@@ -119,7 +119,8 @@
                         Cursos Seleccionados para Matrícula Masiva
                     </h5>
                     <div class="flex justify-content-end mb-4">
-                        <button type="button" pButton label="Matricular" icon="pi pi-check" class="p-button-primary"
+                        <button type="button" pButton pRipple label="Matricular" icon="pi pi-check"
+                            class="p-button-primary"
                             [disabled]="selectedEstudiantes.length === 0 || cursosSeleccionados.length === 0"
                             (click)="onMatricularMasiva($event)"></button>
                     </div>
@@ -141,7 +142,7 @@
                                 <td>{{ curso.docentes || "-" }}</td>
                                 <td>{{ curso.salon || "-" }}</td>
                                 <td>
-                                    <button type="button" pButton icon="pi pi-trash"
+                                    <button type="button" pButton pRipple icon="pi pi-trash"
                                         class="p-button-rounded p-button-text p-button-danger p-button-sm"
                                         (click)="onEliminarCursoSeleccionado($event, curso.id)"
                                         pTooltip="Eliminar"></button>

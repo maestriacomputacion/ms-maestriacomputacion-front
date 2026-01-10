@@ -7,7 +7,7 @@
 
     <!-- Buscador principal - Diseño minimalista siguiendo heurísticas de Nielsen -->
     <div class="flex flex-row align-items-center justify-content-between mb-3 w-full">
-        <div class="mr-3" style="flex: 0 0 70%; max-width: 70%;">
+        <div class="mr-3 flex-1 min-w-0">
             <span class="p-input-icon-left w-full">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" class="w-full"
@@ -40,7 +40,7 @@
         [globalFilterFields]="['codigo', 'persona.nombre', 'persona.apellido', 'persona.identificacion', 'persona.correoElectronico', 'correoUniversidad', 'ciudadResidencia', 'persona.telefono']">
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:3rem" class="text-center" scope="col"><p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                <th class="text-center w-2rem" scope="col"><p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
                 <th class="text-center" scope="col">Código</th>
                 <th class="text-center" scope="col">Nombre Completo</th>
@@ -52,14 +52,15 @@
         </ng-template>
         <ng-template pTemplate="body" let-estudiante>
             <tr>
-                <td class="text-center"><p-tableCheckbox [value]="estudiante"></p-tableCheckbox></td>
+                <td class="text-center w-2rem"><p-tableCheckbox [value]="estudiante"></p-tableCheckbox></td>
                 <td>{{ estudiante.codigo }}</td>
                 <td>{{ getNombreCompleto(estudiante) }}</td>
                 <td>{{ estudiante.persona?.identificacion }}</td>
                 <td>{{ estudiante.persona?.correoElectronico }}</td>
                 <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico ?? '—' }}</td>
                 <td class="text-center">
-                    <button pButton pRipple icon="pi pi-book" class="p-button-rounded p-button-text p-button-warning"
+                    <button pButton pRipple icon="pi pi-book"
+                        class="p-button-rounded p-button-text p-button-sm p-button-warning"
                         (click)="onGenerarMatriculaPrevia(estudiante.id)" title="Generar Matrícula Previa">
                     </button>
                 </td>

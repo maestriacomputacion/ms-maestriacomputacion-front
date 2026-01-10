@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { Router } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { CursoService } from '../../services/curso.service';
@@ -48,8 +48,7 @@ export class ListadoMatriculasComponent implements OnInit {
     constructor(
         private readonly periodoService: PeriodoAcademicoService,
         private readonly cursoService: CursoService,
-        private readonly messageService: MessageService,
-        private readonly confirmationService: ConfirmationService,
+        private readonly router: Router,
         private readonly dialogService: DialogService
     ) {}
 
@@ -64,8 +63,8 @@ export class ListadoMatriculasComponent implements OnInit {
             next: (resp: ApiResponse<any[]>) => {
                 this.periodosOptions = [{ label: 'Todos', value: '' }].concat(
                     (resp.data || []).map((p) => ({
-                        label: p.descripcion || `Periodo ${p.tagPeriodo}`,
-                        value: String(p.id),
+                        label: this.formatearPeriodoLabel(p),
+                        value: p.descripcion || `Periodo ${p.tagPeriodo}`,
                     }))
                 );
             },
@@ -298,6 +297,16 @@ export class ListadoMatriculasComponent implements OnInit {
         }));
     }
 
+    private formatearPeriodoLabel(periodo: PeriodoBasico): string {
+        const fechaInicio = periodo.fechaInicio || '—';
+        const fechaFin = periodo.fechaFin || '—';
+        const tag =
+            periodo.tagPeriodo !== undefined && periodo.tagPeriodo !== null
+                ? String(periodo.tagPeriodo)
+                : 'Sin tag';
+        return `${fechaInicio} - ${fechaFin} (${tag})`;
+    }
+
     private aplicarFiltrosPeriodo(
         data: MatriculaResumen[]
     ): MatriculaResumen[] {
@@ -395,25 +404,10 @@ export class ListadoMatriculasComponent implements OnInit {
         return found?.label || String(value);
     }
 
-    verEstudiantesCurso(event: Event, cursoId: number): void {
-        const estudiantes = this.matriculas
-            .filter((m) => (m.curso?.id || 0) === cursoId)
-            .map((m) => {
-                const codigo = m.estudiante?.codigo || '';
-                const persona = (m.estudiante as any)?.persona;
-                const nombre = persona?.nombre || '';
-                const apellido = persona?.apellido || '';
-                return `${codigo} - ${nombre} ${apellido}`.trim();
-            });
-        this.confirmationService.confirm({
-            target: event.target,
-            message: estudiantes.length
-                ? estudiantes.join('\n')
-                : 'Sin estudiantes',
-            icon: 'pi pi-users',
-            acceptLabel: 'Cerrar',
-            rejectVisible: false,
-            accept: () => {},
-        });
+    irAGestionMatriculaCurso(): void {
+        this.router.navigate([
+            '/gestion-matricula-academica/gestion-matricula-curso',
+        ]);
     }
+
 }

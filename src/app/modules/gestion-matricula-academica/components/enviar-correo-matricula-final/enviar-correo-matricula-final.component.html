@@ -31,7 +31,7 @@
             placeholder="Año"
             class="w-10rem"
         ></p-dropdown>
-        <button pButton label="Consultar" icon="pi pi-search" class="p-button-primary"></button>
+        <button pButton pRipple label="Consultar" icon="pi pi-search" class="p-button-primary"></button>
     </div>
 
     <div class="mb-3">
@@ -39,6 +39,7 @@
             <span class="font-medium text-900">Filtrar por tipo de asignatura:</span>
             <button
                 pButton
+                pRipple
                 class="p-button-text p-button-sm"
                 icon="pi pi-filter-slash"
                 label="Limpiar"
@@ -51,6 +52,7 @@
                 *ngFor="let tipo of tiposAsignatura"
                 type="button"
                 pButton
+                pRipple
                 [label]="tipo.label"
                 class="p-button-sm"
                 [class.p-button-outlined]="!tiposSeleccionados.includes(tipo.value)"
@@ -111,6 +113,7 @@
     <div class="flex justify-content-end mt-3">
         <button
             pButton
+            pRipple
             label="Enviar correo"
             icon="pi pi-send"
             class="p-button-primary"

@@ -73,6 +73,7 @@
                 <td class="text-center">
                     <button
                         pButton
+                        pRipple
                         icon="pi pi-trash"
                         class="p-button-text p-button-danger p-button-sm"
                         (click)="remover(estudiante)"
@@ -96,9 +97,10 @@
         </div>
         <button
             pButton
+            pRipple
             label="Agregar a envío"
             icon="pi pi-plus"
-            class="p-button-outlined"
+            class="p-button-secondary p-button-outlined"
             [disabled]="!seleccion.length"
             (click)="agregarAEnvio()"
         ></button>
@@ -143,11 +145,12 @@
                     <td>{{ estudiante.nombre }}</td>
                     <td>{{ estudiante.correo }}</td>
                     <td class="text-center">
-                        <button
-                            pButton
-                            icon="pi pi-trash"
-                            class="p-button-text p-button-danger p-button-sm"
-                            (click)="removerEnvio(estudiante)"
+                    <button
+                        pButton
+                        pRipple
+                        icon="pi pi-trash"
+                        class="p-button-text p-button-danger p-button-sm"
+                        (click)="removerEnvio(estudiante)"
                             pTooltip="Quitar del envío"
                         ></button>
                     </td>
@@ -166,6 +169,7 @@
     <div class="flex justify-content-end mt-4">
         <button
             pButton
+            pRipple
             label="Enviar correo a estudiantes"
             icon="pi pi-send"
             class="p-button-primary"

@@ -1,14 +1,15 @@
 <p-dialog header="Observación del estudiante" [(visible)]="displayObservacionModal" [modal]="true" [closable]="false"
-  [style]="{width: '400px'}">
+  styleClass="w-25rem">
   <div class="p-fluid">
     <div class="field">
       <label for="observacion">Observación</label>
       <textarea id="observacion" pInputTextarea [(ngModel)]="observacionTemporal" rows="4" autoResize="true"
-        style="min-height: 80px;"></textarea>
+        class="h-6rem"></textarea>
     </div>
     <div class="flex justify-content-end gap-2 mt-3">
-      <button pButton label="Cancelar" class="p-button-secondary" (click)="cerrarObservacionModal()"></button>
-      <button pButton label="Guardar" class="p-button-primary" (click)="guardarObservacion()"></button>
+      <button pButton pRipple label="Cancelar" class="p-button-secondary p-button-outlined"
+        (click)="cerrarObservacionModal()"></button>
+      <button pButton pRipple label="Guardar" class="p-button-primary" (click)="guardarObservacion()"></button>
     </div>
   </div>
 </p-dialog>
@@ -22,14 +23,13 @@
   </p-header>
 
   <!-- Indicador de carga -->
-  <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 100px">
+  <div *ngIf="loading" class="flex justify-content-center align-items-center h-8rem">
     <p-progressSpinner></p-progressSpinner>
   </div>
 
   <!-- Información del curso (dentro de una card) -->
   <div class="mb-4" *ngIf="curso && !loading">
-    <p-card styleClass="surface-card border-round shadow-1"
-      style="display: inline-block; width: auto; min-width: 320px;">
+    <p-card styleClass="surface-card border-round shadow-1 inline-block w-20rem">
       <ng-template pTemplate="header">
         <div class="px-3 pt-3">
           <h3 class="text-xl font-semibold m-0">Información del curso</h3>
@@ -81,7 +81,7 @@
       <h3 class="text-xl font-semibold mb-3">Seleccionar estudiantes</h3>
 
       <!-- Buscador -->
-      <div class="mb-3 flex gap-2" style="width: 450px;">
+      <div class="mb-3 flex gap-2 w-28rem">
         <span class="p-input-icon-left flex-grow-1">
           <i class="pi pi-search"></i>
           <input type="text" pInputText placeholder="Buscar por código, nombre o correo..." class="w-full"
@@ -109,7 +109,7 @@
             <td>{{ estudiante.persona?.correoElectronico }}</td>
             <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico }}</td>
             <td class="text-center">
-              <button pButton label="Seleccionar" class="p-button-text p-button-primary"
+              <button pButton pRipple label="Seleccionar" class="p-button-text p-button-sm"
                 (click)="seleccionarEstudiante(estudiante.codigo)" pTooltip="Agregar a la lista de matrícula"
                 tooltipPosition="top">
               </button>
@@ -151,18 +151,20 @@
           <tr [ngClass]="{'bg-red-50': estudiante.motivoError}">
             <td class="text-center">
               {{ estudiante.codigo }}
-              <i *ngIf="estudiante.motivoError" class="pi pi-exclamation-circle ml-1"
-                style="color: #dc2626; cursor: help;" [pTooltip]="estudiante.motivoError" tooltipPosition="top"></i>
+              <i *ngIf="estudiante.motivoError" class="pi pi-exclamation-circle ml-1 text-red-600 cursor-pointer"
+                [pTooltip]="estudiante.motivoError" tooltipPosition="top"></i>
             </td>
             <td>{{ estudiante.persona?.nombre }} {{ estudiante.persona?.apellido }}</td>
             <td>{{ estudiante.persona?.correoElectronico }}</td>
             <td class="text-center">{{ estudiante.informacionMaestria?.semestreAcademico }}</td>
             <td class="text-center">
-              <button pButton icon="pi pi-comment" class="p-button-rounded p-button-text p-button-info mr-2"
+              <button pButton pRipple icon="pi pi-comment"
+                class="p-button-rounded p-button-text p-button-sm p-button-info mr-2"
                 (click)="agregarObservacion(estudiante.codigo)" pTooltip="Agregar/Editar observación"
                 tooltipPosition="top">
               </button>
-              <button pButton icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger"
+              <button pButton pRipple icon="pi pi-times"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger"
                 (click)="quitarEstudiante(estudiante.codigo)" pTooltip="Quitar estudiante" tooltipPosition="top">
               </button>
             </td>
@@ -179,10 +181,11 @@
 
     <!-- Botones de acción -->
     <div class="flex justify-content-end gap-2 mt-3">
-      <button pButton label="Cancelar" class="p-button-secondary" (click)="cancelarMatricula()"
+      <button pButton pRipple label="Cancelar" class="p-button-secondary p-button-outlined"
+        (click)="cancelarMatricula()"
         pTooltip="Descartar cambios y volver" tooltipPosition="top">
       </button>
-      <button pButton label="Matricular" class="p-button-primary" (click)="finalizarMatricula($event)"
+      <button pButton pRipple label="Matricular" class="p-button-primary" (click)="finalizarMatricula($event)"
         [disabled]="!estudiantesMatricular || estudiantesMatricular.length === 0"
         pTooltip="Guardar y completar el proceso de matrícula" tooltipPosition="top">
       </button>

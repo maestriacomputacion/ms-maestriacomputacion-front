@@ -87,39 +87,37 @@
                     class="font-medium mb-1 white-space-nowrap w-8rem"
                     >Estudiante</label
                 >
-                <div class="flex align-items-center gap-2 w-full flex-1">
-                    <input
-                        id="estudiante"
-                        pInputText
-                        type="text"
-                        class="w-full flex-1 min-w-0"
-                        [readonly]="true"
-                        [placeholder]="
-                            selectedEstudiante?.codigo
-                                ? selectedEstudiante?.codigo +
-                                  ' - ' +
-                                  (selectedEstudiante?.nombre || '')
-                                : 'Seleccione estudiante'
-                        "
-                    />
-                    <button
-                        pButton
-                        pRipple
-                        icon="pi pi-search"
-                        class="p-button-text p-button-sm flex-shrink-0"
-                        (click)="abrirBuscadorEstudiantes()"
-                        pTooltip="Buscar estudiante"
-                        tooltipPosition="top"
-                    ></button>
-                    <button
-                        pButton
-                        pRipple
-                        icon="pi pi-times"
-                        class="p-button-text p-button-sm p-button-danger flex-shrink-0"
-                        (click)="selectedEstudiante = null; aplicarFiltros()"
-                        pTooltip="Limpiar"
-                        tooltipPosition="top"
-                    ></button>
+                <div class="flex flex-column gap-1 w-full flex-1 min-w-0">
+                    <div class="flex align-items-center gap-2 w-full">
+                        <button
+                            id="estudiante"
+                            pButton
+                            pRipple
+                            icon="pi pi-search"
+                            label="Seleccionar estudiante"
+                            class="w-full flex-1 p-button-outlined"
+                            (click)="abrirBuscadorEstudiantes()"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            icon="pi pi-times"
+                            class="p-button-text p-button-sm p-button-danger flex-shrink-0"
+                            (click)="
+                                selectedEstudiante = null; aplicarFiltros()
+                            "
+                            [disabled]="!selectedEstudiante"
+                            pTooltip="Limpiar"
+                            tooltipPosition="top"
+                        ></button>
+                    </div>
+                    <small
+                        class="text-600 overflow-hidden text-overflow-ellipsis white-space-nowrap"
+                        *ngIf="selectedEstudiante"
+                    >
+                        {{ selectedEstudiante?.codigo }} -
+                        {{ selectedEstudiante?.nombre || "" }}
+                    </small>
                 </div>
             </div>
         </div>

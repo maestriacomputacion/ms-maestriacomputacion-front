@@ -12,7 +12,9 @@
                 class="flex align-items-center gap-2"
                 *ngIf="estado !== 'gestion-matricula-curso'"
             >
-                <label for="periodo" class="font-medium mb-1 white-space-nowrap"
+                <label
+                    for="periodo"
+                    class="font-medium mb-1 white-space-nowrap w-10rem"
                     >Periodo</label
                 >
                 <p-dropdown
@@ -22,13 +24,13 @@
                     (onChange)="onFilterChange()"
                     [showClear]="true"
                     placeholder="Selecciona el periodo"
-                    class="w-12rem"
+                    class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label
                     for="areaFormacion"
-                    class="font-medium mb-1 white-space-nowrap"
+                    class="font-medium mb-1 white-space-nowrap w-10rem"
                     >Area de formación</label
                 >
                 <p-dropdown
@@ -38,13 +40,13 @@
                     (onChange)="onAreaChange($event.value)"
                     [showClear]="true"
                     placeholder="Selecciona el area"
-                    class="w-12rem"
+                    class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2" *ngIf="areaSeleccionada">
                 <label
                     for="asignaturaInvestigacion"
-                    class="font-medium mb-1 white-space-nowrap"
+                    class="font-medium mb-1 white-space-nowrap w-10rem"
                     >Asignatura de investigación</label
                 >
                 <p-dropdown
@@ -54,7 +56,7 @@
                     (onChange)="onFilterChange()"
                     [showClear]="true"
                     placeholder="Selecciona la asignatura"
-                    class="w-12rem"
+                    class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
         </div>

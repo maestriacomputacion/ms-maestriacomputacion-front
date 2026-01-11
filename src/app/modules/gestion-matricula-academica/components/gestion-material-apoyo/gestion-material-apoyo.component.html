@@ -4,40 +4,36 @@
     <p-header>
         <b>GESTIONAR MATERIAL DE APOYO</b>
     </p-header>
-    <div class="grid">
-        <div class="col-5">
-            <div class="flex align-items-end h-full">
-                <span class="p-input-icon-left w-full">
-                    <i class="pi pi-search"></i>
-                    <input
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        placeholder="Buscar Material de Apoyo"
-                        (input)="
-                            tableMaterialApoyo.filterGlobal(
-                                $event.target.value,
-                                'contains'
-                            )
-                        "
-                    />
-                </span>
-            </div>
+    <div
+        class="flex flex-column md:flex-row md:align-items-end md:justify-content-between gap-3 mb-3"
+    >
+        <div class="flex-1 min-w-0">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar Material de Apoyo"
+                    (input)="
+                        tableMaterialApoyo.filterGlobal(
+                            $event.target.value,
+                            'contains'
+                        )
+                    "
+                />
+            </span>
         </div>
-        <div class="col-1"></div>
-        <div class="col-6">
-            <div class="w-full text-right">
-                <button
-                    pButton
-                    pRipple
-                    label="Registrar Material"
-                    class="p-button-primary p-button-sm"
-                    (click)="showDialog()"
-                ></button>
-            </div>
+        <div class="flex md:justify-content-end">
+            <button
+                pButton
+                pRipple
+                label="Registrar Material"
+                class="p-button-primary p-button-sm"
+                (click)="showDialog()"
+            ></button>
         </div>
     </div>
-    <br />
     <p-table
         #tableMaterialApoyo
         [value]="materialesApoyo"

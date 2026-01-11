@@ -3,38 +3,36 @@
         <b>GESTIÓN DE PERIODOS ACADÉMICOS</b>
     </p-header>
     <!-- Encabezado -->
-    <div class="grid mb-3">
+    <div
+        class="flex flex-column md:flex-row md:align-items-end md:justify-content-between gap-3 mb-3"
+    >
         <!-- Busqueda -->
-        <div class="col-6">
-            <div class="flex align-items-end h-full">
-                <span class="p-input-icon-left w-full">
-                    <i class="pi pi-search"></i>
-                    <input
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        placeholder="Buscar periodo"
-                        (input)="
-                            tablePeriodos.filterGlobal(
-                                $event.target.value,
-                                'contains'
-                            )
-                        "
-                    />
-                </span>
-            </div>
+        <div class="flex-1 min-w-0">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar periodo"
+                    (input)="
+                        tablePeriodos.filterGlobal(
+                            $event.target.value,
+                            'contains'
+                        )
+                    "
+                />
+            </span>
         </div>
-        <div class="col-6">
-            <div class="w-full text-right">
-                <button
-                    pButton
-                    pRipple
-                    icon="pi pi-plus"
-                    label="Agregar periodo"
-                    class="p-button-primary p-button-sm mb-2"
-                    (click)="onAgregarPeriodo()"
-                ></button>
-            </div>
+        <div class="flex md:justify-content-end">
+            <button
+                pButton
+                pRipple
+                icon="pi pi-plus"
+                label="Agregar periodo"
+                class="p-button-primary p-button-sm"
+                (click)="onAgregarPeriodo()"
+            ></button>
         </div>
     </div>
     <!-- Tabla Periodos -->

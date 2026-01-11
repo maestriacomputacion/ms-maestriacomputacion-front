@@ -224,8 +224,11 @@
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-text p-button-danger"
                                 pTooltip="Quitar de la selección"
-                                (click)="removeSelectedMaterial(material)"
+                                (click)="
+                                    removeSelectedMaterial($event, material)
+                                "
                             ></button>
+                            <p-confirmPopup></p-confirmPopup>
                             <span *ngIf="isViewMode">-</span>
                         </td>
                     </tr>

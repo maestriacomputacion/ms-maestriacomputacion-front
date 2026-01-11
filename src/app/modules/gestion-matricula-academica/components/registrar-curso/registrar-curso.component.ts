@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService, PrimeIcons } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
@@ -63,6 +63,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         private readonly materialApoyoService: MaterialApoyoService,
         private readonly registrarCursoService: RegistrarCursoService,
         private readonly messageService: MessageService,
+        private readonly confirmationService: ConfirmationService,
         private readonly router: Router,
         private readonly route: ActivatedRoute
     ) {}
@@ -246,12 +247,19 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.displayMaterialDialog = false;
     }
 
-    removeSelectedMaterial(material: MaterialApoyo): void {
+    removeSelectedMaterial(event: Event, material: MaterialApoyo): void {
         if (!material) return;
 
-        const confirmed = confirm('¿Quitar el material seleccionado?');
-        if (!confirmed) return;
+        this.confirmationService.confirm({
+            target: event.target as HTMLElement,
+            message: '¿Quitar el material seleccionado?',
+            acceptLabel: 'Sí­',
+            rejectLabel: 'No',
+            accept: () => this.applyRemoveSelectedMaterial(material),
+        });
+    }
 
+    private applyRemoveSelectedMaterial(material: MaterialApoyo): void {
         const id = (material as any).id;
         if (typeof id === 'number') {
             this.selectedMateriales = this.selectedMateriales.filter(

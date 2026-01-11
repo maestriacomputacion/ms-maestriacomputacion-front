@@ -282,7 +282,7 @@
                 <button
                     pButton
                     label="Cancelar"
-                    class="p-button-outlined"
+                    class="p-button-secondary p-button-outlined"
                     (click)="cancelMaterialSelection()"
                 ></button>
                 <button
@@ -341,7 +341,7 @@
                 <button
                     pButton
                     label="Cancelar"
-                    class="p-button-outlined"
+                    class="p-button-secondary p-button-outlined"
                     (click)="cancelAsignaturaSelection()"
                 ></button>
                 <button
@@ -396,7 +396,7 @@
             *ngIf="!isViewMode"
             pButton
             label="Cancelar"
-            class="p-button-secondary"
+            class="p-button-secondary p-button-outlined"
             type="button"
             [disabled]="saving"
             (click)="onCancel()"
@@ -405,7 +405,7 @@
             *ngIf="isViewMode"
             pButton
             label="Cerrar"
-            class="p-button-secondary"
+            class="p-button-secondary p-button-outlined"
             type="button"
             (click)="onCloseView()"
         ></button>

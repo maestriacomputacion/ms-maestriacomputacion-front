@@ -12,9 +12,10 @@
                 <i class="pi pi-search"></i>
                 <input
                     pInputText
+                    placeholder="Ej: Guia de laboratorio"
                     type="text"
                     class="w-full"
-                    placeholder="Buscar Material de Apoyo"
+                    placeholder="Ej: Guia de laboratorio"
                     (input)="
                         tableMaterialApoyo.filterGlobal(
                             $event.target.value,
@@ -126,6 +127,7 @@
                 name="nombre"
                 type="text"
                 pInputText
+                placeholder="Ej: Guia de laboratorio"
                 [(ngModel)]="materialApoyo.nombre"
                 #nombreCtrl="ngModel"
                 [class.p-invalid]="
@@ -152,7 +154,7 @@
                 (ngModelChange)="onDescripcionChange($event)"
                 (paste)="onDescripcionPaste($event)"
                 [rows]="3"
-                placeholder="Descripción del material de apoyo"
+                placeholder="Ej: Documento PDF del curso"
                 maxlength="255"
                 aria-describedby="descCounter"
                 [attr.aria-invalid]="descriptionLength > MAX_DESCRIPTION"

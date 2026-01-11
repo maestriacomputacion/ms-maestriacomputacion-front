@@ -21,7 +21,7 @@
                     [(ngModel)]="selectedPeriodoId"
                     (onChange)="onPeriodoChange()"
                     [showClear]="false"
-                    placeholder="Selecciona el periodo"
+                    placeholder="Ej: 2025-1"
                     class="w-full flex-1 min-w-0"
                 >
                     <ng-template pTemplate="selectedItem" let-item>
@@ -45,7 +45,7 @@
                     [(ngModel)]="selectedAsignatura"
                     (onChange)="aplicarFiltros()"
                     [showClear]="true"
-                    placeholder="Selecciona la asignatura"
+                    placeholder="Ej: Metodologia de la Investigacion"
                     class="w-full flex-1 min-w-0"
                 >
                     <ng-template pTemplate="selectedItem" let-item>
@@ -69,7 +69,7 @@
                     [(ngModel)]="selectedEstado"
                     (onChange)="aplicarFiltros()"
                     [showClear]="true"
-                    placeholder="Todos"
+                    placeholder="Ej: Aprobada"
                     class="w-full flex-1 min-w-0"
                 >
                     <ng-template pTemplate="selectedItem" let-item>
@@ -133,7 +133,7 @@
                     pInputText
                     type="text"
                     class="w-full"
-                    placeholder="Buscar por periodo, asignatura o grupo"
+                    placeholder="Ej: 2025-1, Metodologia"
                     [(ngModel)]="globalSearch"
                     (input)="aplicarFiltros()"
                 />

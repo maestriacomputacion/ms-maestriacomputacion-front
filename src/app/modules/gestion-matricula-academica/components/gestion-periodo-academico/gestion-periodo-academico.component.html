@@ -14,7 +14,7 @@
                     pInputText
                     type="text"
                     class="w-full"
-                    placeholder="Buscar periodo"
+                    placeholder="Ej: 2025-1"
                     (input)="
                         tablePeriodos.filterGlobal(
                             $event.target.value,
@@ -223,7 +223,7 @@
                     [options]="tagPeriodoOptions"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Seleccione"
+                    placeholder="Ej: 2025-1"
                     class="flex-1"
                     [ngClass]="{
                         'ng-invalid ng-dirty':
@@ -245,7 +245,7 @@
                     [options]="estadoOptions"
                     optionLabel="label"
                     optionValue="value"
-                    placeholder="Seleccione"
+                    placeholder="Ej: 2025-1"
                     class="flex-1"
                     [ngClass]="{
                         'ng-invalid ng-dirty':
@@ -262,6 +262,7 @@
                     formControlName="descripcion"
                     rows="4"
                     class="w-full"
+                    placeholder="Ej: Periodo 2025-1"
                     maxlength="200"
                     [ngClass]="{
                         'ng-invalid ng-dirty':

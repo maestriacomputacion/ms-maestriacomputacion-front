@@ -14,7 +14,7 @@
             >
                 <label
                     for="periodo"
-                    class="font-medium mb-1 white-space-nowrap w-10rem"
+                    class="font-medium mb-1 w-12rem white-space-normal"
                     >Periodo</label
                 >
                 <p-dropdown
@@ -23,14 +23,14 @@
                     [(ngModel)]="periodoSeleccionado"
                     (onChange)="onFilterChange()"
                     [showClear]="true"
-                    placeholder="Selecciona el periodo"
+                    placeholder="Ej: 2025-1"
                     class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label
                     for="areaFormacion"
-                    class="font-medium mb-1 white-space-nowrap w-10rem"
+                    class="font-medium mb-1 w-12rem white-space-normal"
                     >Area de formación</label
                 >
                 <p-dropdown
@@ -39,14 +39,14 @@
                     [(ngModel)]="areaSeleccionada"
                     (onChange)="onAreaChange($event.value)"
                     [showClear]="true"
-                    placeholder="Selecciona el area"
+                    placeholder="Ej: Investigacion"
                     class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
             <div class="flex align-items-center gap-2" *ngIf="areaSeleccionada">
                 <label
                     for="asignaturaInvestigacion"
-                    class="font-medium mb-1 white-space-nowrap w-10rem"
+                    class="font-medium mb-1 w-12rem white-space-normal"
                     >Asignatura de investigación</label
                 >
                 <p-dropdown
@@ -55,7 +55,7 @@
                     [(ngModel)]="asignaturaSeleccionada"
                     (onChange)="onFilterChange()"
                     [showClear]="true"
-                    placeholder="Selecciona la asignatura"
+                    placeholder="Ej: Metodologia de la Investigacion"
                     class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
@@ -72,7 +72,7 @@
                     pInputText
                     type="text"
                     class="w-full"
-                    placeholder="Buscar Curso"
+                    placeholder="Ej: Metodologia"
                     (input)="
                         tableCursos.filterGlobal(
                             $event.target.value,

@@ -127,8 +127,7 @@ export class ListadoMatriculasComponent implements OnInit {
     }
 
     private mapToResumen(item: MatriculaResumenBackend): MatriculaResumen {
-        const descripcion =
-            item.periodo?.descripcion || `Periodo ${item.periodo?.tagPeriodo}`;
+        const descripcion = this.formatearPeriodoDescripcion(item.periodo);
         return {
             cursoId: item.idCurso,
             periodoId: item.periodo?.id,
@@ -141,13 +140,22 @@ export class ListadoMatriculasComponent implements OnInit {
     }
 
     private formatearPeriodoLabel(periodo: PeriodoBasico): string {
-        const fechaInicio = periodo.fechaInicio || '—';
-        const fechaFin = periodo.fechaFin || '—';
-        const tag =
-            periodo.tagPeriodo !== undefined && periodo.tagPeriodo !== null
-                ? String(periodo.tagPeriodo)
-                : 'Sin tag';
-        return `${fechaInicio} - ${fechaFin} (${tag})`;
+        return this.formatearPeriodoDescripcion(periodo);
+    }
+
+    private formatearPeriodoDescripcion(
+        periodo?: PeriodoBasico | null
+    ): string {
+        if (!periodo) return 'Periodo -';
+        const fechaInicio = this.formatearFecha(periodo.fechaInicio);
+        const fechaFin = this.formatearFecha(periodo.fechaFin);
+        const rango = `${fechaInicio} - ${fechaFin}`;
+        return periodo.estado === 'ACTIVO' ? `${rango} (activo)` : rango;
+    }
+
+    private formatearFecha(fecha?: string | null): string {
+        if (!fecha) return '-';
+        return String(fecha).replace(/-/g, '/');
     }
 
     private aplicarFiltrosPeriodo(

@@ -22,8 +22,16 @@
                     (onChange)="onPeriodoChange()"
                     [showClear]="false"
                     placeholder="Selecciona el periodo"
-                    class="w-full flex-1"
-                ></p-dropdown>
+                    class="w-full flex-1 min-w-0"
+                >
+                    <ng-template pTemplate="selectedItem" let-item>
+                        <span
+                            class="block overflow-hidden text-overflow-ellipsis white-space-nowrap"
+                        >
+                            {{ item?.label || "Selecciona el periodo" }}
+                        </span>
+                    </ng-template>
+                </p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label
@@ -38,8 +46,16 @@
                     (onChange)="aplicarFiltros()"
                     [showClear]="true"
                     placeholder="Selecciona la asignatura"
-                    class="w-full flex-1"
-                ></p-dropdown>
+                    class="w-full flex-1 min-w-0"
+                >
+                    <ng-template pTemplate="selectedItem" let-item>
+                        <span
+                            class="block overflow-hidden text-overflow-ellipsis white-space-nowrap"
+                        >
+                            {{ item?.label || "Selecciona la asignatura" }}
+                        </span>
+                    </ng-template>
+                </p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label
@@ -54,8 +70,16 @@
                     (onChange)="aplicarFiltros()"
                     [showClear]="true"
                     placeholder="Todos"
-                    class="w-full flex-1"
-                ></p-dropdown>
+                    class="w-full flex-1 min-w-0"
+                >
+                    <ng-template pTemplate="selectedItem" let-item>
+                        <span
+                            class="block overflow-hidden text-overflow-ellipsis white-space-nowrap"
+                        >
+                            {{ item?.label || "Todos" }}
+                        </span>
+                    </ng-template>
+                </p-dropdown>
             </div>
             <div class="flex align-items-center gap-2">
                 <label
@@ -68,7 +92,7 @@
                         id="estudiante"
                         pInputText
                         type="text"
-                        class="w-full flex-1"
+                        class="w-full flex-1 min-w-0"
                         [readonly]="true"
                         [placeholder]="
                             selectedEstudiante?.codigo
@@ -82,7 +106,7 @@
                         pButton
                         pRipple
                         icon="pi pi-search"
-                        class="p-button-text p-button-sm"
+                        class="p-button-text p-button-sm flex-shrink-0"
                         (click)="abrirBuscadorEstudiantes()"
                         pTooltip="Buscar estudiante"
                         tooltipPosition="top"
@@ -91,7 +115,7 @@
                         pButton
                         pRipple
                         icon="pi pi-times"
-                        class="p-button-text p-button-sm p-button-danger"
+                        class="p-button-text p-button-sm p-button-danger flex-shrink-0"
                         (click)="selectedEstudiante = null; aplicarFiltros()"
                         pTooltip="Limpiar"
                         tooltipPosition="top"

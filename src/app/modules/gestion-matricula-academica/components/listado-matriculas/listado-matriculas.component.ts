@@ -76,7 +76,7 @@ export class ListadoMatriculasComponent implements OnInit {
                 if (periodoDefaultId) {
                     setTimeout(() => {
                         this.selectedPeriodoId = periodoDefaultId;
-                        this.cargarMatriculasPorPeriodo(periodoDefaultId);
+                        this.aplicarFiltros();
                     }, 0);
                 }
             },
@@ -95,35 +95,44 @@ export class ListadoMatriculasComponent implements OnInit {
     }
 
     aplicarFiltros(): void {
-        let data = [...this.resumenMatriculas];
-        data = this.aplicarFiltrosPeriodo(data);
-        data = this.aplicarFiltrosAsignatura(data);
-        data = this.aplicarFiltrosEstado(data);
-        data = this.aplicarBusquedaGlobal(data);
-        this.resumenFiltrado = data;
+        if (!this.selectedPeriodoId) {
+            this.resumenFiltrado = [];
+            return;
+        }
+        this.cargarMatriculasPorPeriodo(
+            this.selectedPeriodoId,
+            this.selectedEstudiante?.id,
+            this.selectedAsignatura || undefined
+        );
     }
 
-    private cargarMatriculasPorPeriodo(periodoId: string): void {
+    private cargarMatriculasPorPeriodo(
+        periodoId: string,
+        estudianteId?: number,
+        asignatura?: string
+    ): void {
         this.loading = true;
-        this.matriculaService.getMatriculasResumen(periodoId).subscribe({
-            next: (resp: ApiResponse<MatriculaResumenBackend[]>) => {
-                if (resp?.typeResponse === 'SUCCESS') {
-                    this.resumenMatriculas = (resp.data || []).map((item) =>
-                        this.mapToResumen(item)
-                    );
-                } else {
+        this.matriculaService
+            .getMatriculasResumen(periodoId, estudianteId, asignatura)
+            .subscribe({
+                next: (resp: ApiResponse<MatriculaResumenBackend[]>) => {
+                    if (resp?.typeResponse === 'SUCCESS') {
+                        this.resumenMatriculas = (resp.data || []).map((item) =>
+                            this.mapToResumen(item)
+                        );
+                    } else {
+                        this.resumenMatriculas = [];
+                    }
+                    this.aplicarFiltrosLocales();
+                    this.loading = false;
+                },
+                error: (err) => {
+                    console.error('Error cargando matrículas', err);
                     this.resumenMatriculas = [];
-                }
-                this.aplicarFiltros();
-                this.loading = false;
-            },
-            error: (err) => {
-                console.error('Error cargando matrículas', err);
-                this.resumenMatriculas = [];
-                this.aplicarFiltros();
-                this.loading = false;
-            },
-        });
+                    this.aplicarFiltrosLocales();
+                    this.loading = false;
+                },
+            });
     }
 
     private mapToResumen(item: MatriculaResumenBackend): MatriculaResumen {
@@ -158,26 +167,11 @@ export class ListadoMatriculasComponent implements OnInit {
         return String(fecha).replace(/-/g, '/');
     }
 
-    private aplicarFiltrosPeriodo(
-        data: MatriculaResumen[]
-    ): MatriculaResumen[] {
-        if (!this.selectedPeriodoId) return data;
-        return data.filter(
-            (d) => String(d.periodoId) === this.selectedPeriodoId
-        );
-    }
-
-    private aplicarFiltrosAsignatura(
-        data: MatriculaResumen[]
-    ): MatriculaResumen[] {
-        if (!this.selectedAsignatura || this.selectedAsignatura === '')
-            return data;
-        const label = this.getAsignaturaLabel(
-            this.selectedAsignatura
-        ).toLowerCase();
-        return data.filter((d) =>
-            String(d.asignatura).toLowerCase().includes(label)
-        );
+    private aplicarFiltrosLocales(): void {
+        let data = [...this.resumenMatriculas];
+        data = this.aplicarFiltrosEstado(data);
+        data = this.aplicarBusquedaGlobal(data);
+        this.resumenFiltrado = data;
     }
 
     private aplicarFiltrosEstado(data: MatriculaResumen[]): MatriculaResumen[] {
@@ -233,9 +227,7 @@ export class ListadoMatriculasComponent implements OnInit {
     }
 
     onPeriodoChange(): void {
-        if (this.selectedPeriodoId) {
-            this.cargarMatriculasPorPeriodo(this.selectedPeriodoId);
-        }
+        this.aplicarFiltros();
     }
 
     irAGestionMatriculaCurso(): void {

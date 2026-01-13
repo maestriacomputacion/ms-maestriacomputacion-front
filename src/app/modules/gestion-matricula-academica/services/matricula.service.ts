@@ -13,10 +13,18 @@ export class MatriculaService {
     constructor(private readonly http: HttpClient) {}
 
     getMatriculasResumen(
-        periodoId: number | string
+        periodoId: number | string,
+        estudianteId?: number | string,
+        asignatura?: string
     ): Observable<ApiResponse<MatriculaResumenBackend[]>> {
         let params = new HttpParams();
         params = params.set('periodoId', String(periodoId));
+        if (estudianteId) {
+            params = params.set('estudiante', String(estudianteId));
+        }
+        if (asignatura) {
+            params = params.set('asignatura', asignatura);
+        }
         return this.http.get<ApiResponse<MatriculaResumenBackend[]>>(
             this.endpoint,
             { params }

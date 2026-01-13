@@ -292,7 +292,11 @@
                         editMode ? 'Actualizar periodo' : 'Registrar periodo'
                     "
                     class="p-button-primary"
-                    [disabled]="!form.valid || !fechasValidas"
+                    [disabled]="
+                        !form.valid ||
+                        !fechasValidas ||
+                        (editMode && !form.dirty)
+                    "
                 ></button>
             </div>
         </form>

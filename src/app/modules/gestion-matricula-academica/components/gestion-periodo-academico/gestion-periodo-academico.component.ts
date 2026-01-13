@@ -96,6 +96,12 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             this.form.get('fechaFin')?.value
         );
         if (!fechaInicio || !fechaFin) return false;
+
+        // En modo edición, si las fechas no han cambiado, asumir que son válidas
+        if (this.editMode) {
+            return fechaInicio < fechaFin;
+        }
+
         return fechaInicio < fechaFin && this.fechasValidasBackend;
     }
 
@@ -111,17 +117,21 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
         const periodo = this.periodos.find((p) => p.id === id);
         if (!periodo) return;
 
+        this.editMode = true;
+        this.editPeriodoId = id;
+        this.resetValidacionBackend();
+
         this.form.patchValue({
-            fechaInicio: periodo.fechaInicio,
-            fechaFin: periodo.fechaFin,
-            fechaFinMatricula: periodo.fechaFinMatricula,
+            fechaInicio: this.parseStringToDate(periodo.fechaInicio),
+            fechaFin: this.parseStringToDate(periodo.fechaFin),
+            fechaFinMatricula: this.parseStringToDate(
+                periodo.fechaFinMatricula
+            ),
             tagPeriodo: periodo.tagPeriodo,
             descripcion: periodo.descripcion,
             estado: periodo.estado,
         });
-        this.editMode = true;
-        this.editPeriodoId = id;
-        this.resetValidacionBackend();
+
         this.displayModal = true;
     }
 
@@ -190,6 +200,10 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     }
 
     cancelarModal(): void {
+        this.form.reset();
+        this.resetValidacionBackend();
+        this.editMode = false;
+        this.editPeriodoId = null;
         this.displayModal = false;
     }
 
@@ -200,6 +214,12 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
         const month = (d.getMonth() + 1).toString().padStart(2, '0');
         const day = d.getDate().toString().padStart(2, '0');
         return `${d.getFullYear()}-${month}-${day}`;
+    }
+
+    parseStringToDate(dateStr: string): Date | null {
+        if (!dateStr) return null;
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
     }
 
     private setupFormListeners(): void {

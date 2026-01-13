@@ -162,6 +162,12 @@ export class AppTopBarComponent implements OnInit {
 
                 return false;
             }
+            if (
+                item.label === 'GESTIÓN MATRÍCULAS' ||
+                item.label === 'GESTIÓN ACADÉMICA'
+            ) {
+                return !!user && user.role.includes('ROLE_COORDINADOR');
+            }
             
             if (item.label === 'EVALUACIÓN DOCENTE') {
                 // Solo mostrar si el usuario es estudiante

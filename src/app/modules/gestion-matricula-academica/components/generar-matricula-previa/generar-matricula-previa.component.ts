@@ -11,6 +11,11 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 import { Estudiante as EstudianteModel } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import { CursoService } from '../../services/curso.service';
+import { CursoUI } from '../../models/curso.model';
+import {
+    MatriculaRealizada,
+    DocenteBasico,
+} from '../../models/matricula.model';
 
 @Component({
     selector: 'app-generar-matricula-previa',
@@ -21,11 +26,11 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     estudiante: Estudiante | null = null;
     asignaturas: AsignaturaMatricular[] = [];
     areas: { label: string; value: string }[] = [];
-    cursosPorArea: Record<string, any[]> = {};
+    cursosPorArea: Record<string, CursoUI[]> = {};
     loadingCursosPorArea: Record<string, boolean> = {};
     cursosPorAreaAgrupados: Record<
         string,
-        { asignatura: string; cursos: any[] }[]
+        { asignatura: string; cursos: CursoUI[] }[]
     > = {};
     displayObservacionModal = false;
     observacionForm: FormGroup;
@@ -54,11 +59,11 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             if (params['id']) {
                 this.estudianteId = +params['id'];
                 this.cargarDatosEstudiantePorId(this.estudianteId);
+                this.cargarAsignaturas();
             } else {
                 this.cargarDatosEstudiante();
             }
         });
-        this.cargarAsignaturas();
         this.cargarAreasFormacion();
     }
 
@@ -125,7 +130,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         });
     }
 
-    onTabChange(event: any): void {
+    onTabChange(event: { index: number }): void {
         try {
             const idx = event?.index ?? 0;
             const area = this.areas?.[idx];
@@ -139,7 +144,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
 
     onAgregarCursoDesdeArea(
         event: Event,
-        cursoItem: any,
+        cursoItem: CursoUI,
         area: { label: string; value: string } | null
     ): void {
         if (!cursoItem?.id) return;
@@ -203,14 +208,14 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                             acceptLabel: 'Sí',
                             rejectLabel: 'No',
                             accept: () => {
-                                const nueva = {
+                                const nueva: AsignaturaMatricular = {
                                     id: cursoItem.id,
                                     grupo: cursoItem.grupo ?? '',
                                     nombreAsignatura: nombreAsignatura,
                                     docentes: cursoItem.docente ?? '',
                                     opciones: 'Matricular',
                                     observacion: '',
-                                } as any;
+                                };
 
                                 this.asignaturas.push(nueva);
                                 this.messageService.add({
@@ -326,13 +331,56 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     }
 
     cargarAsignaturas() {
+        if (!this.estudianteId) {
+            // Si no hay estudianteId, iniciar con lista vacía
+            this.asignaturas = [];
+            return;
+        }
+
+        // Cargar las matrículas existentes del estudiante
+        this.loading = true;
         this.matriculaPreviaService
-            .getAsignaturasMatricular()
-            .subscribe((resp: ApiResponse<AsignaturaMatricular[]>) => {
-                if (resp.typeResponse === 'SUCCESS') {
-                    this.asignaturas = resp.data;
-                }
+            .getMatriculasEstudiante(this.estudianteId)
+            .subscribe({
+                next: (resp: ApiResponse<MatriculaRealizada[]>) => {
+                    if (resp.typeResponse === 'SUCCESS' && resp.data) {
+                        // Transformar los datos al formato AsignaturaMatricular
+                        this.asignaturas = resp.data.map(
+                            (matricula): AsignaturaMatricular => ({
+                                id: matricula.curso?.id || 0,
+                                grupo: matricula.curso?.grupo || '',
+                                nombreAsignatura:
+                                    matricula.curso?.asignatura?.nombre || '',
+                                docentes: this.formatearDocentes(
+                                    matricula.curso?.docentes || []
+                                ),
+                                opciones: 'Matriculado',
+                                observacion: matricula.observacion || '',
+                            })
+                        );
+                    } else {
+                        this.asignaturas = [];
+                    }
+                    this.loading = false;
+                },
+                error: (err) => {
+                    console.error('Error cargando matrículas', err);
+                    this.asignaturas = [];
+                    this.loading = false;
+                },
             });
+    }
+
+    private formatearDocentes(docentes: DocenteBasico[]): string {
+        if (!docentes || docentes.length === 0) return '-';
+        return docentes
+            .map((doc) => {
+                const nombre = doc.persona?.nombre || '';
+                const apellido = doc.persona?.apellido || '';
+                return `${nombre} ${apellido}`.trim();
+            })
+            .filter((n) => n)
+            .join(', ');
     }
 
     onAgregarObservacion(id: number) {

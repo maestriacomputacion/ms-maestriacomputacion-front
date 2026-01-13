@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
+import { MatriculaRealizada } from '../models/matricula.model';
 import { matricula_academica } from 'src/environments/environment';
 
 export interface Estudiante {
@@ -17,6 +18,7 @@ export interface AsignaturaMatricular {
     id: number;
     grupo: string;
     nombreAsignatura: string;
+    docentes: string;
     opciones: string;
     observacion: string;
 }
@@ -63,5 +65,12 @@ export class MatriculaPreviaService {
     }): Observable<ApiResponse<any>> {
         const url = `${matricula_academica.api_url}matricula/estudiante`;
         return this.http.post<ApiResponse<any>>(url, payload);
+    }
+
+    getMatriculasEstudiante(
+        estudianteId: number
+    ): Observable<ApiResponse<MatriculaRealizada[]>> {
+        const url = `${matricula_academica.api_url}matricula/estudiante/${estudianteId}`;
+        return this.http.get<ApiResponse<MatriculaRealizada[]>>(url);
     }
 }

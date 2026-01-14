@@ -19,7 +19,8 @@ export class MatriculaMasivaService {
 
     constructor(private readonly http: HttpClient) {}
 
-    matricularBatch(
+    // Endpoint: matricular masivamente estudiantes en cursos
+    matricularMasivo(
         payload: MatriculaBatchPayload
     ): Observable<ApiResponse<any>> {
         return this.http.post<ApiResponse<any>>(this.endpoint, payload);

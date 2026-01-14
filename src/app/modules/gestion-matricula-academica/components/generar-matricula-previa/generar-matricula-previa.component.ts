@@ -11,6 +11,8 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 import { Estudiante as EstudianteModel } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import { CursoService } from '../../services/curso.service';
+import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
+import { MatriculaCursoService } from '../../services/matricula-curso.service';
 import { CursoUI } from '../../models/curso.model';
 import {
     MatriculaRealizada,
@@ -43,6 +45,8 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         private readonly matriculaPreviaService: MatriculaPreviaService,
         private readonly estudianteService: EstudianteService,
         private readonly cursoService: CursoService,
+        private readonly catalogoAcademicoService: CatalogoAcademicoService,
+        private readonly matriculaCursoService: MatriculaCursoService,
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
         private readonly route: ActivatedRoute,
@@ -68,7 +72,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     }
 
     private cargarAreasFormacion(): void {
-        this.cursoService.getAreasFormacion().subscribe({
+        this.catalogoAcademicoService.getAreasFormacion().subscribe({
             next: (resp) => {
                 if (resp?.typeResponse === 'SUCCESS') {
                     this.areas = resp.data || [];
@@ -102,7 +106,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
 
         this.loadingCursosPorArea[idArea] = true;
         this.cursoService
-            .getCursosDisponiblesEstudianteV2(this.estudianteId, { idArea })
+            .getCursosDisponiblesPorEstudiante(this.estudianteId, { idArea })
             .subscribe({
                 next: (resp) => {
                     if (resp?.typeResponse === 'SUCCESS') {
@@ -198,8 +202,8 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         }
 
         this.loading = true;
-        this.cursoService
-            .validarMatricula(this.estudianteId, cursoItem.id)
+        this.matriculaCursoService
+            .validarMatriculaEnCurso(this.estudianteId, cursoItem.id)
             .subscribe({
                 next: (resp) => {
                     this.loading = false;

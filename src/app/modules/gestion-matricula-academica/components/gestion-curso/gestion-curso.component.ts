@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CursoService } from '../../services/curso.service';
+import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
 import { CursoUI } from '../../models/curso.model';
 import { ApiResponse } from '../../models/api-response.model';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
@@ -31,6 +32,7 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly cursoService: CursoService,
+        private readonly catalogoAcademicoService: CatalogoAcademicoService,
         private readonly periodoService: PeriodoAcademicoService,
         private readonly router: Router,
         private readonly confirmationService: ConfirmationService,
@@ -95,7 +97,7 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     }
 
     private loadAreasFormacion(): void {
-        this.cursoService
+        this.catalogoAcademicoService
             .getAreasFormacion()
             .pipe(takeUntil(this.destroy$))
             .subscribe(
@@ -131,7 +133,7 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
         this.asignaturaSeleccionada = null;
 
         if (nuevaArea) {
-            this.cursoService
+            this.catalogoAcademicoService
                 .getAsignaturasByArea(nuevaArea)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(

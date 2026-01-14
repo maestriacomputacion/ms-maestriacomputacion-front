@@ -48,17 +48,7 @@ export class MatriculaPreviaService {
         });
     }
 
-    getAsignaturasMatricular(): Observable<
-        ApiResponse<AsignaturaMatricular[]>
-    > {
-        return of({
-            typeResponse: 'SUCCESS',
-            message: 'Asignaturas para matricular cargadas correctamente',
-            data: this.asignaturasMatricular,
-            statusCode: 200,
-        });
-    }
-
+    // Endpoint: registrar matricula previa de un estudiante
     matricularEstudiante(payload: {
         estudianteId: number;
         cursos: { cursoId: number; observacion: string }[];
@@ -67,6 +57,7 @@ export class MatriculaPreviaService {
         return this.http.post<ApiResponse<any>>(url, payload);
     }
 
+    // Endpoint: obtener matriculas de un estudiante
     getMatriculasEstudiante(
         estudianteId: number
     ): Observable<ApiResponse<MatriculaRealizada[]>> {

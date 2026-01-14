@@ -13,6 +13,7 @@ const backendPeriodoAcademico = (path: string = '') =>
 export class PeriodoAcademicoService {
     constructor(private readonly http: HttpClient) {}
 
+    // Endpoint: listar periodos academicos
     getPeriodos(): Observable<ApiResponse<PeriodoAcademico[]>> {
         return this.http
             .get<ApiResponse<PeriodoAcademico[]>>(backendPeriodoAcademico())
@@ -34,6 +35,7 @@ export class PeriodoAcademicoService {
             );
     }
 
+    // Endpoint: crear un periodo academico
     crearPeriodo(
         periodo: Omit<PeriodoAcademico, 'id'>
     ): Observable<ApiResponse<PeriodoAcademico>> {
@@ -51,6 +53,7 @@ export class PeriodoAcademicoService {
         );
     }
 
+    // Endpoint: actualizar un periodo academico
     actualizarPeriodo(
         id: string,
         periodo: Omit<PeriodoAcademico, 'id'>
@@ -69,10 +72,12 @@ export class PeriodoAcademicoService {
         );
     }
 
+    // Endpoint: eliminar un periodo academico
     eliminarPeriodo(id: string): Observable<ApiResponse<any>> {
         return this.http.delete<ApiResponse<any>>(backendPeriodoAcademico(id));
     }
 
+    // Endpoint: validar rango de fechas para un periodo
     validarFechasPeriodo(
         fechaInicio: string,
         fechaFin: string
@@ -87,6 +92,7 @@ export class PeriodoAcademicoService {
         );
     }
 
+    // Endpoint: obtener periodo academico activo
     getPeriodoActivo(): Observable<ApiResponse<PeriodoAcademico | null>> {
         return this.http.get<ApiResponse<PeriodoAcademico | null>>(
             backendPeriodoAcademico('activo')

@@ -15,6 +15,7 @@ const backendMateriales = (path: string = '') =>
 export class MaterialApoyoService {
     constructor(private readonly http: HttpClient) {}
 
+    // Endpoint: listar materiales de apoyo
     listMaterialApoyo(): Observable<ApiResponse<MaterialApoyo[]>> {
         return this.http
             .get<ApiResponse<MaterialApoyo[]>>(backendMateriales())
@@ -37,12 +38,14 @@ export class MaterialApoyoService {
             );
     }
 
+    // Endpoint: obtener detalle de material de apoyo
     getMaterialApoyo(id: number): Observable<MaterialApoyo> {
         return this.http
             .get<ApiResponse<MaterialApoyo>>(backendMateriales(String(id)))
             .pipe(map((resp) => resp.data || ({} as MaterialApoyo)));
     }
 
+    // Endpoint: crear material de apoyo
     createMaterialApoyo(
         material: MaterialApoyo
     ): Observable<ApiResponse<MaterialApoyo>> {
@@ -58,6 +61,7 @@ export class MaterialApoyoService {
         );
     }
 
+    // Endpoint: actualizar material de apoyo
     updateMaterialApoyo(
         id: number,
         material: MaterialApoyo
@@ -74,6 +78,7 @@ export class MaterialApoyoService {
         );
     }
 
+    // Endpoint: eliminar material de apoyo
     deleteMaterialApoyo(id: number): Observable<ApiResponse<any>> {
         return this.http.delete<ApiResponse<any>>(
             backendMateriales(String(id))

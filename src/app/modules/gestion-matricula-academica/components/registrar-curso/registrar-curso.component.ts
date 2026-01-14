@@ -14,7 +14,8 @@ import {
 
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
-import { RegistrarCursoService } from '../../services/registrar-curso.service';
+import { CursoService } from '../../services/curso.service';
+import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
 import {
     AsignaturaModel,
     DocenteModel,
@@ -61,7 +62,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     constructor(
         private readonly fb: FormBuilder,
         private readonly materialApoyoService: MaterialApoyoService,
-        private readonly registrarCursoService: RegistrarCursoService,
+        private readonly cursoService: CursoService,
+        private readonly catalogoAcademicoService: CatalogoAcademicoService,
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router,
@@ -112,11 +114,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
         const serviceCall =
             this.isEditMode && this.cursoId
-                ? this.registrarCursoService.actualizarCurso(
-                      this.cursoId,
-                      payload
-                  )
-                : this.registrarCursoService.registrarCurso(payload);
+                ? this.cursoService.actualizarCurso(this.cursoId, payload)
+                : this.cursoService.registrarCurso(payload);
 
         const submitSub = serviceCall.subscribe({
             next: (response) => {
@@ -362,7 +361,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         const asignaturaId = this.asignatura
                             ? this.asignatura.id || 0
                             : 0;
-                        return this.registrarCursoService.exists(
+                        return this.cursoService.verificarCursoExistente(
                             value,
                             asignaturaId
                         );
@@ -407,7 +406,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     private cargarAsignaturas(): void {
         this.loadingAsignaturas = true;
-        const sub = this.registrarCursoService
+        const sub = this.catalogoAcademicoService
             .listAsignaturas()
             .pipe(
                 takeUntil(this.destroy$),
@@ -445,7 +444,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     private cargarDocentesPorAsignatura(asignaturaId: number): void {
         this.loadingDocentes = true;
-        const sub = this.registrarCursoService
+        const sub = this.catalogoAcademicoService
             .listDocentesByAsignatura(asignaturaId)
             .pipe(
                 takeUntil(this.destroy$),
@@ -494,8 +493,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         if (!grupoValue || !this.asignatura) return;
         const asignaturaId = this.asignatura.id || 0;
         const grupoControl = this.form.get('grupo');
-        const sub = this.registrarCursoService
-            .exists(grupoValue, asignaturaId)
+        const sub = this.cursoService
+            .verificarCursoExistente(grupoValue, asignaturaId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -533,7 +532,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     private loadCursoForEdit(id: number): void {
-        const loadSub = this.registrarCursoService
+        const loadSub = this.cursoService
             .getCursoById(id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
@@ -613,7 +612,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         if (!curso.asignatura?.id) return;
 
         this.loadingDocentes = true;
-        const docentesSub = this.registrarCursoService
+        const docentesSub = this.catalogoAcademicoService
             .listDocentesByAsignatura(curso.asignatura.id)
             .pipe(
                 takeUntil(this.destroy$),

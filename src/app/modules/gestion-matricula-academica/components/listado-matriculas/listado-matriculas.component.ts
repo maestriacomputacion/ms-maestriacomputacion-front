@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
-import { CursoService } from '../../services/curso.service';
-import { MatriculaService } from '../../services/matricula.service';
+import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
+import { MatriculaResumenService } from '../../services/matricula-resumen.service';
 import { ApiResponse } from '../../models/api-response.model';
 import {
     PeriodoBasico,
@@ -47,8 +47,8 @@ export class ListadoMatriculasComponent implements OnInit {
 
     constructor(
         private readonly periodoService: PeriodoAcademicoService,
-        private readonly cursoService: CursoService,
-        private readonly matriculaService: MatriculaService,
+        private readonly catalogoAcademicoService: CatalogoAcademicoService,
+        private readonly matriculaResumenService: MatriculaResumenService,
         private readonly router: Router,
         private readonly dialogService: DialogService
     ) {}
@@ -82,7 +82,7 @@ export class ListadoMatriculasComponent implements OnInit {
             },
         });
 
-        this.cursoService.getAsignaturas().subscribe({
+        this.catalogoAcademicoService.getAsignaturas().subscribe({
             next: (resp) => {
                 this.asignaturasOptions = [
                     { label: 'Todas', value: '' },
@@ -112,7 +112,7 @@ export class ListadoMatriculasComponent implements OnInit {
         asignatura?: string
     ): void {
         this.loading = true;
-        this.matriculaService
+        this.matriculaResumenService
             .getMatriculasResumen(periodoId, estudianteId, asignatura)
             .subscribe({
                 next: (resp: ApiResponse<MatriculaResumenBackend[]>) => {

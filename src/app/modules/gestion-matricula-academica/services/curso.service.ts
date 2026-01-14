@@ -4,13 +4,19 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
 import { CursoUI, BackendCurso } from '../models/curso.model';
-import {
-    MatriculaEstudiantesRequest,
-    MatriculaResponseData,
-} from '../models/matricula.model';
 import { matricula_academica } from 'src/environments/environment';
 
 type OptionalId = string | number | null;
+
+export interface CursoRegistroPayload {
+    grupo: string;
+    asignaturaId: number;
+    docentesIds: number[];
+    horario?: string;
+    salon?: string;
+    materialApoyoIds?: number[];
+    observacion?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class CursoService {
@@ -55,11 +61,6 @@ export class CursoService {
         };
     }
 
-    private buildPayload(curso: Omit<CursoUI, 'id'>) {
-        const { grupo, asignatura, docente, fecha } = curso;
-        return { grupo, asignatura, docente, fecha };
-    }
-
     private obtenerCursos(
         url: string,
         httpParams: HttpParams
@@ -89,6 +90,7 @@ export class CursoService {
             );
     }
 
+    // Endpoint: listar cursos filtrados por periodo/asignatura/area
     getCursos(params?: {
         idPeriodo?: OptionalId;
         idAsignatura?: OptionalId;
@@ -122,7 +124,8 @@ export class CursoService {
         return this.obtenerCursos(this.backend, httpParams);
     }
 
-    getCursosDisponiblesEstudianteV2(
+    // Endpoint: listar cursos disponibles para un estudiante
+    getCursosDisponiblesPorEstudiante(
         idEstudiante: number | string,
         params?: {
             idArea?: OptionalId;
@@ -142,164 +145,47 @@ export class CursoService {
         );
     }
 
+    // Endpoint: obtener detalle de curso por id
     getCursoById(id: number | string): Observable<ApiResponse<BackendCurso>> {
         return this.http.get<ApiResponse<BackendCurso>>(
             `${this.backend}/${id}`
         );
     }
 
-    crearCurso(curso: Omit<CursoUI, 'id'>): Observable<ApiResponse<CursoUI>> {
-        const payload = this.buildPayload(curso);
+    // Endpoint: registrar un curso
+    registrarCurso(
+        payload: CursoRegistroPayload
+    ): Observable<ApiResponse<CursoUI>> {
         return this.http.post<ApiResponse<CursoUI>>(this.backend, payload);
     }
 
+    // Endpoint: actualizar un curso existente
     actualizarCurso(
         id: number | string,
-        curso: Omit<CursoUI, 'id'>
+        payload: CursoRegistroPayload
     ): Observable<ApiResponse<CursoUI>> {
-        const payload = this.buildPayload(curso);
         return this.http.put<ApiResponse<CursoUI>>(
             `${this.backend}/${id}`,
             payload
         );
     }
 
+    // Endpoint: eliminar un curso por id
     eliminarCurso(id: number | string): Observable<ApiResponse<unknown>> {
         return this.http.delete<ApiResponse<unknown>>(`${this.backend}/${id}`);
     }
 
-    getAreasFormacion(): Observable<
-        ApiResponse<{ label: string; value: string }[]>
-    > {
-        const url = `${this.backend}/asignaturas/area`;
-        return this.http.get<ApiResponse<any[]>>(url).pipe(
-            map((resp) => ({
-                typeResponse: resp.typeResponse,
-                message: resp.message,
-                statusCode: resp.statusCode,
-                data: (resp.data || []).map((a: any) => ({
-                    label: a.nombre ?? '',
-                    value: String(a.id ?? ''),
-                })),
-            })),
-            catchError((err) => {
-                console.error('Error cargando áreas de formación', err);
-                return of({
-                    typeResponse: 'SUCCESS',
-                    message:
-                        'Áreas de formación no disponibles (fallback vacío)',
-                    data: [] as { label: string; value: string }[],
-                    statusCode: 200,
-                } as ApiResponse<{ label: string; value: string }[]>);
-            })
-        );
-    }
-
-    getAsignaturas(): Observable<
-        ApiResponse<{ label: string; value: string }[]>
-    > {
-        const url = `${this.backend}/asignaturas`;
-        return this.http.get<ApiResponse<any[]>>(url).pipe(
-            map((resp) => ({
-                typeResponse: resp.typeResponse,
-                message: resp.message,
-                statusCode: resp.statusCode,
-                data: (resp.data || []).map((a: any) => ({
-                    label: a.nombre ?? '',
-                    value: String(a.id ?? ''),
-                })),
-            })),
-            catchError((err) => {
-                console.error('Error cargando asignaturas', err);
-                return of({
-                    typeResponse: 'SUCCESS',
-                    message: 'Asignaturas no disponibles (vacío)',
-                    data: [] as { label: string; value: string }[],
-                    statusCode: 200,
-                } as ApiResponse<{ label: string; value: string }[]>);
-            })
-        );
-    }
-
-    /** Obtiene asignaturas filtradas por área (opcional). */
-    getAsignaturasByArea(
-        idArea?: string | number | null
-    ): Observable<ApiResponse<{ label: string; value: string }[]>> {
-        const url = `${this.backend}/asignaturas`;
-        let params = new HttpParams();
-        if (idArea !== undefined && idArea !== null && `${idArea}` !== '') {
-            params = params.set('idArea', String(idArea));
-        }
-        return this.http.get<ApiResponse<any[]>>(url, { params }).pipe(
-            map((resp) => ({
-                typeResponse: resp.typeResponse,
-                message: resp.message,
-                statusCode: resp.statusCode,
-                data: (resp.data || []).map((a: any) => ({
-                    label: a.nombre ?? '',
-                    value: String(a.id ?? ''),
-                })),
-            })),
-            catchError((err) => {
-                console.error('Error cargando asignaturas por área', err);
-                return of({
-                    typeResponse: 'SUCCESS',
-                    message: 'Asignaturas no disponibles (fallback vacío)',
-                    data: [] as { label: string; value: string }[],
-                    statusCode: 200,
-                } as ApiResponse<{ label: string; value: string }[]>);
-            })
-        );
-    }
-
-    /** Obtiene las asignaturas (raw) posibilitando acceso a campos como id, nombre, codigo, creditos, areaFormacion. */
-    getAsignaturasRawByArea(
-        idArea?: string | number | null
-    ): Observable<ApiResponse<any[]>> {
-        const url = `${this.backend}/asignaturas`;
-        let params = new HttpParams();
-        if (idArea !== undefined && idArea !== null && `${idArea}` !== '') {
-            params = params.set('idArea', String(idArea));
-        }
-        return this.http.get<ApiResponse<any[]>>(url, { params }).pipe(
-            map((resp) => ({
-                typeResponse: resp.typeResponse,
-                message: resp.message,
-                statusCode: resp.statusCode,
-                data: resp.data || [],
-            })),
-            catchError((err) => {
-                console.error('Error cargando asignaturas raw por área', err);
-                return of({
-                    typeResponse: 'SUCCESS',
-                    message: 'Asignaturas no disponibles (fallback vacío)',
-                    data: [] as any[],
-                    statusCode: 200,
-                } as ApiResponse<any[]>);
-            })
-        );
-    }
-
-    /**
-     * Valida si un estudiante puede matricularse en un curso.
-     * Endpoint: GET {matricula_academica.api_url}matricula/validar?estudianteId=..&cursoId=..
-     * Respuesta: ApiResponse<boolean> (data = true|false)
-     */
-    validarMatricula(
-        estudianteId: number,
-        cursoId: number
+    // Endpoint: validar si existe un curso por grupo y asignatura
+    verificarCursoExistente(
+        grupo: string,
+        asignaturaId: number
     ): Observable<ApiResponse<boolean>> {
-        const url = `${matricula_academica.api_url}matricula/validar`;
-        let params = new HttpParams();
-        params = params.set('estudianteId', String(estudianteId));
-        params = params.set('cursoId', String(cursoId));
-        return this.http.get<ApiResponse<boolean>>(url, { params });
-    }
-
-    matricularEstudiantes(
-        payload: MatriculaEstudiantesRequest
-    ): Observable<ApiResponse<MatriculaResponseData>> {
-        const url = `${matricula_academica.api_url}matricula/curso`;
-        return this.http.post<ApiResponse<MatriculaResponseData>>(url, payload);
+        const params = {
+            grupo,
+            asignaturaId: String(asignaturaId),
+        };
+        return this.http.get<ApiResponse<boolean>>(`${this.backend}/existe`, {
+            params,
+        });
     }
 }

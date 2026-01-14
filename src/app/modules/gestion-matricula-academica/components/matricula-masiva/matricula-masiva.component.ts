@@ -9,6 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
 import { CursoService } from '../../services/curso.service';
+import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
 import {
     MatriculaMasivaService,
     MatriculaBatchPayload,
@@ -41,6 +42,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
         private readonly cursoService: CursoService,
+        private readonly catalogoAcademicoService: CatalogoAcademicoService,
         private readonly matriculaMasivaService: MatriculaMasivaService,
         private readonly fb: FormBuilder,
         private readonly dialogService: DialogService
@@ -241,7 +243,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
     }
 
     private cargarAreasFormacion(): void {
-        this.cursoService
+        this.catalogoAcademicoService
             .getAreasFormacion()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
@@ -275,7 +277,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         };
 
         this.matriculaMasivaService
-            .matricularBatch(payload)
+            .matricularMasivo(payload)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {

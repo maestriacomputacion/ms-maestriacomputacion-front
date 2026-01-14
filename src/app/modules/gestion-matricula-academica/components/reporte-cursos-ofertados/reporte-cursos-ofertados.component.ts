@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CursoOfertadoReporte } from '../../models/correos.model';
-import { CursoService } from '../../services/curso.service';
+import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { HttpClient } from '@angular/common/http';
 import { matricula_academica } from 'src/environments/environment';
@@ -40,7 +40,7 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
     private readonly destroy$ = new Subject<void>();
 
     constructor(
-        private readonly cursoService: CursoService,
+        private readonly catalogoAcademicoService: CatalogoAcademicoService,
         private readonly periodoService: PeriodoAcademicoService,
         private readonly http: HttpClient
     ) {}
@@ -56,7 +56,7 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
     }
 
     private cargarAsignaturas(): void {
-        this.cursoService
+        this.catalogoAcademicoService
             .getAsignaturas()
             .pipe(takeUntil(this.destroy$))
             .subscribe({

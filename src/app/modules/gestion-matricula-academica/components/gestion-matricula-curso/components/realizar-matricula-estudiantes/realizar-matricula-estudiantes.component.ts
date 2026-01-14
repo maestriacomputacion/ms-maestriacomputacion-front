@@ -11,7 +11,7 @@ import {
     MatriculaResponseData,
 } from '../../../../models/matricula.model';
 import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
-import { MatriculaEstudiantesService } from '../../../../services/matricula-estudiantes.service';
+import { MatriculaCursoService } from '../../../../services/matricula-curso.service';
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 
 type EstudianteExtendido = EstudianteBase & {
@@ -49,8 +49,8 @@ export class RealizarMatriculaEstudiantesComponent
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
         private readonly estudianteService: EstudianteService,
-        @Inject(MatriculaEstudiantesService)
-        private readonly matriculaEstudiantesService: MatriculaEstudiantesService
+        @Inject(MatriculaCursoService)
+        private readonly matriculaCursoService: MatriculaCursoService
     ) {}
 
     ngOnInit(): void {
@@ -247,7 +247,7 @@ export class RealizarMatriculaEstudiantesComponent
 
     private cargarEstudiantesMatricular(cursoId: number): void {
         this.loading = true;
-        this.matriculaEstudiantesService
+        this.matriculaCursoService
             .getEstudiantesMatriculados(cursoId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
@@ -324,8 +324,8 @@ export class RealizarMatriculaEstudiantesComponent
 
     private validarYAgregarEstudiante(estudiante: EstudianteExtendido): void {
         this.loading = true;
-        this.cursoService
-            .validarMatricula(estudiante.id, this.cursoId!)
+        this.matriculaCursoService
+            .validarMatriculaEnCurso(estudiante.id, this.cursoId!)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -382,8 +382,8 @@ export class RealizarMatriculaEstudiantesComponent
         };
 
         this.loading = true;
-        this.cursoService
-            .matricularEstudiantes(payload)
+        this.matriculaCursoService
+            .matricularEstudiantesEnCurso(payload)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {

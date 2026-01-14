@@ -7,11 +7,12 @@ import { matricula_academica } from 'src/environments/environment';
 import { MatriculaResumenBackend } from '../models/matricula.model';
 
 @Injectable({ providedIn: 'root' })
-export class MatriculaService {
+export class MatriculaResumenService {
     private readonly endpoint = `${matricula_academica.api_url}matricula`;
 
     constructor(private readonly http: HttpClient) {}
 
+    // Endpoint: obtener resumen de matriculas por periodo
     getMatriculasResumen(
         periodoId: number | string,
         estudianteId?: number | string,

@@ -220,12 +220,6 @@ export class ListadoMatriculasComponent implements OnInit {
         });
     }
 
-    getAsignaturaLabel(value: string | null): string {
-        if (!value) return '';
-        const found = this.asignaturasOptions.find((a) => a.value === value);
-        return found?.label || String(value);
-    }
-
     onPeriodoChange(): void {
         this.aplicarFiltros();
     }

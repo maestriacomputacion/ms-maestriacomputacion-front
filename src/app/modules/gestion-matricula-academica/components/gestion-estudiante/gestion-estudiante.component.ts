@@ -48,27 +48,6 @@ export class GestionEstudianteComponent implements OnInit {
         });
     }
 
-    onVerEstudiante(estudianteOrId: Estudiante | number): void {
-        const id =
-            typeof estudianteOrId === 'number'
-                ? estudianteOrId
-                : estudianteOrId?.id;
-        if (id === undefined || id === null) return;
-        this.router.navigate([
-            '/gestion-matricula-academica',
-            'ver-estudiante',
-            id,
-        ]);
-    }
-
-    onEditarEstudiante(id: number): void {
-        this.router.navigate([
-            '/gestion-matricula-academica',
-            'editar-estudiante',
-            id,
-        ]);
-    }
-
     onGenerarMatriculaPrevia(id: number): void {
         if (id === undefined || id === null) return;
         this.router.navigate([
@@ -76,24 +55,6 @@ export class GestionEstudianteComponent implements OnInit {
             'generar-matricula-previa',
             id,
         ]);
-    }
-
-    onEliminarEstudiante(eventOrId: Event | number, maybeId?: number): void {
-        const id = typeof eventOrId === 'number' ? eventOrId : maybeId;
-        const target =
-            typeof eventOrId === 'object'
-                ? (eventOrId.target as any)
-                : undefined;
-        if (id === undefined || id === null) return;
-
-        this.confirmationService.confirm({
-            target,
-            message: '¿Está seguro de que desea eliminar este estudiante?',
-            icon: PrimeIcons.EXCLAMATION_TRIANGLE,
-            acceptLabel: 'Sí, eliminar',
-            rejectLabel: 'No',
-            accept: () => this.deleteEstudiante(id),
-        });
     }
 
     private deleteEstudiante(id: number): void {
@@ -140,37 +101,5 @@ export class GestionEstudianteComponent implements OnInit {
                 estudiante.persona?.apellido ?? ''
             }`.trim() || 'Sin nombre'
         );
-    }
-
-    formatEstadoMaestria(estado?: string | null): string {
-        if (!estado) return 'N/A';
-
-        // Mapear valores conocidos a etiquetas legibles
-        const mapa: Record<string, string> = {
-            ACTIVO: 'Activo',
-            MATRICULADO: 'Matriculado',
-            GRADUADO: 'Graduado',
-            RETIRADO: 'Retirado',
-            SUSPENDIDO: 'Suspendido',
-        };
-
-        return mapa[estado] ?? estado;
-    }
-
-    estadoTagClass(estado?: string | null): string {
-        if (!estado) return 'p-tag p-tag-secondary';
-
-        const success = ['ACTIVO', 'MATRICULADO'].includes(estado);
-        const danger = ['RETIRADO', 'SUSPENDIDO'].includes(estado);
-
-        if (success) return 'p-tag p-tag-success';
-        if (danger) return 'p-tag p-tag-danger';
-        return 'p-tag p-tag-info';
-    }
-
-    getLabelEstudianteDoctorado(estudiante: Estudiante): string {
-        const val = estudiante.informacionMaestria?.esEstudianteDoctorado;
-        if (val === null || val === undefined) return 'N/A';
-        return val ? 'Sí' : 'No';
     }
 }

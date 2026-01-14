@@ -188,13 +188,6 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
             });
     }
 
-    regresar(): void {
-        this.router.navigate([
-            '/gestion-matricula-academica',
-            'gestion-estudiantes',
-        ]);
-    }
-
     private obtenerEstudiantesSeleccionados(): void {
         const nav = this.router.getCurrentNavigation();
         if (nav?.extras?.state?.selectedEstudiantes) {

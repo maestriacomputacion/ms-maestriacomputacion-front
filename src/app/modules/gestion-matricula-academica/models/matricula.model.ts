@@ -1,31 +1,32 @@
-import { Persona } from '../../gestion-estudiantes/models/persona';
 import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
+import { AsignaturaModel, DocenteModel } from './curso.model';
 
+// Detalle de curso para payload de matricula.
 export interface CursoMatriculaDetalle {
     cursoId: number;
     observacion: string;
 }
 
+// Estudiante con cursos para payload de matricula.
 export interface EstudianteMatriculaCurso {
     estudianteId: number;
     cursos: CursoMatriculaDetalle[];
 }
 
+// Contenedor del request de matricula por estudiantes.
 export interface MatriculaEstudiantesRequest {
     matriculaEstudianteCursos: EstudianteMatriculaCurso[];
 }
 
-export interface DocenteBasico {
-    id: number;
-    persona?: Persona;
+// Docente usado en respuestas de matricula.
+export interface DocenteBasico extends DocenteModel {
     codigo?: string;
     facultad?: string;
     departamento?: string;
 }
 
-export interface AsignaturaBasico {
-    id: number;
-    nombre: string;
+// Asignatura usada en respuestas de matricula.
+export interface AsignaturaBasico extends AsignaturaModel {
     codigo: string;
     estado: boolean;
     areaFormacion: number;
@@ -33,6 +34,7 @@ export interface AsignaturaBasico {
     creditos: number;
 }
 
+// Periodo usado en respuestas de matricula.
 export interface PeriodoBasico {
     id: number;
     fechaInicio: string;
@@ -43,6 +45,7 @@ export interface PeriodoBasico {
     estado: string;
 }
 
+// Detalle de curso usado en respuestas de matricula.
 export interface CursoDetallado {
     id: number;
     grupo: string;
@@ -56,6 +59,7 @@ export interface CursoDetallado {
     observacion?: string;
 }
 
+// Registro de matricula no realizado.
 export interface MatriculaNoRealizada {
     id?: number;
     estudiante: Estudiante;
@@ -65,6 +69,7 @@ export interface MatriculaNoRealizada {
     observacion?: string;
 }
 
+// Registro de matricula realizado.
 export interface MatriculaRealizada {
     id: number;
     estudiante: Estudiante;
@@ -74,6 +79,7 @@ export interface MatriculaRealizada {
     observacion: string;
 }
 
+// Registro de matricula eliminado.
 export interface MatriculaEliminada {
     id?: number;
     estudiante: Estudiante;
@@ -84,12 +90,14 @@ export interface MatriculaEliminada {
     fechaEliminacion?: string;
 }
 
+// Contenedor de respuesta de matricula en batch.
 export interface MatriculaResponseData {
     matriculasRealizadas: MatriculaRealizada[];
     matriculasNoRealizadas: MatriculaNoRealizada[];
     matriculasEliminadas?: MatriculaEliminada[];
 }
 
+// Resumen de matricula para la UI.
 export interface MatriculaResumen {
     cursoId: number;
     periodoId?: number;
@@ -100,6 +108,7 @@ export interface MatriculaResumen {
     cantidadEstudiantes: number;
 }
 
+// Resumen de matricula tal como llega del backend.
 export interface MatriculaResumenBackend {
     idCurso: number;
     asignatura: string;

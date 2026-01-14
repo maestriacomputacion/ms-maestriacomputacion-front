@@ -1,3 +1,4 @@
+// Material de apoyo.
 export interface MaterialApoyo {
     id?: number;
     nombre?: string;

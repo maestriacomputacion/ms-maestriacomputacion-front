@@ -1,9 +1,11 @@
+// Tipo de correo.
 export interface TipoCorreo {
     label: string;
     descripcion: string;
     icon: string;
 }
 
+// Curso usado en flujos de correo.
 export interface CursoCorreo {
     id: number;
     grupo: string;
@@ -12,6 +14,7 @@ export interface CursoCorreo {
     tipo: string;
 }
 
+// Estudiante usado en flujos de correo.
 export interface EstudianteCorreo {
     id: number;
     codigo: string;
@@ -19,6 +22,7 @@ export interface EstudianteCorreo {
     correo: string;
 }
 
+// Curso usado en reporte de ofertados.
 export interface CursoOfertadoReporte {
     id: number;
     grupo: string;

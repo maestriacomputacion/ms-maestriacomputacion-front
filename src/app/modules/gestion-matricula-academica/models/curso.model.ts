@@ -1,6 +1,7 @@
 import { PeriodoAcademico } from './periodo-academico.model';
 import { Persona } from '../../gestion-estudiantes/models/persona';
 
+// Modelo de asignatura usado en cursos y catalogo.
 export interface AsignaturaModel {
     id: number;
     nombre: string;
@@ -11,6 +12,7 @@ export interface AsignaturaModel {
     creditos?: number;
 }
 
+// Modelo de docente con referencia a persona.
 export interface DocenteModel {
     id: number;
     persona?: Persona;
@@ -19,6 +21,7 @@ export interface DocenteModel {
     departamento?: string | null;
 }
 
+// Modelo de curso tal como llega del backend.
 export interface BackendCurso {
     id: number;
     grupo: string;
@@ -32,7 +35,7 @@ export interface BackendCurso {
     observacion?: string | null;
 }
 
-// Modelo usado en la UI
+// Modelo de curso para la UI.
 export interface CursoUI {
     id: number;
     grupo: string;
@@ -42,15 +45,4 @@ export interface CursoUI {
     periodoEstado?: string; // estado del periodo (e.g., 'ACTIVO'|'INACTIVO')
     salon?: string | null; // salón asociado al curso
     horario?: string | null; // horario del curso
-}
-
-// Modelo detallado para vistas como matricular estudiantes
-export interface CursoDetalle {
-    id: number;
-    grupo: string;
-    asignatura: string;
-    periodo: string;
-    docentes: string;
-    horario: string;
-    salon: string;
 }

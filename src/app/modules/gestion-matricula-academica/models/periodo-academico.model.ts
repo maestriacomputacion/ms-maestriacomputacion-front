@@ -1,3 +1,4 @@
+// Periodo academico.
 export interface PeriodoAcademico {
     id: string;
     fechaInicio: string;

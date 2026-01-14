@@ -248,26 +248,33 @@ export class RealizarMatriculaEstudiantesComponent
     private cargarEstudiantesMatricular(cursoId: number): void {
         this.loading = true;
         this.matriculaEstudiantesService
-            .getEstudiantesByCurso(cursoId)
+            .getEstudiantesMatriculados(cursoId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
                     if (response.typeResponse === 'SUCCESS') {
-                        this.estudiantesMatricular = response.data || [];
+                        const estudiantesData = response.data || [];
+                        this.estudiantesMatricular = estudiantesData.map(
+                            (item: any) => ({
+                                ...item.estudiante,
+                                observaciones: item.observacion || '',
+                                motivoError: undefined,
+                            })
+                        );
                     } else {
                         this.messageService.add({
-                            severity: 'error',
-                            summary: 'Error',
+                            severity: 'warn',
+                            summary: 'Advertencia',
                             detail:
                                 response.message ||
-                                'No se pudo cargar la lista de estudiantes a matricular',
+                                'No se pudieron cargar los estudiantes matriculados',
                         });
                     }
                     this.loading = false;
                 },
                 error: (err) => {
                     console.error(
-                        'Error cargando estudiantes a matricular',
+                        'Error cargando estudiantes matriculados',
                         err
                     );
                     this.messageService.add({
@@ -276,7 +283,7 @@ export class RealizarMatriculaEstudiantesComponent
                         detail:
                             err?.error?.message ??
                             err?.message ??
-                            'Error al cargar los estudiantes a matricular',
+                            'Error al cargar los estudiantes matriculados',
                     });
                     this.loading = false;
                 },

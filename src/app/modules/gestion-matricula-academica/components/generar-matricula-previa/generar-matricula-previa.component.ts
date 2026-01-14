@@ -95,39 +95,47 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             return;
         }
 
-        this.loadingCursosPorArea[idArea] = true;
-        this.cursoService.getCursos({ idArea }).subscribe({
-            next: (resp) => {
-                if (resp?.typeResponse === 'SUCCESS') {
-                    // `resp.data` viene ya transformado a CursoUI por el servicio
-                    const items = resp.data || [];
-                    this.cursosPorArea[idArea] = items;
+        if (!this.estudianteId) {
+            console.warn('No se puede cargar cursos sin estudianteId');
+            return;
+        }
 
-                    // Agrupar por nombre de asignatura para renderizar una tabla por asignatura
-                    const map: Record<
-                        string,
-                        { asignatura: string; cursos: any[] }
-                    > = {};
-                    for (const it of items) {
-                        const key = it.asignatura ?? 'Sin nombre';
-                        if (!map[key]) {
-                            map[key] = { asignatura: key, cursos: [] };
+        this.loadingCursosPorArea[idArea] = true;
+        this.cursoService
+            .getCursosDisponiblesEstudianteV2(this.estudianteId, { idArea })
+            .subscribe({
+                next: (resp) => {
+                    if (resp?.typeResponse === 'SUCCESS') {
+                        // `resp.data` viene ya transformado a CursoUI por el servicio
+                        const items = resp.data || [];
+                        this.cursosPorArea[idArea] = items;
+
+                        // Agrupar por nombre de asignatura para renderizar una tabla por asignatura
+                        const map: Record<
+                            string,
+                            { asignatura: string; cursos: any[] }
+                        > = {};
+                        for (const it of items) {
+                            const key = it.asignatura ?? 'Sin nombre';
+                            if (!map[key]) {
+                                map[key] = { asignatura: key, cursos: [] };
+                            }
+                            map[key].cursos.push(it);
                         }
-                        map[key].cursos.push(it);
+                        this.cursosPorAreaAgrupados[idArea] =
+                            Object.values(map);
+                    } else {
+                        this.cursosPorArea[idArea] = [];
+                        this.cursosPorAreaAgrupados[idArea] = [];
                     }
-                    this.cursosPorAreaAgrupados[idArea] = Object.values(map);
-                } else {
+                    this.loadingCursosPorArea[idArea] = false;
+                },
+                error: (err) => {
+                    console.error('Error cargando cursos por área', err);
                     this.cursosPorArea[idArea] = [];
-                    this.cursosPorAreaAgrupados[idArea] = [];
-                }
-                this.loadingCursosPorArea[idArea] = false;
-            },
-            error: (err) => {
-                console.error('Error cargando cursos por área', err);
-                this.cursosPorArea[idArea] = [];
-                this.loadingCursosPorArea[idArea] = false;
-            },
-        });
+                    this.loadingCursosPorArea[idArea] = false;
+                },
+            });
     }
 
     onTabChange(event: { index: number }): void {
@@ -195,7 +203,6 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             .subscribe({
                 next: (resp) => {
                     this.loading = false;
-                    // Backend devuelve ApiResponse<boolean> en data
                     if (
                         resp?.typeResponse === 'SUCCESS' &&
                         resp.data === true

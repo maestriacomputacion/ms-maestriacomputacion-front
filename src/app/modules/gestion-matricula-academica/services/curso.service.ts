@@ -60,6 +60,35 @@ export class CursoService {
         return { grupo, asignatura, docente, fecha };
     }
 
+    private obtenerCursos(
+        url: string,
+        httpParams: HttpParams
+    ): Observable<ApiResponse<CursoUI[]>> {
+        return this.http
+            .get<ApiResponse<BackendCurso[]>>(url, {
+                params: httpParams,
+            })
+            .pipe(
+                map((resp) => ({
+                    typeResponse: resp.typeResponse,
+                    message: resp.message,
+                    statusCode: resp.statusCode,
+                    data: (resp.data ?? []).map((item) =>
+                        this.transformToUI(item)
+                    ),
+                })),
+                // Fallback: devolver lista vacía en caso de error
+                catchError(() =>
+                    of({
+                        typeResponse: 'SUCCESS',
+                        message: 'No se pudieron cargar cursos; fallback vacío',
+                        data: [] as CursoUI[],
+                        statusCode: 200,
+                    } as ApiResponse<CursoUI[]>)
+                )
+            );
+    }
+
     getCursos(params?: {
         idPeriodo?: OptionalId;
         idAsignatura?: OptionalId;
@@ -90,29 +119,27 @@ export class CursoService {
             }
         }
 
-        return this.http
-            .get<ApiResponse<BackendCurso[]>>(this.backend, {
-                params: httpParams,
-            })
-            .pipe(
-                map((resp) => ({
-                    typeResponse: resp.typeResponse,
-                    message: resp.message,
-                    statusCode: resp.statusCode,
-                    data: (resp.data ?? []).map((item) =>
-                        this.transformToUI(item)
-                    ),
-                })),
-                // Fallback: devolver lista vacía en caso de error
-                catchError(() =>
-                    of({
-                        typeResponse: 'SUCCESS',
-                        message: 'No se pudieron cargar cursos; fallback vacío',
-                        data: [] as CursoUI[],
-                        statusCode: 200,
-                    } as ApiResponse<CursoUI[]>)
-                )
-            );
+        return this.obtenerCursos(this.backend, httpParams);
+    }
+
+    getCursosDisponiblesEstudianteV2(
+        idEstudiante: number | string,
+        params?: {
+            idArea?: OptionalId;
+        }
+    ): Observable<ApiResponse<CursoUI[]>> {
+        let httpParams = new HttpParams();
+        if (params) {
+            const { idArea } = params;
+            if (idArea !== undefined && idArea !== null && `${idArea}` !== '') {
+                httpParams = httpParams.set('idArea', String(idArea));
+            }
+        }
+
+        return this.obtenerCursos(
+            `${this.backend}/disponibles-estudiante/${idEstudiante}`,
+            httpParams
+        );
     }
 
     getCursoById(id: number | string): Observable<ApiResponse<BackendCurso>> {

@@ -5,5 +5,9 @@ export type EstudianteBusqueda = {
     codigo?: string;
     nombre?: string;
     apellido?: string;
-    persona?: { nombre?: string; apellido?: string };
+    persona?: {
+        nombre?: string;
+        apellido?: string;
+        tipoIdentificacion?: string;
+    };
 };

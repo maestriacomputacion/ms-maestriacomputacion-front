@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
+import { MessageService } from 'primeng/api';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
+import { EstudianteAcademicoService } from '../../services/estudiante-academico.service';
 
 @Component({
     selector: 'app-gestion-estudiante',
@@ -15,9 +15,8 @@ export class GestionEstudianteComponent implements OnInit {
     loading: boolean = false;
 
     constructor(
-        private readonly estudianteService: EstudianteService,
+        private readonly estudianteAcademicoService: EstudianteAcademicoService,
         private readonly router: Router,
-        private readonly confirmationService: ConfirmationService,
         private readonly messageService: MessageService
     ) {}
 
@@ -27,9 +26,19 @@ export class GestionEstudianteComponent implements OnInit {
 
     private loadEstudiantes(): void {
         this.loading = true;
-        this.estudianteService.listEstudiantes().subscribe({
-            next: (estudiantes: Estudiante[]) => {
-                this.estudiantes = estudiantes || [];
+        this.estudianteAcademicoService.getEstudiantesActivos().subscribe({
+            next: (response) => {
+                if (response.typeResponse === 'SUCCESS') {
+                    this.estudiantes = response.data || [];
+                } else {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Advertencia',
+                        detail:
+                            response.message ||
+                            'No se pudieron cargar los estudiantes',
+                    });
+                }
                 this.loading = false;
             },
             error: (err) => {
@@ -58,7 +67,7 @@ export class GestionEstudianteComponent implements OnInit {
     }
 
     private deleteEstudiante(id: number): void {
-        this.estudianteService.deleteEstudiante(id).subscribe({
+        this.estudianteAcademicoService.deleteEstudiante(id).subscribe({
             next: () => {
                 this.messageService.add({
                     severity: 'success',

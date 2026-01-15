@@ -93,8 +93,12 @@
                             id="estudiante"
                             pButton
                             pRipple
-                            icon="pi pi-search"
-                            label="Seleccionar estudiante"
+                            [icon]="selectedEstudiante ? null : 'pi pi-search'"
+                            [label]="
+                                selectedEstudiante?.nombre
+                                    ? selectedEstudiante.nombre
+                                    : 'Seleccionar estudiante'
+                            "
                             class="w-full flex-1 p-button-outlined"
                             (click)="abrirBuscadorEstudiantes()"
                         ></button>

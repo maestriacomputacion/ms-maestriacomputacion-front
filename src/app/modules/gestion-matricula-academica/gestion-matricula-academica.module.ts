@@ -25,6 +25,7 @@ import { ReporteCentroPostgradosComponent } from './components/reporte-centro-po
 import { TipoCorreosComponent } from './components/tipo-correos/tipo-correos.component';
 import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-matricula-final/enviar-correo-matricula-final.component';
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
+import { BuscadorEstudiantesAcademicoComponent } from './components/buscador-estudiantes-academico/buscador-estudiantes-academico.component';
 
 @NgModule({
     declarations: [
@@ -47,6 +48,7 @@ import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/envi
         VistaTutorComponent,
         AprobarMatriculaEstudianteComponent,
         ListadoMatriculasComponent,
+        BuscadorEstudiantesAcademicoComponent,
     ],
     imports: [
         CommonModule,

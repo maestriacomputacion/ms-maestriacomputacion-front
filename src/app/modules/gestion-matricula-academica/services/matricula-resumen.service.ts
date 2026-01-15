@@ -20,7 +20,11 @@ export class MatriculaResumenService {
     ): Observable<ApiResponse<MatriculaResumenBackend[]>> {
         let params = new HttpParams();
         params = params.set('periodoId', String(periodoId));
-        if (estudianteId) {
+        if (
+            estudianteId !== undefined &&
+            estudianteId !== null &&
+            `${estudianteId}` !== ''
+        ) {
             params = params.set('estudiante', String(estudianteId));
         }
         if (asignatura) {

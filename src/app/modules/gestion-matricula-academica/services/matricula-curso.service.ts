@@ -35,7 +35,7 @@ export class MatriculaCursoService {
     getEstudiantesDisponiblesPorCurso(
         cursoId: number | string
     ): Observable<ApiResponse<Estudiante[]>> {
-        const url = `${matricula_academica.api_url}curso/disponibles-estudiantes/curso/${cursoId}`;
+        const url = `${matricula_academica.api_url}cursos/disponibles-estudiantes/asignatura/${cursoId}`;
         return this.http.get<ApiResponse<Estudiante[]>>(url);
     }
 

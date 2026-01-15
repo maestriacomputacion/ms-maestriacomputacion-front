@@ -12,7 +12,7 @@ import {
 } from '../../models/matricula.model';
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
 import { EstudianteBusqueda } from '../../models/estudiante-busqueda.model';
-import { BuscadorEstudiantesComponent } from 'src/app/shared/components/buscador-estudiantes/buscador-estudiantes.component';
+import { BuscadorEstudiantesAcademicoComponent } from '../buscador-estudiantes-academico/buscador-estudiantes-academico.component';
 
 @Component({
     selector: 'app-listado-matriculas',
@@ -206,10 +206,13 @@ export class ListadoMatriculasComponent implements OnInit {
     }
 
     abrirBuscadorEstudiantes(): void {
-        this.refDialog = this.dialogService.open(BuscadorEstudiantesComponent, {
-            header: 'Buscar estudiante',
-            width: '60%',
-        });
+        this.refDialog = this.dialogService.open(
+            BuscadorEstudiantesAcademicoComponent,
+            {
+                header: 'Buscar estudiante',
+                width: '60%',
+            }
+        );
         this.refDialog.onClose.subscribe(
             (result: EstudianteBusqueda | null) => {
                 if (result) {

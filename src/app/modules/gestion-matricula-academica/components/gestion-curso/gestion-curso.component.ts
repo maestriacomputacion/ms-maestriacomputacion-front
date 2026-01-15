@@ -19,7 +19,7 @@ import { PeriodoAcademico } from '../../models/periodo-academico.model';
 export class GestionCursoComponent implements OnInit, OnDestroy {
     @Input() estado?: string;
 
-    cursos: any;
+    cursos: CursoUI[] = [];
     periodos: Array<{ label: string; value: string }> = [];
     areasFormacion: Array<{ label: string; value: string }> = [];
     asignaturas: Array<{ label: string; value: string }> = [];

@@ -118,3 +118,26 @@ export interface MatriculaResumenBackend {
     estado: string;
     cantidadEstudiante: number;
 }
+
+// Curso seleccionado para matricula masiva.
+export type CursoSeleccionado = {
+    id: number;
+    grupo: string;
+    nombreAsignatura: string;
+    docentes?: string;
+    salon?: string;
+};
+
+// Estudiante con informacion adicional en UI de matricula.
+export type EstudianteExtendido = Estudiante & {
+    observaciones?: string;
+    motivoError?: string;
+};
+
+// Estado de navegacion para resultado de matricula.
+export type MatriculaResultadoState = {
+    matriculasRealizadas?: MatriculaRealizada[];
+    matriculasNoRealizadas?: MatriculaNoRealizada[];
+    matriculasEliminadas?: MatriculaEliminada[];
+    origen?: string;
+};

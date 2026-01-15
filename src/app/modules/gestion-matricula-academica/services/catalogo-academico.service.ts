@@ -5,10 +5,10 @@ import { catchError, map } from 'rxjs/operators';
 
 import { ApiResponse } from '../models/api-response.model';
 import { AsignaturaModel, DocenteModel } from '../models/curso.model';
+import { CatalogoOption } from '../models/catalogo.model';
 import { matricula_academica } from 'src/environments/environment';
 
 type OptionalId = string | number | null;
-type CatalogoOption = { label: string; value: string };
 type CatalogoItem = { id?: string | number | null; nombre?: string | null };
 
 @Injectable({ providedIn: 'root' })

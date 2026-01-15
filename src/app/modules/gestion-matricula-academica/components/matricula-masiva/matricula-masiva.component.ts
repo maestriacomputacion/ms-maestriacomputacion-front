@@ -16,17 +16,12 @@ import {
 } from '../../services/matricula-masiva.service';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import { CursoUI } from '../../models/curso.model';
-
-type CatalogoOption = { label: string; value: string };
-type TabChangeEvent = { index?: number };
-type CursoAgrupado = { asignatura: string; cursos: CursoUI[] };
-type CursoSeleccionado = {
-    id: number;
-    grupo: string;
-    nombreAsignatura: string;
-    docentes?: string;
-    salon?: string;
-};
+import {
+    CatalogoOption,
+    TabChangeEvent,
+    CursoAgrupado,
+} from '../../models/catalogo.model';
+import { CursoSeleccionado } from '../../models/matricula.model';
 
 @Component({
     selector: 'app-matricula-masiva',

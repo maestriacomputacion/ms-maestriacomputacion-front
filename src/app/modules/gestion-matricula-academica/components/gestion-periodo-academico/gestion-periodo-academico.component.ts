@@ -12,9 +12,10 @@ import { takeUntil } from 'rxjs/operators';
 
 import { ApiResponse } from '../../models/api-response.model';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
-import { PeriodoAcademico } from '../../models/periodo-academico.model';
-
-type PeriodoAcademicoPayload = Omit<PeriodoAcademico, 'id'>;
+import {
+    PeriodoAcademico,
+    PeriodoAcademicoPayload,
+} from '../../models/periodo-academico.model';
 
 @Component({
     selector: 'app-gestion-periodo-academico',

@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CursoUI } from '../../models/curso.model';
-
-type CatalogoOption = { label: string; value: string };
-type TabChangeEvent = { index?: number };
-type CursoAgrupado = { asignatura: string; cursos: CursoUI[] };
+import {
+    CatalogoOption,
+    TabChangeEvent,
+    CursoAgrupado,
+} from '../../models/catalogo.model';
 
 @Component({
     selector: 'app-cursos-por-area-tabs',

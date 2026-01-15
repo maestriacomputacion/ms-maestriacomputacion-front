@@ -10,17 +10,12 @@ import {
     MatriculaEstudiantesRequest,
     MatriculaResponseData,
     MatriculaNoRealizada,
+    EstudianteExtendido,
 } from '../../../../models/matricula.model';
-import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import {
     MatriculaCursoService,
     EstudianteMatriculado,
 } from '../../../../services/matricula-curso.service';
-
-type EstudianteExtendido = EstudianteBase & {
-    observaciones?: string;
-    motivoError?: string;
-};
 
 @Component({
     selector: 'app-realizar-matricula-estudiantes',

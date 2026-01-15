@@ -11,16 +11,8 @@ import {
     MatriculaResumenBackend,
 } from '../../models/matricula.model';
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
+import { EstudianteBusqueda } from '../../models/estudiante-busqueda.model';
 import { BuscadorEstudiantesComponent } from 'src/app/shared/components/buscador-estudiantes/buscador-estudiantes.component';
-
-type EstudianteBusqueda = {
-    id?: number;
-    identificacion?: string;
-    codigo?: string;
-    nombre?: string;
-    apellido?: string;
-    persona?: { nombre?: string; apellido?: string };
-};
 
 @Component({
     selector: 'app-listado-matriculas',

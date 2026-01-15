@@ -6,14 +6,8 @@ import {
     MatriculaRealizada,
     MatriculaNoRealizada,
     DocenteBasico,
+    MatriculaResultadoState,
 } from '../../models/matricula.model';
-
-type MatriculaResultadoState = {
-    matriculasRealizadas?: MatriculaRealizada[];
-    matriculasNoRealizadas?: MatriculaNoRealizada[];
-    matriculasEliminadas?: MatriculaEliminada[];
-    origen?: string;
-};
 
 @Component({
     selector: 'app-resultado-matricula-masiva',

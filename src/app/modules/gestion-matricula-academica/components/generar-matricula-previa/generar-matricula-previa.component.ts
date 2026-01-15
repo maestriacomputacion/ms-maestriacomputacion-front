@@ -15,6 +15,11 @@ import { CatalogoAcademicoService } from '../../services/catalogo-academico.serv
 import { MatriculaCursoService } from '../../services/matricula-curso.service';
 import { CursoUI } from '../../models/curso.model';
 import {
+    CatalogoOption,
+    TabChangeEvent,
+    CursoAgrupado,
+} from '../../models/catalogo.model';
+import {
     MatriculaRealizada,
     DocenteBasico,
 } from '../../models/matricula.model';
@@ -27,13 +32,10 @@ import {
 export class GenerarMatriculaPreviaComponent implements OnInit {
     estudiante: Estudiante | null = null;
     asignaturas: AsignaturaMatricular[] = [];
-    areas: { label: string; value: string }[] = [];
+    areas: CatalogoOption[] = [];
     cursosPorArea: Record<string, CursoUI[]> = {};
     loadingCursosPorArea: Record<string, boolean> = {};
-    cursosPorAreaAgrupados: Record<
-        string,
-        { asignatura: string; cursos: CursoUI[] }[]
-    > = {};
+    cursosPorAreaAgrupados: Record<string, CursoAgrupado[]> = {};
     displayObservacionModal = false;
     observacionForm: FormGroup;
     asignaturaSeleccionadaId: number | null = null;
@@ -115,10 +117,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                         this.cursosPorArea[idArea] = items;
 
                         // Agrupar por nombre de asignatura para renderizar una tabla por asignatura
-                        const map: Record<
-                            string,
-                            { asignatura: string; cursos: CursoUI[] }
-                        > = {};
+                        const map: Record<string, CursoAgrupado> = {};
                         for (const it of items) {
                             const key = it.asignatura ?? 'Sin nombre';
                             if (!map[key]) {
@@ -142,7 +141,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             });
     }
 
-    onTabChange(event: { index?: number }): void {
+    onTabChange(event: TabChangeEvent): void {
         try {
             const idx = event?.index ?? 0;
             const area = this.areas?.[idx];

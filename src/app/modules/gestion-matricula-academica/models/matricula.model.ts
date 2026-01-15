@@ -1,5 +1,6 @@
 import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
 import { AsignaturaModel, DocenteModel } from './curso.model';
+import { MaterialApoyo } from './material-apoyo';
 
 // Detalle de curso para payload de matricula.
 export interface CursoMatriculaDetalle {
@@ -53,7 +54,7 @@ export interface CursoDetallado {
     periodoDescripcion?: string;
     asignatura: AsignaturaBasico;
     docentes: DocenteBasico[];
-    materiales: any[];
+    materiales: MaterialApoyo[];
     horario?: string;
     salon?: string;
     observacion?: string;

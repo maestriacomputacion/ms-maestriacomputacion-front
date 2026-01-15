@@ -8,6 +8,9 @@ import { PeriodoAcademico } from '../models/periodo-academico.model';
 
 const backendPeriodoAcademico = (path: string = '') =>
     `${matricula_academica.api_url}periodos${path ? '/' + path : ''}`;
+type PeriodoAcademicoBackend = Omit<PeriodoAcademico, 'id'> & {
+    id: string | number | null;
+};
 
 @Injectable({ providedIn: 'root' })
 export class PeriodoAcademicoService {
@@ -16,14 +19,19 @@ export class PeriodoAcademicoService {
     // Endpoint: listar periodos academicos
     getPeriodos(): Observable<ApiResponse<PeriodoAcademico[]>> {
         return this.http
-            .get<ApiResponse<PeriodoAcademico[]>>(backendPeriodoAcademico())
+            .get<
+                ApiResponse<PeriodoAcademicoBackend[]>
+            >(backendPeriodoAcademico())
             .pipe(
                 map((resp) => ({
                     typeResponse: resp.typeResponse,
                     message: resp.message,
                     statusCode: resp.statusCode,
-                    data: (resp.data || []).map((item: any) => ({
-                        id: String(item.id),
+                    data: (resp.data || []).map((item) => ({
+                        id:
+                            item.id !== undefined && item.id !== null
+                                ? String(item.id)
+                                : '',
                         fechaInicio: item.fechaInicio,
                         fechaFin: item.fechaFin,
                         fechaFinMatricula: item.fechaFinMatricula,
@@ -73,8 +81,10 @@ export class PeriodoAcademicoService {
     }
 
     // Endpoint: eliminar un periodo academico
-    eliminarPeriodo(id: string): Observable<ApiResponse<any>> {
-        return this.http.delete<ApiResponse<any>>(backendPeriodoAcademico(id));
+    eliminarPeriodo(id: string): Observable<ApiResponse<unknown>> {
+        return this.http.delete<ApiResponse<unknown>>(
+            backendPeriodoAcademico(id)
+        );
     }
 
     // Endpoint: validar rango de fechas para un periodo

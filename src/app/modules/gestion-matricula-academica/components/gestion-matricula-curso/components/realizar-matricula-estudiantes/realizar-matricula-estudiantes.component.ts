@@ -9,9 +9,13 @@ import { BackendCurso } from '../../../../models/curso.model';
 import {
     MatriculaEstudiantesRequest,
     MatriculaResponseData,
+    MatriculaNoRealizada,
 } from '../../../../models/matricula.model';
 import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
-import { MatriculaCursoService } from '../../../../services/matricula-curso.service';
+import {
+    MatriculaCursoService,
+    EstudianteMatriculado,
+} from '../../../../services/matricula-curso.service';
 
 type EstudianteExtendido = EstudianteBase & {
     observaciones?: string;
@@ -263,7 +267,7 @@ export class RealizarMatriculaEstudiantesComponent
                     if (response.typeResponse === 'SUCCESS') {
                         const estudiantesData = response.data || [];
                         this.estudiantesMatricular = estudiantesData.map(
-                            (item: any) => ({
+                            (item: EstudianteMatriculado) => ({
                                 ...item.estudiante,
                                 observaciones: item.observacion || '',
                                 motivoError: undefined,
@@ -462,7 +466,7 @@ export class RealizarMatriculaEstudiantesComponent
         }, 1000);
     }
 
-    private actualizarMotivosError(noRealizadas: any[]): void {
+    private actualizarMotivosError(noRealizadas: MatriculaNoRealizada[]): void {
         if (noRealizadas.length > 0) {
             for (const matricula of noRealizadas) {
                 const estudiante = this.estudiantesMatricular.find(

@@ -8,6 +8,8 @@ import { AsignaturaModel, DocenteModel } from '../models/curso.model';
 import { matricula_academica } from 'src/environments/environment';
 
 type OptionalId = string | number | null;
+type CatalogoOption = { label: string; value: string };
+type CatalogoItem = { id?: string | number | null; nombre?: string | null };
 
 @Injectable({ providedIn: 'root' })
 export class CatalogoAcademicoService {
@@ -16,18 +18,17 @@ export class CatalogoAcademicoService {
     constructor(private readonly http: HttpClient) {}
 
     // Endpoint: listar areas de formacion disponibles
-    getAreasFormacion(): Observable<
-        ApiResponse<{ label: string; value: string }[]>
-    > {
+    getAreasFormacion(): Observable<ApiResponse<CatalogoOption[]>> {
         const url = `${this.backendCursos}/asignaturas/area`;
-        return this.http.get<ApiResponse<any[]>>(url).pipe(
+        return this.http.get<ApiResponse<CatalogoItem[]>>(url).pipe(
             map((resp) => ({
                 typeResponse: resp.typeResponse,
                 message: resp.message,
                 statusCode: resp.statusCode,
-                data: (resp.data || []).map((a: any) => ({
+                data: (resp.data || []).map((a) => ({
                     label: a.nombre ?? '',
-                    value: String(a.id ?? ''),
+                    value:
+                        a.id !== undefined && a.id !== null ? String(a.id) : '',
                 })),
             })),
             catchError((err) => {
@@ -39,26 +40,25 @@ export class CatalogoAcademicoService {
                     typeResponse: 'SUCCESS',
                     message:
                         '\u00c1reas de formaci\u00f3n no disponibles (fallback vac\u00edo)',
-                    data: [] as { label: string; value: string }[],
+                    data: [] as CatalogoOption[],
                     statusCode: 200,
-                } as ApiResponse<{ label: string; value: string }[]>);
+                } as ApiResponse<CatalogoOption[]>);
             })
         );
     }
 
     // Endpoint: listar asignaturas para filtros generales
-    getAsignaturas(): Observable<
-        ApiResponse<{ label: string; value: string }[]>
-    > {
+    getAsignaturas(): Observable<ApiResponse<CatalogoOption[]>> {
         const url = `${this.backendCursos}/asignaturas`;
-        return this.http.get<ApiResponse<any[]>>(url).pipe(
+        return this.http.get<ApiResponse<CatalogoItem[]>>(url).pipe(
             map((resp) => ({
                 typeResponse: resp.typeResponse,
                 message: resp.message,
                 statusCode: resp.statusCode,
-                data: (resp.data || []).map((a: any) => ({
+                data: (resp.data || []).map((a) => ({
                     label: a.nombre ?? '',
-                    value: String(a.id ?? ''),
+                    value:
+                        a.id !== undefined && a.id !== null ? String(a.id) : '',
                 })),
             })),
             catchError((err) => {
@@ -66,9 +66,9 @@ export class CatalogoAcademicoService {
                 return of({
                     typeResponse: 'SUCCESS',
                     message: 'Asignaturas no disponibles (vac\u00edo)',
-                    data: [] as { label: string; value: string }[],
+                    data: [] as CatalogoOption[],
                     statusCode: 200,
-                } as ApiResponse<{ label: string; value: string }[]>);
+                } as ApiResponse<CatalogoOption[]>);
             })
         );
     }
@@ -76,20 +76,21 @@ export class CatalogoAcademicoService {
     // Endpoint: listar asignaturas filtradas por area para filtros
     getAsignaturasByArea(
         idArea?: OptionalId
-    ): Observable<ApiResponse<{ label: string; value: string }[]>> {
+    ): Observable<ApiResponse<CatalogoOption[]>> {
         const url = `${this.backendCursos}/asignaturas`;
         let params = new HttpParams();
         if (idArea !== undefined && idArea !== null && `${idArea}` !== '') {
             params = params.set('idArea', String(idArea));
         }
-        return this.http.get<ApiResponse<any[]>>(url, { params }).pipe(
+        return this.http.get<ApiResponse<CatalogoItem[]>>(url, { params }).pipe(
             map((resp) => ({
                 typeResponse: resp.typeResponse,
                 message: resp.message,
                 statusCode: resp.statusCode,
-                data: (resp.data || []).map((a: any) => ({
+                data: (resp.data || []).map((a) => ({
                     label: a.nombre ?? '',
-                    value: String(a.id ?? ''),
+                    value:
+                        a.id !== undefined && a.id !== null ? String(a.id) : '',
                 })),
             })),
             catchError((err) => {
@@ -97,9 +98,9 @@ export class CatalogoAcademicoService {
                 return of({
                     typeResponse: 'SUCCESS',
                     message: 'Asignaturas no disponibles (fallback vac\u00edo)',
-                    data: [] as { label: string; value: string }[],
+                    data: [] as CatalogoOption[],
                     statusCode: 200,
-                } as ApiResponse<{ label: string; value: string }[]>);
+                } as ApiResponse<CatalogoOption[]>);
             })
         );
     }

@@ -95,7 +95,7 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
     }
 
     private cargarCursos(): void {
-        const params: any = {};
+        const params: { idPeriodo?: string } = {};
         if (this.periodoActivoId) {
             params.idPeriodo = this.periodoActivoId;
         }

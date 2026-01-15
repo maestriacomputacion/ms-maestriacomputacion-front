@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MessageService, ConfirmationService, PrimeIcons } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
@@ -14,7 +14,10 @@ import {
 
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
-import { CursoService } from '../../services/curso.service';
+import {
+    CursoService,
+    CursoRegistroPayload,
+} from '../../services/curso.service';
 import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
 import {
     AsignaturaModel,
@@ -259,7 +262,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     private applyRemoveSelectedMaterial(material: MaterialApoyo): void {
-        const id = (material as any).id;
+        const id = material.id;
         if (typeof id === 'number') {
             this.selectedMateriales = this.selectedMateriales.filter(
                 (m) => m.id !== id
@@ -346,7 +349,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     private setupValidacionExistenciaCurso(): void {
         const grupoControl = this.form.get('grupo');
         if (grupoControl && !this.isEditMode && !this.isViewMode) {
-            const sub = (grupoControl.valueChanges as any)
+            const sub = grupoControl.valueChanges
                 .pipe(
                     debounceTime(400),
                     distinctUntilChanged(),
@@ -655,7 +658,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.subs.push(docentesSub);
     }
 
-    private construirPayload(): any {
+    private construirPayload(): CursoRegistroPayload {
         return {
             grupo: this.form.value.grupo,
             asignaturaId: this.asignatura?.id || 0,
@@ -665,8 +668,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             horario: this.form.value.horario,
             salon: this.form.value.salon,
             materialApoyoIds: this.selectedMateriales
-                .map((m) => (m as any).id)
-                .filter((id) => !!id),
+                .map((m) => m.id)
+                .filter((id): id is number => typeof id === 'number'),
             observacion: this.form.value.observacion,
         };
     }

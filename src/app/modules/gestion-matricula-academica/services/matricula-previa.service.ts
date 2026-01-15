@@ -52,9 +52,9 @@ export class MatriculaPreviaService {
     matricularEstudiante(payload: {
         estudianteId: number;
         cursos: { cursoId: number; observacion: string }[];
-    }): Observable<ApiResponse<any>> {
+    }): Observable<ApiResponse<unknown>> {
         const url = `${matricula_academica.api_url}matricula/estudiante`;
-        return this.http.post<ApiResponse<any>>(url, payload);
+        return this.http.post<ApiResponse<unknown>>(url, payload);
     }
 
     // Endpoint: obtener matriculas de un estudiante

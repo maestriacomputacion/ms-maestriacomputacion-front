@@ -24,16 +24,13 @@ export class MaterialApoyoService {
                     typeResponse: resp.typeResponse,
                     message: resp.message,
                     statusCode: resp.statusCode,
-                    data: (resp.data || []).map(
-                        (item: any) =>
-                            ({
-                                id: item.id,
-                                nombre: item.nombre,
-                                descripcion: item.descripcion,
-                                enlace: item.enlace,
-                                estado: item.estado,
-                            }) as MaterialApoyo
-                    ),
+                    data: (resp.data || []).map((item) => ({
+                        id: item.id,
+                        nombre: item.nombre,
+                        descripcion: item.descripcion,
+                        enlace: item.enlace,
+                        estado: item.estado,
+                    })),
                 }))
             );
     }
@@ -79,8 +76,8 @@ export class MaterialApoyoService {
     }
 
     // Endpoint: eliminar material de apoyo
-    deleteMaterialApoyo(id: number): Observable<ApiResponse<any>> {
-        return this.http.delete<ApiResponse<any>>(
+    deleteMaterialApoyo(id: number): Observable<ApiResponse<unknown>> {
+        return this.http.delete<ApiResponse<unknown>>(
             backendMateriales(String(id))
         );
     }

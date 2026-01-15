@@ -10,7 +10,17 @@ import {
     MatriculaResumen,
     MatriculaResumenBackend,
 } from '../../models/matricula.model';
+import { PeriodoAcademico } from '../../models/periodo-academico.model';
 import { BuscadorEstudiantesComponent } from 'src/app/shared/components/buscador-estudiantes/buscador-estudiantes.component';
+
+type EstudianteBusqueda = {
+    id?: number;
+    identificacion?: string;
+    codigo?: string;
+    nombre?: string;
+    apellido?: string;
+    persona?: { nombre?: string; apellido?: string };
+};
 
 @Component({
     selector: 'app-listado-matriculas',
@@ -59,7 +69,7 @@ export class ListadoMatriculasComponent implements OnInit {
 
     cargarFiltrosBase(): void {
         this.periodoService.getPeriodos().subscribe({
-            next: (resp: ApiResponse<any[]>) => {
+            next: (resp: ApiResponse<PeriodoAcademico[]>) => {
                 const periodos = resp.data || [];
                 this.periodosOptions = periodos.map((p) => ({
                     label: this.formatearPeriodoLabel(p),
@@ -148,12 +158,14 @@ export class ListadoMatriculasComponent implements OnInit {
         };
     }
 
-    private formatearPeriodoLabel(periodo: PeriodoBasico): string {
+    private formatearPeriodoLabel(
+        periodo: PeriodoBasico | PeriodoAcademico
+    ): string {
         return this.formatearPeriodoDescripcion(periodo);
     }
 
     private formatearPeriodoDescripcion(
-        periodo?: PeriodoBasico | null
+        periodo?: PeriodoBasico | PeriodoAcademico | null
     ): string {
         if (!periodo) return 'Periodo -';
         const fechaInicio = this.formatearFecha(periodo.fechaInicio);
@@ -206,18 +218,20 @@ export class ListadoMatriculasComponent implements OnInit {
             header: 'Buscar estudiante',
             width: '60%',
         });
-        this.refDialog.onClose.subscribe((result: any) => {
-            if (result) {
-                this.selectedEstudiante = {
-                    id: result.id,
-                    codigo: result.identificacion || result.codigo,
-                    nombre: `${result.nombre ?? result.persona?.nombre ?? ''} ${
-                        result.apellido ?? result.persona?.apellido ?? ''
-                    }`.trim(),
-                };
-                this.aplicarFiltros();
+        this.refDialog.onClose.subscribe(
+            (result: EstudianteBusqueda | null) => {
+                if (result) {
+                    this.selectedEstudiante = {
+                        id: result.id,
+                        codigo: result.identificacion || result.codigo,
+                        nombre: `${result.nombre ?? result.persona?.nombre ?? ''} ${
+                            result.apellido ?? result.persona?.apellido ?? ''
+                        }`.trim(),
+                    };
+                    this.aplicarFiltros();
+                }
             }
-        });
+        );
     }
 
     onPeriodoChange(): void {

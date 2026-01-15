@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
-import { Persona } from 'src/app/modules/gestion-estudiantes/models/persona';
 import { TutorInfo } from '../../models/tutor.model';
 
 @Component({

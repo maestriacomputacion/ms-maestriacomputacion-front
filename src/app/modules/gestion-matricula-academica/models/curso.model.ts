@@ -1,5 +1,6 @@
 import { PeriodoAcademico } from './periodo-academico.model';
 import { Persona } from '../../gestion-estudiantes/models/persona';
+import { MaterialApoyo } from './material-apoyo';
 
 // Modelo de asignatura usado en cursos y catalogo.
 export interface AsignaturaModel {
@@ -8,7 +9,7 @@ export interface AsignaturaModel {
     codigo?: string;
     estado?: boolean;
     areaFormacion?: number;
-    tipo?: any;
+    tipo?: string | null;
     creditos?: number;
 }
 
@@ -29,7 +30,7 @@ export interface BackendCurso {
     periodoDescripcion?: string;
     asignatura: AsignaturaModel;
     docentes: DocenteModel[];
-    materiales?: any[];
+    materiales?: MaterialApoyo[];
     horario?: string | null;
     salon?: string | null;
     observacion?: string | null;

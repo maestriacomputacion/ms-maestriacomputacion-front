@@ -14,6 +14,8 @@ import { ApiResponse } from '../../models/api-response.model';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
 
+type PeriodoAcademicoPayload = Omit<PeriodoAcademico, 'id'>;
+
 @Component({
     selector: 'app-gestion-periodo-academico',
     templateUrl: './gestion-periodo-academico.component.html',
@@ -207,7 +209,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
         this.displayModal = false;
     }
 
-    formatDateToString(date: any): string {
+    formatDateToString(date: string | Date | null | undefined): string {
         if (!date) return '';
         if (typeof date === 'string') return date;
         const d = new Date(date);
@@ -283,7 +285,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
         }
     }
 
-    private crearPeriodoBackend(periodoData: any): void {
+    private crearPeriodoBackend(periodoData: PeriodoAcademicoPayload): void {
         this.periodoService
             .crearPeriodo(periodoData)
             .pipe(takeUntil(this.destroy$))
@@ -303,7 +305,10 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             });
     }
 
-    private actualizarPeriodoBackend(id: string, periodoData: any): void {
+    private actualizarPeriodoBackend(
+        id: string,
+        periodoData: PeriodoAcademicoPayload
+    ): void {
         this.periodoService
             .actualizarPeriodo(id, periodoData)
             .pipe(takeUntil(this.destroy$))
@@ -357,8 +362,8 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     }
 
     private handlePeriodoResponse(
-        response: ApiResponse<any>,
-        accion: string
+        response: ApiResponse<unknown>,
+        _accion: string
     ): void {
         this.messageService.add({
             severity: response.typeResponse === 'SUCCESS' ? 'success' : 'error',

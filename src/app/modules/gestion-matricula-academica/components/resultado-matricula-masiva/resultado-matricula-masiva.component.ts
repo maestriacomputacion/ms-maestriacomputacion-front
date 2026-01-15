@@ -5,7 +5,15 @@ import {
     MatriculaEliminada,
     MatriculaRealizada,
     MatriculaNoRealizada,
+    DocenteBasico,
 } from '../../models/matricula.model';
+
+type MatriculaResultadoState = {
+    matriculasRealizadas?: MatriculaRealizada[];
+    matriculasNoRealizadas?: MatriculaNoRealizada[];
+    matriculasEliminadas?: MatriculaEliminada[];
+    origen?: string;
+};
 
 @Component({
     selector: 'app-resultado-matricula-masiva',
@@ -50,7 +58,11 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
     /** Asigna los datos recibidos por navigation state o history.state */
     private asignarDatosDeNavegacion(): void {
         const navigation = this.router.getCurrentNavigation();
-        const state = navigation?.extras?.state ?? (history as any).state;
+        const state =
+            (navigation?.extras?.state as
+                | MatriculaResultadoState
+                | undefined) ??
+            (history as { state?: MatriculaResultadoState }).state;
         if (state) {
             if (state.matriculasRealizadas) {
                 this.matriculasRealizadas = state.matriculasRealizadas;
@@ -93,7 +105,7 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
         });
     }
 
-    getDocentesNombres(docentes: any[]): string {
+    getDocentesNombres(docentes?: DocenteBasico[] | null): string {
         if (!docentes || docentes.length === 0) return '-';
         return docentes
             .map((d) => {

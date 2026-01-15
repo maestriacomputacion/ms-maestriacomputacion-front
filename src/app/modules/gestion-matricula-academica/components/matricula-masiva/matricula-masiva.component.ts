@@ -14,6 +14,19 @@ import {
     MatriculaMasivaService,
     MatriculaBatchPayload,
 } from '../../services/matricula-masiva.service';
+import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
+import { CursoUI } from '../../models/curso.model';
+
+type CatalogoOption = { label: string; value: string };
+type TabChangeEvent = { index?: number };
+type CursoAgrupado = { asignatura: string; cursos: CursoUI[] };
+type CursoSeleccionado = {
+    id: number;
+    grupo: string;
+    nombreAsignatura: string;
+    docentes?: string;
+    salon?: string;
+};
 
 @Component({
     selector: 'app-matricula-masiva',
@@ -21,18 +34,14 @@ import {
     styleUrls: ['./matricula-masiva.component.scss'],
 })
 export class MatriculaMasivaComponent implements OnInit, OnDestroy {
-    selectedEstudiantes: any[] = [];
+    selectedEstudiantes: Estudiante[] = [];
     periodoActivo: PeriodoAcademico | null = null;
-    areas: { label: string; value: string }[] = [];
-    cursosPorArea: Record<string, any[]> = {};
+    areas: CatalogoOption[] = [];
+    cursosPorArea: Record<string, CursoUI[]> = {};
     loadingCursosPorArea: Record<string, boolean> = {};
-    cursosPorAreaAgrupados: Record<
-        string,
-        { asignatura: string; cursos: any[] }[]
-    > = {};
+    cursosPorAreaAgrupados: Record<string, CursoAgrupado[]> = {};
     loading = false;
-    cursosSeleccionados: any[] = [];
-    resultadoDialogRef: any;
+    cursosSeleccionados: CursoSeleccionado[] = [];
 
     private readonly destroy$ = new Subject<void>();
 
@@ -82,7 +91,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         });
     }
 
-    onTabChange(event: any): void {
+    onTabChange(event: TabChangeEvent): void {
         try {
             const idx = event?.index ?? 0;
             const area = this.areas?.[idx];
@@ -94,7 +103,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         }
     }
 
-    onAgregarCursoDesdeArea(event: Event, cursoItem: any): void {
+    onAgregarCursoDesdeArea(event: Event, cursoItem: CursoUI): void {
         if (!cursoItem?.id) return;
 
         if (this.cursoYaSeleccionado(cursoItem.id)) {
@@ -146,7 +155,8 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         });
     }
 
-    confirmarQuitarEstudiante(event: Event, id: string): void {
+    confirmarQuitarEstudiante(event: Event, id: number | undefined): void {
+        if (id === undefined || id === null) return;
         this.confirmationService.confirm({
             target: event.target as HTMLElement,
             message:
@@ -311,7 +321,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                         });
                     }
                 },
-                error: (err) => {
+                error: () => {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
@@ -321,7 +331,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
             });
     }
 
-    private confirmacionAgregarCurso(event: Event, cursoItem: any): void {
+    private confirmacionAgregarCurso(event: Event, cursoItem: CursoUI): void {
         this.confirmationService.confirm({
             target: event.target as HTMLElement,
             message: `¿Agregar grupo "${cursoItem.grupo}" de "${cursoItem.asignatura}" a todos los estudiantes?`,
@@ -346,10 +356,8 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         });
     }
 
-    private agruparCursosPorAsignatura(
-        items: any[]
-    ): { asignatura: string; cursos: any[] }[] {
-        const map: Record<string, { asignatura: string; cursos: any[] }> = {};
+    private agruparCursosPorAsignatura(items: CursoUI[]): CursoAgrupado[] {
+        const map: Record<string, CursoAgrupado> = {};
         for (const item of items) {
             const key = item.asignatura ?? 'Sin nombre';
             if (!map[key]) {
@@ -364,7 +372,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         return this.cursosSeleccionados.some((c) => c.id === cursoId);
     }
 
-    private onQuitarEstudiante(id: string): void {
+    private onQuitarEstudiante(id: number): void {
         this.selectedEstudiantes = this.selectedEstudiantes.filter(
             (e) => e.id !== id
         );

@@ -1,4 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CursoUI } from '../../models/curso.model';
+
+type CatalogoOption = { label: string; value: string };
+type TabChangeEvent = { index?: number };
+type CursoAgrupado = { asignatura: string; cursos: CursoUI[] };
 
 @Component({
     selector: 'app-cursos-por-area-tabs',
@@ -6,29 +11,26 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     styleUrls: ['./cursos-por-area-tabs.component.scss'],
 })
 export class CursosPorAreaTabsComponent {
-    @Input() areas: { label: string; value: string }[] = [];
-    @Input() cursosPorArea: Record<string, any[]> = {};
+    @Input() areas: CatalogoOption[] = [];
+    @Input() cursosPorArea: Record<string, CursoUI[]> = {};
     @Input() loadingCursosPorArea: Record<string, boolean> = {};
-    @Input() cursosPorAreaAgrupados: Record<
-        string,
-        { asignatura: string; cursos: any[] }[]
-    > = {};
+    @Input() cursosPorAreaAgrupados: Record<string, CursoAgrupado[]> = {};
 
-    @Output() tabChanged = new EventEmitter<any>();
+    @Output() tabChanged = new EventEmitter<TabChangeEvent>();
     @Output() cursoSeleccionado = new EventEmitter<{
         event: Event;
-        item: any;
-        area: { label: string; value: string };
+        item: CursoUI;
+        area: CatalogoOption;
     }>();
 
-    onTabChange(event: any): void {
+    onTabChange(event: TabChangeEvent): void {
         this.tabChanged.emit(event);
     }
 
     onSeleccionarCurso(
         event: Event,
-        item: any,
-        area: { label: string; value: string }
+        item: CursoUI,
+        area: CatalogoOption
     ): void {
         this.cursoSeleccionado.emit({ event, item, area });
     }

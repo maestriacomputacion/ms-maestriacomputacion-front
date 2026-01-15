@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 import { matricula_academica } from 'src/environments/environment';
+import { MatriculaResponseData } from '../models/matricula.model';
 
 export interface MatriculaEstudianteCurso {
     estudianteId: number;
@@ -22,7 +23,10 @@ export class MatriculaMasivaService {
     // Endpoint: matricular masivamente estudiantes en cursos
     matricularMasivo(
         payload: MatriculaBatchPayload
-    ): Observable<ApiResponse<any>> {
-        return this.http.post<ApiResponse<any>>(this.endpoint, payload);
+    ): Observable<ApiResponse<MatriculaResponseData>> {
+        return this.http.post<ApiResponse<MatriculaResponseData>>(
+            this.endpoint,
+            payload
+        );
     }
 }

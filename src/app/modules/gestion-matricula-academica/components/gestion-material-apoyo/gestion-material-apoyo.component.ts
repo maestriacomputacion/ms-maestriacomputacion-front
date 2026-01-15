@@ -67,8 +67,9 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
     }
 
     onDescripcionPaste(event: ClipboardEvent): void {
-        const clipboardData =
-            event.clipboardData || (globalThis as any).clipboardData;
+        const legacyClipboard = (globalThis as { clipboardData?: DataTransfer })
+            .clipboardData;
+        const clipboardData = event.clipboardData || legacyClipboard;
         const pastedText = clipboardData ? clipboardData.getData('text') : '';
         if (!pastedText) return;
 
@@ -273,7 +274,7 @@ export class GestionMaterialApoyoComponent implements OnInit, OnDestroy {
         });
     }
 
-    private handleError(error: any, defaultMessage: string): void {
+    private handleError(error: unknown, defaultMessage: string): void {
         const errorMsg = mapResponseException(error) || defaultMessage;
         this.messageService.add({
             severity: 'error',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfirmationService, MessageService, PrimeIcons } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 

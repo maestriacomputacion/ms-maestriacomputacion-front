@@ -117,7 +117,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                         // Agrupar por nombre de asignatura para renderizar una tabla por asignatura
                         const map: Record<
                             string,
-                            { asignatura: string; cursos: any[] }
+                            { asignatura: string; cursos: CursoUI[] }
                         > = {};
                         for (const it of items) {
                             const key = it.asignatura ?? 'Sin nombre';
@@ -142,7 +142,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             });
     }
 
-    onTabChange(event: { index: number }): void {
+    onTabChange(event: { index?: number }): void {
         try {
             const idx = event?.index ?? 0;
             const area = this.areas?.[idx];
@@ -157,7 +157,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     onAgregarCursoDesdeArea(
         event: Event,
         cursoItem: CursoUI,
-        area: { label: string; value: string } | null
+        _area: { label: string; value: string } | null
     ): void {
         if (!cursoItem?.id) return;
 

@@ -7,6 +7,8 @@
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
         "test": "ng test",
+        "prepare": "husky install",
+        "postinstall": "husky install",
         "lint": "ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\"",
         "lint:fix": "ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\" --fix",
         "lint:strict": "ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\" --max-warnings=0"
@@ -70,6 +72,8 @@
         "karma-coverage-istanbul-reporter": "~3.0.3",
         "karma-jasmine": "~4.0.0",
         "karma-jasmine-html-reporter": "~1.7.0",
+        "husky": "^8.0.3",
+        "lint-staged": "^13.3.0",
         "prettier": "^3.7.4",
         "protractor": "~7.0.0",
         "ts-node": "~8.3.0",

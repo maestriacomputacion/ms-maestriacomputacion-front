@@ -1,0 +1,8 @@
+{
+    "src/app/modules/gestion-matricula-academica/**/*.{ts,html}": [
+        "ESLINT_USE_FLAT_CONFIG=true eslint --max-warnings=0"
+    ],
+    "src/app/modules/gestion-matricula-academica/**/*.{ts,html,scss,css}": [
+        "prettier --write"
+    ]
+}

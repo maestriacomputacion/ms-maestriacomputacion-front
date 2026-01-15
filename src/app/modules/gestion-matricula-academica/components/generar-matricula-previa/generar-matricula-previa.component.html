@@ -4,7 +4,10 @@
     </p-header>
 
     <!-- Indicador de carga -->
-    <div *ngIf="loading" class="flex justify-content-center align-items-center h-12rem">
+    <div
+        *ngIf="loading"
+        class="flex justify-content-center align-items-center h-12rem"
+    >
         <p-progressSpinner></p-progressSpinner>
     </div>
 
@@ -19,37 +22,49 @@
                     </h5>
                     <div class="flex flex-column gap-3">
                         <div>
-                            <span class="font-medium text-600 text-sm">Código:</span>
+                            <span class="font-medium text-600 text-sm"
+                                >Código:</span
+                            >
                             <p class="text-900 mt-1 mb-0">
                                 {{ estudiante.codigo }}
                             </p>
                         </div>
                         <div>
-                            <span class="font-medium text-600 text-sm">Nombre:</span>
+                            <span class="font-medium text-600 text-sm"
+                                >Nombre:</span
+                            >
                             <p class="text-900 mt-1 mb-0">
                                 {{ estudiante.nombre }}
                             </p>
                         </div>
                         <div>
-                            <span class="font-medium text-600 text-sm">Apellidos:</span>
+                            <span class="font-medium text-600 text-sm"
+                                >Apellidos:</span
+                            >
                             <p class="text-900 mt-1 mb-0">
                                 {{ estudiante.apellidos }}
                             </p>
                         </div>
                         <div>
-                            <span class="font-medium text-600 text-sm">Director:</span>
+                            <span class="font-medium text-600 text-sm"
+                                >Director:</span
+                            >
                             <p class="text-900 mt-1 mb-0">
                                 {{ estudiante.director }}
                             </p>
                         </div>
                         <div>
-                            <span class="font-medium text-600 text-sm">Co-Director:</span>
+                            <span class="font-medium text-600 text-sm"
+                                >Co-Director:</span
+                            >
                             <p class="text-900 mt-1 mb-0">
                                 {{ estudiante.coDirector }}
                             </p>
                         </div>
                         <div>
-                            <span class="font-medium text-600 text-sm">Semestre Académico:</span>
+                            <span class="font-medium text-600 text-sm"
+                                >Semestre Académico:</span
+                            >
                             <p class="text-900 mt-1 mb-0">
                                 {{ estudiante.semestreAcademico }}
                             </p>
@@ -69,12 +84,22 @@
 
                     <!-- Botón Guardar -->
                     <div class="flex justify-content-end mb-4">
-                        <button type="button" pButton pRipple [label]="textoBotonMatricular"
-                            [icon]="iconoBotonMatricular" class="p-button-primary" [disabled]="!huboCambios"
-                            (click)="onGuardarMatricula($event)"></button>
+                        <button
+                            type="button"
+                            pButton
+                            pRipple
+                            [label]="textoBotonMatricular"
+                            [icon]="iconoBotonMatricular"
+                            class="p-button-primary"
+                            [disabled]="!huboCambios"
+                            (click)="onGuardarMatricula($event)"
+                        ></button>
                     </div>
 
-                    <p-table [value]="asignaturas" styleClass="p-datatable-striped">
+                    <p-table
+                        [value]="asignaturas"
+                        styleClass="p-datatable-striped"
+                    >
                         <ng-template pTemplate="header">
                             <tr>
                                 <th scope="col">Grupo</th>
@@ -92,20 +117,36 @@
                                 <td>{{ asignatura.docentes || "-" }}</td>
                                 <td>{{ asignatura.observacion || "-" }}</td>
                                 <td class="text-center">
-                                    <div class="flex justify-content-center align-items-center gap-2">
-                                        <button type="button" pButton pRipple icon="pi pi-comment"
-                                            class="p-button-rounded p-button-text p-button-sm" (click)="
+                                    <div
+                                        class="flex justify-content-center align-items-center gap-2"
+                                    >
+                                        <button
+                                            type="button"
+                                            pButton
+                                            pRipple
+                                            icon="pi pi-comment"
+                                            class="p-button-rounded p-button-text p-button-sm"
+                                            (click)="
                                                 onAgregarObservacion(
                                                     asignatura.id
                                                 )
-                                            " pTooltip="Agregar Observación"></button>
-                                        <button type="button" pButton pRipple icon="pi pi-trash"
-                                            class="p-button-rounded p-button-text p-button-danger p-button-sm" (click)="
+                                            "
+                                            pTooltip="Agregar Observación"
+                                        ></button>
+                                        <button
+                                            type="button"
+                                            pButton
+                                            pRipple
+                                            icon="pi pi-trash"
+                                            class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                                            (click)="
                                                 onEliminarAsignatura(
                                                     $event,
                                                     asignatura.id
                                                 )
-                                            " pTooltip="Eliminar"></button>
+                                            "
+                                            pTooltip="Eliminar"
+                                        ></button>
                                     </div>
                                 </td>
                             </tr>
@@ -128,39 +169,64 @@
             <h4 class="m-0 font-semibold text-900">
                 Cursos disponibles por área
             </h4>
-            <small class="text-500">Seleccione un área para ver las asignaturas disponibles y
-                agréguelas a la lista de matricular.</small>
+            <small class="text-500"
+                >Seleccione un área para ver las asignaturas disponibles y
+                agréguelas a la lista de matricular.</small
+            >
         </div>
         <div class="surface-card border-round p-0">
-            <app-cursos-por-area-tabs [areas]="areas" [cursosPorArea]="cursosPorArea"
-                [loadingCursosPorArea]="loadingCursosPorArea" [cursosPorAreaAgrupados]="cursosPorAreaAgrupados"
-                (tabChanged)="onTabChange($event)" (cursoSeleccionado)="
+            <app-cursos-por-area-tabs
+                [areas]="areas"
+                [cursosPorArea]="cursosPorArea"
+                [loadingCursosPorArea]="loadingCursosPorArea"
+                [cursosPorAreaAgrupados]="cursosPorAreaAgrupados"
+                (tabChanged)="onTabChange($event)"
+                (cursoSeleccionado)="
                     onAgregarCursoDesdeArea(
                         $event.event,
                         $event.item,
                         $event.area
                     )
-                ">
+                "
+            >
             </app-cursos-por-area-tabs>
         </div>
     </div>
 
     <!-- Modal para Agregar Observación -->
-    <p-dialog [(visible)]="displayObservacionModal" [modal]="true" [resizable]="false" [draggable]="false"
-        styleClass="w-30rem" header="Agregar Observación">
+    <p-dialog
+        [(visible)]="displayObservacionModal"
+        [modal]="true"
+        [resizable]="false"
+        [draggable]="false"
+        styleClass="w-30rem"
+        header="Agregar Observación"
+    >
         <form [formGroup]="observacionForm" (ngSubmit)="onGuardarObservacion()">
             <div class="grid">
                 <div class="col-12">
                     <div class="field">
-                        <label for="observacion" class="font-medium text-900 block mb-2">Observación <span
-                                class="text-red-500"></span></label>
-                        <textarea id="observacion" pInputTextarea formControlName="observacion"
-                            placeholder="Ingrese la observación" class="w-full" rows="4">
+                        <label
+                            for="observacion"
+                            class="font-medium text-900 block mb-2"
+                            >Observación <span class="text-red-500"></span
+                        ></label>
+                        <textarea
+                            id="observacion"
+                            pInputTextarea
+                            formControlName="observacion"
+                            placeholder="Ingrese la observación"
+                            class="w-full"
+                            rows="4"
+                        >
                         </textarea>
-                        <small class="p-error block mt-1" *ngIf="
+                        <small
+                            class="p-error block mt-1"
+                            *ngIf="
                                 observacionForm.get('observacion')?.invalid &&
                                 observacionForm.get('observacion')?.touched
-                            ">
+                            "
+                        >
                             La observación es requerida
                         </small>
                     </div>
@@ -168,10 +234,24 @@
             </div>
 
             <div class="flex justify-content-end gap-2 mt-3">
-                <button type="button" pButton pRipple label="Cancelar" icon="pi pi-times"
-                    class="p-button-secondary p-button-outlined" (click)="onCancelarObservacion()"></button>
-                <button type="submit" pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary"
-                    [disabled]="observacionForm.invalid"></button>
+                <button
+                    type="button"
+                    pButton
+                    pRipple
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-secondary p-button-outlined"
+                    (click)="onCancelarObservacion()"
+                ></button>
+                <button
+                    type="submit"
+                    pButton
+                    pRipple
+                    label="Guardar"
+                    icon="pi pi-check"
+                    class="p-button-primary"
+                    [disabled]="observacionForm.invalid"
+                ></button>
             </div>
         </form>
     </p-dialog>

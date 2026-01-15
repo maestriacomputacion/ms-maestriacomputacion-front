@@ -91,7 +91,5 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
         });
     }
 
-    enviarCorreo(): void {
-        
-    }
+    enviarCorreo(): void {}
 }

@@ -69,7 +69,5 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
         this.seleccionParaEnviar = [...this.seleccionParaEnviar, ...nuevos];
     }
 
-    enviarCorreos(): void {
-        
-    }
+    enviarCorreos(): void {}
 }

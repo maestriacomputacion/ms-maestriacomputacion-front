@@ -23,6 +23,6 @@ export class TipoCorreosComponent {
     ];
 
     // seleccionar(tipo: TipoCorreo): void {
-      
+
     // }
 }

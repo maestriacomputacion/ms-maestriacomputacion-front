@@ -58,8 +58,6 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
                 | undefined) ??
             (history as { state?: MatriculaResultadoState }).state;
 
-        
-
         if (state) {
             if (state.matriculasProcesadas) {
                 this.matriculasProcesadas = state.matriculasProcesadas;
@@ -74,8 +72,6 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
                 this.origenNavegacion = state.origen;
             }
         }
-
-    
     }
 
     finalizar(event: Event): void {

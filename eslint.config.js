@@ -20,6 +20,7 @@ module.exports = [
             "@angular-eslint": angularPlugin,
         },
         rules: {
+            // Reglas básicas de Angular
             "@angular-eslint/directive-selector": [
                 "error",
                 {
@@ -36,13 +37,20 @@ module.exports = [
                     style: "kebab-case",
                 },
             ],
+            
+            // Reglas básicas de TypeScript (solo warnings para no bloquear)
             "@typescript-eslint/no-explicit-any": "warn",
             "@typescript-eslint/no-unused-vars": [
                 "warn",
                 {
                     argsIgnorePattern: "^_",
+                    varsIgnorePattern: "^_",
                 },
             ],
+            
+            // Prevenir errores comunes
+            "no-debugger": "warn",
+            "no-console": ["warn", { allow: ["warn", "error"] }],
         },
     },
     {
@@ -53,6 +61,10 @@ module.exports = [
         plugins: {
             "@angular-eslint/template": angularTemplatePlugin,
         },
-        rules: {},
+        rules: {
+            // Reglas básicas de template
+            "@angular-eslint/template/banana-in-box": "error", // Detectar [()] mal escritos
+            "@angular-eslint/template/no-negated-async": "warn", // Evitar !async en templates
+        },
     },
 ];

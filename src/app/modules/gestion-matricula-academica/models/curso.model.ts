@@ -40,6 +40,7 @@ export interface BackendCurso {
 export interface CursoUI {
     id: number;
     grupo: string;
+    asignaturaId: number;
     asignatura: string;
     docente: string; // concatenado
     fecha: string; // fecha formateada

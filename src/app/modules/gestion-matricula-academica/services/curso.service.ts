@@ -50,6 +50,7 @@ export class CursoService {
         return {
             id: Number(item.id),
             grupo: item.grupo,
+            asignaturaId: Number(item.asignatura?.id ?? 0),
             asignatura: item.asignatura?.nombre ?? '',
             docente: docentes,
             fecha: CursoService.formatDateString(

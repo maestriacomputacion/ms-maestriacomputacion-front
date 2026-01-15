@@ -31,6 +31,14 @@ export class MatriculaCursoService {
         return this.http.get<ApiResponse<EstudianteMatriculado[]>>(url);
     }
 
+    // Endpoint: listar estudiantes disponibles por curso
+    getEstudiantesDisponiblesPorCurso(
+        cursoId: number | string
+    ): Observable<ApiResponse<Estudiante[]>> {
+        const url = `${matricula_academica.api_url}curso/disponibles-estudiantes/curso/${cursoId}`;
+        return this.http.get<ApiResponse<Estudiante[]>>(url);
+    }
+
     // Endpoint: validar si un estudiante puede matricularse en un curso
     validarMatriculaEnCurso(
         estudianteId: number,

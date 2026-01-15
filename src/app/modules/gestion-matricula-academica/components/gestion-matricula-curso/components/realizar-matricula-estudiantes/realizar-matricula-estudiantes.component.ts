@@ -12,7 +12,6 @@ import {
 } from '../../../../models/matricula.model';
 import { Estudiante as EstudianteBase } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import { MatriculaCursoService } from '../../../../services/matricula-curso.service';
-import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
 
 type EstudianteExtendido = EstudianteBase & {
     observaciones?: string;
@@ -48,7 +47,6 @@ export class RealizarMatriculaEstudiantesComponent
         private readonly cursoService: CursoService,
         private readonly messageService: MessageService,
         private readonly confirmationService: ConfirmationService,
-        private readonly estudianteService: EstudianteService,
         @Inject(MatriculaCursoService)
         private readonly matriculaCursoService: MatriculaCursoService
     ) {}
@@ -59,9 +57,9 @@ export class RealizarMatriculaEstudiantesComponent
                 this.cursoId = +params['id'];
                 this.cargarCurso(this.cursoId);
                 this.cargarEstudiantesMatricular(this.cursoId);
+                this.cargarEstudiantesDisponibles(this.cursoId);
             }
         });
-        this.cargarEstudiantes();
     }
 
     ngOnDestroy(): void {
@@ -219,14 +217,24 @@ export class RealizarMatriculaEstudiantesComponent
         return `${fechaInicio} - ${fechaFin}`;
     }
 
-    private cargarEstudiantes(): void {
+    private cargarEstudiantesDisponibles(cursoId: number): void {
         this.loading = true;
-        this.estudianteService
-            .listEstudiantes()
+        this.matriculaCursoService
+            .getEstudiantesDisponiblesPorCurso(cursoId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
-                next: (estudiantes: EstudianteBase[]) => {
-                    this.estudiantes = estudiantes || [];
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.estudiantes = response.data || [];
+                    } else {
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: 'Advertencia',
+                            detail:
+                                response.message ||
+                                'No se pudieron cargar los estudiantes disponibles',
+                        });
+                    }
                     this.filtrarEstudiantes();
                     this.loading = false;
                 },

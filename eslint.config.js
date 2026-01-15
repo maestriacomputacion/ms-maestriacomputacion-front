@@ -5,54 +5,54 @@ const angularTemplatePlugin = require("@angular-eslint/eslint-plugin-template");
 const angularTemplateParser = require("@angular-eslint/template-parser");
 
 module.exports = [
-  {
-    files: ["src/app/modules/gestion-matricula-academica/**/*.ts"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        project: "./tsconfig.json",
-        ecmaVersion: 2020,
-        sourceType: "module",
-      },
-    },
-    plugins: {
-      "@typescript-eslint": tsPlugin,
-      "@angular-eslint": angularPlugin,
-    },
-    rules: {
-      "@angular-eslint/directive-selector": [
-        "error",
-        {
-          type: "attribute",
-          prefix: "app",
-          style: "camelCase",
+    {
+        files: ["src/app/modules/gestion-matricula-academica/**/*.ts"],
+        languageOptions: {
+            parser: tsParser,
+            parserOptions: {
+                project: "./tsconfig.json",
+                ecmaVersion: 2020,
+                sourceType: "module",
+            },
         },
-      ],
-      "@angular-eslint/component-selector": [
-        "error",
-        {
-          type: "element",
-          prefix: "app",
-          style: "kebab-case",
+        plugins: {
+            "@typescript-eslint": tsPlugin,
+            "@angular-eslint": angularPlugin,
         },
-      ],
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
+        rules: {
+            "@angular-eslint/directive-selector": [
+                "error",
+                {
+                    type: "attribute",
+                    prefix: "app",
+                    style: "camelCase",
+                },
+            ],
+            "@angular-eslint/component-selector": [
+                "error",
+                {
+                    type: "element",
+                    prefix: "app",
+                    style: "kebab-case",
+                },
+            ],
+            "@typescript-eslint/no-explicit-any": "warn",
+            "@typescript-eslint/no-unused-vars": [
+                "warn",
+                {
+                    argsIgnorePattern: "^_",
+                },
+            ],
         },
-      ],
     },
-  },
-  {
-    files: ["src/app/modules/gestion-matricula-academica/**/*.html"],
-    languageOptions: {
-      parser: angularTemplateParser,
+    {
+        files: ["src/app/modules/gestion-matricula-academica/**/*.html"],
+        languageOptions: {
+            parser: angularTemplateParser,
+        },
+        plugins: {
+            "@angular-eslint/template": angularTemplatePlugin,
+        },
+        rules: {},
     },
-    plugins: {
-      "@angular-eslint/template": angularTemplatePlugin,
-    },
-    rules: {},
-  },
 ];

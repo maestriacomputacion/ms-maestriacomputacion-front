@@ -1,12 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-if ! git diff --cached --name-only -- "src/app/modules/gestion-matricula-academica" | grep -q .; then
-  exit 0
-fi
-
-if command -v npx >/dev/null 2>&1; then
-  npx lint-staged --no-stash
-else
-  bunx lint-staged --no-stash
-fi
+exit 0

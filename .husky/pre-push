@@ -1,0 +1,30 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+run_cmd() {
+  if command -v npx >/dev/null 2>&1; then
+    npx "$@"
+  else
+    bunx "$@"
+  fi
+}
+
+should_check=false
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    range="$local_sha"
+  else
+    range="$remote_sha..$local_sha"
+  fi
+
+  if git diff --name-only "$range" -- "src/app/modules/gestion-matricula-academica" | grep -q .; then
+    should_check=true
+  fi
+done
+
+if [ "$should_check" != "true" ]; then
+  exit 0
+fi
+
+ESLINT_USE_FLAT_CONFIG=true run_cmd eslint "src/app/modules/gestion-matricula-academica/**/*.ts" --max-warnings=0
+run_cmd prettier --check "src/app/modules/gestion-matricula-academica/**/*.{ts,html,scss,css}"

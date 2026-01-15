@@ -132,9 +132,9 @@ export const menuItems: MenuItem[] = [
                 icon: 'pi pi-fw pi-user',
                 items: [
                     {
-                        label: 'Notificación de prematricula a tutor',
-                        icon: 'pi pi-fw pi-envelope',
-                        routerLink: '/gestion-matricula-academica/notificacion-prematricula-tutor',
+                        label: 'Listado de Tutores',
+                        icon: 'pi pi-fw pi-users',
+                        routerLink: '/gestion-matricula-academica/listado-tutores',
                     }
                 ],
             },

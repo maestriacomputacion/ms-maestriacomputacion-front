@@ -18,6 +18,7 @@ import { ReporteCentroPostgradosComponent } from './components/reporte-centro-po
 import { TipoNotificacionComponent } from './components/tipo-notificacion/tipo-notificacion.component';
 import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-matricula-final/enviar-correo-matricula-final.component';
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
+import { ListadoTutoresComponent } from './components/listado-tutores/listado-tutores.component';
 
 const routes: Routes = [
     {
@@ -103,6 +104,10 @@ const routes: Routes = [
             {
                 path: 'listado-matriculas',
                 component: ListadoMatriculasComponent,
+            },
+            {
+                path: 'listado-tutores',
+                component: ListadoTutoresComponent,
             },
         ],
     },

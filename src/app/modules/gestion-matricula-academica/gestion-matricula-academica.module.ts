@@ -26,6 +26,7 @@ import { TipoNotificacionComponent } from './components/tipo-notificacion/tipo-n
 import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-matricula-final/enviar-correo-matricula-final.component';
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
 import { BuscadorEstudiantesAcademicoComponent } from './components/buscador-estudiantes-academico/buscador-estudiantes-academico.component';
+import { ListadoTutoresComponent } from './components/listado-tutores/listado-tutores.component';
 
 @NgModule({
     declarations: [
@@ -48,6 +49,7 @@ import { BuscadorEstudiantesAcademicoComponent } from './components/buscador-est
         VistaTutorComponent,
         AprobarMatriculaEstudianteComponent,
         ListadoMatriculasComponent,
+        ListadoTutoresComponent,
         BuscadorEstudiantesAcademicoComponent,
     ],
     imports: [

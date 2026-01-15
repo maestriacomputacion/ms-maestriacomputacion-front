@@ -1,0 +1,69 @@
+<p-toast></p-toast>
+
+<p-panel>
+    <p-header>
+        <b>LISTADO DE TUTORES</b>
+    </p-header>
+
+    <div
+        class="flex flex-row align-items-center justify-content-between mb-3 w-full"
+    >
+        <div class="mr-3 flex-1 min-w-0">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar por nombre, código o correo..."
+                    (input)="
+                        tableTutores.filterGlobal(
+                            $event.target.value,
+                            'contains'
+                        )
+                    "
+                />
+            </span>
+            <small class="text-500 block mt-1">
+                <i class="pi pi-info-circle mr-1"></i>
+                Busca en todos los campos: nombre, código y correo
+            </small>
+        </div>
+    </div>
+
+    <p-table
+        #tableTutores
+        [value]="tutores"
+        [paginator]="true"
+        [rows]="10"
+        [loading]="loading"
+        [totalRecords]="tutores?.length || 0"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} tutores"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [responsiveLayout]="'scroll'"
+        [globalFilterFields]="['nombre', 'codigo', 'correo']"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col" class="text-center">Código</th>
+                <th scope="col">Correo</th>
+                <th scope="col" class="text-center">Cantidad de estudiantes</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-tutor>
+            <tr>
+                <td>{{ tutor.nombre }}</td>
+                <td class="text-center">{{ tutor.codigo }}</td>
+                <td>{{ tutor.correo }}</td>
+                <td class="text-center">{{ tutor.cantidadEstudiantes }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td [attr.colspan]="4">No se encontraron tutores</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>

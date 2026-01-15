@@ -92,6 +92,6 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
     }
 
     enviarCorreo(): void {
-        console.log('Enviar correo con selección', this.seleccion);
+        
     }
 }

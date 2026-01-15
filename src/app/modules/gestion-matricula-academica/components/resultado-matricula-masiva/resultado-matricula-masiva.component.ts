@@ -15,8 +15,8 @@ import {
     styleUrls: ['./resultado-matricula-masiva.component.scss'],
 })
 export class ResultadoMatriculaMasivaComponent implements OnInit {
-    @Input() matriculasRealizadas: MatriculaRealizada[] = [];
-    @Input() matriculasNoRealizadas: MatriculaNoRealizada[] = [];
+    @Input() matriculasProcesadas: MatriculaRealizada[] = [];
+    @Input() matriculasNoProcesadas: MatriculaNoRealizada[] = [];
     @Input() matriculasEliminadas: MatriculaEliminada[] = [];
     origenNavegacion: string = 'matricula-masiva';
 
@@ -43,8 +43,8 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
     }
 
     get resumen(): string {
-        const ex = this.matriculasRealizadas?.length || 0;
-        const ne = this.matriculasNoRealizadas?.length || 0;
+        const ex = this.matriculasProcesadas?.length || 0;
+        const ne = this.matriculasNoProcesadas?.length || 0;
         const del = this.matriculasEliminadas?.length || 0;
         return `${ex} realizados • ${ne} no realizados • ${del} eliminados`;
     }
@@ -57,12 +57,15 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
                 | MatriculaResultadoState
                 | undefined) ??
             (history as { state?: MatriculaResultadoState }).state;
+
+        
+
         if (state) {
-            if (state.matriculasRealizadas) {
-                this.matriculasRealizadas = state.matriculasRealizadas;
+            if (state.matriculasProcesadas) {
+                this.matriculasProcesadas = state.matriculasProcesadas;
             }
-            if (state.matriculasNoRealizadas) {
-                this.matriculasNoRealizadas = state.matriculasNoRealizadas;
+            if (state.matriculasNoProcesadas) {
+                this.matriculasNoProcesadas = state.matriculasNoProcesadas;
             }
             if (state.matriculasEliminadas) {
                 this.matriculasEliminadas = state.matriculasEliminadas;
@@ -71,6 +74,8 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
                 this.origenNavegacion = state.origen;
             }
         }
+
+    
     }
 
     finalizar(event: Event): void {

@@ -22,7 +22,7 @@ export class TipoCorreosComponent {
         },
     ];
 
-    seleccionar(tipo: TipoCorreo): void {
-        console.log('Enviar:', tipo);
-    }
+    // seleccionar(tipo: TipoCorreo): void {
+      
+    // }
 }

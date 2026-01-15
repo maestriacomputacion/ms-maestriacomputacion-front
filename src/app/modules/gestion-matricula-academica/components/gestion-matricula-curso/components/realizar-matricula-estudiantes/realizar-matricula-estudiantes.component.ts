@@ -429,8 +429,9 @@ export class RealizarMatriculaEstudiantesComponent
         data: MatriculaResponseData,
         mensaje: string
     ): void {
-        const realizadas = data.matriculasRealizadas || [];
-        const noRealizadas = data.matriculasNoRealizadas || [];
+        const realizadas = data.matriculasProcesadas || [];
+        const noRealizadas = data.matriculasNoProcesadas || [];
+        const eliminadas = data.matriculasEliminadas || [];
 
         this.actualizarMotivosError(noRealizadas);
 
@@ -448,8 +449,9 @@ export class RealizarMatriculaEstudiantesComponent
         });
 
         const datosNavegacion = {
-            matriculasRealizadas: realizadas,
-            matriculasNoRealizadas: noRealizadas,
+            matriculasProcesadas: realizadas,
+            matriculasNoProcesadas: noRealizadas,
+            matriculasEliminadas: eliminadas,
             origen: 'realizar-matricula',
         };
 

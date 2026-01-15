@@ -70,6 +70,6 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
     }
 
     enviarCorreos(): void {
-        console.log('Enviar a', this.seleccionParaEnviar);
+        
     }
 }

@@ -32,6 +32,7 @@ import {
 export class GenerarMatriculaPreviaComponent implements OnInit {
     estudiante: Estudiante | null = null;
     asignaturas: AsignaturaMatricular[] = [];
+    asignaturasIniciales: AsignaturaMatricular[] = [];
     areas: CatalogoOption[] = [];
     cursosPorArea: Record<string, CursoUI[]> = {};
     loadingCursosPorArea: Record<string, boolean> = {};
@@ -71,6 +72,49 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
             }
         });
         this.cargarAreasFormacion();
+    }
+
+    get huboCambios(): boolean {
+        // Si no hay asignaturas iniciales, significa que es una matrícula nueva
+        if (this.asignaturasIniciales.length === 0) {
+            return this.asignaturas.length > 0;
+        }
+
+        // Verificar si la cantidad cambió
+        if (this.asignaturas.length !== this.asignaturasIniciales.length) {
+            return true;
+        }
+
+        // Verificar si hay IDs diferentes
+        const idsActuales = this.asignaturas.map((a) => a.id).sort();
+        const idsIniciales = this.asignaturasIniciales.map((a) => a.id).sort();
+
+        return !idsActuales.every((id, index) => id === idsIniciales[index]);
+    }
+
+    get textoBotonMatricular(): string {
+        // Verificar si hay matrículas nuevas (IDs que no estaban en las iniciales)
+        const idsIniciales = this.asignaturasIniciales.map((a) => a.id);
+        const hayMatriculasNuevas = this.asignaturas.some(
+            (a) => !idsIniciales.includes(a.id)
+        );
+
+        // Si hay matrículas nuevas, mostrar "Matricular"
+        if (hayMatriculasNuevas) {
+            return 'Matricular';
+        }
+        // Solo eliminó o modificó observaciones, mostrar "Guardar"
+        return 'Guardar';
+    }
+
+    get iconoBotonMatricular(): string {
+        // Verificar si hay matrículas nuevas
+        const idsIniciales = this.asignaturasIniciales.map((a) => a.id);
+        const hayMatriculasNuevas = this.asignaturas.some(
+            (a) => !idsIniciales.includes(a.id)
+        );
+
+        return hayMatriculasNuevas ? 'pi pi-check' : 'pi pi-save';
     }
 
     private cargarAreasFormacion(): void {
@@ -368,8 +412,13 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                                 observacion: matricula.observacion || '',
                             })
                         );
+                        // Guardar copia de las asignaturas iniciales
+                        this.asignaturasIniciales = JSON.parse(
+                            JSON.stringify(this.asignaturas)
+                        );
                     } else {
                         this.asignaturas = [];
+                        this.asignaturasIniciales = [];
                     }
                     this.loading = false;
                 },
@@ -459,18 +508,32 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     }
 
     onGuardarMatricula(event: Event) {
-        if (!this.estudianteId || this.asignaturas.length === 0) {
+        if (!this.estudianteId) {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Advertencia',
-                detail: 'Debe seleccionar al menos una asignatura para guardar.',
+                detail: 'No se encontró el estudiante.',
             });
             return;
         }
 
+        if (!this.huboCambios) {
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Información',
+                detail: 'No hay cambios para guardar.',
+            });
+            return;
+        }
+
+        const mensajeConfirmacion =
+            this.asignaturas.length === 0
+                ? '¿Está seguro de eliminar todas las matrículas de este estudiante?'
+                : `¿Guardar matrícula con ${this.asignaturas.length} asignatura(s)?`;
+
         this.confirmationService.confirm({
             target: event.target,
-            message: `¿Guardar matrícula con ${this.asignaturas.length} asignatura(s)?`,
+            message: mensajeConfirmacion,
             icon: 'pi pi-save',
             acceptLabel: 'Sí',
             rejectLabel: 'No',
@@ -488,9 +551,12 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                     .subscribe({
                         next: (resp) => {
                             if (resp.typeResponse === 'SUCCESS') {
-                                const realizadas = Array.isArray(resp.data)
-                                    ? resp.data
-                                    : [];
+                                const procesadas =
+                                    resp.data?.matriculasProcesadas || [];
+                                const noProcesadas =
+                                    resp.data?.matriculasNoProcesadas || [];
+                                const eliminadas =
+                                    resp.data?.matriculasEliminadas || [];
 
                                 this.messageService.add({
                                     severity: 'success',
@@ -502,8 +568,9 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                                 });
 
                                 const datosNavegacion = {
-                                    matriculasRealizadas: realizadas,
-                                    matriculasNoRealizadas: [],
+                                    matriculasProcesadas: procesadas,
+                                    matriculasNoProcesadas: noProcesadas,
+                                    matriculasEliminadas: eliminadas,
                                     origen: 'matricula-previa',
                                 };
 

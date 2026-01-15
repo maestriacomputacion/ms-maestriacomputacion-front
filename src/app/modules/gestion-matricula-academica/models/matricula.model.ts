@@ -93,8 +93,8 @@ export interface MatriculaEliminada {
 
 // Contenedor de respuesta de matricula en batch.
 export interface MatriculaResponseData {
-    matriculasRealizadas: MatriculaRealizada[];
-    matriculasNoRealizadas: MatriculaNoRealizada[];
+    matriculasProcesadas: MatriculaRealizada[];
+    matriculasNoProcesadas: MatriculaNoRealizada[];
     matriculasEliminadas?: MatriculaEliminada[];
 }
 
@@ -136,8 +136,8 @@ export type EstudianteExtendido = Estudiante & {
 
 // Estado de navegacion para resultado de matricula.
 export type MatriculaResultadoState = {
-    matriculasRealizadas?: MatriculaRealizada[];
-    matriculasNoRealizadas?: MatriculaNoRealizada[];
+    matriculasProcesadas?: MatriculaRealizada[];
+    matriculasNoProcesadas?: MatriculaNoRealizada[];
     matriculasEliminadas?: MatriculaEliminada[];
     origen?: string;
 };

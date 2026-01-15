@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { MatriculaRealizada } from '../models/matricula.model';
+import {
+    MatriculaRealizada,
+    MatriculaResponseData,
+} from '../models/matricula.model';
 import { matricula_academica } from 'src/environments/environment';
 
 export interface Estudiante {
@@ -52,9 +55,9 @@ export class MatriculaPreviaService {
     matricularEstudiante(payload: {
         estudianteId: number;
         cursos: { cursoId: number; observacion: string }[];
-    }): Observable<ApiResponse<unknown>> {
+    }): Observable<ApiResponse<MatriculaResponseData>> {
         const url = `${matricula_academica.api_url}matricula/estudiante`;
-        return this.http.post<ApiResponse<unknown>>(url, payload);
+        return this.http.post<ApiResponse<MatriculaResponseData>>(url, payload);
     }
 
     // Endpoint: obtener matriculas de un estudiante

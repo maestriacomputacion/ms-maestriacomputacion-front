@@ -290,10 +290,12 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                         this.cursosSeleccionados = [];
 
                         const datosNavegacion = {
-                            matriculasRealizadas:
-                                response?.data?.matriculasRealizadas || [],
-                            matriculasNoRealizadas:
-                                response?.data?.matriculasNoRealizadas || [],
+                            matriculasProcesadas:
+                                response?.data?.matriculasProcesadas || [],
+                            matriculasNoProcesadas:
+                                response?.data?.matriculasNoProcesadas || [],
+                            matriculasEliminadas:
+                                response?.data?.matriculasEliminadas || [],
                             origen: 'matricula-masiva',
                         };
 

@@ -21,7 +21,7 @@ export class ReporteCentroPostgradosComponent {
     }
 
     generarReporte(): void {
-        const valores = this.reporteForm.value;
-        console.log('Generar reporte centro de postgrados', valores);
+        
+        
     }
 }

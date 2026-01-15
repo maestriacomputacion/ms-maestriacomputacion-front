@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface TutorListado {
     nombre: string;
@@ -14,6 +15,8 @@ interface TutorListado {
 })
 export class ListadoTutoresComponent {
     loading: boolean = false;
+
+    constructor(private readonly router: Router) {}
 
     tutores: TutorListado[] = [
         {
@@ -41,4 +44,11 @@ export class ListadoTutoresComponent {
             cantidadEstudiantes: 3,
         },
     ];
+
+    verDetallesTutor(tutor: TutorListado): void {
+        this.router.navigate([
+            '/gestion-matricula-academica',
+            'sugerencias-matricula',
+        ]);
+    }
 }

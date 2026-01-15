@@ -19,6 +19,7 @@ import { TipoNotificacionComponent } from './components/tipo-notificacion/tipo-n
 import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-matricula-final/enviar-correo-matricula-final.component';
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
 import { ListadoTutoresComponent } from './components/listado-tutores/listado-tutores.component';
+import { SugerenciasMatriculaComponent } from './components/sugerencias-matricula/sugerencias-matricula.component';
 
 const routes: Routes = [
     {
@@ -108,6 +109,10 @@ const routes: Routes = [
             {
                 path: 'listado-tutores',
                 component: ListadoTutoresComponent,
+            },
+            {
+                path: 'sugerencias-matricula',
+                component: SugerenciasMatriculaComponent,
             },
         ],
     },

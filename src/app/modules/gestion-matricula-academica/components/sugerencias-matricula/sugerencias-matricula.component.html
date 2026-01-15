@@ -1,0 +1,147 @@
+<p-toast></p-toast>
+
+<p-panel>
+    <p-header>
+        <b>SUGERENCIAS DE MATRICULA</b>
+    </p-header>
+
+    <div class="w-20rem">
+        <div class="flex flex-column gap-3 mb-3">
+            <div class="flex align-items-center gap-2">
+                <span class="font-medium mb-1 w-12rem white-space-normal"
+                    >Periodo</span
+                >
+                <span class="text-900 flex-1 min-w-0">{{ periodo }}</span>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <span class="font-medium mb-1 w-12rem white-space-normal"
+                    >Año</span
+                >
+                <span class="text-900 flex-1 min-w-0">{{ anio }}</span>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <span class="font-medium mb-1 w-12rem white-space-normal"
+                    >Nombre del tutor</span
+                >
+                <span class="text-900 flex-1 min-w-0">{{ nombreTutor }}</span>
+            </div>
+            <div class="flex align-items-center gap-2">
+                <label
+                    for="estudiante"
+                    class="font-medium mb-1 w-12rem white-space-normal"
+                    >Estudiante</label
+                >
+                <p-dropdown
+                    id="estudiante"
+                    [options]="estudiantes"
+                    [(ngModel)]="estudianteSeleccionado"
+                    optionLabel="label"
+                    optionValue="value"
+                    class="w-full flex-1 min-w-0"
+                    (onChange)="onEstudianteChange()"
+                ></p-dropdown>
+            </div>
+        </div>
+    </div>
+
+    <p-table
+        [value]="sugerencias"
+        [loading]="loading"
+        [paginator]="false"
+        responsiveLayout="scroll"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th
+                    class="text-center"
+                    scope="col"
+                    pSortableColumn="asignatura"
+                >
+                    Asignatura
+                    <p-sortIcon field="asignatura"></p-sortIcon>
+                </th>
+                <th class="text-center" scope="col" pSortableColumn="estado">
+                    Estado
+                    <p-sortIcon field="estado"></p-sortIcon>
+                </th>
+                <th
+                    class="text-center"
+                    scope="col"
+                    pSortableColumn="observaciones"
+                >
+                    Observaciones
+                    <p-sortIcon field="observaciones"></p-sortIcon>
+                </th>
+                <th class="text-center" scope="col">Opciones</th>
+                <th class="text-center" scope="col" style="width: 100px">
+                    <p-checkbox
+                        [binary]="true"
+                        [ngModel]="verificarTodosSeleccionados()"
+                        (onChange)="seleccionarTodos($event)"
+                        inputId="seleccionar-todos"
+                    ></p-checkbox>
+                    <label for="seleccionar-todos" class="ml-2"
+                        >Seleccionar</label
+                    >
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-sugerencia>
+            <tr>
+                <td>{{ sugerencia.asignatura }}</td>
+                <td class="text-center">{{ sugerencia.estado }}</td>
+                <td>{{ sugerencia.observaciones }}</td>
+                <td class="text-center">
+                    <div
+                        class="flex align-items-center justify-content-center gap-2"
+                    >
+                        <button
+                            pButton
+                            type="button"
+                            icon="pi pi-check"
+                            class="p-button-rounded p-button-success p-button-text p-button-sm"
+                            pTooltip="Aprobar"
+                            tooltipPosition="top"
+                            (click)="aprobarSugerencia(sugerencia)"
+                        ></button>
+                        <button
+                            pButton
+                            type="button"
+                            icon="pi pi-times"
+                            class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                            pTooltip="Rechazar"
+                            tooltipPosition="top"
+                            (click)="rechazarSugerencia(sugerencia)"
+                        ></button>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <p-checkbox
+                        [(ngModel)]="sugerencia.seleccionada"
+                        [binary]="true"
+                        [inputId]="'sel-' + sugerencia.id"
+                    ></p-checkbox>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="5">No se encontraron sugerencias</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <div
+        class="flex flex-row align-items-center justify-content-end mt-3 w-full"
+    >
+        <button
+            pButton
+            pRipple
+            label="Aplicar sugerencia"
+            class="p-button-primary p-button-sm"
+            [disabled]="!tieneSeleccionadas()"
+            (click)="aplicarSugerencias()"
+        ></button>
+    </div>
+</p-panel>

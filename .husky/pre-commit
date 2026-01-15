@@ -6,7 +6,7 @@ if ! git diff --cached --name-only -- "src/app/modules/gestion-matricula-academi
 fi
 
 if command -v npx >/dev/null 2>&1; then
-  npx lint-staged
+  npx lint-staged --no-stash
 else
-  bunx lint-staged
+  bunx lint-staged --no-stash
 fi

@@ -22,7 +22,7 @@ import { AprobarMatriculaEstudianteComponent } from './components/aprobar-matric
 import { ListadoMatriculasComponent } from './components/listado-matriculas/listado-matriculas.component';
 import { ReporteCursosOfertadosComponent } from './components/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
 import { ReporteCentroPostgradosComponent } from './components/reporte-centro-postgrados/reporte-centro-postgrados.component';
-import { TipoCorreosComponent } from './components/tipo-correos/tipo-correos.component';
+import { TipoNotificacionComponent } from './components/tipo-notificacion/tipo-notificacion.component';
 import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-matricula-final/enviar-correo-matricula-final.component';
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
 import { BuscadorEstudiantesAcademicoComponent } from './components/buscador-estudiantes-academico/buscador-estudiantes-academico.component';
@@ -33,7 +33,7 @@ import { BuscadorEstudiantesAcademicoComponent } from './components/buscador-est
         GestionCursoComponent,
         ReporteCursosOfertadosComponent,
         ReporteCentroPostgradosComponent,
-        TipoCorreosComponent,
+        TipoNotificacionComponent,
         EnviarCorreoMatriculaFinalComponent,
         EnviarCorreoMatriculaFinalEstudianteComponent,
         RegistrarCursoComponent,

@@ -3,6 +3,7 @@ export interface TipoCorreo {
     label: string;
     descripcion: string;
     icon: string;
+    ruta: string;
 }
 
 // Curso usado en flujos de correo.

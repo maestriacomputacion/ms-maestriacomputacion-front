@@ -1,6 +1,6 @@
 <p-panel>
     <p-header>
-        <b>TIPO DE NOTIFICACIONES</b>
+        <b>TIPO DE NOTIFICACIÓN</b>
     </p-header>
 
     <div class="surface-card border-1 border-200 border-round p-4">
@@ -20,10 +20,10 @@
                         <button
                             pButton
                             pRipple
-                            label="Enviar correo"
+                            label="Ir"
                             class="p-button-primary p-button-sm"
-                            icon="pi pi-envelope"
-                            (click)="seleccionar(tipo)"
+                            icon="pi pi-arrow-right"
+                            [routerLink]="tipo.ruta"
                         ></button>
                     </div>
                 </div>

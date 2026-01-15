@@ -2,21 +2,16 @@ import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
 import { AsignaturaModel, DocenteModel } from './curso.model';
 import { MaterialApoyo } from './material-apoyo';
 
-// Detalle de curso para payload de matricula.
-export interface CursoMatriculaDetalle {
-    cursoId: number;
+// Estudiante para payload de matricula por curso.
+export interface EstudianteMatriculaCurso {
+    estudianteId: number;
     observacion: string;
 }
 
-// Estudiante con cursos para payload de matricula.
-export interface EstudianteMatriculaCurso {
-    estudianteId: number;
-    cursos: CursoMatriculaDetalle[];
-}
-
-// Contenedor del request de matricula por estudiantes.
+// Contenedor del request de matricula por curso.
 export interface MatriculaEstudiantesRequest {
-    matriculaEstudianteCursos: EstudianteMatriculaCurso[];
+    cursoId: number;
+    estudiantes: EstudianteMatriculaCurso[];
 }
 
 // Docente usado en respuestas de matricula.

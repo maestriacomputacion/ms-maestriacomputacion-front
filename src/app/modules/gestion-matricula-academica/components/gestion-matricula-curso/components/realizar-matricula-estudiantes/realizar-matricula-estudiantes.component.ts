@@ -375,17 +375,11 @@ export class RealizarMatriculaEstudiantesComponent
 
     private procesarMatricula(): void {
         const payload: MatriculaEstudiantesRequest = {
-            matriculaEstudianteCursos: this.estudiantesMatricular.map(
-                (estudiante) => ({
-                    estudianteId: estudiante.id,
-                    cursos: [
-                        {
-                            cursoId: this.cursoId,
-                            observacion: estudiante.observaciones || '',
-                        },
-                    ],
-                })
-            ),
+            cursoId: this.cursoId!,
+            estudiantes: this.estudiantesMatricular.map((estudiante) => ({
+                estudianteId: estudiante.id,
+                observacion: estudiante.observaciones || '',
+            })),
         };
 
         this.loading = true;

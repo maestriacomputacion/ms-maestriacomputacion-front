@@ -17,8 +17,7 @@ export class TipoNotificacionComponent {
         },
         {
             label: 'Notificar por cursos',
-            descripcion:
-                'Notifica la matrícula final organizada por cursos.',
+            descripcion: 'Notifica la matrícula final organizada por cursos.',
             icon: 'pi pi-book',
             ruta: '/gestion-matricula-academica/enviar-correo-matricula-final',
         },

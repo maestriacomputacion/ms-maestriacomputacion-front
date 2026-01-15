@@ -9,6 +9,14 @@ run_cmd() {
   fi
 }
 
+run_script() {
+  if command -v npm >/dev/null 2>&1; then
+    npm run "$@"
+  else
+    bun run "$@"
+  fi
+}
+
 should_check=false
 while read -r local_ref local_sha remote_ref remote_sha; do
   if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
@@ -26,5 +34,5 @@ if [ "$should_check" != "true" ]; then
   exit 0
 fi
 
-ESLINT_USE_FLAT_CONFIG=true run_cmd eslint "src/app/modules/gestion-matricula-academica/**/*.ts" --max-warnings=0
+run_script lint:strict
 run_cmd prettier --check "src/app/modules/gestion-matricula-academica/**/*.{ts,html,scss,css}"

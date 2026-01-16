@@ -1,7 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+    AbstractControl,
+    FormBuilder,
+    FormGroup,
+    Validators,
+} from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import {
     debounceTime,
@@ -349,63 +354,83 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     private setupValidacionExistenciaCurso(): void {
         const grupoControl = this.form.get('grupo');
-        if (grupoControl && !this.isEditMode && !this.isViewMode) {
-            const sub = grupoControl.valueChanges
-                .pipe(
-                    debounceTime(400),
-                    distinctUntilChanged(),
-                    filter(
-                        (value: string) =>
-                            !!value &&
-                            value.length > 0 &&
-                            !!this.asignatura &&
-                            !!this.asignatura.id
-                    ),
-                    switchMap((value: string) => {
-                        const asignaturaId = this.asignatura
-                            ? this.asignatura.id || 0
-                            : 0;
-                        return this.cursoService.verificarCursoExistente(
-                            value,
-                            asignaturaId
-                        );
-                    })
-                )
-                .subscribe({
-                    next: (response) => {
-                        if (
-                            response?.typeResponse === 'SUCCESS' &&
-                            response?.data === true
-                        ) {
-                            const detail = response.message || null;
-                            this.cursoExistsMessage = detail;
-                            grupoControl.setErrors({ exists: true });
-                        } else {
-                            this.cursoExistsMessage = null;
-                            const errors = grupoControl.errors || {};
-                            if (errors.exists) delete errors.exists;
-                            if (Object.keys(errors).length === 0) {
-                                grupoControl.setErrors(null);
-                            } else {
-                                grupoControl.setErrors(errors);
-                            }
-                        }
-                    },
-                    error: (err) => {
-                        const detail =
-                            err?.error?.message || err?.message || null;
-                        this.cursoExistsMessage = detail;
-                        if (detail) {
-                            this.messageService.add({
-                                severity: 'warn',
-                                summary: 'Atención',
-                                detail,
-                            });
-                        }
-                    },
-                });
-            this.subs.push(sub);
+        if (!grupoControl || this.isEditMode || this.isViewMode) {
+            return;
         }
+
+        const sub = grupoControl.valueChanges
+            .pipe(
+                debounceTime(400),
+                distinctUntilChanged(),
+                filter((value: string) =>
+                    this.debeVerificarCursoExistente(value)
+                ),
+                switchMap((value: string) =>
+                    this.cursoService.verificarCursoExistente(
+                        value,
+                        this.obtenerIdAsignatura()
+                    )
+                )
+            )
+            .subscribe({
+                next: (response) =>
+                    this.manejarRespuestaCursoExistente(
+                        response,
+                        grupoControl
+                    ),
+                error: (err) => this.manejarErrorCursoExistente(err),
+            });
+        this.subs.push(sub);
+    }
+
+    private debeVerificarCursoExistente(value: string): boolean {
+        return (
+            !!value &&
+            value.length > 0 &&
+            !!this.asignatura &&
+            !!this.asignatura.id
+        );
+    }
+
+    private obtenerIdAsignatura(): number {
+        return this.asignatura ? this.asignatura.id || 0 : 0;
+    }
+
+    private manejarRespuestaCursoExistente(
+        response: { typeResponse?: string; data?: boolean; message?: string },
+        grupoControl: AbstractControl
+    ): void {
+        if (response?.typeResponse === 'SUCCESS' && response?.data === true) {
+            const detail = response.message || null;
+            this.cursoExistsMessage = detail;
+            grupoControl.setErrors({ exists: true });
+            return;
+        }
+
+        this.cursoExistsMessage = null;
+        const errors = grupoControl.errors || {};
+        if (errors.exists) {
+            delete errors.exists;
+        }
+        grupoControl.setErrors(
+            Object.keys(errors).length === 0 ? null : errors
+        );
+    }
+
+    private manejarErrorCursoExistente(err: {
+        error?: { message?: string };
+        message?: string;
+    }): void {
+        const detail = err?.error?.message || err?.message || null;
+        this.cursoExistsMessage = detail;
+        if (!detail) {
+            return;
+        }
+        this.messageService.add({
+            severity: 'warn',
+            summary: 'Atención',
+            detail,
+        });
     }
 
     private cargarAsignaturas(): void {

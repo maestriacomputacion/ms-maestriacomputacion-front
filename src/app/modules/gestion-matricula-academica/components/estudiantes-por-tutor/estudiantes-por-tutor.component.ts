@@ -16,11 +16,11 @@ interface EstudianteListado {
 }
 
 @Component({
-    selector: 'app-sugerencias-matricula',
-    templateUrl: './sugerencias-matricula.component.html',
-    styleUrls: ['./sugerencias-matricula.component.scss'],
+    selector: 'app-estudiantes-por-tutor',
+    templateUrl: './estudiantes-por-tutor.component.html',
+    styleUrls: ['./estudiantes-por-tutor.component.scss'],
 })
-export class SugerenciasMatriculaComponent implements OnInit {
+export class EstudiantesPorTutorComponent implements OnInit {
     loading: boolean = false;
     periodo: number = 2;
     anio: number = 2025;
@@ -145,7 +145,7 @@ export class SugerenciasMatriculaComponent implements OnInit {
     }
 
     private setTutorData(): void {
-        const tutorIdParam = this.route.snapshot.queryParamMap.get('tutorId');
+        const tutorIdParam = this.route.snapshot.paramMap.get('tutorId');
 
         this.tutorId = tutorIdParam ? Number(tutorIdParam) : null;
 

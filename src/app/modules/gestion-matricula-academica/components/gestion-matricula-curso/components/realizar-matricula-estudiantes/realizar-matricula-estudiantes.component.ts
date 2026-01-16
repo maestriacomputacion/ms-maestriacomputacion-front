@@ -312,8 +312,7 @@ export class RealizarMatriculaEstudiantesComponent
                             this.messageService.add({
                                 severity: 'warn',
                                 summary: 'Advertencia',
-                                detail:
-                                    'No se encontró la asignatura del curso para listar estudiantes disponibles',
+                                detail: 'No se encontró la asignatura del curso para listar estudiantes disponibles',
                             });
                         }
                     } else {

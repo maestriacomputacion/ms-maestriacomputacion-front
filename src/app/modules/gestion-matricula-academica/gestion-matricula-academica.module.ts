@@ -27,7 +27,7 @@ import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
 import { BuscadorEstudiantesAcademicoComponent } from './components/buscador-estudiantes-academico/buscador-estudiantes-academico.component';
 import { ListadoTutoresComponent } from './components/listado-tutores/listado-tutores.component';
-import { SugerenciasMatriculaComponent } from './components/sugerencias-matricula/sugerencias-matricula.component';
+import { EstudiantesPorTutorComponent } from './components/estudiantes-por-tutor/estudiantes-por-tutor.component';
 
 @NgModule({
     declarations: [
@@ -52,7 +52,7 @@ import { SugerenciasMatriculaComponent } from './components/sugerencias-matricul
         ListadoMatriculasComponent,
         ListadoTutoresComponent,
         BuscadorEstudiantesAcademicoComponent,
-        SugerenciasMatriculaComponent,
+        EstudiantesPorTutorComponent,
     ],
     imports: [
         CommonModule,

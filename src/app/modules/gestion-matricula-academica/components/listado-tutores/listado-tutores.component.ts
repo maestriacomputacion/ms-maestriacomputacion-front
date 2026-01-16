@@ -60,11 +60,8 @@ export class ListadoTutoresComponent implements OnInit {
     verDetallesTutor(tutor: TutorListado): void {
         this.router.navigate([
             '/gestion-matricula-academica',
-            'sugerencias-matricula',
-        ], {
-            queryParams: {
-                tutorId: tutor.docenteId,
-            },
-        });
+            'estudiantes-por-tutor',
+            tutor.docenteId,
+        ]);
     }
 }

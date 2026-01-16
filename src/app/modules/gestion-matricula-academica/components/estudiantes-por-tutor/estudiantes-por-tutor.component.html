@@ -13,13 +13,13 @@
         <div class="flex align-items-center gap-2">
             <span class="font-semibold text-900">Codigo:</span>
             <span class="text-700 font-normal">{{
-                codigoTutor || 'Sin dato'
+                codigoTutor || "Sin dato"
             }}</span>
         </div>
         <div class="flex align-items-center gap-2">
             <span class="font-semibold text-900">Correo:</span>
             <span class="text-700 font-normal">{{
-                correoTutor || 'Sin dato'
+                correoTutor || "Sin dato"
             }}</span>
         </div>
     </div>
@@ -69,11 +69,7 @@
                     Codigo
                     <p-sortIcon field="codigo"></p-sortIcon>
                 </th>
-                <th
-                    class="text-center"
-                    scope="col"
-                    pSortableColumn="nombre"
-                >
+                <th class="text-center" scope="col" pSortableColumn="nombre">
                     Nombre y apellido
                     <p-sortIcon field="nombre"></p-sortIcon>
                 </th>
@@ -122,15 +118,15 @@
                     {{ estudiante.nombre }} {{ estudiante.apellido }}
                 </td>
                 <td class="text-center">
-                    {{ estudiante.correoUniversitario || 'Sin dato' }}
+                    {{ estudiante.correoUniversitario || "Sin dato" }}
                 </td>
                 <td class="text-center">
-                    {{ estudiante.estadoPrematricula || 'Sin dato' }}
+                    {{ estudiante.estadoPrematricula || "Sin dato" }}
                 </td>
                 <td class="text-center">
                     {{
                         estudiante.cantidadCursos === null
-                            ? 'Sin dato'
+                            ? "Sin dato"
                             : estudiante.cantidadCursos
                     }}
                 </td>
@@ -186,3 +182,4 @@
             (click)="aplicarSugerencias()"
         ></button>
     </div>
+</p-panel>

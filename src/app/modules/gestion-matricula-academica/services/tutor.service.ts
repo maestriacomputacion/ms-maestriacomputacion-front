@@ -20,9 +20,7 @@ export class TutorService {
     // Endpoint: listar tutores con cantidad de estudiantes
     getTutores(): Observable<ApiResponse<TutorListado[]>> {
         return this.http
-            .get<ApiResponse<TutorListadoBackend[]>>(
-                `${this.backend}/tutores`
-            )
+            .get<ApiResponse<TutorListadoBackend[]>>(`${this.backend}/tutores`)
             .pipe(
                 map((response) => ({
                     typeResponse: response.typeResponse,

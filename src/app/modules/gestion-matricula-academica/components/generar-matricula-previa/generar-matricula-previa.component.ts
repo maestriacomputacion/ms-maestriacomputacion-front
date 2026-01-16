@@ -86,17 +86,23 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         }
 
         // Verificar si hay IDs diferentes
-        const idsActuales = this.asignaturas.map((a) => a.id).sort();
-        const idsIniciales = this.asignaturasIniciales.map((a) => a.id).sort();
+        const idsActuales = this.asignaturas
+            .map((a) => a.id)
+            .sort((a, b) => a - b);
+        const idsIniciales = this.asignaturasIniciales
+            .map((a) => a.id)
+            .sort((a, b) => a - b);
 
         return !idsActuales.every((id, index) => id === idsIniciales[index]);
     }
 
     get textoBotonMatricular(): string {
         // Verificar si hay matrículas nuevas (IDs que no estaban en las iniciales)
-        const idsIniciales = this.asignaturasIniciales.map((a) => a.id);
+        const idsIniciales = new Set(
+            this.asignaturasIniciales.map((a) => a.id)
+        );
         const hayMatriculasNuevas = this.asignaturas.some(
-            (a) => !idsIniciales.includes(a.id)
+            (a) => !idsIniciales.has(a.id)
         );
 
         // Si hay matrículas nuevas, mostrar "Matricular"
@@ -109,9 +115,11 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
 
     get iconoBotonMatricular(): string {
         // Verificar si hay matrículas nuevas
-        const idsIniciales = this.asignaturasIniciales.map((a) => a.id);
+        const idsIniciales = new Set(
+            this.asignaturasIniciales.map((a) => a.id)
+        );
         const hayMatriculasNuevas = this.asignaturas.some(
-            (a) => !idsIniciales.includes(a.id)
+            (a) => !idsIniciales.has(a.id)
         );
 
         return hayMatriculasNuevas ? 'pi pi-check' : 'pi pi-save';
@@ -413,8 +421,8 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                             })
                         );
                         // Guardar copia de las asignaturas iniciales
-                        this.asignaturasIniciales = JSON.parse(
-                            JSON.stringify(this.asignaturas)
+                        this.asignaturasIniciales = this.asignaturas.map(
+                            (asignatura) => ({ ...asignatura })
                         );
                     } else {
                         this.asignaturas = [];
@@ -438,7 +446,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                 const apellido = doc.persona?.apellido || '';
                 return `${nombre} ${apellido}`.trim();
             })
-            .filter((n) => n)
+            .filter(Boolean)
             .join(', ');
     }
 

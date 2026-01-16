@@ -252,8 +252,9 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     removeSelectedMaterial(event: Event, material: MaterialApoyo): void {
         if (!material) return;
 
+        const target = event.target ?? event.currentTarget;
         this.confirmationService.confirm({
-            target: event.target as HTMLElement,
+            target: target ?? undefined,
             message: '¿Quitar el material seleccionado?',
             acceptLabel: 'Sí­',
             rejectLabel: 'No',
@@ -403,7 +404,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                         }
                     },
                 });
-            this.subs.push(sub as Subscription);
+            this.subs.push(sub);
         }
     }
 

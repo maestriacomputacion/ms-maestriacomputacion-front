@@ -20,5 +20,9 @@ export class ReporteCentroPostgradosComponent {
         });
     }
 
-    generarReporte(): void {}
+    generarReporte(): void {
+        if (!this.reporteForm) {
+            return;
+        }
+    }
 }

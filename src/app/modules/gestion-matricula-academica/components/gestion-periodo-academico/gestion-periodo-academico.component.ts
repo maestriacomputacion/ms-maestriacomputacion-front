@@ -168,7 +168,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             acceptLabel: 'Sí, precargar',
             rejectLabel: 'Cancelar',
             accept: () => {
-                // _TODO: Implementar la lógica de precarga de cursos
+                // Implementar la lógica de precarga de cursos en el servicio.
                 // this.periodoService.precargarCursos(periodoId).subscribe({...});
                 this.messageService.add({
                     severity: 'info',

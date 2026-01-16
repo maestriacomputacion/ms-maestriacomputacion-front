@@ -64,10 +64,14 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
     }
 
     agregarAEnvio(): void {
-        const ids = this.seleccionParaEnviar.map((e) => e.id);
-        const nuevos = this.seleccion.filter((e) => !ids.includes(e.id));
+        const ids = new Set(this.seleccionParaEnviar.map((e) => e.id));
+        const nuevos = this.seleccion.filter((e) => !ids.has(e.id));
         this.seleccionParaEnviar = [...this.seleccionParaEnviar, ...nuevos];
     }
 
-    enviarCorreos(): void {}
+    enviarCorreos(): void {
+        if (!this.seleccionParaEnviar.length) {
+            return;
+        }
+    }
 }

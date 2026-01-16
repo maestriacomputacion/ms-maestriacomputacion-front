@@ -173,8 +173,9 @@ export class RealizarMatriculaEstudiantesComponent
             return;
         }
 
+        const target = event?.target ?? event?.currentTarget;
         this.confirmationService.confirm({
-            target: event?.target as HTMLElement,
+            target: target ?? undefined,
             message: `¿Está seguro de matricular ${this.estudiantesMatricular.length} estudiante(s) en este curso?`,
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí, matricular',
@@ -339,9 +340,13 @@ export class RealizarMatriculaEstudiantesComponent
     }
 
     private validarYAgregarEstudiante(estudiante: EstudianteExtendido): void {
+        const cursoId = this.cursoId;
+        if (!cursoId) {
+            return;
+        }
         this.loading = true;
         this.matriculaCursoService
-            .validarMatriculaEnCurso(estudiante.id, this.cursoId!)
+            .validarMatriculaEnCurso(estudiante.id, cursoId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -383,8 +388,12 @@ export class RealizarMatriculaEstudiantesComponent
     }
 
     private procesarMatricula(): void {
+        const cursoId = this.cursoId;
+        if (!cursoId) {
+            return;
+        }
         const payload: MatriculaEstudiantesRequest = {
-            cursoId: this.cursoId!,
+            cursoId,
             estudiantes: this.estudiantesMatricular.map((estudiante) => ({
                 estudianteId: estudiante.id,
                 observacion: estudiante.observaciones || '',

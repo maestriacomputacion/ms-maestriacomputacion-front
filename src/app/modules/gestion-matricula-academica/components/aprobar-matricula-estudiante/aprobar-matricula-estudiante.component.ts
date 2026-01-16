@@ -178,8 +178,9 @@ export class AprobarMatriculaEstudianteComponent implements OnInit {
     }
 
     onAprobar(event: Event, matricula: MatriculaRealizada): void {
+        const target = event.target ?? event.currentTarget;
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
+            target: target ?? undefined,
             message: '¿Está seguro de aprobar esta matrícula?',
             icon: 'pi pi-check-circle',
             acceptLabel: 'Sí, aprobar',
@@ -196,8 +197,9 @@ export class AprobarMatriculaEstudianteComponent implements OnInit {
     }
 
     onRechazar(event: Event, matricula: MatriculaRealizada): void {
+        const target = event.target ?? event.currentTarget;
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
+            target: target ?? undefined,
             message: '¿Está seguro de rechazar esta matrícula?',
             icon: 'pi pi-times-circle',
             acceptLabel: 'Sí, rechazar',

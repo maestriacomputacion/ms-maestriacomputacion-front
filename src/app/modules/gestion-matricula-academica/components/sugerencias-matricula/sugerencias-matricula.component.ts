@@ -1,21 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { TutorService } from '../../services/tutor.service';
+import { Estudiante } from '../../../gestion-estudiantes/models/estudiante';
 
-interface SugerenciaAsignatura {
+interface EstudianteListado {
     id: number;
-    asignatura: string;
-    estado: string;
-    observaciones: string;
-    cumpleRequisitos: boolean;
-    validarPreRequisito: boolean;
-    compatibleConHorario: boolean;
-    superposicionHorario: boolean;
-    seleccionada: boolean;
-}
-
-interface OpcionEstudiante {
-    label: string;
-    value: number | string;
+    codigo: string;
+    nombre: string;
+    apellido: string;
+    correoUniversitario: string;
+    estadoPrematricula: string;
+    cantidadCursos: number | null;
+    seleccionado: boolean;
 }
 
 @Component({
@@ -28,130 +25,204 @@ export class SugerenciasMatriculaComponent implements OnInit {
     periodo: number = 2;
     anio: number = 2025;
     nombreTutor: string = 'Daniel Paz';
+    codigoTutor: string = '';
+    correoTutor: string = '';
+    tutorId: number | null = null;
 
-    estudianteSeleccionado: number | string = 'todos';
-    estudiantes: OpcionEstudiante[] = [];
+    estudiantesListado: EstudianteListado[] = [];
+    estudiantesFiltrados: EstudianteListado[] = [];
 
-    sugerencias: SugerenciaAsignatura[] = [];
-
-    constructor(private readonly messageService: MessageService) {}
+    constructor(
+        private readonly messageService: MessageService,
+        private readonly tutorService: TutorService,
+        private readonly route: ActivatedRoute
+    ) {}
 
     ngOnInit(): void {
+        this.setTutorData();
+        this.loadTutorInfo();
         this.cargarEstudiantes();
-        this.cargarSugerencias();
     }
 
     cargarEstudiantes(): void {
-        // Datos de ejemplo - reemplazar con servicio real
-        this.estudiantes = [
-            { label: 'Todo los estudiantes', value: 'todos' },
-            { label: 'Juan Pérez', value: 1 },
-            { label: 'María García', value: 2 },
-            { label: 'Pedro Martínez', value: 3 },
-        ];
-    }
+        if (!this.tutorId) {
+            this.estudiantesListado = [];
+            this.estudiantesFiltrados = [];
+            return;
+        }
 
-    cargarSugerencias(): void {
-        // Datos de ejemplo - reemplazar con servicio real
-        this.sugerencias = [
-            {
-                id: 1,
-                asignatura: 'Bases de Datos',
-                estado: 'Aprobado',
-                observaciones: 'Cumple requisitos',
-                cumpleRequisitos: true,
-                validarPreRequisito: false,
-                compatibleConHorario: false,
-                superposicionHorario: false,
-                seleccionada: false,
+        this.loading = true;
+        this.tutorService.getEstudiantesPorTutor(this.tutorId).subscribe({
+            next: (response) => {
+                if (response.typeResponse === 'SUCCESS') {
+                    const estudiantesResponse = response.data ?? [];
+                    this.estudiantesListado =
+                        this.mapEstudiantesListado(estudiantesResponse);
+                    this.estudiantesFiltrados = [...this.estudiantesListado];
+                } else {
+                    this.estudiantesListado = [];
+                    this.estudiantesFiltrados = [];
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Advertencia',
+                        detail:
+                            response.message ||
+                            'No se pudieron cargar los estudiantes',
+                    });
+                }
+                this.loading = false;
             },
-            {
-                id: 2,
-                asignatura: 'Aprendizaje Profundo',
-                estado: 'Aprobado',
-                observaciones: 'Falta validar pre-requisito',
-                cumpleRequisitos: false,
-                validarPreRequisito: true,
-                compatibleConHorario: false,
-                superposicionHorario: false,
-                seleccionada: false,
+            error: (err) => {
+                console.error('Error cargando estudiantes', err);
+                const detail =
+                    err?.error?.message ||
+                    err?.message ||
+                    'Error al cargar los estudiantes';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail,
+                });
+                this.estudiantesListado = [];
+                this.estudiantesFiltrados = [];
+                this.loading = false;
             },
-            {
-                id: 3,
-                asignatura: 'Ingeniería de Software',
-                estado: 'Aprobado',
-                observaciones: 'Compatible con horario',
-                cumpleRequisitos: false,
-                validarPreRequisito: false,
-                compatibleConHorario: true,
-                superposicionHorario: false,
-                seleccionada: false,
-            },
-            {
-                id: 4,
-                asignatura: 'Fundamentos de Computación',
-                estado: 'Aprobado',
-                observaciones: 'Superposición de horario',
-                cumpleRequisitos: false,
-                validarPreRequisito: false,
-                compatibleConHorario: false,
-                superposicionHorario: true,
-                seleccionada: false,
-            },
-        ];
-    }
-
-    onEstudianteChange(): void {
-        this.cargarSugerencias();
+        });
     }
 
     seleccionarTodos(event: { checked: boolean }): void {
         const seleccionado = event.checked;
-        this.sugerencias.forEach((s) => (s.seleccionada = seleccionado));
+        this.estudiantesFiltrados.forEach(
+            (estudiante) => (estudiante.seleccionado = seleccionado)
+        );
     }
 
     verificarTodosSeleccionados(): boolean {
         return (
-            this.sugerencias.length > 0 &&
-            this.sugerencias.every((s) => s.seleccionada)
+            this.estudiantesFiltrados.length > 0 &&
+            this.estudiantesFiltrados.every((s) => s.seleccionado)
         );
     }
 
-    aprobarSugerencia(sugerencia: SugerenciaAsignatura): void {
+    aprobarEstudiante(estudiante: EstudianteListado): void {
         this.messageService.add({
             severity: 'success',
             summary: 'Aprobado',
-            detail: `Sugerencia para ${sugerencia.asignatura} aprobada`,
+            detail: `Estudiante ${estudiante.nombre} ${estudiante.apellido} aprobado`,
         });
     }
 
-    rechazarSugerencia(sugerencia: SugerenciaAsignatura): void {
+    rechazarEstudiante(estudiante: EstudianteListado): void {
         this.messageService.add({
             severity: 'info',
             summary: 'Rechazado',
-            detail: `Sugerencia para ${sugerencia.asignatura} rechazada`,
+            detail: `Estudiante ${estudiante.nombre} ${estudiante.apellido} rechazado`,
         });
     }
 
     tieneSeleccionadas(): boolean {
-        return this.sugerencias.some((s) => s.seleccionada);
+        return this.estudiantesListado.some((s) => s.seleccionado);
     }
 
     aplicarSugerencias(): void {
-        const seleccionadas = this.sugerencias.filter((s) => s.seleccionada);
+        const seleccionadas = this.estudiantesListado.filter(
+            (s) => s.seleccionado
+        );
         if (seleccionadas.length === 0) {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Sin seleccion',
-                detail: 'Selecciona al menos una sugerencia para aplicar.',
+                detail: 'Selecciona al menos un estudiante para aplicar.',
             });
             return;
         }
 
         this.messageService.add({
             severity: 'success',
-            summary: 'Sugerencias aplicadas',
-            detail: `Se aplicaron ${seleccionadas.length} sugerencias.`,
+            summary: 'Seleccion aplicada',
+            detail: `Se aplico a ${seleccionadas.length} estudiantes.`,
+        });
+    }
+
+    private setTutorData(): void {
+        const tutorIdParam = this.route.snapshot.queryParamMap.get('tutorId');
+
+        this.tutorId = tutorIdParam ? Number(tutorIdParam) : null;
+
+        if (!this.tutorId) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'No se encontro el tutor seleccionado.',
+            });
+        }
+    }
+
+    private loadTutorInfo(): void {
+        if (!this.tutorId) {
+            return;
+        }
+
+        this.tutorService.getTutores().subscribe({
+            next: (response) => {
+                if (response.typeResponse !== 'SUCCESS') {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Advertencia',
+                        detail:
+                            response.message ||
+                            'No se pudo cargar la informacion del tutor',
+                    });
+                    return;
+                }
+
+                const tutor = (response.data ?? []).find(
+                    (item) => item.docenteId === this.tutorId
+                );
+                if (!tutor) {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Advertencia',
+                        detail: 'No se encontro informacion del tutor.',
+                    });
+                    return;
+                }
+
+                this.nombreTutor = tutor.nombre;
+                this.codigoTutor = tutor.codigo || '';
+                this.correoTutor = tutor.correo || '';
+            },
+            error: (err) => {
+                console.error('Error cargando tutor', err);
+                const detail =
+                    err?.error?.message ||
+                    err?.message ||
+                    'Error al cargar la informacion del tutor';
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail,
+                });
+            },
+        });
+    }
+
+    private mapEstudiantesListado(
+        estudiantes: Estudiante[]
+    ): EstudianteListado[] {
+        return estudiantes.map((estudiante) => {
+            const persona = estudiante.persona;
+
+            return {
+                id: estudiante.id ?? 0,
+                codigo: estudiante.codigo ?? '',
+                nombre: persona?.nombre ?? '',
+                apellido: persona?.apellido ?? '',
+                correoUniversitario: estudiante.correoUniversidad ?? '',
+                estadoPrematricula: '',
+                cantidadCursos: null,
+                seleccionado: false,
+            };
         });
     }
 }

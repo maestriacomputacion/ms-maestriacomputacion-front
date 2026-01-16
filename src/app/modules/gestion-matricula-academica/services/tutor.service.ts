@@ -7,6 +7,7 @@ import {
     TutorListadoBackend,
 } from '../models/tutor-listado.model';
 import { matricula_academica } from 'src/environments/environment';
+import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
 
 @Injectable({
     providedIn: 'root',
@@ -46,5 +47,14 @@ export class TutorService {
                     }),
                 }))
             );
+    }
+
+    // Endpoint: listar estudiantes por tutor
+    getEstudiantesPorTutor(
+        tutorId: number
+    ): Observable<ApiResponse<Estudiante[]>> {
+        return this.http.get<ApiResponse<Estudiante[]>>(
+            `${this.backend}/tutores/${tutorId}/estudiantes`
+        );
     }
 }

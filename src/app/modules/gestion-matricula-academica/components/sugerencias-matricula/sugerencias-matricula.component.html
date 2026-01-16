@@ -2,79 +2,107 @@
 
 <p-panel>
     <p-header>
-        <b>SUGERENCIAS DE MATRICULA</b>
+        <b>ESTUDIANTES POR TUTOR</b>
     </p-header>
 
-    <div class="w-20rem">
-        <div class="flex flex-column gap-3 mb-3">
-            <div class="flex align-items-center gap-2">
-                <span class="font-medium mb-1 w-12rem white-space-normal"
-                    >Periodo</span
-                >
-                <span class="text-900 flex-1 min-w-0">{{ periodo }}</span>
-            </div>
-            <div class="flex align-items-center gap-2">
-                <span class="font-medium mb-1 w-12rem white-space-normal"
-                    >Año</span
-                >
-                <span class="text-900 flex-1 min-w-0">{{ anio }}</span>
-            </div>
-            <div class="flex align-items-center gap-2">
-                <span class="font-medium mb-1 w-12rem white-space-normal"
-                    >Nombre del tutor</span
-                >
-                <span class="text-900 flex-1 min-w-0">{{ nombreTutor }}</span>
-            </div>
-            <div class="flex align-items-center gap-2">
-                <label
-                    for="estudiante"
-                    class="font-medium mb-1 w-12rem white-space-normal"
-                    >Estudiante</label
-                >
-                <p-dropdown
-                    id="estudiante"
-                    [options]="estudiantes"
-                    [(ngModel)]="estudianteSeleccionado"
-                    optionLabel="label"
-                    optionValue="value"
-                    class="w-full flex-1 min-w-0"
-                    (onChange)="onEstudianteChange()"
-                ></p-dropdown>
-            </div>
+    <div class="mb-1 flex align-items-center gap-2 text-base">
+        <span class="font-semibold text-900">Tutor:</span>
+        <span class="text-700 font-normal">{{ nombreTutor }}</span>
+    </div>
+    <div class="mb-3 flex flex-column gap-1 text-base">
+        <div class="flex align-items-center gap-2">
+            <span class="font-semibold text-900">Codigo:</span>
+            <span class="text-700 font-normal">{{
+                codigoTutor || 'Sin dato'
+            }}</span>
+        </div>
+        <div class="flex align-items-center gap-2">
+            <span class="font-semibold text-900">Correo:</span>
+            <span class="text-700 font-normal">{{
+                correoTutor || 'Sin dato'
+            }}</span>
         </div>
     </div>
 
+    <div
+        class="flex flex-row align-items-center justify-content-between mb-3 w-full"
+    >
+        <div class="w-6">
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Buscar por codigo, nombre, apellido o correo..."
+                    (input)="
+                        tablaEstudiantes.filterGlobal(
+                            $event.target.value,
+                            'contains'
+                        )
+                    "
+                />
+            </span>
+        </div>
+    </div>
     <p-table
-        [value]="sugerencias"
+        #tablaEstudiantes
+        [value]="estudiantesFiltrados"
         [loading]="loading"
-        [paginator]="false"
+        [paginator]="true"
+        [rows]="10"
+        [totalRecords]="estudiantesFiltrados?.length || 0"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
         responsiveLayout="scroll"
         styleClass="p-datatable-gridlines p-datatable-striped"
+        [globalFilterFields]="[
+            'codigo',
+            'nombre',
+            'apellido',
+            'correoUniversitario'
+        ]"
     >
         <ng-template pTemplate="header">
             <tr>
-                <th
-                    class="text-center"
-                    scope="col"
-                    pSortableColumn="asignatura"
-                >
-                    Asignatura
-                    <p-sortIcon field="asignatura"></p-sortIcon>
-                </th>
-                <th class="text-center" scope="col" pSortableColumn="estado">
-                    Estado
-                    <p-sortIcon field="estado"></p-sortIcon>
+                <th class="text-center" scope="col" pSortableColumn="codigo">
+                    Codigo
+                    <p-sortIcon field="codigo"></p-sortIcon>
                 </th>
                 <th
                     class="text-center"
                     scope="col"
-                    pSortableColumn="observaciones"
+                    pSortableColumn="nombre"
                 >
-                    Observaciones
-                    <p-sortIcon field="observaciones"></p-sortIcon>
+                    Nombre y apellido
+                    <p-sortIcon field="nombre"></p-sortIcon>
+                </th>
+                <th
+                    class="text-center"
+                    scope="col"
+                    pSortableColumn="correoUniversitario"
+                >
+                    Correo universidad
+                    <p-sortIcon field="correoUniversitario"></p-sortIcon>
+                </th>
+                <th
+                    class="text-center"
+                    scope="col"
+                    pSortableColumn="estadoPrematricula"
+                >
+                    Estado prematricula
+                    <p-sortIcon field="estadoPrematricula"></p-sortIcon>
+                </th>
+                <th
+                    class="text-center"
+                    scope="col"
+                    pSortableColumn="cantidadCursos"
+                >
+                    Cantidad cursos
+                    <p-sortIcon field="cantidadCursos"></p-sortIcon>
                 </th>
                 <th class="text-center" scope="col">Opciones</th>
-                <th class="text-center" scope="col" style="width: 100px">
+                <th class="text-center" scope="col" style="width: 110px">
                     <p-checkbox
                         [binary]="true"
                         [ngModel]="verificarTodosSeleccionados()"
@@ -87,11 +115,25 @@
                 </th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-sugerencia>
+        <ng-template pTemplate="body" let-estudiante>
             <tr>
-                <td>{{ sugerencia.asignatura }}</td>
-                <td class="text-center">{{ sugerencia.estado }}</td>
-                <td>{{ sugerencia.observaciones }}</td>
+                <td class="text-center">{{ estudiante.codigo }}</td>
+                <td class="text-center">
+                    {{ estudiante.nombre }} {{ estudiante.apellido }}
+                </td>
+                <td class="text-center">
+                    {{ estudiante.correoUniversitario || 'Sin dato' }}
+                </td>
+                <td class="text-center">
+                    {{ estudiante.estadoPrematricula || 'Sin dato' }}
+                </td>
+                <td class="text-center">
+                    {{
+                        estudiante.cantidadCursos === null
+                            ? 'Sin dato'
+                            : estudiante.cantidadCursos
+                    }}
+                </td>
                 <td class="text-center">
                     <div
                         class="flex align-items-center justify-content-center gap-2"
@@ -103,7 +145,7 @@
                             class="p-button-rounded p-button-success p-button-text p-button-sm"
                             pTooltip="Aprobar"
                             tooltipPosition="top"
-                            (click)="aprobarSugerencia(sugerencia)"
+                            (click)="aprobarEstudiante(estudiante)"
                         ></button>
                         <button
                             pButton
@@ -112,22 +154,22 @@
                             class="p-button-rounded p-button-danger p-button-text p-button-sm"
                             pTooltip="Rechazar"
                             tooltipPosition="top"
-                            (click)="rechazarSugerencia(sugerencia)"
+                            (click)="rechazarEstudiante(estudiante)"
                         ></button>
                     </div>
                 </td>
                 <td class="text-center">
                     <p-checkbox
-                        [(ngModel)]="sugerencia.seleccionada"
+                        [(ngModel)]="estudiante.seleccionado"
                         [binary]="true"
-                        [inputId]="'sel-' + sugerencia.id"
+                        [inputId]="'sel-' + estudiante.id"
                     ></p-checkbox>
                 </td>
             </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td [attr.colspan]="5">No se encontraron sugerencias</td>
+                <td [attr.colspan]="7">No se encontraron estudiantes</td>
             </tr>
         </ng-template>
     </p-table>
@@ -138,10 +180,9 @@
         <button
             pButton
             pRipple
-            label="Aplicar sugerencia"
+            label="Aplicar seleccion"
             class="p-button-primary p-button-sm"
             [disabled]="!tieneSeleccionadas()"
             (click)="aplicarSugerencias()"
         ></button>
     </div>
-</p-panel>

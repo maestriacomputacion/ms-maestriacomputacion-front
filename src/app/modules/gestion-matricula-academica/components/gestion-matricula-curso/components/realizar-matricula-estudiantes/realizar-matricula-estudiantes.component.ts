@@ -56,7 +56,6 @@ export class RealizarMatriculaEstudiantesComponent
                 this.cursoId = +params['id'];
                 this.cargarCurso(this.cursoId);
                 this.cargarEstudiantesMatricular(this.cursoId);
-                this.cargarEstudiantesDisponibles(this.cursoId);
             }
         });
     }
@@ -216,10 +215,10 @@ export class RealizarMatriculaEstudiantesComponent
         return `${fechaInicio} - ${fechaFin}`;
     }
 
-    private cargarEstudiantesDisponibles(cursoId: number): void {
+    private cargarEstudiantesDisponibles(asignaturaId: number): void {
         this.loading = true;
         this.matriculaCursoService
-            .getEstudiantesDisponiblesPorCurso(cursoId)
+            .getEstudiantesDisponiblesPorAsignatura(asignaturaId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -306,6 +305,17 @@ export class RealizarMatriculaEstudiantesComponent
                 next: (response) => {
                     if (response.typeResponse === 'SUCCESS') {
                         this.curso = response.data;
+                        const asignaturaId = this.curso?.asignatura?.id;
+                        if (asignaturaId) {
+                            this.cargarEstudiantesDisponibles(asignaturaId);
+                        } else {
+                            this.messageService.add({
+                                severity: 'warn',
+                                summary: 'Advertencia',
+                                detail:
+                                    'No se encontró la asignatura del curso para listar estudiantes disponibles',
+                            });
+                        }
                     } else {
                         this.messageService.add({
                             severity: 'error',

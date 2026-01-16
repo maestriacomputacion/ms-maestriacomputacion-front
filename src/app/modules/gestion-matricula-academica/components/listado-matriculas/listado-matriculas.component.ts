@@ -70,11 +70,12 @@ export class ListadoMatriculasComponent implements OnInit {
                 const periodoActivo = periodos.find(
                     (p) => p.estado === 'ACTIVO'
                 );
-                const periodoDefaultId = periodoActivo
-                    ? String(periodoActivo.id)
-                    : periodos.length > 0
-                      ? String(periodos[0].id)
-                      : null;
+                let periodoDefaultId: string | null = null;
+                if (periodoActivo) {
+                    periodoDefaultId = String(periodoActivo.id);
+                } else if (periodos.length > 0) {
+                    periodoDefaultId = String(periodos[0].id);
+                }
                 if (periodoDefaultId) {
                     setTimeout(() => {
                         this.selectedPeriodoId = periodoDefaultId;
@@ -168,7 +169,7 @@ export class ListadoMatriculasComponent implements OnInit {
 
     private formatearFecha(fecha?: string | null): string {
         if (!fecha) return '-';
-        return String(fecha).replace(/-/g, '/');
+        return String(fecha).split('-').join('/');
     }
 
     private aplicarFiltrosLocales(): void {

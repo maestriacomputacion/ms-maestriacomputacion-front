@@ -168,9 +168,14 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
             return;
         }
 
+        if (!this.periodoActivo?.id) {
+            console.warn('No hay periodo activo disponible para cargar cursos');
+            return;
+        }
+
         this.loadingCursosPorArea[idArea] = true;
         this.cursoService
-            .getCursos({ idArea })
+            .getCursos({ idArea, idPeriodo: this.periodoActivo.id })
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
@@ -220,6 +225,9 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                 next: (response) => {
                     if (response?.typeResponse === 'SUCCESS' && response.data) {
                         this.periodoActivo = response.data;
+                        if (this.areas.length > 0) {
+                            this.cargarCursosPorArea(this.areas[0].value);
+                        }
                     } else {
                         this.messageService.add({
                             severity: 'warn',
@@ -248,7 +256,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                 next: (response) => {
                     if (response?.typeResponse === 'SUCCESS') {
                         this.areas = response.data || [];
-                        if (this.areas.length > 0) {
+                        if (this.areas.length > 0 && this.periodoActivo?.id) {
                             this.cargarCursosPorArea(this.areas[0].value);
                         }
                     } else {

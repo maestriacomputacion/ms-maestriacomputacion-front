@@ -146,6 +146,15 @@
                             *ngIf="estado !== 'gestion-matricula-curso'"
                             pButton
                             pRipple
+                            icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text p-button-sm p-button-warning"
+                            (click)="onEditarCurso(curso)"
+                            title="Editar"
+                        ></button>
+                        <button
+                            *ngIf="estado !== 'gestion-matricula-curso'"
+                            pButton
+                            pRipple
                             icon="pi pi-trash"
                             class="p-button-rounded p-button-text p-button-sm p-button-danger"
                             (click)="onEliminarCurso($event, curso.id)"

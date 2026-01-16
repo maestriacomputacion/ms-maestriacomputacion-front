@@ -659,18 +659,19 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     private construirPayload(): CursoRegistroPayload {
+        const rawValues = this.form.getRawValue();
         return {
-            grupo: this.form.value.grupo,
+            grupo: rawValues.grupo ?? this.cursoOriginal?.grupo ?? '',
             asignaturaId: this.asignatura?.id || 0,
             docentesIds: this.targetDocentes.map((d) =>
                 d.id ? d.id : Number(d.codigo) || 0
             ),
-            horario: this.form.value.horario,
-            salon: this.form.value.salon,
+            horario: rawValues.horario,
+            salon: rawValues.salon,
             materialApoyoIds: this.selectedMateriales
                 .map((m) => m.id)
                 .filter((id): id is number => typeof id === 'number'),
-            observacion: this.form.value.observacion,
+            observacion: rawValues.observacion,
         };
     }
 

@@ -233,9 +233,11 @@ export class ListadoMatriculasComponent implements OnInit {
         this.aplicarFiltros();
     }
 
-    irAGestionMatriculaCurso(): void {
+    irAGestionMatriculaCurso(cursoId?: number): void {
+        if (!cursoId) return;
         this.router.navigate([
-            '/gestion-matricula-academica/gestion-matricula-curso',
+            '/gestion-matricula-academica/realizar-matricula-curso',
+            cursoId,
         ]);
     }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { CursoOfertadoReporte } from '../../models/correos.model';
 import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
 import { PeriodoAcademicoService } from '../../services/periodo-academico.service';
@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { matricula_academica } from 'src/environments/environment';
 import { BackendCurso } from '../../models/curso.model';
 import { ApiResponse } from '../../models/api-response.model';
+import { CursoService } from '../../services/curso.service';
 
 @Component({
     selector: 'app-reporte-cursos-ofertados',
@@ -36,12 +37,16 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
     seleccionCursos: CursoOfertadoReporte[] = [];
 
     periodoActivoId: string | null = null;
+    mostrarDialogoReporte = false;
+    formatoReporte: 'pdf' | 'xlsx' = 'pdf';
+    generandoReporte = false;
 
     private readonly destroy$ = new Subject<void>();
 
     constructor(
         private readonly catalogoAcademicoService: CatalogoAcademicoService,
         private readonly periodoService: PeriodoAcademicoService,
+        private readonly cursoService: CursoService,
         private readonly http: HttpClient
     ) {}
 
@@ -180,5 +185,87 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
 
             return coincideTipo && coincideBusqueda;
         });
+    }
+
+    abrirDialogoReporte(): void {
+        this.mostrarDialogoReporte = true;
+    }
+
+    cerrarDialogoReporte(): void {
+        this.mostrarDialogoReporte = false;
+    }
+
+    generarReporte(): void {
+        const asignaturaIds = this.tiposSeleccionados
+            .map(Number)
+            .filter((id) => !Number.isNaN(id));
+        const cursosIds = this.seleccionCursos
+            .map((curso) => Number(curso.id))
+            .filter((id) => !Number.isNaN(id));
+
+        const payload = { asignaturaIds, cursosIds };
+
+        this.generandoReporte = true;
+        this.cursoService
+            .descargarReporteCursosOfertados(this.formatoReporte, payload)
+            .pipe(
+                takeUntil(this.destroy$),
+                finalize(() => {
+                    this.generandoReporte = false;
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    const contentDisposition =
+                        response.headers.get('content-disposition') ??
+                        response.headers.get('Content-Disposition');
+                    const nombreArchivo =
+                        this.obtenerNombreArchivo(contentDisposition) ??
+                        this.nombreArchivoConFecha();
+                    if (!response.body) {
+                        console.error(
+                            'Respuesta vacia al generar reporte',
+                            response
+                        );
+                        return;
+                    }
+                    const url = globalThis.URL.createObjectURL(response.body);
+                    const enlace = document.createElement('a');
+                    enlace.href = url;
+                    enlace.download = nombreArchivo;
+                    enlace.click();
+                    globalThis.URL.revokeObjectURL(url);
+                    this.cerrarDialogoReporte();
+                },
+                error: (err) => {
+                    console.error('Error generando reporte', err);
+                },
+            });
+    }
+
+    private obtenerNombreArchivo(
+        contentDisposition: string | null
+    ): string | null {
+        if (!contentDisposition) {
+            return null;
+        }
+        const match = /filename="([^"]+)"/i.exec(contentDisposition);
+        if (match?.[1]) {
+            return match[1];
+        }
+        const simpleMatch = /filename=([^;]+)/i.exec(contentDisposition);
+        return simpleMatch?.[1]?.trim() ?? null;
+    }
+
+    private nombreArchivoConFecha(): string {
+        const ahora = new Date();
+        const pad = (value: number): string => String(value).padStart(2, '0');
+        const fecha = `${ahora.getFullYear()}${pad(ahora.getMonth() + 1)}${pad(
+            ahora.getDate()
+        )}`;
+        const hora = `${pad(ahora.getHours())}${pad(ahora.getMinutes())}${pad(
+            ahora.getSeconds()
+        )}`;
+        return `reporte_curso_${fecha}_${hora}`;
     }
 }

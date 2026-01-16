@@ -122,17 +122,59 @@
         <button
             pButton
             pRipple
-            label="Reporte general"
+            label="Generar reporte"
             class="p-button-primary"
             icon="pi pi-file"
+            (click)="abrirDialogoReporte()"
+        ></button>
+    </div>
+</p-panel>
+
+<p-dialog
+    header="Formato del reporte"
+    [(visible)]="mostrarDialogoReporte"
+    [modal]="true"
+    [dismissableMask]="true"
+    [style]="{ width: '26rem' }"
+>
+    <div class="flex flex-column gap-3">
+        <div class="flex align-items-center gap-2">
+            <p-radioButton
+                name="formatoReporte"
+                value="pdf"
+                [(ngModel)]="formatoReporte"
+                inputId="formatoReportePdf"
+            ></p-radioButton>
+            <label for="formatoReportePdf">PDF</label>
+        </div>
+        <div class="flex align-items-center gap-2">
+            <p-radioButton
+                name="formatoReporte"
+                value="xlsx"
+                [(ngModel)]="formatoReporte"
+                inputId="formatoReporteXlsx"
+            ></p-radioButton>
+            <label for="formatoReporteXlsx">XLSX</label>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            class="p-button-text"
+            label="Cancelar"
+            (click)="cerrarDialogoReporte()"
+            [disabled]="generandoReporte"
         ></button>
         <button
             pButton
             pRipple
-            label="Reporte seleccionado"
+            label="Generar"
             class="p-button-primary"
-            icon="pi pi-check-square"
-            [disabled]="!seleccionCursos.length"
+            icon="pi pi-download"
+            (click)="generarReporte()"
+            [loading]="generandoReporte"
         ></button>
-    </div>
-</p-panel>
+    </ng-template>
+</p-dialog>

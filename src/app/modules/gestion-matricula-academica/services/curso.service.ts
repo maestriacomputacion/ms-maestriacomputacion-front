@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
@@ -187,6 +187,19 @@ export class CursoService {
         };
         return this.http.get<ApiResponse<boolean>>(`${this.backend}/existe`, {
             params,
+        });
+    }
+
+    // Endpoint: POST /cursos/ofertados/report?formato=pdf
+    descargarReporteCursosOfertados(
+        formato: 'pdf' | 'xlsx',
+        payload: { asignaturaIds: number[]; cursosIds: number[] }
+    ): Observable<HttpResponse<Blob>> {
+        const params = new HttpParams().set('formato', formato);
+        return this.http.post(`${this.backend}/ofertados/report`, payload, {
+            params,
+            responseType: 'blob',
+            observe: 'response',
         });
     }
 }

@@ -138,6 +138,11 @@ export const menuItems: MenuItem[] = [
                     }
                 ],
             },
+            {
+                label:'Revisión de Matrículas',
+                icon:'pi pi-fw pi-user',
+                routerLink:'/gestion-matricula-academica/vista-tutor'
+            }
 
         ],
     },

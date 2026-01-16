@@ -166,15 +166,34 @@ export class AppTopBarComponent implements OnInit {
                 item.label === 'GESTIÓN MATRÍCULAS' ||
                 item.label === 'GESTIÓN ACADÉMICA'
             ) {
-                return !!user && user.role.includes('ROLE_COORDINADOR');
+                if (!user) {
+                    return false;
+                }
+                if (item.label === 'GESTIÓN MATRÍCULAS') {
+                    if (user.role.includes('ROLE_COORDINADOR')) {
+                        item.items = item.items.filter(
+                            (subItem) =>
+                                subItem.label !== 'Revisión de Matrículas'
+                        );
+                        return true;
+                    }
+                    if (user.role.includes('ROLE_DOCENTE')) {
+                        item.items = item.items.filter(
+                            (subItem) =>
+                                subItem.label === 'Revisión de Matrículas'
+                        );
+                        return true;
+                    }
+                    return false;
+                }
+                return user.role.includes('ROLE_COORDINADOR');
             }
-            
+
             if (item.label === 'EVALUACIÓN DOCENTE') {
                 // Solo mostrar si el usuario es estudiante
-                return (
-                    user && user.role && user.role.includes('ROLE_ESTUDIANTE')
-                );
+                return user?.role?.includes('ROLE_ESTUDIANTE');
             }
+
             return true;
         });
     }

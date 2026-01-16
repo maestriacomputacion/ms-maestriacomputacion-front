@@ -20,6 +20,7 @@ import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
 import { ListadoTutoresComponent } from './components/listado-tutores/listado-tutores.component';
 import { SugerenciasMatriculaComponent } from './components/sugerencias-matricula/sugerencias-matricula.component';
+import { RoleGuard } from '../gestion-autenticacion/guards/role.guard';
 
 const routes: Routes = [
     {
@@ -29,10 +30,14 @@ const routes: Routes = [
             {
                 path: 'periodo-academico',
                 component: GestionPeriodoAcademicoComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'gestion-cursos',
                 component: GestionCursoComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'reporte-cursos-ofertados',
@@ -57,14 +62,20 @@ const routes: Routes = [
             {
                 path: 'registrar-curso',
                 component: RegistrarCursoComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'editar-curso/:id',
                 component: RegistrarCursoComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'ver-curso/:id',
                 component: RegistrarCursoComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'material-apoyo',
@@ -73,22 +84,32 @@ const routes: Routes = [
             {
                 path: 'generar-matricula-previa/:id',
                 component: GenerarMatriculaPreviaComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'gestion-estudiantes',
                 component: GestionEstudianteComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'gestion-matricula-curso',
                 component: GestionMatriculaCursoComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'realizar-matricula-curso/:id',
                 component: RealizarMatriculaEstudiantesComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'matricula-masiva',
                 component: MatriculaMasivaComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'resultado-matricula-masiva',
@@ -105,6 +126,8 @@ const routes: Routes = [
             {
                 path: 'listado-matriculas',
                 component: ListadoMatriculasComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },  
             },
             {
                 path: 'listado-tutores',

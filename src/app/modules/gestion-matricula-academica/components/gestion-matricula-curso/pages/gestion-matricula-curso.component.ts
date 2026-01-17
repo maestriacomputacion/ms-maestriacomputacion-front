@@ -8,5 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class GestionMatriculaCursoComponent implements OnInit {
     constructor() {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        // Método inicializado
+    }
 }

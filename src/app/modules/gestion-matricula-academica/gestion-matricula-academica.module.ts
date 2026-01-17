@@ -15,6 +15,7 @@ import { GestionEstudianteComponent } from './components/gestion-estudiante/gest
 import { GestionMatriculaCursoComponent } from './components/gestion-matricula-curso/pages/gestion-matricula-curso.component';
 import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/realizar-matricula-estudiantes/realizar-matricula-estudiantes.component';
 import { CancelarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/cancelar-matricula-estudiantes/cancelar-matricula-estudiantes.component';
+import { CursoInfoCardComponent } from './components/gestion-matricula-curso/components/curso-info-card/curso-info-card.component';
 import { MatriculaMasivaComponent } from './components/matricula-masiva/matricula-masiva.component';
 import { ResultadoMatriculaMasivaComponent } from './components/resultado-matricula-masiva/resultado-matricula-masiva.component';
 import { CursosPorAreaTabsComponent } from './components/cursos-por-area-tabs/cursos-por-area-tabs.component';
@@ -46,6 +47,7 @@ import { EstudiantesPorTutorComponent } from './components/estudiantes-por-tutor
         GestionMatriculaCursoComponent,
         RealizarMatriculaEstudiantesComponent,
         CancelarMatriculaEstudiantesComponent,
+        CursoInfoCardComponent,
         MatriculaMasivaComponent,
         ResultadoMatriculaMasivaComponent,
         CursosPorAreaTabsComponent,

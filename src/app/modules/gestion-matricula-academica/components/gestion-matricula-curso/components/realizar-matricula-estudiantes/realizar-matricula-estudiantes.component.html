@@ -197,24 +197,44 @@
                             }}
                         </td>
                         <td class="text-center">
-                            <button
-                                pButton
-                                pRipple
-                                icon="pi pi-comment"
-                                class="p-button-rounded p-button-text p-button-sm p-button-info mr-2"
-                                (click)="agregarObservacion(estudiante.codigo)"
-                                pTooltip="Agregar/Editar observación"
-                                tooltipPosition="top"
-                            ></button>
-                            <button
-                                pButton
-                                pRipple
-                                icon="pi pi-times"
-                                class="p-button-rounded p-button-text p-button-sm p-button-danger"
-                                (click)="quitarEstudiante(estudiante.codigo)"
-                                pTooltip="Quitar estudiante"
-                                tooltipPosition="top"
-                            ></button>
+                            <ng-container
+                                *ngIf="
+                                    !esEstadoBloqueado(
+                                        estudiante.estadoMatricula
+                                    );
+                                    else sinOpciones
+                                "
+                            >
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-comment"
+                                    class="p-button-rounded p-button-text p-button-sm p-button-info mr-2"
+                                    (click)="
+                                        agregarObservacion(estudiante.codigo)
+                                    "
+                                    pTooltip="Agregar/Editar observación"
+                                    tooltipPosition="top"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-times"
+                                    class="p-button-rounded p-button-text p-button-sm p-button-danger"
+                                    (click)="
+                                        quitarEstudiante(estudiante.codigo)
+                                    "
+                                    pTooltip="Quitar estudiante"
+                                    tooltipPosition="top"
+                                ></button>
+                            </ng-container>
+                            <ng-template #sinOpciones>
+                                <i
+                                    class="pi pi-check-circle text-green-600 cursor-pointer"
+                                    pTooltip="La matrícula ya fue aceptada o rechazada"
+                                    tooltipPosition="top"
+                                ></i>
+                            </ng-template>
                         </td>
                         <td>{{ estudiante.observaciones }}</td>
                     </tr>

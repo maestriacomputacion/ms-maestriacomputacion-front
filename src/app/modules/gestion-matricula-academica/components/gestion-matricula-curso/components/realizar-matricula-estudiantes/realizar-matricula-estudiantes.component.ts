@@ -144,6 +144,15 @@ export class RealizarMatriculaEstudiantesComponent
         const idx = this.estudiantesMatricular.findIndex(
             (e) => e.codigo === codigo
         );
+        const estudiante = this.estudiantesMatricular[idx];
+        if (estudiante && this.esEstadoBloqueado(estudiante.estadoMatricula)) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Acción no permitida',
+                detail: 'No se puede quitar un estudiante con estado APROBADO o RECHAZADO',
+            });
+            return;
+        }
         if (idx !== -1) {
             this.estudiantesMatricular.splice(idx, 1);
             this.messageService.add({
@@ -241,6 +250,7 @@ export class RealizarMatriculaEstudiantesComponent
                                 ...item.estudiante,
                                 observaciones: item.observacion || '',
                                 motivoError: undefined,
+                                estadoMatricula: item.estado,
                             })
                         );
                     } else {
@@ -467,4 +477,11 @@ export class RealizarMatriculaEstudiantesComponent
         return this.estudiantesMatricular.some((e) => e.codigo === codigo);
     }
 
+    esEstadoBloqueado(estado?: string): boolean {
+        const estadoNormalizado = estado?.toUpperCase();
+        return (
+            estadoNormalizado === 'APROBADO' ||
+            estadoNormalizado === 'RECHAZADO'
+        );
+    }
 }

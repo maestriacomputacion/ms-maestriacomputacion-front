@@ -127,6 +127,7 @@ export type CursoSeleccionado = {
 export type EstudianteExtendido = Estudiante & {
     observaciones?: string;
     motivoError?: string;
+    estadoMatricula?: string;
 };
 
 // Estado de navegacion para resultado de matricula.

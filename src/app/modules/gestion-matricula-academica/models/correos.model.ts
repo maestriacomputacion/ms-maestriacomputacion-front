@@ -3,7 +3,8 @@ export interface TipoCorreo {
     label: string;
     descripcion: string;
     icon: string;
-    ruta: string;
+    ruta?: string;
+    accion?: 'enviar-prematricula';
 }
 
 // Curso usado en flujos de correo.

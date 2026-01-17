@@ -6,6 +6,7 @@ import {
     TutorListado,
     TutorListadoBackend,
 } from '../models/tutor-listado.model';
+import { NotificacionPrematriculaTutor } from '../models/notificacion-prematricula.model';
 import { matricula_academica } from 'src/environments/environment';
 import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
 
@@ -53,6 +54,16 @@ export class TutorService {
     ): Observable<ApiResponse<Estudiante[]>> {
         return this.http.get<ApiResponse<Estudiante[]>>(
             `${this.backend}/tutores/${tutorId}/estudiantes`
+        );
+    }
+
+    // Endpoint: notificar prematricula a tutores
+    notificarPrematricula(): Observable<
+        ApiResponse<NotificacionPrematriculaTutor[]>
+    > {
+        return this.http.post<ApiResponse<NotificacionPrematriculaTutor[]>>(
+            `${this.backend}/tutores/notificar-prematricula`,
+            {}
         );
     }
 }

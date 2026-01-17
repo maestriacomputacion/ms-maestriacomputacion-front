@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+<p-confirmPopup></p-confirmPopup>
 <p-panel>
     <p-header>
         <b>TIPO DE NOTIFICACIÓN</b>
@@ -18,16 +20,87 @@
                     <div class="text-600">{{ tipo.descripcion }}</div>
                     <div class="flex justify-content-end">
                         <button
+                            *ngIf="
+                                tipo.accion === 'enviar-prematricula';
+                                else irButton
+                            "
                             pButton
                             pRipple
-                            label="Ir"
+                            label="Enviar"
                             class="p-button-primary p-button-sm"
-                            icon="pi pi-arrow-right"
-                            [routerLink]="tipo.ruta"
+                            icon="pi pi-send"
+                            [loading]="enviandoPrematricula"
+                            [disabled]="enviandoPrematricula"
+                            (click)="enviarPrematriculaATutores($event)"
                         ></button>
+                        <ng-template #irButton>
+                            <button
+                                pButton
+                                pRipple
+                                label="Ir"
+                                class="p-button-primary p-button-sm"
+                                icon="pi pi-arrow-right"
+                                [routerLink]="tipo.ruta"
+                            ></button>
+                        </ng-template>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </p-panel>
+
+<p-dialog
+    header="Resumen de envio"
+    [(visible)]="resumenVisible"
+    [modal]="true"
+    [style]="{ width: 'min(680px, 92vw)' }"
+    [draggable]="false"
+    (onHide)="cerrarResumen()"
+>
+    <div class="flex flex-column gap-3">
+        <div class="font-semibold text-900">{{ resumenMessage }}</div>
+        <div class="flex flex-wrap gap-3 text-700">
+            <div>
+                <span class="font-semibold">Tutores notificados:</span>
+                {{ totalTutoresNotificados }}
+            </div>
+            <div>
+                <span class="font-semibold"
+                    >Estudiantes con matrícula activa:</span
+                >
+                {{ totalEstudiantesNotificados }}
+            </div>
+        </div>
+
+        <p-table
+            *ngIf="resumenNotificaciones.length; else sinNotificaciones"
+            [value]="resumenNotificaciones"
+            [rows]="5"
+            [paginator]="resumenNotificaciones.length > 5"
+            responsiveLayout="scroll"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Código</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Estudiantes con matrícula activa</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.codigo }}</td>
+                    <td>{{ item.correo }}</td>
+                    <td>{{ item.totalEstudiantesConMatriculaActiva }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <ng-template #sinNotificaciones>
+            <div class="text-600">
+                Sin tutores con matrícula activa para notificar.
+            </div>
+        </ng-template>
+    </div>
+</p-dialog>

@@ -188,7 +188,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
             const currentGrupo = this.form.get('grupo')?.value;
             if (!this.isEditMode && currentGrupo?.length) {
-                this.validateGroupWithAsignatura(currentGrupo);
+                this.validarGrupoConAsignatura(currentGrupo);
             }
         }
         this.displayAsignaturaDialog = false;
@@ -207,7 +207,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
         const currentGrupo = this.form.get('grupo')?.value;
         if (!this.isEditMode && currentGrupo?.length) {
-            this.validateGroupWithAsignatura(currentGrupo);
+            this.validarGrupoConAsignatura(currentGrupo);
         }
 
         if (asignatura?.id) {
@@ -374,10 +374,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             )
             .subscribe({
                 next: (response) =>
-                    this.manejarRespuestaCursoExistente(
-                        response,
-                        grupoControl
-                    ),
+                    this.manejarRespuestaCursoExistente(response, grupoControl),
                 error: (err) => this.manejarErrorCursoExistente(err),
             });
         this.subs.push(sub);
@@ -518,46 +515,23 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         else grupoControl.setErrors(errors);
     }
 
-    private validateGroupWithAsignatura(grupoValue: string): void {
-        if (!grupoValue || !this.asignatura) return;
-        const asignaturaId = this.asignatura.id || 0;
+    private validarGrupoConAsignatura(grupoValue: string): void {
+        if (!this.debeValidarGrupoConAsignatura(grupoValue)) return;
         const grupoControl = this.form.get('grupo');
+        if (!grupoControl) return;
         const sub = this.cursoService
-            .verificarCursoExistente(grupoValue, asignaturaId)
+            .verificarCursoExistente(grupoValue, this.obtenerIdAsignatura())
             .pipe(takeUntil(this.destroy$))
             .subscribe({
-                next: (response) => {
-                    if (
-                        response?.typeResponse === 'SUCCESS' &&
-                        response.data === true
-                    ) {
-                        const detail = response.message || null;
-                        this.cursoExistsMessage = detail;
-                        grupoControl?.setErrors({ exists: true });
-                    } else {
-                        this.cursoExistsMessage = null;
-                        if (grupoControl) {
-                            const errors = grupoControl.errors || {};
-                            if (errors.exists) delete errors.exists;
-                            if (Object.keys(errors).length === 0)
-                                grupoControl.setErrors(null);
-                            else grupoControl.setErrors(errors);
-                        }
-                    }
-                },
-                error: (err) => {
-                    const detail = err?.error?.message ?? err?.message ?? null;
-                    this.cursoExistsMessage = detail;
-                    if (detail) {
-                        this.messageService.add({
-                            severity: 'warn',
-                            summary: 'Atención',
-                            detail,
-                        });
-                    }
-                },
+                next: (response) =>
+                    this.manejarRespuestaCursoExistente(response, grupoControl),
+                error: (err) => this.manejarErrorCursoExistente(err),
             });
         this.subs.push(sub);
+    }
+
+    private debeValidarGrupoConAsignatura(grupoValue: string): boolean {
+        return !!grupoValue && !!this.asignatura;
     }
 
     private loadCursoForEdit(id: number): void {

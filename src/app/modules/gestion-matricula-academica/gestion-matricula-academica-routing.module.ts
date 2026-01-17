@@ -8,6 +8,7 @@ import { GenerarMatriculaPreviaComponent } from './components/generar-matricula-
 import { GestionEstudianteComponent } from './components/gestion-estudiante/gestion-estudiante.component';
 import { GestionMatriculaCursoComponent } from './components/gestion-matricula-curso/pages/gestion-matricula-curso.component';
 import { RealizarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/realizar-matricula-estudiantes/realizar-matricula-estudiantes.component';
+import { CancelarMatriculaEstudiantesComponent } from './components/gestion-matricula-curso/components/cancelar-matricula-estudiantes/cancelar-matricula-estudiantes.component';
 import { MatriculaMasivaComponent } from './components/matricula-masiva/matricula-masiva.component';
 import { ResultadoMatriculaMasivaComponent } from './components/resultado-matricula-masiva/resultado-matricula-masiva.component';
 import { VistaTutorComponent } from './components/vista-tutor/vista-tutor.component';
@@ -102,6 +103,12 @@ const routes: Routes = [
             {
                 path: 'realizar-matricula-curso/:id',
                 component: RealizarMatriculaEstudiantesComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },
+            },
+            {
+                path: 'cancelar-matricula-curso/:id',
+                component: CancelarMatriculaEstudiantesComponent,
                 canActivate: [RoleGuard],
                 data: { expectedRole: ['ROLE_COORDINADOR'] },
             },

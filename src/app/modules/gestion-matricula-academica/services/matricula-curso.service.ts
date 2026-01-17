@@ -58,4 +58,13 @@ export class MatriculaCursoService {
         const url = `${matricula_academica.api_url}matricula/curso`;
         return this.http.post<ApiResponse<MatriculaResponseData>>(url, payload);
     }
+
+    // Endpoint: cancelar una matricula por id
+    cancelarMatricula(
+        matriculaId: number,
+        motivo: string
+    ): Observable<ApiResponse<null>> {
+        const url = `${matricula_academica.api_url}matricula/${matriculaId}/cancelar`;
+        return this.http.put<ApiResponse<null>>(url, { motivo });
+    }
 }

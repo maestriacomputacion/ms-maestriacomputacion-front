@@ -13,6 +13,7 @@ import {
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
 import { EstudianteBusqueda } from '../../models/estudiante-busqueda.model';
 import { BuscadorEstudiantesAcademicoComponent } from '../buscador-estudiantes-academico/buscador-estudiantes-academico.component';
+import { MATRICULA_ESTADO_OPTIONS } from '../../constants/matricula-estados';
 
 @Component({
     selector: 'app-listado-matriculas',
@@ -24,13 +25,8 @@ export class ListadoMatriculasComponent implements OnInit {
 
     periodosOptions: { label: string; value: string }[] = [];
     asignaturasOptions: { label: string; value: string }[] = [];
-    estadoOptions: { label: string; value: string }[] = [
-        { label: 'Todos', value: '' },
-        { label: 'Aprobada', value: 'APROBADA' },
-        { label: 'Pendiente', value: 'PENDIENTE' },
-        { label: 'Rechazada', value: 'RECHAZADA' },
-        { label: 'Activa', value: 'ACTIVO' },
-    ];
+    estadoOptions: { label: string; value: string }[] =
+        MATRICULA_ESTADO_OPTIONS;
 
     selectedPeriodoId: string | null = null;
     selectedAsignatura: string | null = null;
@@ -237,7 +233,7 @@ export class ListadoMatriculasComponent implements OnInit {
     irAGestionMatriculaCurso(cursoId?: number): void {
         if (!cursoId) return;
         this.router.navigate([
-            '/gestion-matricula-academica/realizar-matricula-curso',
+            '/gestion-matricula-academica/cancelar-matricula-curso/',
             cursoId,
         ]);
     }

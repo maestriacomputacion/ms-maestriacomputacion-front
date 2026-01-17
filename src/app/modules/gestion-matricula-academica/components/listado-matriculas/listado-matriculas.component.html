@@ -69,7 +69,7 @@
                     [(ngModel)]="selectedEstado"
                     (onChange)="aplicarFiltros()"
                     [showClear]="true"
-                    placeholder="Ej: Aprobada"
+                    placeholder="Ej: Creada"
                     class="w-full flex-1 min-w-0"
                 >
                     <ng-template pTemplate="selectedItem" let-item>
@@ -186,11 +186,17 @@
                         [severity]="
                             item.estado === 'APROBADA'
                                 ? 'success'
-                                : item.estado === 'PENDIENTE'
-                                  ? 'warning'
-                                  : item.estado === 'RECHAZADA'
-                                    ? 'danger'
-                                    : 'info'
+                                : item.estado === 'CREADA'
+                                  ? 'info'
+                                  : item.estado === 'TUTOR_AVALADA'
+                                    ? 'warning'
+                                    : item.estado === 'TUTOR_NO_AVALADA'
+                                      ? 'danger'
+                                      : item.estado === 'RECHAZADA'
+                                        ? 'danger'
+                                        : item.estado === 'CANCELADA'
+                                          ? 'secondary'
+                                          : 'info'
                         "
                     ></p-tag>
                 </td>

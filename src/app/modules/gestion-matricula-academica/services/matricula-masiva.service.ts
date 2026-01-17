@@ -3,16 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 import { matricula_academica } from 'src/environments/environment';
-import { MatriculaResponseData } from '../models/matricula.model';
-
-export interface MatriculaEstudianteCurso {
-    estudianteId: number;
-    cursos: { cursoId: number }[];
-}
-
-export interface MatriculaBatchPayload {
-    matriculaEstudianteCursos: MatriculaEstudianteCurso[];
-}
+import {
+    MatriculaBatchPayload,
+    MatriculaResponseData,
+} from '../models/matricula.model';
 
 @Injectable({ providedIn: 'root' })
 export class MatriculaMasivaService {

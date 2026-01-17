@@ -19,15 +19,13 @@ import {
 
 import { MaterialApoyo } from '../../models/material-apoyo';
 import { MaterialApoyoService } from '../../services/material-apoyo.service';
-import {
-    CursoService,
-    CursoRegistroPayload,
-} from '../../services/curso.service';
+import { CursoService } from '../../services/curso.service';
 import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
 import {
     AsignaturaModel,
     DocenteModel,
     BackendCurso,
+    CursoRegistroPayload,
 } from '../../models/curso.model';
 
 @Component({

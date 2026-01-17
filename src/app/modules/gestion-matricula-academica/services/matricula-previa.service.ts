@@ -7,24 +7,10 @@ import {
     MatriculaResponseData,
 } from '../models/matricula.model';
 import { matricula_academica } from 'src/environments/environment';
-
-export interface Estudiante {
-    codigo: string;
-    nombre: string;
-    apellidos: string;
-    director: string;
-    coDirector: string;
-    semestreAcademico: string;
-}
-
-export interface AsignaturaMatricular {
-    id: number;
-    grupo: string;
-    nombreAsignatura: string;
-    docentes: string;
-    opciones: string;
-    observacion: string;
-}
+import {
+    Estudiante,
+    AsignaturaMatricular,
+} from '../models/matricula-previa.model';
 
 @Injectable({ providedIn: 'root' })
 export class MatriculaPreviaService {
@@ -40,7 +26,7 @@ export class MatriculaPreviaService {
     // Lista inicial vacía — las asignaturas se agregarán al seleccionar desde las áreas
     private readonly asignaturasMatricular: AsignaturaMatricular[] = [];
 
-    constructor(private http: HttpClient) {}
+    constructor(private readonly http: HttpClient) {}
 
     getEstudiante(): Observable<ApiResponse<Estudiante>> {
         return of({

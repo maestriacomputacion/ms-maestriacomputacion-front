@@ -48,3 +48,14 @@ export interface CursoUI {
     salon?: string | null; // salón asociado al curso
     horario?: string | null; // horario del curso
 }
+
+// Payload para registrar/actualizar cursos.
+export interface CursoRegistroPayload {
+    grupo: string;
+    asignaturaId: number;
+    docentesIds: number[];
+    horario?: string;
+    salon?: string;
+    materialApoyoIds?: number[];
+    observacion?: string;
+}

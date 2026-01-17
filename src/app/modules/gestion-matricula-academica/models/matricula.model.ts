@@ -114,6 +114,14 @@ export interface MatriculaResumenBackend {
     cantidadEstudiante: number;
 }
 
+// Estudiante matriculado en un curso.
+export interface EstudianteMatriculado {
+    id: number;
+    estudiante: Estudiante;
+    estado: string;
+    observacion: string;
+}
+
 // Curso seleccionado para matricula masiva.
 export type CursoSeleccionado = {
     id: number;
@@ -137,3 +145,14 @@ export type MatriculaResultadoState = {
     matriculasEliminadas?: MatriculaEliminada[];
     origen?: string;
 };
+
+// Payload para matricula masiva por estudiantes.
+export interface MatriculaEstudianteCurso {
+    estudianteId: number;
+    cursos: { cursoId: number }[];
+}
+
+// Payload batch para matriculas masivas.
+export interface MatriculaBatchPayload {
+    matriculaEstudianteCursos: MatriculaEstudianteCurso[];
+}

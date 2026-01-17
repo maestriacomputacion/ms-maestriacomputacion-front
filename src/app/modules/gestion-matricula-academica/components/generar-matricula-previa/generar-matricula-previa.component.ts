@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatriculaPreviaService } from '../../services/matricula-previa.service';
 import {
-    MatriculaPreviaService,
     Estudiante,
     AsignaturaMatricular,
-} from '../../services/matricula-previa.service';
+} from '../../models/matricula-previa.model';
 import { ApiResponse } from '../../models/api-response.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
@@ -462,6 +462,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                                 ),
                                 opciones: 'Matriculado',
                                 observacion: matricula.observacion || '',
+                                estadoMatricula: matricula.estado,
                             })
                         );
                         // Guardar copia de las asignaturas iniciales
@@ -495,8 +496,16 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     }
 
     onAgregarObservacion(id: number) {
-        this.asignaturaSeleccionadaId = id;
         const asignatura = this.asignaturas.find((a) => a.id === id);
+        if (this.esEstadoBloqueado(asignatura?.estadoMatricula)) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Acción no permitida',
+                detail: 'No se puede editar la observación cuando la matrícula está APROBADA o RECHAZADA',
+            });
+            return;
+        }
+        this.asignaturaSeleccionadaId = id;
 
         this.observacionForm.patchValue({
             observacion: asignatura?.observacion || '',
@@ -535,6 +544,15 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     }
 
     onEliminarAsignatura(event: Event, id: number) {
+        const asignatura = this.asignaturas.find((a) => a.id === id);
+        if (this.esEstadoBloqueado(asignatura?.estadoMatricula)) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Acción no permitida',
+                detail: 'No se puede eliminar una matrícula APROBADA o RECHAZADA',
+            });
+            return;
+        }
         this.confirmationService.confirm({
             target: event.target,
             message: '¿Eliminar esta asignatura?',
@@ -662,5 +680,13 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                     });
             },
         });
+    }
+
+    esEstadoBloqueado(estado?: string): boolean {
+        const estadoNormalizado = estado?.toUpperCase();
+        return (
+            estadoNormalizado === 'APROBADO' ||
+            estadoNormalizado === 'RECHAZADO'
+        );
     }
 }

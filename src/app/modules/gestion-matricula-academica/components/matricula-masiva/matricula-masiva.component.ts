@@ -10,10 +10,7 @@ import { PeriodoAcademicoService } from '../../services/periodo-academico.servic
 import { PeriodoAcademico } from '../../models/periodo-academico.model';
 import { CursoService } from '../../services/curso.service';
 import { CatalogoAcademicoService } from '../../services/catalogo-academico.service';
-import {
-    MatriculaMasivaService,
-    MatriculaBatchPayload,
-} from '../../services/matricula-masiva.service';
+import { MatriculaMasivaService } from '../../services/matricula-masiva.service';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import { CursoUI } from '../../models/curso.model';
 import {
@@ -21,7 +18,10 @@ import {
     TabChangeEvent,
     CursoAgrupado,
 } from '../../models/catalogo.model';
-import { CursoSeleccionado } from '../../models/matricula.model';
+import {
+    CursoSeleccionado,
+    MatriculaBatchPayload,
+} from '../../models/matricula.model';
 
 @Component({
     selector: 'app-matricula-masiva',

@@ -11,11 +11,9 @@ import {
     MatriculaResponseData,
     MatriculaNoRealizada,
     EstudianteExtendido,
-} from '../../../../models/matricula.model';
-import {
-    MatriculaCursoService,
     EstudianteMatriculado,
-} from '../../../../services/matricula-curso.service';
+} from '../../../../models/matricula.model';
+import { MatriculaCursoService } from '../../../../services/matricula-curso.service';
 
 @Component({
     selector: 'app-realizar-matricula-estudiantes',

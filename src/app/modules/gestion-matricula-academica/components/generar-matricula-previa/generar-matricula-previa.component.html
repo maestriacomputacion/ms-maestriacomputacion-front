@@ -117,37 +117,52 @@
                                 <td>{{ asignatura.docentes || "-" }}</td>
                                 <td>{{ asignatura.observacion || "-" }}</td>
                                 <td class="text-center">
-                                    <div
-                                        class="flex justify-content-center align-items-center gap-2"
+                                    <ng-container
+                                        *ngIf="
+                                            !esEstadoBloqueado(
+                                                asignatura.estadoMatricula
+                                            );
+                                            else sinOpciones
+                                        "
                                     >
-                                        <button
-                                            type="button"
-                                            pButton
-                                            pRipple
-                                            icon="pi pi-comment"
-                                            class="p-button-rounded p-button-text p-button-sm"
-                                            (click)="
-                                                onAgregarObservacion(
-                                                    asignatura.id
-                                                )
-                                            "
-                                            pTooltip="Agregar Observación"
-                                        ></button>
-                                        <button
-                                            type="button"
-                                            pButton
-                                            pRipple
-                                            icon="pi pi-trash"
-                                            class="p-button-rounded p-button-text p-button-danger p-button-sm"
-                                            (click)="
-                                                onEliminarAsignatura(
-                                                    $event,
-                                                    asignatura.id
-                                                )
-                                            "
-                                            pTooltip="Eliminar"
-                                        ></button>
-                                    </div>
+                                        <div
+                                            class="flex justify-content-center align-items-center gap-2"
+                                        >
+                                            <button
+                                                type="button"
+                                                pButton
+                                                pRipple
+                                                icon="pi pi-comment"
+                                                class="p-button-rounded p-button-text p-button-sm"
+                                                (click)="
+                                                    onAgregarObservacion(
+                                                        asignatura.id
+                                                    )
+                                                "
+                                                pTooltip="Agregar Observación"
+                                            ></button>
+                                            <button
+                                                type="button"
+                                                pButton
+                                                pRipple
+                                                icon="pi pi-trash"
+                                                class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                                                (click)="
+                                                    onEliminarAsignatura(
+                                                        $event,
+                                                        asignatura.id
+                                                    )
+                                                "
+                                                pTooltip="Eliminar"
+                                            ></button>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #sinOpciones>
+                                        <i
+                                            class="pi pi-check-circle text-green-600 cursor-pointer"
+                                            pTooltip="La matrícula ya fue aceptada o rechazada"
+                                        ></i>
+                                    </ng-template>
                                 </td>
                             </tr>
                         </ng-template>

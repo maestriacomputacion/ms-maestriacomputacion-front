@@ -6,10 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 
 import { CursoService } from '../../../../services/curso.service';
 import { BackendCurso } from '../../../../models/curso.model';
-import {
-    EstudianteMatriculado,
-    MatriculaCursoService,
-} from '../../../../services/matricula-curso.service';
+import { EstudianteMatriculado } from '../../../../models/matricula.model';
+import { MatriculaCursoService } from '../../../../services/matricula-curso.service';
 
 @Component({
     selector: 'app-cancelar-matricula-estudiantes',

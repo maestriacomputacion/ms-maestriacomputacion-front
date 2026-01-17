@@ -4,18 +4,12 @@ import { Observable } from 'rxjs';
 
 import { ApiResponse } from '../models/api-response.model';
 import { matricula_academica } from 'src/environments/environment';
-import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
 import {
+    EstudianteMatriculado,
     MatriculaEstudiantesRequest,
     MatriculaResponseData,
 } from '../models/matricula.model';
-
-export interface EstudianteMatriculado {
-    id: number;
-    estudiante: Estudiante;
-    estado: string;
-    observacion: string;
-}
+import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
 
 @Injectable({
     providedIn: 'root',

@@ -3,20 +3,14 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
-import { CursoUI, BackendCurso } from '../models/curso.model';
+import {
+    CursoUI,
+    BackendCurso,
+    CursoRegistroPayload,
+} from '../models/curso.model';
 import { matricula_academica } from 'src/environments/environment';
 
 type OptionalId = string | number | null;
-
-export interface CursoRegistroPayload {
-    grupo: string;
-    asignaturaId: number;
-    docentesIds: number[];
-    horario?: string;
-    salon?: string;
-    materialApoyoIds?: number[];
-    observacion?: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class CursoService {

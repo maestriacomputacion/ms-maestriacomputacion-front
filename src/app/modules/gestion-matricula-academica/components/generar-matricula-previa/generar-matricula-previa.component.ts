@@ -328,68 +328,112 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
         this.loading = true;
         // Obtener datos del estudiante y su estado para tener información completa
         this.estudianteService.getEstudiante(id).subscribe({
-            next: (estudianteData: EstudianteModel) => {
-                // Intentar obtener el estado del estudiante para tener nombres de director y co-director
-                this.estudianteService.getEstadoEstudiante(id).subscribe({
-                    next: (estadoEstudiante) => {
-                        // Transformar el modelo de Estudiante a Estudiante del servicio de matrícula previa
-                        this.estudiante = {
-                            codigo: estudianteData.codigo || '',
-                            nombre: estudianteData.persona?.nombre || '',
-                            apellidos: estudianteData.persona?.apellido || '',
-                            director:
-                                estadoEstudiante.director ||
-                                (estudianteData.idDirector
-                                    ? 'Director asignado'
-                                    : 'Sin director'),
-                            coDirector:
-                                estadoEstudiante.codirector ||
-                                (estudianteData.idCodirector
-                                    ? 'Co-Director asignado'
-                                    : 'Sin co-director'),
-                            semestreAcademico: String(
-                                estadoEstudiante.semestreAcademico ||
-                                    estudianteData.informacionMaestria
-                                        ?.semestreAcademico ||
-                                    0
-                            ),
-                        };
-                        this.loading = false;
-                    },
-                    error: () => {
-                        // Si falla obtener el estado, usar solo los datos básicos
-                        this.estudiante = {
-                            codigo: estudianteData.codigo || '',
-                            nombre: estudianteData.persona?.nombre || '',
-                            apellidos: estudianteData.persona?.apellido || '',
-                            director: estudianteData.idDirector
-                                ? 'Director asignado'
-                                : 'Sin director',
-                            coDirector: estudianteData.idCodirector
-                                ? 'Co-Director asignado'
-                                : 'Sin co-director',
-                            semestreAcademico: String(
-                                estudianteData.informacionMaestria
-                                    ?.semestreAcademico || 0
-                            ),
-                        };
-                        this.loading = false;
-                    },
-                });
-            },
-            error: (err) => {
-                console.error('Error cargando estudiante', err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail:
-                        err?.error?.message ||
-                        err?.message ||
-                        'Error al cargar los datos del estudiante',
-                });
-                this.loading = false;
-            },
+            next: (estudianteData: EstudianteModel) =>
+                this.cargarEstadoEstudiante(id, estudianteData),
+            error: (err) => this.manejarErrorCargaEstudiante(err),
         });
+    }
+
+    private cargarEstadoEstudiante(
+        id: number,
+        estudianteData: EstudianteModel
+    ): void {
+        // Intentar obtener el estado del estudiante para tener nombres de director y co-director
+        this.estudianteService.getEstadoEstudiante(id).subscribe({
+            next: (estadoEstudiante) =>
+                this.actualizarEstudianteConEstado(
+                    estudianteData,
+                    estadoEstudiante
+                ),
+            error: () => this.actualizarEstudianteBasico(estudianteData),
+        });
+    }
+
+    private actualizarEstudianteConEstado(
+        estudianteData: EstudianteModel,
+        estadoEstudiante: {
+            director?: string;
+            codirector?: string;
+            semestreAcademico?: number;
+        }
+    ): void {
+        // Transformar el modelo de Estudiante a Estudiante del servicio de matrícula previa
+        this.estudiante = this.construirEstudianteConEstado(
+            estudianteData,
+            estadoEstudiante
+        );
+        this.loading = false;
+    }
+
+    private actualizarEstudianteBasico(estudianteData: EstudianteModel): void {
+        // Si falla obtener el estado, usar solo los datos básicos
+        this.estudiante = this.construirEstudianteBasico(estudianteData);
+        this.loading = false;
+    }
+
+    private construirEstudianteConEstado(
+        estudianteData: EstudianteModel,
+        estadoEstudiante: {
+            director?: string;
+            codirector?: string;
+            semestreAcademico?: number;
+        }
+    ): Estudiante {
+        return {
+            codigo: estudianteData.codigo || '',
+            nombre: estudianteData.persona?.nombre || '',
+            apellidos: estudianteData.persona?.apellido || '',
+            director:
+                estadoEstudiante.director ||
+                (estudianteData.idDirector
+                    ? 'Director asignado'
+                    : 'Sin director'),
+            coDirector:
+                estadoEstudiante.codirector ||
+                (estudianteData.idCodirector
+                    ? 'Co-Director asignado'
+                    : 'Sin co-director'),
+            semestreAcademico: String(
+                estadoEstudiante.semestreAcademico ||
+                    estudianteData.informacionMaestria?.semestreAcademico ||
+                    0
+            ),
+        };
+    }
+
+    private construirEstudianteBasico(
+        estudianteData: EstudianteModel
+    ): Estudiante {
+        return {
+            codigo: estudianteData.codigo || '',
+            nombre: estudianteData.persona?.nombre || '',
+            apellidos: estudianteData.persona?.apellido || '',
+            director: estudianteData.idDirector
+                ? 'Director asignado'
+                : 'Sin director',
+            coDirector: estudianteData.idCodirector
+                ? 'Co-Director asignado'
+                : 'Sin co-director',
+            semestreAcademico: String(
+                estudianteData.informacionMaestria?.semestreAcademico || 0
+            ),
+        };
+    }
+
+    private manejarErrorCargaEstudiante(err: {
+        error?: { message?: string };
+        message?: string;
+    }): void {
+        console.error('Error cargando estudiante', err);
+        this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail:
+                err?.error?.message ||
+                err?.message ||
+                'Error al cargar los datos del estudiante',
+        });
+        this.loading = false;
     }
 
     cargarAsignaturas() {

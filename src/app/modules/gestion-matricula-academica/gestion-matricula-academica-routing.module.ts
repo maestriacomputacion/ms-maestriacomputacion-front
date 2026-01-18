@@ -21,6 +21,7 @@ import { EnviarCorreoMatriculaFinalComponent } from './components/enviar-correo-
 import { EnviarCorreoMatriculaFinalEstudianteComponent } from './components/enviar-correo-matricula-final-estudiante/enviar-correo-matricula-final-estudiante.component';
 import { ListadoTutoresComponent } from './components/listado-tutores/listado-tutores.component';
 import { EstudiantesPorTutorComponent } from './components/estudiantes-por-tutor/estudiantes-por-tutor.component';
+import { DetalleEstudianteTutorComponent } from './components/detalle-estudiante-tutor/detalle-estudiante-tutor.component';
 import { RoleGuard } from '../gestion-autenticacion/guards/role.guard';
 
 const routes: Routes = [
@@ -143,6 +144,10 @@ const routes: Routes = [
             {
                 path: 'estudiantes-por-tutor/:tutorId',
                 component: EstudiantesPorTutorComponent,
+            },
+            {
+                path: 'detalle-estudiante-tutor/:estudianteId',
+                component: DetalleEstudianteTutorComponent,
             },
         ],
     },

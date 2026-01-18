@@ -84,18 +84,18 @@
                 <th
                     class="text-center"
                     scope="col"
-                    pSortableColumn="estadoPrematricula"
+                    pSortableColumn="matriculasPendientes"
                 >
-                    Estado prematricula
-                    <p-sortIcon field="estadoPrematricula"></p-sortIcon>
+                    Matriculas pendientes
+                    <p-sortIcon field="matriculasPendientes"></p-sortIcon>
                 </th>
                 <th
                     class="text-center"
                     scope="col"
-                    pSortableColumn="cantidadCursos"
+                    pSortableColumn="totalMatriculas"
                 >
-                    Cantidad cursos
-                    <p-sortIcon field="cantidadCursos"></p-sortIcon>
+                    Total matriculas
+                    <p-sortIcon field="totalMatriculas"></p-sortIcon>
                 </th>
                 <th class="text-center" scope="col">Opciones</th>
                 <th class="text-center" scope="col" style="width: 110px">
@@ -121,13 +121,17 @@
                     {{ estudiante.correoUniversitario || "Sin dato" }}
                 </td>
                 <td class="text-center">
-                    {{ estudiante.estadoPrematricula || "Sin dato" }}
+                    {{
+                        estudiante.matriculasPendientes === null
+                            ? "Sin dato"
+                            : estudiante.matriculasPendientes
+                    }}
                 </td>
                 <td class="text-center">
                     {{
-                        estudiante.cantidadCursos === null
+                        estudiante.totalMatriculas === null
                             ? "Sin dato"
-                            : estudiante.cantidadCursos
+                            : estudiante.totalMatriculas
                     }}
                 </td>
                 <td class="text-center">
@@ -137,20 +141,11 @@
                         <button
                             pButton
                             type="button"
-                            icon="pi pi-check"
-                            class="p-button-rounded p-button-success p-button-text p-button-sm"
-                            pTooltip="Aprobar"
+                            icon="pi pi-eye"
+                            class="p-button-rounded p-button-info p-button-text p-button-sm"
+                            pTooltip="Ver detalle"
                             tooltipPosition="top"
-                            (click)="aprobarEstudiante(estudiante)"
-                        ></button>
-                        <button
-                            pButton
-                            type="button"
-                            icon="pi pi-times"
-                            class="p-button-rounded p-button-danger p-button-text p-button-sm"
-                            pTooltip="Rechazar"
-                            tooltipPosition="top"
-                            (click)="rechazarEstudiante(estudiante)"
+                            (click)="verDetalleEstudiante(estudiante)"
                         ></button>
                     </div>
                 </td>

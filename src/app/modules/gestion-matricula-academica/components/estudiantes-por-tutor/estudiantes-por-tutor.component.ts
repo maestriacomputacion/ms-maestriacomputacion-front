@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TutorService } from '../../services/tutor.service';
 import { Estudiante } from '../../../gestion-estudiantes/models/estudiante';
@@ -10,8 +10,8 @@ interface EstudianteListado {
     nombre: string;
     apellido: string;
     correoUniversitario: string;
-    estadoPrematricula: string;
-    cantidadCursos: number | null;
+    matriculasPendientes: number | null;
+    totalMatriculas: number | null;
     seleccionado: boolean;
 }
 
@@ -35,7 +35,8 @@ export class EstudiantesPorTutorComponent implements OnInit {
     constructor(
         private readonly messageService: MessageService,
         private readonly tutorService: TutorService,
-        private readonly route: ActivatedRoute
+        private readonly route: ActivatedRoute,
+        private readonly router: Router
     ) {}
 
     ngOnInit(): void {
@@ -104,20 +105,29 @@ export class EstudiantesPorTutorComponent implements OnInit {
         );
     }
 
-    aprobarEstudiante(estudiante: EstudianteListado): void {
-        this.messageService.add({
-            severity: 'success',
-            summary: 'Aprobado',
-            detail: `Estudiante ${estudiante.nombre} ${estudiante.apellido} aprobado`,
-        });
-    }
+    verDetalleEstudiante(estudiante: EstudianteListado): void {
+        if (!estudiante?.id) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'No se pudo abrir el detalle del estudiante.',
+            });
+            return;
+        }
 
-    rechazarEstudiante(estudiante: EstudianteListado): void {
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Rechazado',
-            detail: `Estudiante ${estudiante.nombre} ${estudiante.apellido} rechazado`,
-        });
+        this.router.navigate(
+            [
+                '/gestion-matricula-academica',
+                'detalle-estudiante-tutor',
+                estudiante.id,
+            ],
+            {
+                queryParams: {
+                    tutorId: this.tutorId ?? undefined,
+                },
+                state: { estudiante },
+            }
+        );
     }
 
     tieneSeleccionadas(): boolean {
@@ -212,6 +222,10 @@ export class EstudiantesPorTutorComponent implements OnInit {
     ): EstudianteListado[] {
         return estudiantes.map((estudiante) => {
             const persona = estudiante.persona;
+            const detalle = estudiante as Estudiante & {
+                matriculasPendientes?: number;
+                totalMatriculas?: number;
+            };
 
             return {
                 id: estudiante.id ?? 0,
@@ -219,8 +233,8 @@ export class EstudiantesPorTutorComponent implements OnInit {
                 nombre: persona?.nombre ?? '',
                 apellido: persona?.apellido ?? '',
                 correoUniversitario: estudiante.correoUniversidad ?? '',
-                estadoPrematricula: '',
-                cantidadCursos: null,
+                matriculasPendientes: detalle.matriculasPendientes ?? null,
+                totalMatriculas: detalle.totalMatriculas ?? null,
                 seleccionado: false,
             };
         });

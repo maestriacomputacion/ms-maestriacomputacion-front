@@ -9,9 +9,9 @@
         "test": "ng test",
         "prepare": "husky install",
         "postinstall": "husky install",
-        "lint": "ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\"",
-        "lint:fix": "ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\" --fix",
-        "lint:strict": "ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\" --max-warnings=0"
+        "lint": "cross-env ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\"",
+        "lint:fix": "cross-env ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\" --fix",
+        "lint:strict": "cross-env ESLINT_USE_FLAT_CONFIG=true eslint \"src/app/modules/gestion-matricula-academica/**/*.ts\" --max-warnings=0"
     },
     "private": true,
     "dependencies": {
@@ -63,6 +63,7 @@
         "@typescript-eslint/eslint-plugin": "~5.3.0",
         "@typescript-eslint/parser": "~5.3.0",
         "codelyzer": "^6.0.0",
+        "cross-env": "^7.0.3",
         "eslint": "^8.57.0",
         "husky": "^8.0.3",
         "jasmine-core": "~3.10.0",

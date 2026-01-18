@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { finalize } from 'rxjs/operators';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
+import { MATRICULA_ESTADOS } from '../../constants/matricula-estados';
 import { MatriculaRealizada } from '../../models/matricula.model';
 import { MatriculaPreviaService } from '../../services/matricula-previa.service';
 
@@ -80,12 +82,15 @@ export class DetalleEstudianteTutorComponent implements OnInit {
             acceptLabel: 'Sí, aprobar',
             rejectLabel: 'Cancelar',
             accept: () => {
-                this.actualizarEstado(matricula, 'APROBADA');
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Éxito',
-                    detail: 'Curso aprobado correctamente',
-                });
+                this.cambiarEstadoMatricula(
+                    matricula,
+                    MATRICULA_ESTADOS.APROBADA,
+                    {
+                        severity: 'success',
+                        summary: 'Éxito',
+                        detail: 'Curso aprobado correctamente',
+                    }
+                );
             },
         });
     }
@@ -99,12 +104,15 @@ export class DetalleEstudianteTutorComponent implements OnInit {
             acceptLabel: 'Sí, rechazar',
             rejectLabel: 'Cancelar',
             accept: () => {
-                this.actualizarEstado(matricula, 'RECHAZADA');
-                this.messageService.add({
-                    severity: 'warn',
-                    summary: 'Rechazada',
-                    detail: 'Curso rechazado',
-                });
+                this.cambiarEstadoMatricula(
+                    matricula,
+                    MATRICULA_ESTADOS.RECHAZADA,
+                    {
+                        severity: 'warn',
+                        summary: 'Rechazada',
+                        detail: 'Curso rechazado',
+                    }
+                );
             },
         });
     }
@@ -116,11 +124,11 @@ export class DetalleEstudianteTutorComponent implements OnInit {
 
     getSeverityEstado(estado: string): string {
         switch (estado) {
-            case 'APROBADA':
+            case MATRICULA_ESTADOS.APROBADA:
                 return 'success';
-            case 'PENDIENTE':
+            case MATRICULA_ESTADOS.PENDIENTE:
                 return 'warning';
-            case 'RECHAZADA':
+            case MATRICULA_ESTADOS.RECHAZADA:
                 return 'danger';
             default:
                 return 'info';
@@ -244,11 +252,13 @@ export class DetalleEstudianteTutorComponent implements OnInit {
         const estadoMatriculaRaw =
             (matricula as { estado_matricula?: string }).estado_matricula ??
             matricula.estado ??
-            'PENDIENTE';
+            MATRICULA_ESTADOS.PENDIENTE;
 
         return {
             ...matricula,
-            estadoMatricula: (estadoMatriculaRaw || 'PENDIENTE').toUpperCase(),
+            estadoMatricula: (
+                estadoMatriculaRaw || MATRICULA_ESTADOS.PENDIENTE
+            ).toUpperCase(),
         };
     }
 
@@ -268,5 +278,67 @@ export class DetalleEstudianteTutorComponent implements OnInit {
         if (raw.estado_matricula !== undefined) {
             raw.estado_matricula = nuevoEstado;
         }
+    }
+
+    private cambiarEstadoMatricula(
+        matricula: MatriculaListado,
+        estadoAccion: string,
+        mensajes: { severity: string; summary: string; detail: string }
+    ): void {
+        if (!matricula.id) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No se encontro la matrícula seleccionada.',
+            });
+            return;
+        }
+
+        this.loading = true;
+        this.matriculaPreviaService
+            .cambiarEstadoMatricula(matricula.id, estadoAccion)
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        const estadoBackend =
+                            this.normalizarEstado(response.data?.estado) ??
+                            this.normalizarEstado(
+                                (response.data as { estado_matricula?: string })
+                                    ?.estado_matricula
+                            ) ??
+                            this.normalizarEstado(estadoAccion);
+                        if (estadoBackend) {
+                            this.actualizarEstado(matricula, estadoBackend);
+                        }
+                        this.messageService.add(mensajes);
+                        return;
+                    }
+
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Advertencia',
+                        detail:
+                            response.message ||
+                            'No se pudo actualizar el estado de la matrícula',
+                    });
+                },
+                error: (err) => {
+                    console.error('Error cambiando estado de matrícula', err);
+                    const detail =
+                        err?.error?.message ||
+                        err?.message ||
+                        'Error al actualizar el estado de la matrícula';
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail,
+                    });
+                },
+            });
+    }
+
+    private normalizarEstado(estado?: string | null): string | null {
+        return estado ? estado.toUpperCase() : null;
     }
 }

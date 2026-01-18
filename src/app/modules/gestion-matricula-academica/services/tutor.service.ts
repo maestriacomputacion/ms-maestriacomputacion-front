@@ -8,7 +8,7 @@ import {
 } from '../models/tutor-listado.model';
 import { NotificacionPrematriculaTutor } from '../models/notificacion-prematricula.model';
 import { matricula_academica } from 'src/environments/environment';
-import { Estudiante } from '../../gestion-estudiantes/models/estudiante';
+import { EstudiantePorTutor } from '../models/estudiante-por-tutor.model';
 
 @Injectable({
     providedIn: 'root',
@@ -51,8 +51,8 @@ export class TutorService {
     // Endpoint: listar estudiantes por tutor
     getEstudiantesPorTutor(
         tutorId: number
-    ): Observable<ApiResponse<Estudiante[]>> {
-        return this.http.get<ApiResponse<Estudiante[]>>(
+    ): Observable<ApiResponse<EstudiantePorTutor[]>> {
+        return this.http.get<ApiResponse<EstudiantePorTutor[]>>(
             `${this.backend}/tutores/${tutorId}/estudiantes`
         );
     }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TutorService } from '../../services/tutor.service';
-import { Estudiante } from '../../../gestion-estudiantes/models/estudiante';
+import { EstudiantePorTutor } from '../../models/estudiante-por-tutor.model';
 
 interface EstudianteListado {
     id: number;
@@ -106,6 +106,10 @@ export class EstudiantesPorTutorComponent implements OnInit {
     }
 
     verDetalleEstudiante(estudiante: EstudianteListado): void {
+        if (this.esOpcionesInformativa(estudiante)) {
+            return;
+        }
+
         if (!estudiante?.id) {
             this.messageService.add({
                 severity: 'warn',
@@ -152,6 +156,26 @@ export class EstudiantesPorTutorComponent implements OnInit {
             summary: 'Seleccion aplicada',
             detail: `Se aplico a ${seleccionadas.length} estudiantes.`,
         });
+    }
+
+    getTooltipOpciones(estudiante: EstudianteListado): string {
+        if (estudiante?.totalMatriculas === 0) {
+            return 'Matriculas resueltas';
+        }
+
+        return 'Ver detalle';
+    }
+
+    getIconoOpciones(estudiante: EstudianteListado): string {
+        if (estudiante?.totalMatriculas === 0) {
+            return 'pi pi-info-circle';
+        }
+
+        return 'pi pi-eye';
+    }
+
+    esOpcionesInformativa(estudiante: EstudianteListado): boolean {
+        return estudiante?.totalMatriculas === 0;
     }
 
     private setTutorData(): void {
@@ -218,23 +242,20 @@ export class EstudiantesPorTutorComponent implements OnInit {
     }
 
     private mapEstudiantesListado(
-        estudiantes: Estudiante[]
+        estudiantes: EstudiantePorTutor[]
     ): EstudianteListado[] {
-        return estudiantes.map((estudiante) => {
-            const persona = estudiante.persona;
-            const detalle = estudiante as Estudiante & {
-                matriculasPendientes?: number;
-                totalMatriculas?: number;
-            };
+        return estudiantes.map((item) => {
+            const estudiante = item?.estudiante;
+            const persona = estudiante?.persona;
 
             return {
-                id: estudiante.id ?? 0,
-                codigo: estudiante.codigo ?? '',
+                id: estudiante?.id ?? 0,
+                codigo: estudiante?.codigo ?? '',
                 nombre: persona?.nombre ?? '',
                 apellido: persona?.apellido ?? '',
-                correoUniversitario: estudiante.correoUniversidad ?? '',
-                matriculasPendientes: detalle.matriculasPendientes ?? null,
-                totalMatriculas: detalle.totalMatriculas ?? null,
+                correoUniversitario: estudiante?.correoUniversidad ?? '',
+                matriculasPendientes: item?.totalMatriculasPendientes ?? null,
+                totalMatriculas: item?.totalMatriculas ?? null,
                 seleccionado: false,
             };
         });

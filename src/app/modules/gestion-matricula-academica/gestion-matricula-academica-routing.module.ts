@@ -27,7 +27,6 @@ import { RoleGuard } from '../gestion-autenticacion/guards/role.guard';
 const routes: Routes = [
     {
         path: '',
-        // component:GestionPeriodoAcademicoComponent,
         children: [
             {
                 path: 'periodo-academico',

@@ -140,6 +140,13 @@ export class CursoService {
         );
     }
 
+    // Endpoint: listar cursos con matricula aprobada
+    getCursosMatriculaAprobada(): Observable<ApiResponse<BackendCurso[]>> {
+        return this.http.get<ApiResponse<BackendCurso[]>>(
+            `${this.backend}/matricula-aprobadas`
+        );
+    }
+
     // Endpoint: obtener detalle de curso por id
     getCursoById(id: number | string): Observable<ApiResponse<BackendCurso>> {
         return this.http.get<ApiResponse<BackendCurso>>(

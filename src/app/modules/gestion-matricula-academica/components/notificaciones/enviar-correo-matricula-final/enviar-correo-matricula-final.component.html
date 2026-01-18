@@ -16,37 +16,9 @@
         </div>
     </div>
 
-    <div class="flex align-items-center flex-wrap gap-3 mb-3">
-        <label class="font-medium text-900" for="periodo"
-            >Digite un periodo</label
-        >
-        <p-dropdown
-            inputId="periodo"
-            [options]="periodos"
-            [(ngModel)]="periodoSeleccionado"
-            class="w-6rem"
-        ></p-dropdown>
-        <p-dropdown
-            inputId="anio"
-            [options]="anios"
-            [(ngModel)]="anioSeleccionado"
-            placeholder="Ej: 2025"
-            class="w-10rem"
-        ></p-dropdown>
-        <button
-            pButton
-            pRipple
-            label="Consultar"
-            icon="pi pi-search"
-            class="p-button-primary"
-        ></button>
-    </div>
-
     <div class="mb-3">
         <div class="flex align-items-center gap-2 mb-2">
-            <span class="font-medium text-900"
-                >Filtrar por tipo de asignatura:</span
-            >
+            <span class="font-medium text-900">Filtrar por asignatura:</span>
             <button
                 pButton
                 pRipple
@@ -54,21 +26,21 @@
                 icon="pi pi-filter-slash"
                 label="Limpiar"
                 (click)="limpiarFiltros()"
-                [disabled]="!tiposSeleccionados.length"
+                [disabled]="!asignaturasSeleccionadas.length"
             ></button>
         </div>
         <div class="flex flex-wrap gap-2">
             <button
-                *ngFor="let tipo of tiposAsignatura"
+                *ngFor="let asignatura of asignaturasOptions"
                 type="button"
                 pButton
                 pRipple
-                [label]="tipo.label"
+                [label]="asignatura.label"
                 class="p-button-sm"
                 [class.p-button-outlined]="
-                    !tiposSeleccionados.includes(tipo.value)
+                    !asignaturasSeleccionadas.includes(asignatura.value)
                 "
-                (click)="toggleTipo(tipo.value)"
+                (click)="toggleAsignatura(asignatura.value)"
             ></button>
         </div>
     </div>

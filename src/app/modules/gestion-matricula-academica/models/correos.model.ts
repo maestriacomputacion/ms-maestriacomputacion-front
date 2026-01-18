@@ -11,9 +11,10 @@ export interface TipoCorreo {
 export interface CursoCorreo {
     id: number;
     grupo: string;
+    asignaturaId: number;
     asignatura: string;
     docente: string;
-    tipo: string;
+    tipo?: string;
 }
 
 // Estudiante usado en flujos de correo.

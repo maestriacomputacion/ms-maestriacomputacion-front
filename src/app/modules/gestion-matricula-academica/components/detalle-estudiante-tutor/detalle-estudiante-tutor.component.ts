@@ -128,12 +128,18 @@ export class DetalleEstudianteTutorComponent implements OnInit {
     }
 
     getCodigo(): string {
-        return this.estudiante?.codigo || this.estudianteResumen?.codigo || 'Sin dato';
+        return (
+            this.estudiante?.codigo ||
+            this.estudianteResumen?.codigo ||
+            'Sin dato'
+        );
     }
 
     getNombreCompleto(): string {
         const nombre =
-            this.estudiante?.persona?.nombre ?? this.estudianteResumen?.nombre ?? '';
+            this.estudiante?.persona?.nombre ??
+            this.estudianteResumen?.nombre ??
+            '';
         const apellido =
             this.estudiante?.persona?.apellido ??
             this.estudianteResumen?.apellido ??
@@ -156,8 +162,11 @@ export class DetalleEstudianteTutorComponent implements OnInit {
     }
 
     getSemestre(): string {
-        const semestre = this.estudiante?.informacionMaestria?.semestreAcademico;
-        return semestre !== undefined && semestre !== null && `${semestre}` !== ''
+        const semestre =
+            this.estudiante?.informacionMaestria?.semestreAcademico;
+        return semestre !== undefined &&
+            semestre !== null &&
+            `${semestre}` !== ''
             ? String(semestre)
             : 'Sin dato';
     }
@@ -197,10 +206,9 @@ export class DetalleEstudianteTutorComponent implements OnInit {
                         this.matriculas = data.map((item) =>
                             this.mapMatriculaListado(item)
                         );
-                        this.estudiante =
-                            this.obtenerEstudianteDesdeMatriculas(
-                                this.matriculas
-                            );
+                        this.estudiante = this.obtenerEstudianteDesdeMatriculas(
+                            this.matriculas
+                        );
                     } else {
                         this.matriculas = [];
                         this.messageService.add({

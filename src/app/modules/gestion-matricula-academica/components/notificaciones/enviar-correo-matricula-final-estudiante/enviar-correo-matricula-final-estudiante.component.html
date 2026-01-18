@@ -27,18 +27,20 @@
         <div class="font-medium text-900 mb-2">
             Filtrar por tipo de asignatura:
         </div>
-        <div class="w-6 min-w-min">
-            <span class="p-input-icon-left w-full">
-                <i class="pi pi-search"></i>
-                <input
-                    pInputText
-                    type="text"
-                    class="w-full"
-                    placeholder="Ej: 2023001"
-                    [value]="busqueda"
-                    (input)="onBuscar($event.target.value)"
-                />
-            </span>
+        <div class="flex flex-wrap align-items-center gap-2">
+            <div class="w-6 min-w-min">
+                <span class="p-input-icon-left w-full">
+                    <i class="pi pi-search"></i>
+                    <input
+                        pInputText
+                        type="text"
+                        class="w-full"
+                        placeholder="Ej: 2023001"
+                        [value]="busqueda"
+                        (input)="onBuscar($event.target.value)"
+                    />
+                </span>
+            </div>
         </div>
     </div>
 
@@ -101,6 +103,15 @@
             Seleccionados para envío: {{ seleccionParaEnviar.length }}
             estudiantes
         </div>
+        <button
+            pButton
+            pRipple
+            label="Agregar todos"
+            icon="pi pi-check-square"
+            class="p-button-outlined p-button-sm"
+            [disabled]="!estudiantesFiltrados.length"
+            (click)="seleccionarTodosFiltrados()"
+        ></button>
     </div>
 
     <div class="mt-5">

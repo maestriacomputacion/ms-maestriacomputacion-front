@@ -73,7 +73,6 @@ export class CursoService {
                         this.transformToUI(item)
                     ),
                 })),
-                // Fallback: devolver lista vacía en caso de error
                 catchError(() =>
                     of({
                         typeResponse: 'SUCCESS',

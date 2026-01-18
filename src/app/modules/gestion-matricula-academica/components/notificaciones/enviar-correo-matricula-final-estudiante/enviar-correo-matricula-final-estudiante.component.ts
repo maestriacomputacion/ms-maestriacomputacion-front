@@ -60,6 +60,23 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
         this.aplicarFiltro();
     }
 
+    seleccionarTodosFiltrados(): void {
+        if (!this.estudiantesFiltrados.length) {
+            return;
+        }
+        const idsSeleccionados = new Set(
+            this.seleccionParaEnviar.map((e) => e.id)
+        );
+        const nuevos = this.estudiantesFiltrados.filter(
+            (e) => !idsSeleccionados.has(e.id)
+        );
+        if (!nuevos.length) {
+            return;
+        }
+        this.seleccionParaEnviar = [...this.seleccionParaEnviar, ...nuevos];
+        this.aplicarFiltro();
+    }
+
     estaSeleccionado(estudianteId: number): boolean {
         return this.seleccionParaEnviar.some((e) => e.id === estudianteId);
     }

@@ -30,9 +30,10 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
 
     toggleAsignatura(asignaturaId: string): void {
         if (this.asignaturasSeleccionadas.includes(asignaturaId)) {
-            this.asignaturasSeleccionadas = this.asignaturasSeleccionadas.filter(
-                (id) => id !== asignaturaId
-            );
+            this.asignaturasSeleccionadas =
+                this.asignaturasSeleccionadas.filter(
+                    (id) => id !== asignaturaId
+                );
         } else {
             this.asignaturasSeleccionadas = [
                 ...this.asignaturasSeleccionadas,

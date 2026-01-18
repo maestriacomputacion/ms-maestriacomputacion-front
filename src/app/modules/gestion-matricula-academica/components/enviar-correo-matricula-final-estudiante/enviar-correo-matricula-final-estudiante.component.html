@@ -17,6 +17,10 @@
             director de cada estudiante sobre los cursos matriculados para el
             periodo actual.
         </div>
+        <div class="text-700">
+            <b>Información:</b> Solo se enviarán las matrículas que han sido
+            aprobadas por el coordinador.
+        </div>
     </div>
 
     <div class="mb-3">
@@ -48,8 +52,6 @@
         styleClass="p-datatable-gridlines p-datatable-striped"
         [responsiveLayout]="'scroll'"
         dataKey="id"
-        selectionMode="multiple"
-        [(selection)]="seleccion"
     >
         <ng-template pTemplate="header">
             <tr>
@@ -77,10 +79,10 @@
                     <button
                         pButton
                         pRipple
-                        icon="pi pi-trash"
-                        class="p-button-text p-button-danger p-button-sm"
-                        (click)="remover(estudiante)"
-                        pTooltip="Quitar de selección"
+                        label="Seleccionar"
+                        class="p-button-text p-button-sm"
+                        [disabled]="estaSeleccionado(estudiante.id)"
+                        (click)="seleccionar(estudiante)"
                     ></button>
                 </td>
             </tr>
@@ -96,17 +98,9 @@
 
     <div class="flex justify-content-between align-items-center mt-3">
         <div class="text-700">
-            Seleccionados: {{ seleccion.length }} estudiantes
+            Seleccionados para envío: {{ seleccionParaEnviar.length }}
+            estudiantes
         </div>
-        <button
-            pButton
-            pRipple
-            label="Agregar a envío"
-            icon="pi pi-plus"
-            class="p-button-primary"
-            [disabled]="!seleccion.length"
-            (click)="agregarAEnvio()"
-        ></button>
     </div>
 
     <div class="mt-5">

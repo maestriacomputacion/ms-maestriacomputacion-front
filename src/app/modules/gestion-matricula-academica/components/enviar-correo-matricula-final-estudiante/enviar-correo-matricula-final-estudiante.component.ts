@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EstudianteCorreo } from '../../models/correos.model';
+import { CorreoMatriculaFinalService } from '../../services/correo-matricula-final.service';
 
 @Component({
     selector: 'app-enviar-correo-matricula-final-estudiante',
@@ -7,34 +8,18 @@ import { EstudianteCorreo } from '../../models/correos.model';
     styleUrls: ['./enviar-correo-matricula-final-estudiante.component.scss'],
 })
 export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
-    estudiantes: EstudianteCorreo[] = [
-        {
-            id: 1,
-            codigo: '2-121215',
-            nombre: 'Camilo Ruiz Daza',
-            correo: 'cruiz@unicuacua.edu.co',
-        },
-        {
-            id: 2,
-            codigo: '2-121216',
-            nombre: 'Daniela Velasco González',
-            correo: 'dvelasco@unicuacua.edu.co',
-        },
-        {
-            id: 3,
-            codigo: '2-121217',
-            nombre: 'Luis Fernando Orozco',
-            correo: 'lforozco@unicuacua.edu.co',
-        },
-    ];
+    estudiantes: EstudianteCorreo[] = [];
     estudiantesFiltrados: EstudianteCorreo[] = [];
-    seleccion: EstudianteCorreo[] = [];
     seleccionParaEnviar: EstudianteCorreo[] = [];
 
     busqueda = '';
 
+    constructor(
+        private readonly correoMatriculaFinalService: CorreoMatriculaFinalService
+    ) {}
+
     ngOnInit(): void {
-        this.aplicarFiltro();
+        this.cargarEstudiantes();
     }
 
     onBuscar(term: string): void {
@@ -44,34 +29,58 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
 
     aplicarFiltro(): void {
         const t = this.busqueda.toLowerCase();
-        this.estudiantesFiltrados = this.estudiantes.filter(
-            (e) =>
+        const idsSeleccionados = new Set(
+            this.seleccionParaEnviar.map((e) => e.id)
+        );
+        this.estudiantesFiltrados = this.estudiantes.filter((e) => {
+            if (idsSeleccionados.has(e.id)) {
+                return false;
+            }
+            return (
                 !t ||
                 e.codigo.toLowerCase().includes(t) ||
                 e.nombre.toLowerCase().includes(t) ||
                 e.correo.toLowerCase().includes(t)
-        );
-    }
-
-    remover(estudiante: EstudianteCorreo): void {
-        this.seleccion = this.seleccion.filter((e) => e.id !== estudiante.id);
+            );
+        });
     }
 
     removerEnvio(estudiante: EstudianteCorreo): void {
         this.seleccionParaEnviar = this.seleccionParaEnviar.filter(
             (e) => e.id !== estudiante.id
         );
+        this.aplicarFiltro();
     }
 
-    agregarAEnvio(): void {
-        const ids = new Set(this.seleccionParaEnviar.map((e) => e.id));
-        const nuevos = this.seleccion.filter((e) => !ids.has(e.id));
-        this.seleccionParaEnviar = [...this.seleccionParaEnviar, ...nuevos];
+    seleccionar(estudiante: EstudianteCorreo): void {
+        if (this.estaSeleccionado(estudiante.id)) {
+            return;
+        }
+        this.seleccionParaEnviar = [...this.seleccionParaEnviar, estudiante];
+        this.aplicarFiltro();
+    }
+
+    estaSeleccionado(estudianteId: number): boolean {
+        return this.seleccionParaEnviar.some((e) => e.id === estudianteId);
     }
 
     enviarCorreos(): void {
         if (!this.seleccionParaEnviar.length) {
             return;
         }
+
+        const estudiantesId = this.seleccionParaEnviar.map((e) => e.id);
+        this.correoMatriculaFinalService
+            .enviarCorreoMatriculaFinal({ estudiantesId })
+            .subscribe();
+    }
+
+    private cargarEstudiantes(): void {
+        this.correoMatriculaFinalService
+            .getEstudiantesConMatriculaFinal()
+            .subscribe((response) => {
+                this.estudiantes = response.data ?? [];
+                this.aplicarFiltro();
+            });
     }
 }

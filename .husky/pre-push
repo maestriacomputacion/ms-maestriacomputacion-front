@@ -35,4 +35,3 @@ if [ "$should_check" != "true" ]; then
 fi
 
 run_script lint:strict
-run_cmd prettier --write "src/app/modules/gestion-matricula-academica/**/*.{ts,html,scss,css}"

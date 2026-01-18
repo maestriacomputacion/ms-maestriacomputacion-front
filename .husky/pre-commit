@@ -1,4 +1,12 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-exit 0
+run_cmd() {
+  if command -v npx >/dev/null 2>&1; then
+    npx "$@"
+  else
+    bunx "$@"
+  fi
+}
+
+run_cmd prettier --write "src/app/modules/gestion-matricula-academica/**/*.{ts,html,scss,css}"

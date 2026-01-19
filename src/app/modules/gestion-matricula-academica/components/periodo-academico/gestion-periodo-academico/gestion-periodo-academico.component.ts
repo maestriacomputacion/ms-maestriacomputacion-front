@@ -25,11 +25,15 @@ import {
 export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     periodos: PeriodoAcademico[] = [];
     displayModal = false;
+    displayPrecargaModal = false;
     editMode = false;
     editPeriodoId: string | null = null;
     fechasValidasBackend = true;
     mensajeValidacionBackend = '';
     form: FormGroup;
+    periodoPrecargaDestino: PeriodoAcademico | null = null;
+    periodoPrecargaOrigen: PeriodoAcademico | null = null;
+    periodosPrecargaDisponibles: PeriodoAcademico[] = [];
 
     readonly tagPeriodoOptions = [
         { label: '1', value: 1 },
@@ -149,7 +153,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
         });
     }
 
-    onPrecargarCursos(event: Event, periodoId: string): void {
+    onPrecargarCursos(periodoId: string): void {
         const periodo = this.periodos.find((p) => p.id === periodoId);
         if (!periodo) {
             this.messageService.add({
@@ -160,23 +164,46 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.confirmationService.confirm({
-            target: event.target as HTMLElement,
-            message: `¿Está seguro que desea precargar los cursos para el periodo ${periodo.tagPeriodo} (${periodo.fechaInicio} - ${periodo.fechaFin})?`,
-            header: 'Confirmar Precarga de Cursos',
-            icon: 'pi pi-info-circle',
-            acceptLabel: 'Sí, precargar',
-            rejectLabel: 'Cancelar',
-            accept: () => {
-                // Implementar la lógica de precarga de cursos en el servicio.
-                // this.periodoService.precargarCursos(periodoId).subscribe({...});
-                this.messageService.add({
-                    severity: 'info',
-                    summary: 'Proceso iniciado',
-                    detail: 'La precarga de cursos ha sido iniciada.',
-                });
-            },
+        this.periodoPrecargaDestino = periodo;
+        this.periodoPrecargaOrigen = null;
+        this.periodosPrecargaDisponibles = this.periodos.filter(
+            (item) => item.id !== periodoId
+        );
+        this.displayPrecargaModal = true;
+    }
+
+    confirmarPrecargaCursos(): void {
+        if (!this.periodoPrecargaDestino || !this.periodoPrecargaOrigen) return;
+
+        // Implementar la lógica de precarga de cursos en el servicio.
+        // this.periodoService.precargarCursos({
+        //     idPeriodoDestino: this.periodoPrecargaDestino.id,
+        //     idPeriodoOrigen: this.periodoPrecargaOrigen.id,
+        // }).subscribe({...});
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Proceso iniciado',
+            detail: `La precarga de cursos desde ${this.formatPeriodoEtiqueta(
+                this.periodoPrecargaOrigen
+            )} hacia ${this.formatPeriodoEtiqueta(
+                this.periodoPrecargaDestino
+            )} ha sido iniciada.`,
         });
+        this.cancelarPrecargaCursos();
+    }
+
+    cancelarPrecargaCursos(): void {
+        this.displayPrecargaModal = false;
+        this.periodoPrecargaDestino = null;
+        this.periodoPrecargaOrigen = null;
+        this.periodosPrecargaDisponibles = [];
+    }
+
+    formatPeriodoEtiqueta(periodo: PeriodoAcademico | null): string {
+        if (!periodo) return '';
+        const fechaInicio = periodo.fechaInicio || '-';
+        const fechaFin = periodo.fechaFin || '-';
+        return `Periodo ${periodo.tagPeriodo} (${fechaInicio} - ${fechaFin})`;
     }
 
     registrarPeriodo(): void {

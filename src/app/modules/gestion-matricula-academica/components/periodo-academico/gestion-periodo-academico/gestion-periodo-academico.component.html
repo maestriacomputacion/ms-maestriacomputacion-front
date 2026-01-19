@@ -56,7 +56,7 @@
     >
         <ng-template pTemplate="header">
             <tr>
-                <th scope="col">ID</th>
+                <th scope="col" class="text-center w-5rem">#</th>
                 <th scope="col">Fecha Inicio</th>
                 <th scope="col">Fecha Fin</th>
                 <th scope="col">Fecha fin matrícula</th>
@@ -66,9 +66,9 @@
                 <th scope="col" class="text-center w-3">Opciones</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-periodo>
+        <ng-template pTemplate="body" let-periodo let-rowIndex="rowIndex">
             <tr>
-                <td>{{ periodo.id }}</td>
+                <td class="text-center">{{ rowIndex + 1 }}</td>
                 <td>{{ periodo.fechaInicio }}</td>
                 <td>{{ periodo.fechaFin }}</td>
                 <td>{{ periodo.fechaFinMatricula }}</td>
@@ -84,7 +84,7 @@
                             class="p-button-rounded p-button-text p-button-sm p-button-info mr-2"
                             pTooltip="Precargar cursos"
                             tooltipPosition="top"
-                            (click)="onPrecargarCursos($event, periodo.id)"
+                            (click)="onPrecargarCursos(periodo.id)"
                         ></button>
                         <button
                             pButton
@@ -300,6 +300,84 @@
                 ></button>
             </div>
         </form>
+    </p-dialog>
+
+    <!-- Modal para precargar cursos -->
+    <p-dialog
+        header="Precargar cursos"
+        [(visible)]="displayPrecargaModal"
+        [modal]="true"
+        [closable]="false"
+        [style]="{ width: 'min(720px, 92vw)' }"
+        (onHide)="cancelarPrecargaCursos()"
+    >
+        <div class="flex flex-column gap-3">
+            <div class="text-700">
+                <span class="font-semibold">Periodo destino:</span>
+                {{ formatPeriodoEtiqueta(periodoPrecargaDestino) || "-" }}
+            </div>
+            <div class="text-700">
+                Seleccione el periodo desde donde quiere precargar cursos
+                (seleccion unica).
+            </div>
+            <p-table
+                [value]="periodosPrecargaDisponibles"
+                selectionMode="single"
+                [(selection)]="periodoPrecargaOrigen"
+                dataKey="id"
+                [paginator]="true"
+                [rows]="5"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="{first} - {last} de {totalRecords}"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col" style="width: 3rem"></th>
+                        <th scope="col">Periodo</th>
+                        <th scope="col">Fecha Inicio</th>
+                        <th scope="col">Fecha Fin</th>
+                        <th scope="col">Estado</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-periodo>
+                    <tr [pSelectableRow]="periodo">
+                        <td>
+                            <p-tableRadioButton
+                                [value]="periodo"
+                            ></p-tableRadioButton>
+                        </td>
+                        <td>{{ periodo.tagPeriodo }}</td>
+                        <td>{{ periodo.fechaInicio }}</td>
+                        <td>{{ periodo.fechaFin }}</td>
+                        <td>{{ periodo.estado }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="5">
+                            No hay periodos disponibles para precargar
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-footer>
+            <div class="flex justify-content-end gap-2">
+                <button
+                    pButton
+                    label="Cancelar"
+                    class="p-button-secondary p-button-outlined"
+                    (click)="cancelarPrecargaCursos()"
+                ></button>
+                <button
+                    pButton
+                    label="Precargar"
+                    class="p-button-primary"
+                    [disabled]="!periodoPrecargaOrigen"
+                    (click)="confirmarPrecargaCursos()"
+                ></button>
+            </div>
+        </p-footer>
     </p-dialog>
 
     <p-toast></p-toast>

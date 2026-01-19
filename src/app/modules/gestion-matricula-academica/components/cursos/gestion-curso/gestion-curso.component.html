@@ -15,7 +15,7 @@
                 <label
                     for="periodo"
                     class="font-medium mb-1 w-12rem white-space-normal"
-                    >Periodo</label
+                    >Período</label
                 >
                 <p-dropdown
                     id="periodo"
@@ -31,7 +31,7 @@
                 <label
                     for="areaFormacion"
                     class="font-medium mb-1 w-12rem white-space-normal"
-                    >Area de formación</label
+                    >Área de formación</label
                 >
                 <p-dropdown
                     id="areaFormacion"
@@ -39,7 +39,7 @@
                     [(ngModel)]="areaSeleccionada"
                     (onChange)="onAreaChange($event.value)"
                     [showClear]="true"
-                    placeholder="Ej: Investigacion"
+                    placeholder="Ej: Investigación"
                     class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
@@ -55,7 +55,7 @@
                     [(ngModel)]="asignaturaSeleccionada"
                     (onChange)="onFilterChange()"
                     [showClear]="true"
-                    placeholder="Ej: Metodologia de la Investigacion"
+                    placeholder="Ej: Metodología de la Investigación"
                     class="w-full flex-1 min-w-0"
                 ></p-dropdown>
             </div>
@@ -72,7 +72,7 @@
                     pInputText
                     type="text"
                     class="w-full"
-                    placeholder="Ej: Metodologia"
+                    placeholder="Ej: Metodología"
                     (input)="
                         tableCursos.filterGlobal(
                             $event.target.value,

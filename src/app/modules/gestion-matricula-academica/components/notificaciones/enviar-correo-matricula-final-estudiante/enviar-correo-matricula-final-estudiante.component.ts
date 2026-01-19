@@ -102,7 +102,7 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
         const target = event.currentTarget ?? event.target;
         this.confirmationService.confirm({
             target,
-            header: 'Confirmar envio',
+            header: 'Confirmar envío',
             message:
                 '¿Deseas enviar el correo de matrícula final a los estudiantes seleccionados?',
             acceptLabel: 'Enviar',

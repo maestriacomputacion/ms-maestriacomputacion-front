@@ -54,7 +54,7 @@ export class TipoNotificacionComponent {
         const target = event.currentTarget ?? event.target;
         this.confirmationService.confirm({
             target,
-            header: 'Confirmar envio',
+            header: 'Confirmar envío',
             message:
                 '¿Deseas enviar la prematrícula a todos los tutores con matrícula activa?',
             acceptLabel: 'Enviar',
@@ -90,11 +90,11 @@ export class TipoNotificacionComponent {
                 this.enviandoPrematricula = false;
             },
             error: (err) => {
-                console.error('Error enviando prematricula a tutores', err);
+                console.error('Error enviando prematrícula a tutores', err);
                 const detail =
                     err?.error?.message ||
                     err?.message ||
-                    'Error enviando prematricula a tutores';
+                    'Error enviando prematrícula a tutores';
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',

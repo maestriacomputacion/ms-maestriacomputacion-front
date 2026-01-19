@@ -156,7 +156,7 @@ export class ListadoMatriculasComponent implements OnInit {
     private formatearPeriodoDescripcion(
         periodo?: PeriodoBasico | PeriodoAcademico | null
     ): string {
-        if (!periodo) return 'Periodo -';
+        if (!periodo) return 'Período -';
         const fechaInicio = this.formatearFecha(periodo.fechaInicio);
         const fechaFin = this.formatearFecha(periodo.fechaFin);
         const rango = `${fechaInicio} - ${fechaFin}`;

@@ -145,7 +145,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     onEliminarPeriodo(event: Event, id: string): void {
         this.confirmationService.confirm({
             target: event.target as HTMLElement,
-            message: '¿Está seguro que desea eliminar este periodo académico?',
+            message: '¿Está seguro que desea eliminar este período académico?',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí',
             rejectLabel: 'No',
@@ -159,7 +159,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'No se encontró el periodo académico.',
+                detail: 'No se encontró el período académico.',
             });
             return;
         }
@@ -203,7 +203,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
         if (!periodo) return '';
         const fechaInicio = periodo.fechaInicio || '-';
         const fechaFin = periodo.fechaFin || '-';
-        return `Periodo ${periodo.tagPeriodo} (${fechaInicio} - ${fechaFin})`;
+        return `Período ${periodo.tagPeriodo} (${fechaInicio} - ${fechaFin})`;
     }
 
     registrarPeriodo(): void {
@@ -277,7 +277,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail:
                             response.message ??
-                            'No se pudo obtener la información de periodos.',
+                            'No se pudo obtener la información de períodos.',
                     });
                 }
             });
@@ -327,7 +327,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail:
                             err?.error?.message ??
-                            'No se pudo registrar el periodo académico.',
+                            'No se pudo registrar el período académico.',
                     });
                 },
             });
@@ -350,7 +350,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail:
                             err?.error?.message ??
-                            'No se pudo actualizar el periodo académico.',
+                            'No se pudo actualizar el período académico.',
                     });
                 },
             });
@@ -383,7 +383,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                         summary: 'Error',
                         detail:
                             err?.error?.message ??
-                            'No se pudo eliminar el periodo académico.',
+                            'No se pudo eliminar el período académico.',
                     });
                 },
             });

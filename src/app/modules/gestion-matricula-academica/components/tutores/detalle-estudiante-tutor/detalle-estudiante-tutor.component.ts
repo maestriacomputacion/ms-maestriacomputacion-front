@@ -54,7 +54,7 @@ export class DetalleEstudianteTutorComponent implements OnInit {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Advertencia',
-                detail: 'No se encontro el estudiante seleccionado.',
+                detail: 'No se encontró el estudiante seleccionado.',
             });
             return;
         }
@@ -308,7 +308,7 @@ export class DetalleEstudianteTutorComponent implements OnInit {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'No se encontro la matrícula seleccionada.',
+                detail: 'No se encontró la matrícula seleccionada.',
             });
             return;
         }

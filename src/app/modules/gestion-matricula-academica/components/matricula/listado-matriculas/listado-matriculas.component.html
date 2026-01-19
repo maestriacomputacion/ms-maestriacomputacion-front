@@ -11,7 +11,7 @@
                 <label
                     for="periodo"
                     class="font-medium mb-1 white-space-nowrap w-8rem"
-                    >Periodo</label
+                    >Período</label
                 >
                 <p-dropdown
                     id="periodo"
@@ -28,7 +28,7 @@
                         <span
                             class="block overflow-hidden text-overflow-ellipsis white-space-nowrap"
                         >
-                            {{ item?.label || "Selecciona el periodo" }}
+                            {{ item?.label || "Selecciona el período" }}
                         </span>
                     </ng-template>
                 </p-dropdown>
@@ -45,7 +45,7 @@
                     [(ngModel)]="selectedAsignatura"
                     (onChange)="aplicarFiltros()"
                     [showClear]="true"
-                    placeholder="Ej: Metodologia de la Investigacion"
+                    placeholder="Ej: Metodología de la Investigación"
                     class="w-full flex-1 min-w-0"
                 >
                     <ng-template pTemplate="selectedItem" let-item>
@@ -137,7 +137,7 @@
                     pInputText
                     type="text"
                     class="w-full"
-                    placeholder="Ej: 2025-1, Metodologia"
+                    placeholder="Ej: 2025-1, Metodología"
                     [(ngModel)]="globalSearch"
                     (input)="aplicarFiltros()"
                 />
@@ -167,7 +167,7 @@
     >
         <ng-template pTemplate="header">
             <tr>
-                <th class="text-center" scope="col">Periodo</th>
+                <th class="text-center" scope="col">Período</th>
                 <th class="text-center" scope="col">Asignatura</th>
                 <th class="text-center" scope="col">Grupo</th>
                 <th class="text-center" scope="col">Estado Curso</th>

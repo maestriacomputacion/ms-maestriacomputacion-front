@@ -169,7 +169,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
         }
 
         if (!this.periodoActivo?.id) {
-            console.warn('No hay periodo activo disponible para cargar cursos');
+            console.warn('No hay período activo disponible para cargar cursos');
             return;
         }
 
@@ -234,7 +234,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                             summary: 'Aviso',
                             detail:
                                 response?.message ||
-                                'No se encontró periodo activo',
+                                'No se encontró período activo',
                         });
                     }
                 },
@@ -242,7 +242,7 @@ export class MatriculaMasivaComponent implements OnInit, OnDestroy {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: 'No se pudo obtener el periodo activo',
+                        detail: 'No se pudo obtener el período activo',
                     });
                 },
             });

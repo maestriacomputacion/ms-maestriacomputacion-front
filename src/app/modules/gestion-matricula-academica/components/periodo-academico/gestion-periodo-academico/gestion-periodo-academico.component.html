@@ -1,6 +1,6 @@
 <p-panel>
     <p-header>
-        <b>GESTIÓN DE PERIODOS ACADÉMICOS</b>
+        <b>GESTIÓN DE PERÍODOS ACADÉMICOS</b>
     </p-header>
     <!-- Encabezado -->
     <div
@@ -29,7 +29,7 @@
                 pButton
                 pRipple
                 icon="pi pi-plus"
-                label="Agregar periodo"
+                label="Agregar período"
                 class="p-button-primary p-button-sm"
                 (click)="onAgregarPeriodo()"
             ></button>
@@ -60,7 +60,7 @@
                 <th scope="col">Fecha Inicio</th>
                 <th scope="col">Fecha Fin</th>
                 <th scope="col">Fecha fin matrícula</th>
-                <th scope="col">Periodo</th>
+                <th scope="col">Período</th>
                 <th scope="col">Descripción</th>
                 <th scope="col">Estado</th>
                 <th scope="col" class="text-center w-3">Opciones</th>
@@ -91,7 +91,7 @@
                             pRipple
                             icon="pi pi-pencil"
                             class="p-button-rounded p-button-text p-button-sm p-button-warning mr-2"
-                            pTooltip="Editar periodo"
+                            pTooltip="Editar período"
                             tooltipPosition="top"
                             (click)="onEditarPeriodo(periodo.id)"
                         ></button>
@@ -100,7 +100,7 @@
                             pRipple
                             icon="pi pi-trash"
                             class="p-button-rounded p-button-text p-button-sm p-button-danger"
-                            pTooltip="Eliminar periodo"
+                            pTooltip="Eliminar período"
                             tooltipPosition="top"
                             (click)="onEliminarPeriodo($event, periodo.id)"
                         ></button>
@@ -110,7 +110,7 @@
                         *ngIf="periodo.estado === 'FINALIZADO'"
                         class="text-muted"
                     >
-                        <span class="text-xs">Periodo finalizado</span>
+                        <span class="text-xs">Período finalizado</span>
                     </div>
                 </td>
             </tr>
@@ -132,7 +132,7 @@
         <ng-template pTemplate="header">
             <span class="text-xl font-bold">
                 {{
-                    editMode ? "Editar periodo académico" : "Periodo académico"
+                    editMode ? "Editar período académico" : "Período académico"
                 }}
             </span>
         </ng-template>
@@ -215,7 +215,7 @@
                 <label
                     for="periodoTag"
                     class="text-nowrap w-9rem label-required"
-                    >Periodo:</label
+                    >Período:</label
                 >
                 <p-dropdown
                     id="tagPeriodo"
@@ -262,7 +262,7 @@
                     formControlName="descripcion"
                     rows="4"
                     class="w-full"
-                    placeholder="Ej: Periodo 2025-1"
+                    placeholder="Ej: Período 2025-1"
                     maxlength="200"
                     [ngClass]="{
                         'ng-invalid ng-dirty':
@@ -289,7 +289,7 @@
                     pRipple
                     type="submit"
                     [label]="
-                        editMode ? 'Actualizar periodo' : 'Registrar periodo'
+                        editMode ? 'Actualizar período' : 'Registrar período'
                     "
                     class="p-button-primary"
                     [disabled]="
@@ -313,12 +313,12 @@
     >
         <div class="flex flex-column gap-3">
             <div class="text-700">
-                <span class="font-semibold">Periodo destino:</span>
+                <span class="font-semibold">Período destino:</span>
                 {{ formatPeriodoEtiqueta(periodoPrecargaDestino) || "-" }}
             </div>
             <div class="text-700">
-                Seleccione el periodo desde donde quiere precargar cursos
-                (seleccion unica).
+                Seleccione el período desde donde quiere precargar cursos
+                (selección única).
             </div>
             <p-table
                 [value]="periodosPrecargaDisponibles"
@@ -333,7 +333,7 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th scope="col" style="width: 3rem"></th>
-                        <th scope="col">Periodo</th>
+                        <th scope="col">Período</th>
                         <th scope="col">Fecha Inicio</th>
                         <th scope="col">Fecha Fin</th>
                         <th scope="col">Estado</th>
@@ -355,7 +355,7 @@
                 <ng-template pTemplate="emptymessage">
                     <tr>
                         <td [attr.colspan]="5">
-                            No hay periodos disponibles para precargar
+                            No hay períodos disponibles para precargar
                         </td>
                     </tr>
                 </ng-template>

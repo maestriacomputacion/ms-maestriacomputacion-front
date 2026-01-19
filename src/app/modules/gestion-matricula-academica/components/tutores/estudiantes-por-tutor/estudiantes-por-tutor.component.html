@@ -11,7 +11,7 @@
     </div>
     <div class="mb-3 flex flex-column gap-1 text-base">
         <div class="flex align-items-center gap-2">
-            <span class="font-semibold text-900">Codigo:</span>
+            <span class="font-semibold text-900">Código:</span>
             <span class="text-700 font-normal">{{
                 codigoTutor || "Sin dato"
             }}</span>
@@ -34,7 +34,7 @@
                     pInputText
                     type="text"
                     class="w-full"
-                    placeholder="Buscar por codigo, nombre, apellido o correo..."
+                    placeholder="Buscar por código, nombre, apellido o correo..."
                     (input)="
                         tablaEstudiantes.filterGlobal(
                             $event.target.value,
@@ -66,7 +66,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th class="text-center" scope="col" pSortableColumn="codigo">
-                    Codigo
+                    Código
                     <p-sortIcon field="codigo"></p-sortIcon>
                 </th>
                 <th class="text-center" scope="col" pSortableColumn="nombre">
@@ -82,19 +82,29 @@
                     <p-sortIcon field="correoUniversitario"></p-sortIcon>
                 </th>
                 <th
-                    class="text-center"
+                    class="text-center w-12rem white-space-normal"
                     scope="col"
                     pSortableColumn="matriculasPendientes"
                 >
-                    Matriculas pendientes
+                    Matrículas pendientes por avalar del tutor
                     <p-sortIcon field="matriculasPendientes"></p-sortIcon>
+                </th>
+                <th
+                    class="text-center w-12rem white-space-normal"
+                    scope="col"
+                    pSortableColumn="matriculasPendientesCoordinador"
+                >
+                    Matrículas pendientes por aprobar coordinador
+                    <p-sortIcon
+                        field="matriculasPendientesCoordinador"
+                    ></p-sortIcon>
                 </th>
                 <th
                     class="text-center"
                     scope="col"
                     pSortableColumn="totalMatriculas"
                 >
-                    Total matriculas
+                    Total matrículas activas
                     <p-sortIcon field="totalMatriculas"></p-sortIcon>
                 </th>
                 <th class="text-center" scope="col">Opciones</th>
@@ -120,11 +130,18 @@
                 <td class="text-center">
                     {{ estudiante.correoUniversitario || "Sin dato" }}
                 </td>
-                <td class="text-center">
+                <td class="text-center w-12rem">
                     {{
                         estudiante.matriculasPendientes === null
                             ? "Sin dato"
                             : estudiante.matriculasPendientes
+                    }}
+                </td>
+                <td class="text-center w-12rem">
+                    {{
+                        estudiante.matriculasPendientesCoordinador === null
+                            ? "Sin dato"
+                            : estudiante.matriculasPendientesCoordinador
                     }}
                 </td>
                 <td class="text-center">
@@ -160,7 +177,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td [attr.colspan]="7">No se encontraron estudiantes</td>
+                <td [attr.colspan]="8">No se encontraron estudiantes</td>
             </tr>
         </ng-template>
     </p-table>
@@ -171,10 +188,75 @@
         <button
             pButton
             pRipple
-            label="Aplicar seleccion"
+            label="Aplicar selección"
             class="p-button-primary p-button-sm"
             [disabled]="!tieneSeleccionadas()"
             (click)="aplicarSugerencias()"
         ></button>
     </div>
+
+    <p-dialog
+        [(visible)]="modalAccionVisible"
+        [modal]="true"
+        [closable]="true"
+        [dismissableMask]="true"
+        [style]="{ width: '32rem' }"
+        header="Aplicar selección"
+        styleClass="p-fluid"
+    >
+        <div class="flex flex-column gap-3">
+            <span class="text-700">
+                Estás a punto de aplicar una acción a
+                <span class="font-semibold">{{
+                    getCantidadSeleccionadas()
+                }}</span>
+                estudiantes seleccionados.
+            </span>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex justify-content-end gap-2">
+                <button
+                    *ngIf="esCoordinador()"
+                    pButton
+                    type="button"
+                    class="p-button-primary p-button-sm"
+                    label="Aceptar"
+                    (click)="confirmarAccion('aceptar')"
+                ></button>
+                <button
+                    *ngIf="esCoordinador()"
+                    pButton
+                    type="button"
+                    class="p-button-primary p-button-sm"
+                    label="Rechazar"
+                    (click)="confirmarAccion('rechazar')"
+                ></button>
+                <button
+                    *ngIf="esCoordinador()"
+                    pButton
+                    type="button"
+                    class="p-button-primary p-button-sm"
+                    label="Aprobar elección del tutor"
+                    (click)="confirmarAccion('aprobar-eleccion-tutor')"
+                ></button>
+                <button
+                    *ngIf="esDocente()"
+                    pButton
+                    type="button"
+                    class="p-button-primary p-button-sm"
+                    label="Avalar"
+                    (click)="confirmarAccion('avalar')"
+                ></button>
+                <button
+                    *ngIf="esDocente()"
+                    pButton
+                    type="button"
+                    class="p-button-primary p-button-sm"
+                    label="No avalar"
+                    (click)="confirmarAccion('no-avalar')"
+                ></button>
+            </div>
+        </ng-template>
+    </p-dialog>
 </p-panel>

@@ -12,6 +12,7 @@ interface EstudianteListado {
     apellido: string;
     correoUniversitario: string;
     matriculasPendientes: number | null;
+    matriculasPendientesCoordinador: number | null;
     totalMatriculas: number | null;
     seleccionado: boolean;
 }
@@ -23,12 +24,14 @@ interface EstudianteListado {
 })
 export class EstudiantesPorTutorComponent implements OnInit {
     loading: boolean = false;
+    modalAccionVisible: boolean = false;
     periodo: number | null = null;
     anio: number | null = null;
     nombreTutor: string = '';
     codigoTutor: string = '';
     correoTutor: string = '';
     tutorId: number | null = null;
+    roles: string[] = [];
 
     estudiantesListado: EstudianteListado[] = [];
     estudiantesFiltrados: EstudianteListado[] = [];
@@ -111,7 +114,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Advertencia',
-                detail: 'No se encontro el tutor seleccionado.',
+                detail: 'No se encontró el tutor seleccionado.',
             });
             return;
         }
@@ -149,17 +152,64 @@ export class EstudiantesPorTutorComponent implements OnInit {
         if (seleccionadas.length === 0) {
             this.messageService.add({
                 severity: 'warn',
-                summary: 'Sin seleccion',
+                summary: 'Sin selección',
                 detail: 'Selecciona al menos un estudiante para aplicar.',
             });
             return;
         }
 
+        this.modalAccionVisible = true;
+    }
+
+    getCantidadSeleccionadas(): number {
+        return this.estudiantesListado.filter((s) => s.seleccionado).length;
+    }
+
+    confirmarAccion(
+        accion:
+            | 'aceptar'
+            | 'rechazar'
+            | 'avalar'
+            | 'no-avalar'
+            | 'aprobar-eleccion-tutor'
+    ): void {
+        const seleccionadas = this.estudiantesListado.filter(
+            (s) => s.seleccionado
+        );
+        if (seleccionadas.length === 0) {
+            this.modalAccionVisible = false;
+            return;
+        }
+
+        const acciones: Record<
+            | 'aceptar'
+            | 'rechazar'
+            | 'avalar'
+            | 'no-avalar'
+            | 'aprobar-eleccion-tutor',
+            string
+        > = {
+            aceptar: 'Aceptar',
+            rechazar: 'Rechazar',
+            avalar: 'Avalar',
+            'no-avalar': 'No avalar',
+            'aprobar-eleccion-tutor': 'Aprobar elección del tutor',
+        };
+
         this.messageService.add({
-            severity: 'success',
-            summary: 'Seleccion aplicada',
-            detail: `Se aplico a ${seleccionadas.length} estudiantes.`,
+            severity: 'info',
+            summary: 'Acción simulada',
+            detail: `${acciones[accion]} aplicado a ${seleccionadas.length} estudiantes.`,
         });
+        this.modalAccionVisible = false;
+    }
+
+    esCoordinador(): boolean {
+        return this.roles.includes('ROLE_COORDINADOR');
+    }
+
+    esDocente(): boolean {
+        return this.roles.includes('ROLE_DOCENTE');
     }
 
     getTooltipOpciones(_estudiante: EstudianteListado): string {
@@ -172,9 +222,9 @@ export class EstudiantesPorTutorComponent implements OnInit {
 
     private initTutor(): void {
         const tutorIdParam = this.resolveTutorId();
-        const roles = this.authService.getRole() ?? [];
+        this.roles = this.authService.getRole() ?? [];
 
-        if (roles.includes('ROLE_COORDINADOR')) {
+        if (this.esCoordinador()) {
             if (!tutorIdParam) {
                 this.messageService.add({
                     severity: 'warn',
@@ -190,7 +240,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
             return;
         }
 
-        if (roles.includes('ROLE_DOCENTE')) {
+        if (this.esDocente()) {
             this.resolveDocentePorEmail(tutorIdParam);
             return;
         }
@@ -215,7 +265,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
                         summary: 'Advertencia',
                         detail:
                             response.message ||
-                            'No se pudo cargar la informacion del tutor',
+                            'No se pudo cargar la información del tutor',
                     });
                     return;
                 }
@@ -227,7 +277,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
                     this.messageService.add({
                         severity: 'warn',
                         summary: 'Advertencia',
-                        detail: 'No se encontro informacion del tutor.',
+                        detail: 'No se encontró información del tutor.',
                     });
                     return;
                 }
@@ -241,7 +291,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
                 const detail =
                     err?.error?.message ||
                     err?.message ||
-                    'Error al cargar la informacion del tutor';
+                    'Error al cargar la información del tutor';
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
@@ -264,7 +314,10 @@ export class EstudiantesPorTutorComponent implements OnInit {
                 nombre: persona?.nombre ?? '',
                 apellido: persona?.apellido ?? '',
                 correoUniversitario: estudiante?.correoUniversidad ?? '',
-                matriculasPendientes: item?.totalMatriculasPendientes ?? null,
+                matriculasPendientes:
+                    item?.totalMatriculasPendientesTutor ?? null,
+                matriculasPendientesCoordinador:
+                    item?.totalMatriculasPendienteCordinador ?? null,
                 totalMatriculas: item?.totalMatriculas ?? null,
                 seleccionado: false,
             };
@@ -284,7 +337,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Advertencia',
-                detail: 'No se encontro el correo del docente.',
+                detail: 'No se encontró el correo del docente.',
             });
             return;
         }
@@ -297,7 +350,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
                         summary: 'Advertencia',
                         detail:
                             response.message ||
-                            'No se pudo obtener la informacion del docente.',
+                            'No se pudo obtener la información del docente.',
                     });
                     return;
                 }
@@ -307,7 +360,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
                     this.messageService.add({
                         severity: 'warn',
                         summary: 'Advertencia',
-                        detail: 'No se encontro el docente asociado.',
+                        detail: 'No se encontró el docente asociado.',
                     });
                     return;
                 }
@@ -327,7 +380,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
                     this.messageService.add({
                         severity: 'warn',
                         summary: 'Advertencia',
-                        detail: 'Solo puedes acceder a tu informacion.',
+                        detail: 'Solo puedes acceder a tu información.',
                     });
                     this.router.navigate(
                         [
@@ -346,7 +399,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
                 const detail =
                     err?.error?.message ||
                     err?.message ||
-                    'Error al obtener la informacion del docente.';
+                    'Error al obtener la información del docente.';
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',

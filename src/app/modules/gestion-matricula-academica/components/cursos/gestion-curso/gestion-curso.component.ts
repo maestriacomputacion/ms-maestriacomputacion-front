@@ -85,12 +85,12 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
                         this.periodoSeleccionado = String(response.data.id);
                         this.loadCursos();
                     } else {
-                        console.warn('No hay periodo activo');
+                        console.warn('No hay período activo');
                         this.loadCursos();
                     }
                 },
                 error: (err) => {
-                    console.error('Error obteniendo periodo activo', err);
+                    console.error('Error obteniendo período activo', err);
                     this.loadCursos();
                 },
             });

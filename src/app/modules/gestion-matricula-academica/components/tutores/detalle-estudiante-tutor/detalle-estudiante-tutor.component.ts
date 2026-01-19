@@ -143,6 +143,15 @@ export class DetalleEstudianteTutorComponent implements OnInit {
         }
     }
 
+    mostrarAcciones(matricula: MatriculaListado): boolean {
+        if (!this.esDocente()) {
+            return true;
+        }
+
+        const estado = this.normalizarEstado(matricula?.estadoMatricula);
+        return estado !== MATRICULA_ESTADOS.APROBADA;
+    }
+
     getCodigo(): string {
         return (
             this.estudiante?.codigo ||

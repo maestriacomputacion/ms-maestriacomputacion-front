@@ -106,10 +106,6 @@ export class EstudiantesPorTutorComponent implements OnInit {
     }
 
     verDetalleEstudiante(estudiante: EstudianteListado): void {
-        if (this.esOpcionesInformativa(estudiante)) {
-            return;
-        }
-
         const tutorId = this.tutorId ?? this.resolveTutorId();
         if (!tutorId) {
             this.messageService.add({
@@ -164,26 +160,6 @@ export class EstudiantesPorTutorComponent implements OnInit {
             summary: 'Seleccion aplicada',
             detail: `Se aplico a ${seleccionadas.length} estudiantes.`,
         });
-    }
-
-    getTooltipOpciones(estudiante: EstudianteListado): string {
-        if (estudiante?.totalMatriculas === 0) {
-            return 'Matriculas resueltas';
-        }
-
-        return 'Ver detalle';
-    }
-
-    getIconoOpciones(estudiante: EstudianteListado): string {
-        if (estudiante?.totalMatriculas === 0) {
-            return 'pi pi-info-circle';
-        }
-
-        return 'pi pi-eye';
-    }
-
-    esOpcionesInformativa(estudiante: EstudianteListado): boolean {
-        return estudiante?.totalMatriculas === 0;
     }
 
     private initTutor(): void {

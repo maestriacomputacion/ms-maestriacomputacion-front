@@ -108,4 +108,18 @@ export class PeriodoAcademicoService {
             backendPeriodoAcademico('activo')
         );
     }
+
+    // Endpoint: precargar cursos de un periodo
+    precargarCursos(payload: {
+        idPeriodo: string | number;
+        idPeriodoPrecarga: string | number;
+    }): Observable<ApiResponse<unknown>> {
+        return this.http.post<ApiResponse<unknown>>(
+            backendPeriodoAcademico('precargarCursos'),
+            {
+                idPeriodo: payload.idPeriodo,
+                idPeriodoPrecarga: payload.idPeriodoPrecarga,
+            }
+        );
+    }
 }

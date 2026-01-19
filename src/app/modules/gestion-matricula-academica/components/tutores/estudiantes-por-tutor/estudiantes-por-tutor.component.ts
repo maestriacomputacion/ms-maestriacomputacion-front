@@ -4,6 +4,8 @@ import { MessageService } from 'primeng/api';
 import { TutorService } from '../../../services/tutor.service';
 import { EstudiantePorTutor } from '../../../models/estudiante-por-tutor.model';
 import { AutenticacionService } from 'src/app/modules/gestion-autenticacion/services/autenticacion.service';
+import { MatriculaPreviaService } from '../../../services/matricula-previa.service';
+import { MATRICULA_ESTADOS } from '../../../constants/matricula-estados';
 
 interface EstudianteListado {
     id: number;
@@ -20,7 +22,6 @@ interface EstudianteListado {
 @Component({
     selector: 'app-estudiantes-por-tutor',
     templateUrl: './estudiantes-por-tutor.component.html',
-    styleUrls: ['./estudiantes-por-tutor.component.scss'],
 })
 export class EstudiantesPorTutorComponent implements OnInit {
     loading: boolean = false;
@@ -39,6 +40,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
     constructor(
         private readonly messageService: MessageService,
         private readonly tutorService: TutorService,
+        private readonly matriculaPreviaService: MatriculaPreviaService,
         private readonly route: ActivatedRoute,
         private readonly router: Router,
         private readonly authService: AutenticacionService
@@ -181,6 +183,30 @@ export class EstudiantesPorTutorComponent implements OnInit {
             return;
         }
 
+        const estado = this.getEstadoPorAccion(accion);
+        if (!estado) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'No se pudo determinar el estado para aplicar.',
+            });
+            this.modalAccionVisible = false;
+            return;
+        }
+
+        const estudiantesIds = seleccionadas
+            .map((s) => s.id)
+            .filter((id) => id > 0);
+        if (estudiantesIds.length === 0) {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Advertencia',
+                detail: 'No se encontraron estudiantes válidos.',
+            });
+            this.modalAccionVisible = false;
+            return;
+        }
+
         const acciones: Record<
             | 'aceptar'
             | 'rechazar'
@@ -189,18 +215,59 @@ export class EstudiantesPorTutorComponent implements OnInit {
             | 'aprobar-eleccion-tutor',
             string
         > = {
-            aceptar: 'Aceptar',
+            aceptar: 'Aprobar',
             rechazar: 'Rechazar',
             avalar: 'Avalar',
             'no-avalar': 'No avalar',
             'aprobar-eleccion-tutor': 'Aprobar elección del tutor',
         };
 
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Acción simulada',
-            detail: `${acciones[accion]} aplicado a ${seleccionadas.length} estudiantes.`,
-        });
+        this.loading = true;
+        this.matriculaPreviaService
+            .cambiarEstadoMatriculaMasivo({
+                estudiantesIds,
+                nuevoEstado: estado,
+            })
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Éxito',
+                            detail:
+                                response.message ||
+                                `${acciones[accion]} aplicado a ${estudiantesIds.length} estudiantes.`,
+                        });
+                        this.cargarEstudiantes();
+                        return;
+                    }
+
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Advertencia',
+                        detail:
+                            response.message ||
+                            'No se pudo actualizar el estado de las matrículas.',
+                    });
+                    this.loading = false;
+                },
+                error: (err) => {
+                    console.error(
+                        'Error cambiando estado masivo de matrículas',
+                        err
+                    );
+                    const detail =
+                        err?.error?.message ||
+                        err?.message ||
+                        'Error al actualizar el estado de las matrículas.';
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail,
+                    });
+                    this.loading = false;
+                },
+            });
         this.modalAccionVisible = false;
     }
 
@@ -407,5 +474,31 @@ export class EstudiantesPorTutorComponent implements OnInit {
                 });
             },
         });
+    }
+
+    private getEstadoPorAccion(
+        accion:
+            | 'aceptar'
+            | 'rechazar'
+            | 'avalar'
+            | 'no-avalar'
+            | 'aprobar-eleccion-tutor'
+    ): string | null {
+        const estados: Record<
+            | 'aceptar'
+            | 'rechazar'
+            | 'avalar'
+            | 'no-avalar'
+            | 'aprobar-eleccion-tutor',
+            string
+        > = {
+            aceptar: MATRICULA_ESTADOS.APROBADA,
+            rechazar: MATRICULA_ESTADOS.RECHAZADA,
+            avalar: MATRICULA_ESTADOS.TUTOR_AVALADA,
+            'no-avalar': MATRICULA_ESTADOS.TUTOR_NO_AVALADA,
+            'aprobar-eleccion-tutor': MATRICULA_ESTADOS.APROBADA,
+        };
+
+        return estados[accion] ?? null;
     }
 }

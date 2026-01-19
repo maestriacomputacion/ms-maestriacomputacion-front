@@ -62,4 +62,13 @@ export class MatriculaPreviaService {
         const url = `${matricula_academica.api_url}matricula/cambiar-estado/${matriculaId}`;
         return this.http.put<ApiResponse<MatriculaRealizada>>(url, { estado });
     }
+
+    // Endpoint: cambiar estado masivo de matriculas por estudiantes
+    cambiarEstadoMatriculaMasivo(payload: {
+        estudiantesIds: number[];
+        nuevoEstado: string;
+    }): Observable<ApiResponse<unknown>> {
+        const url = `${matricula_academica.api_url}matricula/cambiar-estado/masivo`;
+        return this.http.post<ApiResponse<unknown>>(url, payload);
+    }
 }

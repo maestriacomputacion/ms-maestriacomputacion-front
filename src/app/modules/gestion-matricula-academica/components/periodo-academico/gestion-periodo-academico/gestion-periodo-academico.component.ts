@@ -175,21 +175,42 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     confirmarPrecargaCursos(): void {
         if (!this.periodoPrecargaDestino || !this.periodoPrecargaOrigen) return;
 
-        // Implementar la lógica de precarga de cursos en el servicio.
-        // this.periodoService.precargarCursos({
-        //     idPeriodoDestino: this.periodoPrecargaDestino.id,
-        //     idPeriodoOrigen: this.periodoPrecargaOrigen.id,
-        // }).subscribe({...});
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Proceso iniciado',
-            detail: `La precarga de cursos desde ${this.formatPeriodoEtiqueta(
-                this.periodoPrecargaOrigen
-            )} hacia ${this.formatPeriodoEtiqueta(
-                this.periodoPrecargaDestino
-            )} ha sido iniciada.`,
-        });
-        this.cancelarPrecargaCursos();
+        this.periodoService
+            .precargarCursos({
+                idPeriodo: this.periodoPrecargaDestino.id,
+                idPeriodoPrecarga: this.periodoPrecargaOrigen.id,
+            })
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response) => {
+                    const precargaExitosa =
+                        response.typeResponse === 'SUCCESS';
+                    const detalleFallback = precargaExitosa
+                        ? `La precarga de cursos desde ${this.formatPeriodoEtiqueta(
+                              this.periodoPrecargaOrigen
+                          )} hacia ${this.formatPeriodoEtiqueta(
+                              this.periodoPrecargaDestino
+                          )} ha sido iniciada.`
+                        : 'No se pudo iniciar la precarga de cursos.';
+                    this.messageService.add({
+                        severity: precargaExitosa ? 'success' : 'error',
+                        summary: precargaExitosa ? 'Proceso iniciado' : 'Error',
+                        detail: response.message ?? detalleFallback,
+                    });
+                    if (precargaExitosa) {
+                        this.cancelarPrecargaCursos();
+                    }
+                },
+                error: (err) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail:
+                            err?.error?.message ??
+                            'No se pudo iniciar la precarga de cursos.',
+                    });
+                },
+            });
     }
 
     cancelarPrecargaCursos(): void {

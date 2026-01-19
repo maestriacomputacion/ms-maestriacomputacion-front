@@ -205,13 +205,69 @@
         styleClass="p-fluid"
     >
         <div class="flex flex-column gap-3">
-            <span class="text-700">
-                Estás a punto de aplicar una acción a
-                <span class="font-semibold">{{
-                    getCantidadSeleccionadas()
-                }}</span>
-                estudiantes seleccionados.
-            </span>
+            <div
+                class="surface-50 border-1 border-200 border-round p-3 flex align-items-center gap-3"
+            >
+                <div
+                    class="w-3rem h-3rem border-round flex align-items-center justify-content-center surface-100 border-1 border-200"
+                >
+                    <i class="pi pi-users text-primary text-xl"></i>
+                </div>
+                <div class="flex flex-column gap-1">
+                    <span class="text-700">
+                        Estás a punto de aplicar una acción a
+                    </span>
+                    <div class="flex align-items-end gap-2">
+                        <span class="text-3xl font-semibold text-900">{{
+                            getCantidadSeleccionadas()
+                        }}</span>
+                        <span class="text-600 pb-1"
+                            >estudiantes seleccionados</span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-column gap-2">
+                <span class="text-700 font-semibold">Acciones disponibles</span>
+                <div class="flex flex-wrap gap-2">
+                    <span
+                        *ngIf="esCoordinador()"
+                        class="border-1 border-200 border-round px-2 py-1 text-700 text-sm surface-0"
+                        >Aprobar</span
+                    >
+                    <span
+                        *ngIf="esCoordinador()"
+                        class="border-1 border-200 border-round px-2 py-1 text-700 text-sm surface-0"
+                        >Rechazar</span
+                    >
+                    <span
+                        *ngIf="esCoordinador()"
+                        class="border-1 border-200 border-round px-2 py-1 text-700 text-sm surface-0"
+                        >Aprobar elección del tutor</span
+                    >
+                    <span
+                        *ngIf="esDocente()"
+                        class="border-1 border-200 border-round px-2 py-1 text-700 text-sm surface-0"
+                        >Avalar</span
+                    >
+                    <span
+                        *ngIf="esDocente()"
+                        class="border-1 border-200 border-round px-2 py-1 text-700 text-sm surface-0"
+                        >No avalar</span
+                    >
+                </div>
+            </div>
+
+            <div
+                class="surface-50 border-1 border-200 border-round p-2 flex align-items-start gap-2 text-600 text-sm"
+            >
+                <i class="pi pi-info-circle text-primary mt-1"></i>
+                <span>
+                    Se actualizará el estado de las matrículas asociadas a los
+                    estudiantes seleccionados.
+                </span>
+            </div>
         </div>
 
         <ng-template pTemplate="footer">
@@ -221,7 +277,7 @@
                     pButton
                     type="button"
                     class="p-button-primary p-button-sm"
-                    label="Aceptar"
+                    label="Aprobar"
                     (click)="confirmarAccion('aceptar')"
                 ></button>
                 <button

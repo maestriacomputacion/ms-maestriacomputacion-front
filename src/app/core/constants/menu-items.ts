@@ -115,11 +115,11 @@ export const menuItems: MenuItem[] = [
                 label: 'Reportes de Matrícula',
                 icon: 'pi pi-fw pi-chart-bar',
                 items: [
-                    {
-                        label: 'Reporte matricula estudiantes',
-                        icon: 'pi pi-fw pi-chart-bar',
-                        routerLink: '/gestion-matricula-academica/reporte-matricula-estudiantes',
-                    },
+                    // {
+                    //     label: 'Reporte matricula estudiantes',
+                    //     icon: 'pi pi-fw pi-chart-bar',
+                    //     routerLink: '/gestion-matricula-academica/reporte-matricula-estudiantes',
+                    // },
                     {
                         label: 'Notificación de matricula a estudiantes',
                         icon: 'pi pi-fw pi-envelope',

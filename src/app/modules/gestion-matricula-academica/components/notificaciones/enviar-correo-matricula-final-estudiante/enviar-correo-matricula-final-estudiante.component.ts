@@ -4,6 +4,14 @@ import { EstudianteCorreo } from '../../../models/correos.model';
 import { NotificacionPrematriculaTutor } from '../../../models/notificacion-prematricula.model';
 import { CorreoMatriculaFinalService } from '../../../services/correo-matricula-final.service';
 
+type ResumenEstudiante = {
+    tutorNombre: string;
+    tutorCodigo: string;
+    estudianteNombre: string;
+    estudianteCodigo: string;
+    estudianteCorreo: string;
+};
+
 @Component({
     selector: 'app-enviar-correo-matricula-final-estudiante',
     templateUrl: './enviar-correo-matricula-final-estudiante.component.html',
@@ -17,6 +25,7 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
     resumenVisible = false;
     resumenMessage = '';
     resumenNotificaciones: NotificacionPrematriculaTutor[] = [];
+    resumenEstudiantes: ResumenEstudiante[] = [];
     totalTutoresNotificados = 0;
     totalEstudiantesNotificados = 0;
 
@@ -173,14 +182,41 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
         data: NotificacionPrematriculaTutor[] | null | undefined
     ): void {
         const listado = data ?? [];
+        const estudiantesListado = listado.reduce<ResumenEstudiante[]>(
+            (acc, item) => {
+                const estudiantes = item.estudiantes ?? [];
+                const mapped = estudiantes.map((estudiante) => {
+                    const nombre = `${estudiante.persona?.nombre ?? ''} ${
+                        estudiante.persona?.apellido ?? ''
+                    }`.trim();
+                    return {
+                        tutorNombre: item.nombre,
+                        tutorCodigo: item.codigo,
+                        estudianteNombre: nombre || 'Sin nombre',
+                        estudianteCodigo: estudiante.codigo ?? '',
+                        estudianteCorreo:
+                            estudiante.correoUniversidad ??
+                            estudiante.persona?.correoElectronico ??
+                            '',
+                    };
+                });
+                return acc.concat(mapped);
+            },
+            []
+        );
         this.resumenMessage = message;
         this.resumenNotificaciones = listado;
         this.totalTutoresNotificados = listado.length;
-        this.totalEstudiantesNotificados = listado.reduce(
-            (acc, item) =>
-                acc + Number(item.totalEstudiantesConMatriculaActiva ?? 0),
-            0
-        );
+        this.resumenEstudiantes = estudiantesListado;
+        this.totalEstudiantesNotificados =
+            estudiantesListado.length > 0
+                ? estudiantesListado.length
+                : listado.reduce(
+                      (acc, item) =>
+                          acc +
+                          Number(item.totalEstudiantesConMatriculaActiva ?? 0),
+                      0
+                  );
     }
 
     cerrarResumen(): void {

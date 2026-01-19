@@ -5,14 +5,13 @@ import { map } from 'rxjs/operators';
 
 import { ApiResponse } from '../models/api-response.model';
 import { EstudianteCorreo } from '../models/correos.model';
+import { NotificacionPrematriculaTutor } from '../models/notificacion-prematricula.model';
 import { matricula_academica } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CorreoMatriculaFinalService {
-    private readonly baseUrl = `${matricula_academica.api_url}matricula/correo-final`;
-
     constructor(private readonly http: HttpClient) {}
 
     // Endpoint: listar estudiantes matriculados
@@ -42,12 +41,15 @@ export class CorreoMatriculaFinalService {
             );
     }
 
-    // Endpoint: enviar correo de matricula final a estudiantes
+    // Endpoint: /matricula/notificar-matricula-final
     enviarCorreoMatriculaFinal(payload: {
-        estudiantesId: number[];
-    }): Observable<ApiResponse<null>> {
-        const url = `${this.baseUrl}/estudiantes/enviar`;
-        return this.http.post<ApiResponse<null>>(url, payload);
+        estudianteIds: number[];
+    }): Observable<ApiResponse<NotificacionPrematriculaTutor[]>> {
+        const url = `${matricula_academica.api_url}matricula/notificar-matricula-final`;
+        return this.http.post<ApiResponse<NotificacionPrematriculaTutor[]>>(
+            url,
+            payload
+        );
     }
 }
 

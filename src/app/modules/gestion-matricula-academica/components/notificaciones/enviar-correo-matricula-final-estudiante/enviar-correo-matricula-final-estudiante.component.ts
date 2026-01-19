@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { EstudianteCorreo } from '../../../models/correos.model';
+import { NotificacionPrematriculaTutor } from '../../../models/notificacion-prematricula.model';
 import { CorreoMatriculaFinalService } from '../../../services/correo-matricula-final.service';
 
 @Component({
@@ -11,11 +13,19 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
     estudiantes: EstudianteCorreo[] = [];
     estudiantesFiltrados: EstudianteCorreo[] = [];
     seleccionParaEnviar: EstudianteCorreo[] = [];
+    enviando = false;
+    resumenVisible = false;
+    resumenMessage = '';
+    resumenNotificaciones: NotificacionPrematriculaTutor[] = [];
+    totalTutoresNotificados = 0;
+    totalEstudiantesNotificados = 0;
 
     busqueda = '';
 
     constructor(
-        private readonly correoMatriculaFinalService: CorreoMatriculaFinalService
+        private readonly correoMatriculaFinalService: CorreoMatriculaFinalService,
+        private readonly messageService: MessageService,
+        private readonly confirmationService: ConfirmationService
     ) {}
 
     ngOnInit(): void {
@@ -81,15 +91,26 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
         return this.seleccionParaEnviar.some((e) => e.id === estudianteId);
     }
 
-    enviarCorreos(): void {
+    enviarCorreos(event: Event): void {
         if (!this.seleccionParaEnviar.length) {
             return;
         }
+        if (this.enviando) {
+            return;
+        }
 
-        const estudiantesId = this.seleccionParaEnviar.map((e) => e.id);
-        this.correoMatriculaFinalService
-            .enviarCorreoMatriculaFinal({ estudiantesId })
-            .subscribe();
+        const target = event.currentTarget ?? event.target;
+        this.confirmationService.confirm({
+            target,
+            header: 'Confirmar envio',
+            message:
+                '¿Deseas enviar el correo de matrícula final a los estudiantes seleccionados?',
+            acceptLabel: 'Enviar',
+            rejectLabel: 'Cancelar',
+            accept: () => {
+                this.ejecutarEnvioCorreos();
+            },
+        });
     }
 
     private cargarEstudiantes(): void {
@@ -99,5 +120,70 @@ export class EnviarCorreoMatriculaFinalEstudianteComponent implements OnInit {
                 this.estudiantes = response.data ?? [];
                 this.aplicarFiltro();
             });
+    }
+
+    private ejecutarEnvioCorreos(): void {
+        const estudianteIds = this.seleccionParaEnviar.map((e) => e.id);
+        this.enviando = true;
+        this.correoMatriculaFinalService
+            .enviarCorreoMatriculaFinal({ estudianteIds })
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.actualizarResumenNotificacion(
+                            response.message,
+                            response.data
+                        );
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Éxito',
+                            detail: response.message,
+                        });
+                        this.resumenVisible = true;
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: response.message,
+                        });
+                    }
+                    this.enviando = false;
+                },
+                error: (err) => {
+                    console.error(
+                        'Error enviando correo de matricula final',
+                        err
+                    );
+                    const detail =
+                        err?.error?.message ||
+                        err?.message ||
+                        'Error enviando correo de matricula final';
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail,
+                    });
+                    this.enviando = false;
+                },
+            });
+    }
+
+    private actualizarResumenNotificacion(
+        message: string,
+        data: NotificacionPrematriculaTutor[] | null | undefined
+    ): void {
+        const listado = data ?? [];
+        this.resumenMessage = message;
+        this.resumenNotificaciones = listado;
+        this.totalTutoresNotificados = listado.length;
+        this.totalEstudiantesNotificados = listado.reduce(
+            (acc, item) =>
+                acc + Number(item.totalEstudiantesConMatriculaActiva ?? 0),
+            0
+        );
+    }
+
+    cerrarResumen(): void {
+        this.resumenVisible = false;
     }
 }

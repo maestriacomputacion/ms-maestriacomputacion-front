@@ -19,6 +19,13 @@ interface EstudianteListado {
     seleccionado: boolean;
 }
 
+type AccionMasiva =
+    | 'aceptar'
+    | 'rechazar'
+    | 'avalar'
+    | 'no-avalar'
+    | 'aprobar-eleccion-tutor';
+
 @Component({
     selector: 'app-estudiantes-por-tutor',
     templateUrl: './estudiantes-por-tutor.component.html',
@@ -167,14 +174,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
         return this.estudiantesListado.filter((s) => s.seleccionado).length;
     }
 
-    confirmarAccion(
-        accion:
-            | 'aceptar'
-            | 'rechazar'
-            | 'avalar'
-            | 'no-avalar'
-            | 'aprobar-eleccion-tutor'
-    ): void {
+    confirmarAccion(accion: AccionMasiva): void {
         const seleccionadas = this.estudiantesListado.filter(
             (s) => s.seleccionado
         );
@@ -207,14 +207,7 @@ export class EstudiantesPorTutorComponent implements OnInit {
             return;
         }
 
-        const acciones: Record<
-            | 'aceptar'
-            | 'rechazar'
-            | 'avalar'
-            | 'no-avalar'
-            | 'aprobar-eleccion-tutor',
-            string
-        > = {
+        const acciones: Record<AccionMasiva, string> = {
             aceptar: 'Aprobar',
             rechazar: 'Rechazar',
             avalar: 'Avalar',
@@ -476,22 +469,8 @@ export class EstudiantesPorTutorComponent implements OnInit {
         });
     }
 
-    private getEstadoPorAccion(
-        accion:
-            | 'aceptar'
-            | 'rechazar'
-            | 'avalar'
-            | 'no-avalar'
-            | 'aprobar-eleccion-tutor'
-    ): string | null {
-        const estados: Record<
-            | 'aceptar'
-            | 'rechazar'
-            | 'avalar'
-            | 'no-avalar'
-            | 'aprobar-eleccion-tutor',
-            string
-        > = {
+    private getEstadoPorAccion(accion: AccionMasiva): string | null {
+        const estados: Record<AccionMasiva, string> = {
             aceptar: MATRICULA_ESTADOS.APROBADA,
             rechazar: MATRICULA_ESTADOS.RECHAZADA,
             avalar: MATRICULA_ESTADOS.TUTOR_AVALADA,

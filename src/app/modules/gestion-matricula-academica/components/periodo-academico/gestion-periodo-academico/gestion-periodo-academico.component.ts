@@ -183,8 +183,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
-                    const precargaExitosa =
-                        response.typeResponse === 'SUCCESS';
+                    const precargaExitosa = response.typeResponse === 'SUCCESS';
                     const detalleFallback = precargaExitosa
                         ? `La precarga de cursos desde ${this.formatPeriodoEtiqueta(
                               this.periodoPrecargaOrigen

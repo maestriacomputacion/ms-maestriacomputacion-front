@@ -141,7 +141,7 @@ export const menuItems: MenuItem[] = [
             {
                 label:'Revisión de Matrículas',
                 icon:'pi pi-fw pi-user',
-                routerLink:'/gestion-matricula-academica/vista-tutor'
+                routerLink:'/gestion-matricula-academica/estudiantes-por-tutor'
             }
 
         ],

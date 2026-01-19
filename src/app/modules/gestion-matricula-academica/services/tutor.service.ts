@@ -6,6 +6,7 @@ import {
     TutorListado,
     TutorListadoBackend,
 } from '../models/tutor-listado.model';
+import { DocenteModel } from '../models/curso.model';
 import { NotificacionPrematriculaTutor } from '../models/notificacion-prematricula.model';
 import { matricula_academica } from 'src/environments/environment';
 import { EstudiantePorTutor } from '../models/estudiante-por-tutor.model';
@@ -55,6 +56,14 @@ export class TutorService {
         return this.http.get<ApiResponse<EstudiantePorTutor[]>>(
             `${this.backend}/tutores/${tutorId}/estudiantes`
         );
+    }
+
+    // Endpoint: obtener docente por email
+    getDocentePorEmail(email: string): Observable<ApiResponse<DocenteModel>> {
+        const url = `${this.backend}/docente-email`;
+        return this.http.get<ApiResponse<DocenteModel>>(url, {
+            params: { email },
+        });
     }
 
     // Endpoint: notificar prematricula a tutores

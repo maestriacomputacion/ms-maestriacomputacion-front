@@ -19,7 +19,6 @@ import { CursoInfoCardComponent } from './components/matricula/gestion-matricula
 import { MatriculaMasivaComponent } from './components/matricula/matricula-masiva/matricula-masiva.component';
 import { ResultadoMatriculaMasivaComponent } from './components/matricula/resultado-matricula-masiva/resultado-matricula-masiva.component';
 import { CursosPorAreaTabsComponent } from './components/matricula/cursos-por-area-tabs/cursos-por-area-tabs.component';
-import { VistaTutorComponent } from './components/tutores/vista-tutor/vista-tutor.component';
 import { AprobarMatriculaEstudianteComponent } from './components/matricula/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
 import { ListadoMatriculasComponent } from './components/matricula/listado-matriculas/listado-matriculas.component';
 import { ReporteCursosOfertadosComponent } from './components/reportes/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
@@ -52,7 +51,6 @@ import { DetalleEstudianteTutorComponent } from './components/tutores/detalle-es
         MatriculaMasivaComponent,
         ResultadoMatriculaMasivaComponent,
         CursosPorAreaTabsComponent,
-        VistaTutorComponent,
         AprobarMatriculaEstudianteComponent,
         ListadoMatriculasComponent,
         ListadoTutoresComponent,

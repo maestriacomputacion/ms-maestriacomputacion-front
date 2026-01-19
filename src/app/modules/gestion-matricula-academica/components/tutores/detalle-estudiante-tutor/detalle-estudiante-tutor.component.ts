@@ -3,9 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { Estudiante } from 'src/app/modules/gestion-estudiantes/models/estudiante';
-import { MATRICULA_ESTADOS } from '../../../constants/matricula-estados';
+import {
+    MATRICULA_ESTADO_OPTIONS,
+    MATRICULA_ESTADOS,
+} from '../../../constants/matricula-estados';
 import { MatriculaRealizada } from '../../../models/matricula.model';
 import { MatriculaPreviaService } from '../../../services/matricula-previa.service';
+import { AutenticacionService } from 'src/app/modules/gestion-autenticacion/services/autenticacion.service';
 
 interface EstudianteResumen {
     id: number;
@@ -37,7 +41,8 @@ export class DetalleEstudianteTutorComponent implements OnInit {
         private readonly router: Router,
         private readonly matriculaPreviaService: MatriculaPreviaService,
         private readonly messageService: MessageService,
-        private readonly confirmationService: ConfirmationService
+        private readonly confirmationService: ConfirmationService,
+        private readonly authService: AutenticacionService
     ) {}
 
     ngOnInit(): void {
@@ -75,6 +80,7 @@ export class DetalleEstudianteTutorComponent implements OnInit {
 
     onAprobar(event: Event, matricula: MatriculaListado): void {
         const target = event.target ?? event.currentTarget;
+        const estado = this.getEstadoAprobacion();
         this.confirmationService.confirm({
             target: target ?? undefined,
             message: '¿Está seguro de aprobar este curso?',
@@ -82,21 +88,18 @@ export class DetalleEstudianteTutorComponent implements OnInit {
             acceptLabel: 'Sí, aprobar',
             rejectLabel: 'Cancelar',
             accept: () => {
-                this.cambiarEstadoMatricula(
-                    matricula,
-                    MATRICULA_ESTADOS.APROBADA,
-                    {
-                        severity: 'success',
-                        summary: 'Éxito',
-                        detail: 'Curso aprobado correctamente',
-                    }
-                );
+                this.cambiarEstadoMatricula(matricula, estado, {
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Curso aprobado correctamente',
+                });
             },
         });
     }
 
     onRechazar(event: Event, matricula: MatriculaListado): void {
         const target = event.target ?? event.currentTarget;
+        const estado = this.getEstadoRechazo();
         this.confirmationService.confirm({
             target: target ?? undefined,
             message: '¿Está seguro de rechazar este curso?',
@@ -104,22 +107,27 @@ export class DetalleEstudianteTutorComponent implements OnInit {
             acceptLabel: 'Sí, rechazar',
             rejectLabel: 'Cancelar',
             accept: () => {
-                this.cambiarEstadoMatricula(
-                    matricula,
-                    MATRICULA_ESTADOS.RECHAZADA,
-                    {
-                        severity: 'warn',
-                        summary: 'Rechazada',
-                        detail: 'Curso rechazado',
-                    }
-                );
+                this.cambiarEstadoMatricula(matricula, estado, {
+                    severity: 'warn',
+                    summary: 'Rechazada',
+                    detail: 'Curso rechazado',
+                });
             },
         });
     }
 
     formatEstado(estado: string): string {
         if (!estado) return 'N/A';
-        return estado.charAt(0) + estado.slice(1).toLowerCase();
+
+        const match = MATRICULA_ESTADO_OPTIONS.find(
+            (option) => option.value === estado
+        );
+        if (match?.label) {
+            return match.label;
+        }
+
+        const normalized = estado.split('_').join(' ').toLowerCase();
+        return normalized.charAt(0).toUpperCase() + normalized.slice(1);
     }
 
     getSeverityEstado(estado: string): string {
@@ -185,7 +193,9 @@ export class DetalleEstudianteTutorComponent implements OnInit {
     }
 
     private getTutorId(): number | null {
-        const tutorId = this.route.snapshot.queryParamMap.get('tutorId');
+        const tutorId =
+            this.route.snapshot.paramMap.get('tutorId') ??
+            this.route.snapshot.queryParamMap.get('tutorId');
         return tutorId ? Number(tutorId) : null;
     }
 
@@ -311,7 +321,10 @@ export class DetalleEstudianteTutorComponent implements OnInit {
                         if (estadoBackend) {
                             this.actualizarEstado(matricula, estadoBackend);
                         }
-                        this.messageService.add(mensajes);
+                        this.messageService.add({
+                            ...mensajes,
+                            detail: response.message || mensajes.detail,
+                        });
                         return;
                     }
 
@@ -340,5 +353,29 @@ export class DetalleEstudianteTutorComponent implements OnInit {
 
     private normalizarEstado(estado?: string | null): string | null {
         return estado ? estado.toUpperCase() : null;
+    }
+
+    private getEstadoAprobacion(): string {
+        if (this.esDocente()) {
+            return MATRICULA_ESTADOS.TUTOR_AVALADA;
+        }
+
+        return MATRICULA_ESTADOS.APROBADA;
+    }
+
+    private getEstadoRechazo(): string {
+        if (this.esDocente()) {
+            return MATRICULA_ESTADOS.TUTOR_NO_AVALADA;
+        }
+
+        return MATRICULA_ESTADOS.RECHAZADA;
+    }
+
+    private esDocente(): boolean {
+        const roles = this.authService.getRole() ?? [];
+        return (
+            roles.includes('ROLE_DOCENTE') &&
+            !roles.includes('ROLE_COORDINADOR')
+        );
     }
 }

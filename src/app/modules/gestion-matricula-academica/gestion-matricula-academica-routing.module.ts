@@ -11,7 +11,6 @@ import { RealizarMatriculaEstudiantesComponent } from './components/matricula/ge
 import { CancelarMatriculaEstudiantesComponent } from './components/matricula/gestion-matricula-curso/components/cancelar-matricula-estudiantes/cancelar-matricula-estudiantes.component';
 import { MatriculaMasivaComponent } from './components/matricula/matricula-masiva/matricula-masiva.component';
 import { ResultadoMatriculaMasivaComponent } from './components/matricula/resultado-matricula-masiva/resultado-matricula-masiva.component';
-import { VistaTutorComponent } from './components/tutores/vista-tutor/vista-tutor.component';
 import { AprobarMatriculaEstudianteComponent } from './components/matricula/aprobar-matricula-estudiante/aprobar-matricula-estudiante.component';
 import { ListadoMatriculasComponent } from './components/matricula/listado-matriculas/listado-matriculas.component';
 import { ReporteCursosOfertadosComponent } from './components/reportes/reporte-cursos-ofertados/reporte-cursos-ofertados.component';
@@ -123,10 +122,6 @@ const routes: Routes = [
                 component: ResultadoMatriculaMasivaComponent,
             },
             {
-                path: 'vista-tutor',
-                component: VistaTutorComponent,
-            },
-            {
                 path: 'aprobar-matricula-estudiante/:id',
                 component: AprobarMatriculaEstudianteComponent,
             },
@@ -139,13 +134,21 @@ const routes: Routes = [
             {
                 path: 'listado-tutores',
                 component: ListadoTutoresComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_COORDINADOR'] },
+            },
+            {
+                path: 'estudiantes-por-tutor',
+                component: EstudiantesPorTutorComponent,
+                canActivate: [RoleGuard],
+                data: { expectedRole: ['ROLE_DOCENTE'] },
             },
             {
                 path: 'estudiantes-por-tutor/:tutorId',
                 component: EstudiantesPorTutorComponent,
             },
             {
-                path: 'detalle-estudiante-tutor/:estudianteId',
+                path: 'detalle-estudiante-tutor/:tutorId/:estudianteId',
                 component: DetalleEstudianteTutorComponent,
             },
         ],

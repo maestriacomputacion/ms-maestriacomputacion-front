@@ -162,6 +162,14 @@ export class EstudiantesPorTutorComponent implements OnInit {
         });
     }
 
+    getTooltipOpciones(_estudiante: EstudianteListado): string {
+        return 'Ver detalle';
+    }
+
+    getIconoOpciones(_estudiante: EstudianteListado): string {
+        return 'pi pi-eye';
+    }
+
     private initTutor(): void {
         const tutorIdParam = this.resolveTutorId();
         const roles = this.authService.getRole() ?? [];

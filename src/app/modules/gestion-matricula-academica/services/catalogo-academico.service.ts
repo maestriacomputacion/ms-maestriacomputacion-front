@@ -14,6 +14,7 @@ type CatalogoItem = { id?: string | number | null; nombre?: string | null };
 @Injectable({ providedIn: 'root' })
 export class CatalogoAcademicoService {
     private readonly backendCursos = `${matricula_academica.api_url}cursos`;
+    private readonly backendDocentes = `${matricula_academica.api_url}estudiante-docente`;
 
     constructor(private readonly http: HttpClient) {}
 
@@ -118,6 +119,13 @@ export class CatalogoAcademicoService {
     ): Observable<ApiResponse<DocenteModel[]>> {
         return this.http.get<ApiResponse<DocenteModel[]>>(
             `${this.backendCursos}/asignaturas/docente/${asignaturaId}`
+        );
+    }
+
+    // Endpoint: listar todos los docentes
+    listDocentes(): Observable<ApiResponse<DocenteModel[]>> {
+        return this.http.get<ApiResponse<DocenteModel[]>>(
+            `${this.backendDocentes}/listaDocentes`
         );
     }
 }

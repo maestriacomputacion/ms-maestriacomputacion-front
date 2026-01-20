@@ -154,6 +154,18 @@
                         [disabled]="loadingDocentes || saving || isViewMode"
                     />
                 </div>
+                <div class="flex align-items-center gap-2 mb-3">
+                    <p-inputSwitch
+                        inputId="mostrarTodosDocentes"
+                        [(ngModel)]="mostrarTodosDocentes"
+                        [ngModelOptions]="{ standalone: true }"
+                        [disabled]="loadingDocentes || saving || isViewMode"
+                        (onChange)="onToggleMostrarDocentes()"
+                    ></p-inputSwitch>
+                    <label for="mostrarTodosDocentes" class="font-medium">
+                        Mostrar todos los docentes
+                    </label>
+                </div>
                 <p-pickList
                     [source]="sourceDocentes"
                     [target]="targetDocentes"
@@ -170,9 +182,9 @@
                 >
                     <ng-template let-docente pTemplate="item">
                         <div>
-                            {{ docente.persona.nombre }}
-                            {{ docente.persona.apellido }} |
-                            {{ docente.codigo }}
+                            {{ docente.persona?.nombre || '' }}
+                            {{ docente.persona?.apellido || '' }} |
+                            {{ docente.codigo || '' }}
                         </div>
                     </ng-template>
                 </p-pickList>

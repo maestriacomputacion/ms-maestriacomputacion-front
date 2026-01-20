@@ -7,11 +7,12 @@ import {
     FormGroup,
     Validators,
 } from '@angular/forms';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, of } from 'rxjs';
 import {
     debounceTime,
     distinctUntilChanged,
     filter,
+    map,
     switchMap,
     finalize,
     takeUntil,
@@ -40,6 +41,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     sourceDocentes: DocenteModel[] = [];
     targetDocentes: DocenteModel[] = [];
     loadingDocentes = false;
+    mostrarTodosDocentes = false;
 
     asignaturas: AsignaturaModel[] = [];
     loadingAsignaturas = false;
@@ -208,9 +210,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             this.validarGrupoConAsignatura(currentGrupo);
         }
 
-        if (asignatura?.id) {
-            this.cargarDocentesPorAsignatura(asignatura.id);
-        }
+        this.cargarDocentesSegunFiltro(true);
     }
 
     onCloseView(): void {
@@ -466,7 +466,31 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         this.subs.push(sub);
     }
 
-    private cargarDocentesPorAsignatura(asignaturaId: number): void {
+    onToggleMostrarDocentes(): void {
+        this.cargarDocentesSegunFiltro(false);
+    }
+
+    private cargarDocentesSegunFiltro(resetTarget: boolean): void {
+        if (this.mostrarTodosDocentes) {
+            this.cargarTodosDocentes(resetTarget);
+            return;
+        }
+
+        if (this.asignatura?.id) {
+            this.cargarDocentesPorAsignatura(this.asignatura.id, resetTarget);
+            return;
+        }
+
+        if (resetTarget) {
+            this.targetDocentes = [];
+        }
+        this.sourceDocentes = [];
+    }
+
+    private cargarDocentesPorAsignatura(
+        asignaturaId: number,
+        resetTarget: boolean
+    ): void {
         this.loadingDocentes = true;
         const sub = this.catalogoAcademicoService
             .listDocentesByAsignatura(asignaturaId)
@@ -477,8 +501,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: (response) => {
                     if (response?.typeResponse === 'SUCCESS') {
-                        this.sourceDocentes = response.data || [];
-                        this.targetDocentes = [];
+                        this.actualizarListasDocentes(
+                            response.data || [],
+                            resetTarget
+                        );
                     } else {
                         this.messageService.add({
                             severity: 'warn',
@@ -502,6 +528,62 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 },
             });
         this.subs.push(sub);
+    }
+
+    private cargarTodosDocentes(resetTarget: boolean): void {
+        this.loadingDocentes = true;
+        const sub = this.catalogoAcademicoService
+            .listDocentes()
+            .pipe(
+                takeUntil(this.destroy$),
+                finalize(() => (this.loadingDocentes = false))
+            )
+            .subscribe({
+                next: (response) => {
+                    if (response?.typeResponse === 'SUCCESS') {
+                        this.actualizarListasDocentes(
+                            response.data || [],
+                            resetTarget
+                        );
+                    } else {
+                        this.messageService.add({
+                            severity: 'warn',
+                            summary: 'Atención',
+                            detail:
+                                response?.message ||
+                                'No se encontraron docentes',
+                        });
+                    }
+                },
+                error: (err) => {
+                    const detail =
+                        err?.error?.message ??
+                        err?.message ??
+                        'Error cargando docentes';
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail,
+                    });
+                },
+            });
+        this.subs.push(sub);
+    }
+
+    private actualizarListasDocentes(
+        docentes: DocenteModel[],
+        resetTarget: boolean
+    ): void {
+        if (resetTarget) {
+            this.targetDocentes = [];
+        }
+
+        const targetIds = new Set(
+            this.targetDocentes.map((docente) => docente.id)
+        );
+        this.sourceDocentes = docentes.filter(
+            (docente) => !targetIds.has(docente.id)
+        );
     }
 
     private clearGrupoExistsErrorIfAny(): void {
@@ -617,43 +699,84 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             .listDocentesByAsignatura(curso.asignatura.id)
             .pipe(
                 takeUntil(this.destroy$),
+                switchMap((response) => {
+                    if (response?.typeResponse !== 'SUCCESS') {
+                        return of({
+                            response,
+                            docentesDisponibles: [] as DocenteModel[],
+                            docentesTodos: null,
+                        });
+                    }
+
+                    const docentesDisponibles = response.data || [];
+                    if (
+                        !this.hayDocentesFaltantes(
+                            curso.docentes,
+                            docentesDisponibles
+                        )
+                    ) {
+                        return of({
+                            response,
+                            docentesDisponibles,
+                            docentesTodos: null,
+                        });
+                    }
+
+                    return this.catalogoAcademicoService.listDocentes().pipe(
+                        map((docentesTodos) => ({
+                            response,
+                            docentesDisponibles,
+                            docentesTodos,
+                        }))
+                    );
+                }),
                 finalize(() => (this.loadingDocentes = false))
             )
             .subscribe({
-                next: (response) => {
-                    if (response?.typeResponse === 'SUCCESS') {
-                        this.sourceDocentes = response.data || [];
+                next: ({ response, docentesDisponibles, docentesTodos }) => {
+                    if (response?.typeResponse !== 'SUCCESS') return;
 
-                        if (curso.docentes?.length) {
-                            this.targetDocentes = curso.docentes
-                                .map((cursoDocente) =>
-                                    this.sourceDocentes.find(
-                                        (disponibleDocente) =>
-                                            disponibleDocente.id ===
-                                            cursoDocente.id
-                                    )
-                                )
-                                .filter(
-                                    (docente): docente is DocenteModel =>
-                                        docente !== undefined
-                                );
-
-                            this.sourceDocentes = this.sourceDocentes.filter(
-                                (docente) =>
-                                    !curso.docentes?.some(
-                                        (d) => d.id === docente.id
-                                    )
-                            );
-                        } else {
-                            this.targetDocentes = [];
-                        }
-                    }
+                    const docentesBase =
+                        docentesTodos?.typeResponse === 'SUCCESS'
+                            ? docentesTodos.data || []
+                            : docentesDisponibles;
+                    this.targetDocentes = this.obtenerDocentesSeleccionados(
+                        docentesBase,
+                        curso.docentes
+                    );
+                    this.actualizarListasDocentes(docentesBase, false);
                 },
                 error: (err) => {
                     console.error('Error cargando docentes para edición', err);
                 },
             });
         this.subs.push(docentesSub);
+    }
+
+    private hayDocentesFaltantes(
+        docentesCurso: DocenteModel[] | undefined,
+        docentesDisponibles: DocenteModel[]
+    ): boolean {
+        if (!docentesCurso?.length) return false;
+        const disponiblesIds = new Set(
+            docentesDisponibles.map((docente) => docente.id)
+        );
+        return docentesCurso.some(
+            (docente) => !disponiblesIds.has(docente.id)
+        );
+    }
+
+    private obtenerDocentesSeleccionados(
+        docentesDisponibles: DocenteModel[],
+        docentesCurso?: DocenteModel[]
+    ): DocenteModel[] {
+        if (!docentesCurso?.length) return [];
+        const docentesMap = new Map(
+            docentesDisponibles.map((docente) => [docente.id, docente])
+        );
+        return docentesCurso.map(
+            (docente) => docentesMap.get(docente.id) ?? docente
+        );
     }
 
     private construirPayload(): CursoRegistroPayload {

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { CursoCorreo } from '../../../models/correos.model';
 import { CatalogoOption } from '../../../models/catalogo.model';
 import { BackendCurso } from '../../../models/curso.model';
 import { CatalogoAcademicoService } from '../../../services/catalogo-academico.service';
 import { CursoService } from '../../../services/curso.service';
+import { CorreoMatriculaFinalService } from '../../../services/correo-matricula-final.service';
 
 @Component({
     selector: 'app-enviar-correo-matricula-final',
@@ -17,10 +19,13 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
     cursos: CursoCorreo[] = [];
     cursosFiltrados: CursoCorreo[] = [];
     seleccion: CursoCorreo[] = [];
+    enviando = false;
 
     constructor(
         private readonly cursoService: CursoService,
-        private readonly catalogoAcademicoService: CatalogoAcademicoService
+        private readonly catalogoAcademicoService: CatalogoAcademicoService,
+        private readonly correoMatriculaFinalService: CorreoMatriculaFinalService,
+        private readonly messageService: MessageService
     ) {}
 
     ngOnInit(): void {
@@ -59,7 +64,55 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
         });
     }
 
-    enviarCorreo(): void {}
+    enviarCorreo(): void {
+        if (!this.seleccion.length) {
+            return;
+        }
+        if (this.enviando) {
+            return;
+        }
+        const cursoIds = Array.from(
+            new Set(this.seleccion.map((curso) => curso.id))
+        );
+        this.enviando = true;
+        this.correoMatriculaFinalService
+            .enviarCorreoMatriculaFinalPorCursos({ cursoIds })
+            .subscribe({
+                next: (response) => {
+                    if (response.typeResponse === 'SUCCESS') {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Éxito',
+                            detail: response.message,
+                        });
+                        this.seleccion = [];
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: response.message,
+                        });
+                    }
+                    this.enviando = false;
+                },
+                error: (err) => {
+                    console.error(
+                        'Error enviando correo de matricula final',
+                        err
+                    );
+                    const detail =
+                        err?.error?.message ||
+                        err?.message ||
+                        'Error enviando correo de matricula final';
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail,
+                    });
+                    this.enviando = false;
+                },
+            });
+    }
 
     private cargarCursos(): void {
         this.cursoService.getCursosMatriculaAprobada().subscribe((response) => {

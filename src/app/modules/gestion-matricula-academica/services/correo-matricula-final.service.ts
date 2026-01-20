@@ -51,6 +51,17 @@ export class CorreoMatriculaFinalService {
             payload
         );
     }
+
+    // Endpoint: /matricula/notificar-matricula-final/cursos
+    enviarCorreoMatriculaFinalPorCursos(payload: {
+        cursoIds: number[];
+    }): Observable<ApiResponse<NotificacionPrematriculaTutor[]>> {
+        const url = `${matricula_academica.api_url}matricula/notificar-matricula-final/cursos`;
+        return this.http.post<ApiResponse<NotificacionPrematriculaTutor[]>>(
+            url,
+            payload
+        );
+    }
 }
 
 type EstudianteMatriculadoBackend = {

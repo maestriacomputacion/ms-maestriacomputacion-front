@@ -761,9 +761,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         const disponiblesIds = new Set(
             docentesDisponibles.map((docente) => docente.id)
         );
-        return docentesCurso.some(
-            (docente) => !disponiblesIds.has(docente.id)
-        );
+        return docentesCurso.some((docente) => !disponiblesIds.has(docente.id));
     }
 
     private obtenerDocentesSeleccionados(

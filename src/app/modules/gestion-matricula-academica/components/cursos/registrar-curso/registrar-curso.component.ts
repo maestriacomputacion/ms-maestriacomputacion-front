@@ -304,8 +304,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 '',
                 [Validators.required, Validators.pattern(/^[A-Za-z]$/)],
             ],
-            horario: ['', [Validators.maxLength(100)]],
-            salon: ['', [Validators.maxLength(50)]],
+            horario: ['', [Validators.required, Validators.maxLength(100)]],
+            salon: ['', [Validators.required, Validators.maxLength(50)]],
             observacion: ['', [Validators.maxLength(200)]],
         });
 

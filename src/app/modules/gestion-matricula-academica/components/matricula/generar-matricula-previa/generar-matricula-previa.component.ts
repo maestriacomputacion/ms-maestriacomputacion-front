@@ -8,8 +8,7 @@ import {
 } from '../../../models/matricula-previa.model';
 import { ApiResponse } from '../../../models/api-response.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { EstudianteService } from 'src/app/modules/gestion-estudiantes/services/estudiante.service';
-import { Estudiante as EstudianteModel } from 'src/app/modules/gestion-estudiantes/models/estudiante';
+import { EstudianteAcademicoService } from '../../../services/estudiante-academico.service';
 import { CursoService } from '../../../services/curso.service';
 import { CatalogoAcademicoService } from '../../../services/catalogo-academico.service';
 import { MatriculaCursoService } from '../../../services/matricula-curso.service';
@@ -19,6 +18,7 @@ import {
     TabChangeEvent,
     CursoAgrupado,
 } from '../../../models/catalogo.model';
+import { Estudiante as EstudianteModel } from 'src/app/modules/gestion-estudiantes/models/estudiante';
 import {
     MatriculaRealizada,
     DocenteBasico,
@@ -46,7 +46,7 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
     constructor(
         private readonly fb: FormBuilder,
         private readonly matriculaPreviaService: MatriculaPreviaService,
-        private readonly estudianteService: EstudianteService,
+        private readonly estudianteAcademicoService: EstudianteAcademicoService,
         private readonly cursoService: CursoService,
         private readonly catalogoAcademicoService: CatalogoAcademicoService,
         private readonly matriculaCursoService: MatriculaCursoService,
@@ -326,98 +326,18 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
 
     cargarDatosEstudiantePorId(id: number) {
         this.loading = true;
-        // Obtener datos del estudiante y su estado para tener información completa
-        this.estudianteService.getEstudiante(id).subscribe({
-            next: (estudianteData: EstudianteModel) =>
-                this.cargarEstadoEstudiante(id, estudianteData),
-            error: (err) => this.manejarErrorCargaEstudiante(err),
+        this.estudianteAcademicoService.getEstudiantePorId(id).subscribe({
+            next: (resp) => {
+                if (resp?.typeResponse === 'SUCCESS' && resp.data) {
+                    this.estudiante = this.mapEstudianteApi(resp.data);
+                }
+                this.loading = false;
+            },
+            error: (err) => {
+                this.loading = false;
+                this.manejarErrorCargaEstudiante(err);
+            },
         });
-    }
-
-    private cargarEstadoEstudiante(
-        id: number,
-        estudianteData: EstudianteModel
-    ): void {
-        // Intentar obtener el estado del estudiante para tener nombres de director y co-director
-        this.estudianteService.getEstadoEstudiante(id).subscribe({
-            next: (estadoEstudiante) =>
-                this.actualizarEstudianteConEstado(
-                    estudianteData,
-                    estadoEstudiante
-                ),
-            error: () => this.actualizarEstudianteBasico(estudianteData),
-        });
-    }
-
-    private actualizarEstudianteConEstado(
-        estudianteData: EstudianteModel,
-        estadoEstudiante: {
-            director?: string;
-            codirector?: string;
-            semestreAcademico?: number;
-        }
-    ): void {
-        // Transformar el modelo de Estudiante a Estudiante del servicio de matrícula previa
-        this.estudiante = this.construirEstudianteConEstado(
-            estudianteData,
-            estadoEstudiante
-        );
-        this.loading = false;
-    }
-
-    private actualizarEstudianteBasico(estudianteData: EstudianteModel): void {
-        // Si falla obtener el estado, usar solo los datos básicos
-        this.estudiante = this.construirEstudianteBasico(estudianteData);
-        this.loading = false;
-    }
-
-    private construirEstudianteConEstado(
-        estudianteData: EstudianteModel,
-        estadoEstudiante: {
-            director?: string;
-            codirector?: string;
-            semestreAcademico?: number;
-        }
-    ): Estudiante {
-        return {
-            codigo: estudianteData.codigo || '',
-            nombre: estudianteData.persona?.nombre || '',
-            apellidos: estudianteData.persona?.apellido || '',
-            director:
-                estadoEstudiante.director ||
-                (estudianteData.idDirector
-                    ? 'Director asignado'
-                    : 'Sin director'),
-            coDirector:
-                estadoEstudiante.codirector ||
-                (estudianteData.idCodirector
-                    ? 'Co-Director asignado'
-                    : 'Sin co-director'),
-            semestreAcademico: String(
-                estadoEstudiante.semestreAcademico ||
-                    estudianteData.informacionMaestria?.semestreAcademico ||
-                    0
-            ),
-        };
-    }
-
-    private construirEstudianteBasico(
-        estudianteData: EstudianteModel
-    ): Estudiante {
-        return {
-            codigo: estudianteData.codigo || '',
-            nombre: estudianteData.persona?.nombre || '',
-            apellidos: estudianteData.persona?.apellido || '',
-            director: estudianteData.idDirector
-                ? 'Director asignado'
-                : 'Sin director',
-            coDirector: estudianteData.idCodirector
-                ? 'Co-Director asignado'
-                : 'Sin co-director',
-            semestreAcademico: String(
-                estudianteData.informacionMaestria?.semestreAcademico || 0
-            ),
-        };
     }
 
     private manejarErrorCargaEstudiante(err: {
@@ -434,6 +354,21 @@ export class GenerarMatriculaPreviaComponent implements OnInit {
                 'Error al cargar los datos del estudiante',
         });
         this.loading = false;
+    }
+
+    private mapEstudianteApi(data: EstudianteModel): Estudiante {
+        return {
+            codigo: data.codigo ?? '',
+            nombre: data.persona?.nombre ?? '',
+            apellidos: data.persona?.apellido ?? '',
+            director: data.idDirector ? 'Director asignado' : 'Sin director',
+            coDirector: data.idCodirector
+                ? 'Co-Director asignado'
+                : 'Sin co-director',
+            semestreAcademico: String(
+                data.informacionMaestria?.semestreAcademico ?? 0
+            ),
+        };
     }
 
     cargarAsignaturas() {

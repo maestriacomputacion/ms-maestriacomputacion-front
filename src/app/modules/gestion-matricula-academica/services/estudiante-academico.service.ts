@@ -19,6 +19,12 @@ export class EstudianteAcademicoService {
         return this.http.get<ApiResponse<Estudiante[]>>(url);
     }
 
+    // Endpoint: obtener estudiante por id
+    getEstudiantePorId(id: number): Observable<ApiResponse<Estudiante>> {
+        const url = `${matricula_academica.api_url}estudiante-docente/estudiante/${id}`;
+        return this.http.get<ApiResponse<Estudiante>>(url);
+    }
+
     // Endpoint: eliminar estudiante por id
     deleteEstudiante(id: number): Observable<unknown> {
         return this.http.delete(backend(`estudiantes/${id}`), {

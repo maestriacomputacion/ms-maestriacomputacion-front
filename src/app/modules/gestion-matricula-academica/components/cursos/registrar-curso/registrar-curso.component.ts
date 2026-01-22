@@ -175,6 +175,8 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     confirmAsignaturaSelection(): void {
         if (this.modalSelectedAsignaturas?.length) {
+            const previousAsignaturaId = this.asignatura?.id ?? null;
+            const selectedAsignatura = this.modalSelectedAsignaturas[0];
             if (this.modalSelectedAsignaturas.length > 1) {
                 this.messageService.add({
                     severity: 'warn',
@@ -182,7 +184,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                     detail: `Se seleccionaron ${this.modalSelectedAsignaturas.length} asignaturas; se usará la primera seleccionada.`,
                 });
             }
-            this.asignatura = this.modalSelectedAsignaturas[0];
+            this.asignatura = selectedAsignatura;
+            if (previousAsignaturaId !== selectedAsignatura?.id) {
+                this.marcarFormularioComoModificado();
+            }
             this.cursoExistsMessage = null;
             this.clearGrupoExistsErrorIfAny();
 
@@ -200,7 +205,11 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
     }
 
     selectAsignatura(asignatura: AsignaturaModel): void {
+        const previousAsignaturaId = this.asignatura?.id ?? null;
         this.asignatura = asignatura;
+        if (previousAsignaturaId !== asignatura?.id) {
+            this.marcarFormularioComoModificado();
+        }
         this.cursoExistsMessage = null;
         this.clearGrupoExistsErrorIfAny();
         this.displayAsignaturaDialog = false;
@@ -220,15 +229,25 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
         ]);
     }
 
-    onCancel(): void {
+    onCancel(event: Event): void {
         if (this.saving) return;
 
         const hayCambios = this.form?.dirty;
         if (hayCambios) {
-            const confirmar = confirm(
-                'Existen cambios sin guardar. Si continúa, se perderán los cambios. ¿Desea continuar?'
-            );
-            if (!confirmar) return;
+            const target = event.target ?? event.currentTarget;
+            this.confirmationService.confirm({
+                target: target ?? undefined,
+                message:
+                    'Existen cambios sin guardar. Si continúa, se perderán los cambios. ¿Desea continuar?',
+                acceptLabel: 'Sí',
+                rejectLabel: 'No',
+                accept: () =>
+                    this.router.navigate([
+                        '/gestion-matricula-academica',
+                        'gestion-cursos',
+                    ]),
+            });
+            return;
         }
 
         this.router.navigate([
@@ -244,6 +263,7 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     confirmMaterialSelection(): void {
         this.selectedMateriales = [...this.tableSelection];
+        this.marcarFormularioComoModificado();
         this.displayMaterialDialog = false;
     }
 
@@ -271,12 +291,12 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
             this.selectedMateriales = this.selectedMateriales.filter(
                 (m) => m.id !== id
             );
-            return;
+        } else {
+            this.selectedMateriales = this.selectedMateriales.filter(
+                (m) => m.nombre !== material.nombre
+            );
         }
-
-        this.selectedMateriales = this.selectedMateriales.filter(
-            (m) => m.nombre !== material.nombre
-        );
+        this.marcarFormularioComoModificado();
     }
 
     private detectarModoYCargarCurso(): void {
@@ -468,6 +488,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
 
     onToggleMostrarDocentes(): void {
         this.cargarDocentesSegunFiltro(false);
+    }
+
+    onDocentesChanged(): void {
+        this.marcarFormularioComoModificado();
     }
 
     private cargarDocentesSegunFiltro(resetTarget: boolean): void {
@@ -812,5 +836,10 @@ export class RegistrarCursoComponent implements OnInit, OnDestroy {
                 'gestion-cursos',
             ]);
         }, navigateDelay);
+    }
+
+    private marcarFormularioComoModificado(): void {
+        if (!this.form || this.isViewMode) return;
+        this.form.markAsDirty();
     }
 }

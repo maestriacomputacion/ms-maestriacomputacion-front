@@ -1,4 +1,5 @@
 <p-toast></p-toast>
+<p-confirmPopup></p-confirmPopup>
 <p-panel [formGroup]="form">
     <p-header>
         <b>{{
@@ -178,6 +179,8 @@
                     [targetStyle]="{ height: '22rem' }"
                     [showSourceControls]="false"
                     [showTargetControls]="false"
+                    (onMoveToTarget)="onDocentesChanged()"
+                    (onMoveToSource)="onDocentesChanged()"
                     [disabled]="loadingDocentes || saving || isViewMode"
                 >
                     <ng-template let-docente pTemplate="item">
@@ -389,21 +392,22 @@
     </div>
 
     <div class="flex justify-content-end mt-4">
-        <button
-            *ngIf="!isViewMode"
-            pButton
-            [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
-            class="p-button-primary mr-2"
-            [disabled]="
-                form.invalid ||
-                saving ||
-                loadingMaterials ||
-                !targetDocentes ||
-                targetDocentes.length === 0
-            "
-            (click)="onSubmit()"
-            [loading]="saving"
-        ></button>
+            <button
+                *ngIf="!isViewMode"
+                pButton
+                [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
+                class="p-button-primary mr-2"
+                [disabled]="
+                    form.invalid ||
+                    saving ||
+                    loadingMaterials ||
+                    !targetDocentes ||
+                    targetDocentes.length === 0 ||
+                    (isEditMode && form.pristine)
+                "
+                (click)="onSubmit()"
+                [loading]="saving"
+            ></button>
         <button
             *ngIf="!isViewMode"
             pButton
@@ -411,7 +415,7 @@
             class="p-button-secondary p-button-outlined"
             type="button"
             [disabled]="saving"
-            (click)="onCancel()"
+            (click)="onCancel($event)"
         ></button>
         <button
             *ngIf="isViewMode"

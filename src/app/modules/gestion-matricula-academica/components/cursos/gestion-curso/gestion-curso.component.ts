@@ -20,7 +20,12 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     @Input() estado?: string;
 
     cursos: CursoUI[] = [];
-    periodos: Array<{ label: string; value: string }> = [];
+    periodos: Array<{
+        label: string;
+        value: string;
+        fechaInicio: string;
+        fechaFin: string;
+    }> = [];
     areasFormacion: Array<{ label: string; value: string }> = [];
     asignaturas: Array<{ label: string; value: string }> = [];
 
@@ -69,6 +74,10 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
                                 periodo.fechaInicio
                             )} - ${this.formatDateString(periodo.fechaFin)}`,
                             value: String(periodo.id),
+                            fechaInicio: this.formatDateString(
+                                periodo.fechaInicio
+                            ),
+                            fechaFin: this.formatDateString(periodo.fechaFin),
                         })
                     );
                 }
@@ -127,6 +136,12 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
     onFilterChange(): void {
         this.loadCursos();
     }
+
+    onPeriodoSeleccionado(periodoId: string | null): void {
+        this.periodoSeleccionado = periodoId;
+        this.loadCursos();
+    }
+
 
     /** Carga asignaturas cuando cambia el área seleccionada. */
     onAreaChange(nuevaArea: string | null): void {

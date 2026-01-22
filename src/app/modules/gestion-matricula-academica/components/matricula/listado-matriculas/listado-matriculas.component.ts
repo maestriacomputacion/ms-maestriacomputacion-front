@@ -23,7 +23,12 @@ import { MATRICULA_ESTADO_OPTIONS } from '../../../constants/matricula-estados';
 export class ListadoMatriculasComponent implements OnInit {
     loading = false;
 
-    periodosOptions: { label: string; value: string }[] = [];
+    periodosOptions: {
+        label: string;
+        value: string;
+        fechaInicio: string;
+        fechaFin: string;
+    }[] = [];
     asignaturasOptions: { label: string; value: string }[] = [];
     estadoOptions: { label: string; value: string }[] =
         MATRICULA_ESTADO_OPTIONS;
@@ -62,6 +67,8 @@ export class ListadoMatriculasComponent implements OnInit {
                 this.periodosOptions = periodos.map((p) => ({
                     label: this.formatearPeriodoLabel(p),
                     value: String(p.id),
+                    fechaInicio: this.formatearFecha(p.fechaInicio),
+                    fechaFin: this.formatearFecha(p.fechaFin),
                 }));
                 const periodoActivo = periodos.find(
                     (p) => p.estado === 'ACTIVO'
@@ -165,7 +172,10 @@ export class ListadoMatriculasComponent implements OnInit {
 
     private formatearFecha(fecha?: string | null): string {
         if (!fecha) return '-';
-        return String(fecha).split('-').join('/');
+        const parts = String(fecha).split('T')[0].split('-');
+        if (parts.length !== 3) return String(fecha);
+        const [year, month, day] = parts;
+        return `${day}/${month}/${year}`;
     }
 
     private aplicarFiltrosLocales(): void {
@@ -226,7 +236,8 @@ export class ListadoMatriculasComponent implements OnInit {
         );
     }
 
-    onPeriodoChange(): void {
+    onPeriodoSeleccionado(periodoId: string | null): void {
+        this.selectedPeriodoId = periodoId;
         this.aplicarFiltros();
     }
 

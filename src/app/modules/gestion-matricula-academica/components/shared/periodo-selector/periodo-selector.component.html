@@ -1,0 +1,141 @@
+<div class="flex align-items-center gap-2 w-auto max-w-full">
+    <button
+        pButton
+        pRipple
+        type="button"
+        class="p-button-outlined inline-flex align-items-start justify-content-start w-auto"
+        (click)="onOpenDialog()"
+    >
+        <i class="pi pi-search mr-2 mt-1"></i>
+        <span class="white-space-nowrap text-left">
+            {{ periodoSeleccionadoLabel || placeholder }}
+        </span>
+    </button>
+    <span
+        *ngIf="selectedPeriodoId && showClear"
+        class="text-primary cursor-pointer white-space-nowrap"
+        role="button"
+        tabindex="0"
+        (click)="onClearSelection()"
+        title="Limpiar"
+    >
+        <i class="pi pi-times"></i>
+    </span>
+</div>
+
+<p-dialog
+    header="Seleccionar período"
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [closable]="true"
+    [style]="{ width: '48rem' }"
+    [breakpoints]="{ '960px': '90vw', '640px': '95vw' }"
+    (onHide)="onCloseDialog()"
+>
+    <div class="flex flex-column gap-3">
+        <span class="text-600">
+            Seleccione un período de la lista para aplicarlo como filtro.
+        </span>
+        <div class="flex flex-column gap-2">
+            <label class="font-medium">Rango de fechas</label>
+            <div class="grid">
+                <div class="col-12 md:col-6 flex flex-column gap-2">
+                    <label class="text-600 text-sm" for="periodoFechaInicio">
+                        Desde
+                    </label>
+                    <p-calendar
+                        [(ngModel)]="fechaInicio"
+                        [showIcon]="true"
+                        dateFormat="dd/mm/yy"
+                        placeholder="Fecha inicio"
+                        inputId="periodoFechaInicio"
+                        [appendTo]="'body'"
+                        [maxDate]="fechaFin || null"
+                        class="w-full"
+                        (ngModelChange)="onFechasChange()"
+                    ></p-calendar>
+                </div>
+                <div class="col-12 md:col-6 flex flex-column gap-2">
+                    <label class="text-600 text-sm" for="periodoFechaFin">
+                        Hasta
+                    </label>
+                    <p-calendar
+                        [(ngModel)]="fechaFin"
+                        [showIcon]="true"
+                        dateFormat="dd/mm/yy"
+                        placeholder="Fecha fin"
+                        inputId="periodoFechaFin"
+                        [appendTo]="'body'"
+                        [minDate]="fechaInicio || null"
+                        class="w-full"
+                        (ngModelChange)="onFechasChange()"
+                    ></p-calendar>
+                </div>
+            </div>
+            <small *ngIf="rangoInvalido" class="text-red-500 text-sm">
+                La fecha fin debe ser mayor o igual a la fecha inicio.
+            </small>
+        </div>
+
+        <p-table
+            [value]="periodosFiltrados"
+            [paginator]="true"
+            [rows]="8"
+            selectionMode="single"
+            (onRowSelect)="onSelectPeriodo($event.data)"
+            [(selection)]="periodoSeleccionadoItem"
+            styleClass="p-datatable-gridlines p-datatable-striped"
+            [responsiveLayout]="'scroll'"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="white-space-nowrap" scope="col">Período</th>
+                    <th scope="col">Inicio</th>
+                    <th scope="col">Fin</th>
+                    <th class="text-center" scope="col">Seleccionar</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-periodo>
+                <tr [pSelectableRow]="periodo">
+                    <td class="white-space-nowrap">{{ periodo.label }}</td>
+                    <td>{{ periodo.fechaInicio }}</td>
+                    <td>{{ periodo.fechaFin }}</td>
+                    <td class="text-center">
+                        <button
+                            pButton
+                            pRipple
+                            type="button"
+                            label="Seleccionar"
+                            class="p-button-text p-button-sm"
+                            (click)="onSelectPeriodo(periodo)"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td [attr.colspan]="4">No se encontraron períodos</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Limpiar"
+            class="p-button-text"
+            (click)="onClearSelection()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cerrar"
+            class="p-button-text"
+            (click)="onCloseDialog()"
+        ></button>
+    </ng-template>
+</p-dialog>

@@ -6,26 +6,24 @@
     </p-header>
 
     <!-- Filtros alineados verticalmente -->
-    <div class="w-20rem">
+    <div class="w-auto max-w-full">
         <div class="flex flex-column gap-3 mb-2">
             <div
-                class="flex align-items-center gap-2"
+                class="flex align-items-start gap-2 flex-column md:flex-row"
                 *ngIf="estado !== 'gestion-matricula-curso'"
             >
                 <label
                     for="periodo"
-                    class="font-medium mb-1 w-12rem white-space-normal"
+                    class="font-medium mb-1 w-full md:w-12rem white-space-normal"
                     >Período</label
                 >
-                <p-dropdown
-                    id="periodo"
-                    [options]="periodos"
-                    [(ngModel)]="periodoSeleccionado"
-                    (onChange)="onFilterChange()"
-                    [showClear]="true"
-                    placeholder="Ej: 2025-1"
-                    class="w-full flex-1 min-w-0"
-                ></p-dropdown>
+                <app-periodo-selector
+                    [periodos]="periodos"
+                    [selectedPeriodoId]="periodoSeleccionado"
+                    (selectedPeriodoIdChange)="
+                        onPeriodoSeleccionado($event)
+                    "
+                ></app-periodo-selector>
             </div>
             <div class="flex align-items-center gap-2">
                 <label

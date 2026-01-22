@@ -30,6 +30,7 @@ import { BuscadorEstudiantesAcademicoComponent } from './components/estudiantes/
 import { ListadoTutoresComponent } from './components/tutores/listado-tutores/listado-tutores.component';
 import { EstudiantesPorTutorComponent } from './components/tutores/estudiantes-por-tutor/estudiantes-por-tutor.component';
 import { DetalleEstudianteTutorComponent } from './components/tutores/detalle-estudiante-tutor/detalle-estudiante-tutor.component';
+import { PeriodoSelectorComponent } from './components/shared/periodo-selector/periodo-selector.component';
 
 @NgModule({
     declarations: [
@@ -57,6 +58,7 @@ import { DetalleEstudianteTutorComponent } from './components/tutores/detalle-es
         BuscadorEstudiantesAcademicoComponent,
         EstudiantesPorTutorComponent,
         DetalleEstudianteTutorComponent,
+        PeriodoSelectorComponent,
     ],
     imports: [
         CommonModule,

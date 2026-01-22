@@ -392,22 +392,22 @@
     </div>
 
     <div class="flex justify-content-end mt-4">
-            <button
-                *ngIf="!isViewMode"
-                pButton
-                [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
-                class="p-button-primary mr-2"
-                [disabled]="
-                    form.invalid ||
-                    saving ||
-                    loadingMaterials ||
-                    !targetDocentes ||
-                    targetDocentes.length === 0 ||
-                    (isEditMode && form.pristine)
-                "
-                (click)="onSubmit()"
-                [loading]="saving"
-            ></button>
+        <button
+            *ngIf="!isViewMode"
+            pButton
+            [label]="isEditMode ? 'Actualizar Curso' : 'Registrar Curso'"
+            class="p-button-primary mr-2"
+            [disabled]="
+                form.invalid ||
+                saving ||
+                loadingMaterials ||
+                !targetDocentes ||
+                targetDocentes.length === 0 ||
+                (isEditMode && form.pristine)
+            "
+            (click)="onSubmit()"
+            [loading]="saving"
+        ></button>
         <button
             *ngIf="!isViewMode"
             pButton

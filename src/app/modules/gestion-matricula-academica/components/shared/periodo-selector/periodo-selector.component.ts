@@ -148,13 +148,18 @@ export class PeriodoSelectorComponent implements OnChanges {
             const inicio = this.getYearFromDate(periodo.fechaInicio);
             const fin = this.getYearFromDate(periodo.fechaFin);
             if (Number.isFinite(inicio)) {
-                minYear = minYear === null ? (inicio as number) : Math.min(minYear, inicio as number);
+                minYear =
+                    minYear === null
+                        ? (inicio as number)
+                        : Math.min(minYear, inicio as number);
             }
             if (Number.isFinite(fin)) {
-                minYear = minYear === null ? (fin as number) : Math.min(minYear, fin as number);
+                minYear =
+                    minYear === null
+                        ? (fin as number)
+                        : Math.min(minYear, fin as number);
             }
         });
         return minYear;
     }
-
 }

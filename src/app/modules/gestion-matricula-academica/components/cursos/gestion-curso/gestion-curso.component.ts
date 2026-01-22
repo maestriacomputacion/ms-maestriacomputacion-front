@@ -142,7 +142,6 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
         this.loadCursos();
     }
 
-
     /** Carga asignaturas cuando cambia el área seleccionada. */
     onAreaChange(nuevaArea: string | null): void {
         this.asignaturaSeleccionada = null;

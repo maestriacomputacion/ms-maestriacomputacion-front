@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
 
 type PeriodoItem = {
     label: string;
@@ -23,8 +30,8 @@ export class PeriodoSelectorComponent implements OnChanges {
     periodoSeleccionadoLabel = '';
     periodoSeleccionadoItem: PeriodoItem | null = null;
     dialogVisible = false;
-    fechaInicio: Date | null = null;
-    fechaFin: Date | null = null;
+    anioInicio: Date | null = null;
+    anioFin: Date | null = null;
     rangoInvalido = false;
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -62,8 +69,8 @@ export class PeriodoSelectorComponent implements OnChanges {
         this.selectedPeriodoId = null;
         this.periodoSeleccionadoLabel = '';
         this.periodoSeleccionadoItem = null;
-        this.fechaInicio = null;
-        this.fechaFin = null;
+        this.anioInicio = null;
+        this.anioFin = null;
         this.rangoInvalido = false;
         this.applyPeriodoFilters();
         this.selectedPeriodoIdChange.emit(null);
@@ -75,7 +82,9 @@ export class PeriodoSelectorComponent implements OnChanges {
 
     private getPeriodoLabelById(id: string | null): string {
         if (!id) return '';
-        return this.periodos.find((periodo) => periodo.value === id)?.label || '';
+        return (
+            this.periodos.find((periodo) => periodo.value === id)?.label || ''
+        );
     }
 
     private getPeriodoItemById(id: string | null): PeriodoItem | null {
@@ -84,7 +93,7 @@ export class PeriodoSelectorComponent implements OnChanges {
     }
 
     private applyPeriodoFilters(): void {
-        const rango = this.getNormalizedRange(this.fechaInicio, this.fechaFin);
+        const rango = this.getNormalizedRange(this.anioInicio, this.anioFin);
 
         if (this.rangoInvalido) {
             this.periodosFiltrados = [];
@@ -94,8 +103,8 @@ export class PeriodoSelectorComponent implements OnChanges {
         this.periodosFiltrados = this.periodos.filter((periodo) => {
             if (!rango) return true;
 
-            const inicio = this.parseDateString(periodo.fechaInicio);
-            const fin = this.parseDateString(periodo.fechaFin);
+            const inicio = this.getYearFromDate(periodo.fechaInicio);
+            const fin = this.getYearFromDate(periodo.fechaFin);
 
             if (!inicio || !fin) return false;
 
@@ -103,27 +112,49 @@ export class PeriodoSelectorComponent implements OnChanges {
         });
     }
 
-    private parseDateString(dateStr: string): Date | null {
+    get minAnioDate(): Date | null {
+        const minYear = this.getMinPeriodoYear();
+        return minYear ? new Date(minYear, 0, 1) : null;
+    }
+
+    private getYearFromDate(dateStr: string): number | null {
         const parts = dateStr.split('/');
         if (parts.length !== 3) return null;
-        const [day, month, year] = parts.map((part) => Number(part));
-        if (!day || !month || !year) return null;
-        return new Date(year, month - 1, day);
+        const year = Number(parts[2]);
+        return Number.isFinite(year) ? year : null;
     }
 
     private getNormalizedRange(
         inicio: Date | null,
         fin: Date | null
-    ): { inicio: Date; fin: Date } | null {
+    ): { inicio: number; fin: number } | null {
         if (!inicio && !fin) return null;
         const start = inicio || fin;
         const end = fin || inicio;
         if (!start || !end) return null;
-        if (inicio && fin && start > end) {
+        const startYear = start.getFullYear();
+        const endYear = end.getFullYear();
+        if (inicio && fin && startYear > endYear) {
             this.rangoInvalido = true;
             return null;
         }
         this.rangoInvalido = false;
-        return { inicio: start, fin: end };
+        return { inicio: startYear, fin: endYear };
     }
+
+    private getMinPeriodoYear(): number | null {
+        let minYear: number | null = null;
+        this.periodos.forEach((periodo) => {
+            const inicio = this.getYearFromDate(periodo.fechaInicio);
+            const fin = this.getYearFromDate(periodo.fechaFin);
+            if (Number.isFinite(inicio)) {
+                minYear = minYear === null ? (inicio as number) : Math.min(minYear, inicio as number);
+            }
+            if (Number.isFinite(fin)) {
+                minYear = minYear === null ? (fin as number) : Math.min(minYear, fin as number);
+            }
+        });
+        return minYear;
+    }
+
 }

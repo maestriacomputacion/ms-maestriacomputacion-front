@@ -37,43 +37,46 @@
             Seleccione un período de la lista para aplicarlo como filtro.
         </span>
         <div class="flex flex-column gap-2">
-            <label class="font-medium">Rango de fechas</label>
+            <label class="font-medium">Rango de anos</label>
             <div class="grid">
                 <div class="col-12 md:col-6 flex flex-column gap-2">
-                    <label class="text-600 text-sm" for="periodoFechaInicio">
+                    <label class="text-600 text-sm" for="periodoAnioInicio">
                         Desde
                     </label>
                     <p-calendar
-                        [(ngModel)]="fechaInicio"
-                        [showIcon]="true"
-                        dateFormat="dd/mm/yy"
-                        placeholder="Fecha inicio"
-                        inputId="periodoFechaInicio"
+                        [(ngModel)]="anioInicio"
+                        view="year"
+                        dateFormat="yy"
+                        placeholder="Ano inicio"
+                        inputId="periodoAnioInicio"
                         [appendTo]="'body'"
-                        [maxDate]="fechaFin || null"
+                        [minDate]="minAnioDate"
+                        [maxDate]="anioFin || null"
+                        [readonlyInput]="true"
                         class="w-full"
                         (ngModelChange)="onFechasChange()"
                     ></p-calendar>
                 </div>
                 <div class="col-12 md:col-6 flex flex-column gap-2">
-                    <label class="text-600 text-sm" for="periodoFechaFin">
+                    <label class="text-600 text-sm" for="periodoAnioFin">
                         Hasta
                     </label>
                     <p-calendar
-                        [(ngModel)]="fechaFin"
-                        [showIcon]="true"
-                        dateFormat="dd/mm/yy"
-                        placeholder="Fecha fin"
-                        inputId="periodoFechaFin"
+                        [(ngModel)]="anioFin"
+                        view="year"
+                        dateFormat="yy"
+                        placeholder="Ano fin"
+                        inputId="periodoAnioFin"
                         [appendTo]="'body'"
-                        [minDate]="fechaInicio || null"
+                        [minDate]="anioInicio || minAnioDate"
+                        [readonlyInput]="true"
                         class="w-full"
                         (ngModelChange)="onFechasChange()"
                     ></p-calendar>
                 </div>
             </div>
             <small *ngIf="rangoInvalido" class="text-red-500 text-sm">
-                La fecha fin debe ser mayor o igual a la fecha inicio.
+                El ano fin debe ser mayor o igual al ano inicio.
             </small>
         </div>
 

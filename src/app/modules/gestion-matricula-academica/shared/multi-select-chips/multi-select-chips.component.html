@@ -1,0 +1,33 @@
+<div class="flex align-items-center gap-1">
+    <p-multiSelect
+        [options]="options"
+        [(ngModel)]="selectedValues"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="placeholder"
+        [maxSelectedLabels]="0"
+        [selectedItemsLabel]="selectedItemsLabel"
+        [showClear]="false"
+        (onChange)="onMultiSelectChange()"
+    ></p-multiSelect>
+    <button
+        *ngIf="showClearButton && selectedValues?.length"
+        pButton
+        pRipple
+        type="button"
+        icon="pi pi-times"
+        class="p-button-text p-button-rounded p-button-sm"
+        (click)="onClearSelection()"
+        pTooltip="Limpiar selección"
+        tooltipPosition="top"
+    ></button>
+</div>
+<div *ngIf="selectedValues?.length" class="flex flex-wrap gap-1 mt-1">
+    <p-chip
+        *ngFor="let value of selectedValues"
+        [label]="getLabel(value)"
+        [removable]="true"
+        (onRemove)="removeValue(value)"
+        styleClass="text-xs py-0"
+    ></p-chip>
+</div>

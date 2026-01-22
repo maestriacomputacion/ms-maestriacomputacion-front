@@ -146,17 +146,6 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
         this.aplicarFiltros();
     }
 
-    toggleTipoSeleccionado(tipo: string): void {
-        if (this.tiposSeleccionados.includes(tipo)) {
-            this.tiposSeleccionados = this.tiposSeleccionados.filter(
-                (item) => item !== tipo
-            );
-        } else {
-            this.tiposSeleccionados = [...this.tiposSeleccionados, tipo];
-        }
-        this.aplicarFiltros();
-    }
-
     limpiarFiltros(): void {
         this.tiposSeleccionados = [];
         this.buscador = '';

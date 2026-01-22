@@ -19,45 +19,19 @@
     <div class="mb-3">
         <div class="flex align-items-center gap-2 mb-2">
             <span class="font-medium text-900">Filtrar por asignatura:</span>
-            <button
-                pButton
-                pRipple
-                class="p-button-text p-button-sm"
-                icon="pi pi-filter-slash"
-                label="Limpiar"
-                (click)="limpiarFiltros()"
-                [disabled]="!asignaturasSeleccionadas.length"
-            ></button>
+            <button pButton pRipple class="p-button-text p-button-sm" icon="pi pi-filter-slash" label="Limpiar"
+                (click)="limpiarFiltros()" [disabled]="!asignaturasSeleccionadas.length"></button>
         </div>
-        <div class="flex flex-wrap gap-2">
-            <button
-                *ngFor="let asignatura of asignaturasOptions"
-                type="button"
-                pButton
-                pRipple
-                [label]="asignatura.label"
-                class="p-button-sm"
-                [class.p-button-outlined]="
-                    !asignaturasSeleccionadas.includes(asignatura.value)
-                "
-                (click)="toggleAsignatura(asignatura.value)"
-            ></button>
-        </div>
+        <app-multi-select-chips [options]="asignaturasOptions" [(selectedValues)]="asignaturasSeleccionadas"
+            placeholder="Seleccionar asignaturas" selectedItemsLabel="Asignaturas seleccionadas: {0}"
+            [showClearButton]="false" (selectionChange)="aplicarFiltros()"
+            class="w-full md:w-30rem"></app-multi-select-chips>
     </div>
 
-    <p-table
-        [value]="cursosFiltrados"
-        [paginator]="true"
-        [rows]="10"
-        [totalRecords]="cursosFiltrados.length"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
-        styleClass="p-datatable-gridlines p-datatable-striped"
-        [responsiveLayout]="'scroll'"
-        dataKey="id"
-        selectionMode="multiple"
-        [(selection)]="seleccion"
-    >
+    <p-table [value]="cursosFiltrados" [paginator]="true" [rows]="10" [totalRecords]="cursosFiltrados.length"
+        [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
+        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'" dataKey="id"
+        selectionMode="multiple" [(selection)]="seleccion">
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="grupo" class="text-center" scope="col">
@@ -95,14 +69,7 @@
     </p-table>
 
     <div class="flex justify-content-end mt-3">
-        <button
-            pButton
-            pRipple
-            label="Enviar correo"
-            icon="pi pi-send"
-            class="p-button-primary"
-            [disabled]="!seleccion.length"
-            (click)="enviarCorreo()"
-        ></button>
+        <button pButton pRipple label="Enviar correo" icon="pi pi-send" class="p-button-primary"
+            [disabled]="!seleccion.length" (click)="enviarCorreo()"></button>
     </div>
 </p-panel>

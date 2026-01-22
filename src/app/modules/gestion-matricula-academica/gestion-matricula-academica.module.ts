@@ -31,6 +31,7 @@ import { ListadoTutoresComponent } from './components/tutores/listado-tutores/li
 import { EstudiantesPorTutorComponent } from './components/tutores/estudiantes-por-tutor/estudiantes-por-tutor.component';
 import { DetalleEstudianteTutorComponent } from './components/tutores/detalle-estudiante-tutor/detalle-estudiante-tutor.component';
 import { PeriodoSelectorComponent } from './components/shared/periodo-selector/periodo-selector.component';
+import { MultiSelectChipsComponent } from './components/shared/multi-select-chips/multi-select-chips.component';
 
 @NgModule({
     declarations: [
@@ -59,6 +60,7 @@ import { PeriodoSelectorComponent } from './components/shared/periodo-selector/p
         EstudiantesPorTutorComponent,
         DetalleEstudianteTutorComponent,
         PeriodoSelectorComponent,
+        MultiSelectChipsComponent,
     ],
     imports: [
         CommonModule,

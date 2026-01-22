@@ -7,73 +7,35 @@
 
     <div class="mb-4">
         <div class="flex align-items-center flex-wrap gap-2 mb-2">
-            <span class="font-medium text-900"
-                >Filtrar por tipo de asignatura</span
-            >
-            <button
-                pButton
-                pRipple
-                class="p-button-text p-button-sm"
-                icon="pi pi-filter-slash"
-                label="Limpiar filtros"
-                (click)="limpiarFiltros()"
-                [disabled]="!tiposSeleccionados.length && !buscador"
-            ></button>
+            <span class="font-medium text-900">Filtrar por tipo de asignatura</span>
+            <button pButton pRipple class="p-button-text p-button-sm" icon="pi pi-filter-slash" label="Limpiar filtros"
+                (click)="limpiarFiltros()" [disabled]="!(tiposSeleccionados?.length) && !buscador"></button>
         </div>
-        <div class="flex flex-wrap gap-2">
-            <button
-                *ngFor="let tipo of tiposAsignatura"
-                type="button"
-                pButton
-                pRipple
-                [label]="tipo.label"
-                class="p-button-sm"
-                [class.p-button-outlined]="
-                    !tiposSeleccionados.includes(tipo.value)
-                "
-                (click)="toggleTipoSeleccionado(tipo.value)"
-            ></button>
-        </div>
+        <app-multi-select-chips [options]="tiposAsignatura" [(selectedValues)]="tiposSeleccionados"
+            placeholder="Seleccionar asignaturas" selectedItemsLabel="Asignaturas seleccionadas: {0}"
+            [showClearButton]="false" (selectionChange)="aplicarFiltros()"
+            class="w-full md:w-30rem"></app-multi-select-chips>
     </div>
 
     <div class="w-6 min-w-min mb-3">
         <span class="p-input-icon-left w-full">
             <i class="pi pi-search"></i>
-            <input
-                pInputText
-                type="text"
-                class="w-full"
-                placeholder="Buscar por asignatura, docente o área"
-                [value]="buscador"
-                (input)="onBuscar($event.target.value)"
-            />
+            <input pInputText type="text" class="w-full" placeholder="Buscar por asignatura, docente o área"
+                [value]="buscador" (input)="onBuscar($event.target.value)" />
         </span>
     </div>
 
-    <p-table
-        [value]="cursosFiltrados"
-        [paginator]="true"
-        [rows]="10"
-        [totalRecords]="cursosFiltrados.length"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
-        styleClass="p-datatable-gridlines p-datatable-striped"
-        [responsiveLayout]="'scroll'"
-        dataKey="id"
-        selectionMode="multiple"
-        [(selection)]="seleccionCursos"
-    >
+    <p-table [value]="cursosFiltrados" [paginator]="true" [rows]="10" [totalRecords]="cursosFiltrados.length"
+        [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} cursos"
+        styleClass="p-datatable-gridlines p-datatable-striped" [responsiveLayout]="'scroll'" dataKey="id"
+        selectionMode="multiple" [(selection)]="seleccionCursos">
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="grupo" class="text-center" scope="col">
                     Grupo
                     <p-sortIcon field="grupo"></p-sortIcon>
                 </th>
-                <th
-                    pSortableColumn="asignatura"
-                    class="text-center"
-                    scope="col"
-                >
+                <th pSortableColumn="asignatura" class="text-center" scope="col">
                     Asignatura Asociada
                     <p-sortIcon field="asignatura"></p-sortIcon>
                 </th>
@@ -81,11 +43,7 @@
                     Docentes
                     <p-sortIcon field="docente"></p-sortIcon>
                 </th>
-                <th
-                    pSortableColumn="areaFormacion"
-                    class="text-center"
-                    scope="col"
-                >
+                <th pSortableColumn="areaFormacion" class="text-center" scope="col">
                     Área de formación
                     <p-sortIcon field="areaFormacion"></p-sortIcon>
                 </th>
@@ -116,73 +74,34 @@
         Total seleccionados: {{ seleccionCursos.length }}
     </div>
 
-    <div
-        class="flex flex-wrap gap-2 justify-content-center align-items-center mt-4"
-    >
-        <button
-            pButton
-            pRipple
-            label="Generar reporte"
-            class="p-button-primary"
-            icon="pi pi-file"
-            (click)="abrirDialogoReporte()"
-        ></button>
+    <div class="flex flex-wrap gap-2 justify-content-center align-items-center mt-4">
+        <button pButton pRipple label="Generar reporte" class="p-button-primary" icon="pi pi-file"
+            (click)="abrirDialogoReporte()"></button>
     </div>
 </p-panel>
 
-<p-dialog
-    header="Formato del reporte"
-    [(visible)]="mostrarDialogoReporte"
-    [modal]="true"
-    [dismissableMask]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [closable]="false"
-    styleClass="w-30rem"
->
+<p-dialog header="Formato del reporte" [(visible)]="mostrarDialogoReporte" [modal]="true" [dismissableMask]="true"
+    [draggable]="false" [resizable]="false" [closable]="false" styleClass="w-30rem">
     <div class="flex flex-column gap-3">
         <div class="flex align-items-center gap-2">
-            <p-radioButton
-                name="formatoReporte"
-                value="pdf"
-                [(ngModel)]="formatoReporte"
-                inputId="formatoReportePdf"
-            ></p-radioButton>
+            <p-radioButton name="formatoReporte" value="pdf" [(ngModel)]="formatoReporte"
+                inputId="formatoReportePdf"></p-radioButton>
             <label for="formatoReportePdf">PDF</label>
         </div>
         <div class="flex align-items-center gap-2">
-            <p-radioButton
-                name="formatoReporte"
-                value="xlsx"
-                [(ngModel)]="formatoReporte"
-                inputId="formatoReporteXlsx"
-            ></p-radioButton>
+            <p-radioButton name="formatoReporte" value="xlsx" [(ngModel)]="formatoReporte"
+                inputId="formatoReporteXlsx"></p-radioButton>
             <label for="formatoReporteXlsx">XLSX</label>
         </div>
     </div>
 
     <p-footer>
         <div class="flex justify-content-end gap-2">
-            <button
-                type="button"
-                pButton
-                pRipple
-                label="Cancelar"
-                icon="pi pi-times"
-                class="p-button-secondary p-button-outlined"
-                (click)="cerrarDialogoReporte()"
-                [disabled]="generandoReporte"
-            ></button>
-            <button
-                type="button"
-                pButton
-                pRipple
-                label="Generar"
-                class="p-button-primary"
-                icon="pi pi-download"
-                (click)="generarReporte()"
-                [loading]="generandoReporte"
-            ></button>
+            <button type="button" pButton pRipple label="Cancelar" icon="pi pi-times"
+                class="p-button-secondary p-button-outlined" (click)="cerrarDialogoReporte()"
+                [disabled]="generandoReporte"></button>
+            <button type="button" pButton pRipple label="Generar" class="p-button-primary" icon="pi pi-download"
+                (click)="generarReporte()" [loading]="generandoReporte"></button>
         </div>
     </p-footer>
 </p-dialog>

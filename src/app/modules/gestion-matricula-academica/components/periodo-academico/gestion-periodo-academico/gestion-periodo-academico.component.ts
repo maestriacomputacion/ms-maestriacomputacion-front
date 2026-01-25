@@ -324,8 +324,11 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
                     error: (err) => {
                         console.error('Error al validar fechas:', err);
                         this.fechasValidasBackend = false;
-                        this.mensajeValidacionBackend =
-                            'Error al validar las fechas con el servidor.';
+                        const errores = err?.error?.data;
+                        this.mensajeValidacionBackend = Array.isArray(errores)
+                            ? errores.join(', ')
+                            : (err?.error?.message ??
+                              'Error al validar las fechas con el servidor.');
                     },
                 });
         } else {

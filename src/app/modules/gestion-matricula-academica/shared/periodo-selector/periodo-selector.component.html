@@ -100,7 +100,15 @@
             </ng-template>
             <ng-template pTemplate="body" let-periodo>
                 <tr [pSelectableRow]="periodo">
-                    <td class="white-space-nowrap">{{ periodo.label }}</td>
+                    <td class="white-space-nowrap">
+                        <span>{{ periodo.label }}</span>
+                        <span
+                            *ngIf="isPeriodoActivo(periodo)"
+                            class="p-tag p-tag-success p-tag-rounded ml-2"
+                        >
+                            Activo
+                        </span>
+                    </td>
                     <td>{{ periodo.fechaInicio }}</td>
                     <td>{{ periodo.fechaFin }}</td>
                     <td class="text-center">

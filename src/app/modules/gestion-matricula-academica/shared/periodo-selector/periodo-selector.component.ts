@@ -12,6 +12,7 @@ type PeriodoItem = {
     value: string;
     fechaInicio: string;
     fechaFin: string;
+    estado?: string | null;
 };
 
 @Component({
@@ -78,6 +79,10 @@ export class PeriodoSelectorComponent implements OnChanges {
 
     onFechasChange(): void {
         this.applyPeriodoFilters();
+    }
+
+    isPeriodoActivo(periodo: PeriodoItem): boolean {
+        return (periodo.estado || '').toUpperCase().trim() === 'ACTIVO';
     }
 
     private getPeriodoLabelById(id: string | null): string {

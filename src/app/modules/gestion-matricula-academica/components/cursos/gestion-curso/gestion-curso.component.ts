@@ -25,6 +25,7 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
         value: string;
         fechaInicio: string;
         fechaFin: string;
+        estado?: string | null;
     }> = [];
     areasFormacion: Array<{ label: string; value: string }> = [];
     asignaturas: Array<{ label: string; value: string }> = [];
@@ -78,6 +79,7 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
                                 periodo.fechaInicio
                             ),
                             fechaFin: this.formatDateString(periodo.fechaFin),
+                            estado: periodo.estado,
                         })
                     );
                 }

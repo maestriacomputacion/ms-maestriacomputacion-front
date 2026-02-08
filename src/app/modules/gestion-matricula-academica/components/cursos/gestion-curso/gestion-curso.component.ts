@@ -51,7 +51,7 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
             this.loadPeriodoActivoYCursos();
         } else {
             this.loadPeriodos();
-            this.loadCursos();
+            this.loadPeriodoActivoYCursos();
         }
     }
 

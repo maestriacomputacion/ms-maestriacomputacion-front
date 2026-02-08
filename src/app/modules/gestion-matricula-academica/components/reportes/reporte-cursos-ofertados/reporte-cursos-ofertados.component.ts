@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil, finalize } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { CursoOfertadoReporte } from '../../../models/correos.model';
 import { CatalogoAcademicoService } from '../../../services/catalogo-academico.service';
 import { PeriodoAcademicoService } from '../../../services/periodo-academico.service';
@@ -40,6 +40,8 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
     mostrarDialogoReporte = false;
     formatoReporte: 'pdf' | 'xlsx' = 'pdf';
     generandoReporte = false;
+    private readonly tiempoMinimoSpinnerMs = 1200;
+    private spinnerTimeoutId: number | null = null;
 
     private readonly destroy$ = new Subject<void>();
 
@@ -56,6 +58,10 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        if (this.spinnerTimeoutId !== null) {
+            clearTimeout(this.spinnerTimeoutId);
+            this.spinnerTimeoutId = null;
+        }
         this.destroy$.next();
         this.destroy$.complete();
     }
@@ -185,6 +191,9 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
     }
 
     generarReporte(): void {
+        if (this.generandoReporte) {
+            return;
+        }
         const asignaturaIds = this.tiposSeleccionados
             .map(Number)
             .filter((id) => !Number.isNaN(id));
@@ -195,41 +204,61 @@ export class ReporteCursosOfertadosComponent implements OnInit, OnDestroy {
         const payload = { asignaturaIds, cursosIds };
 
         this.generandoReporte = true;
+        const inicioCarga = Date.now();
         this.cursoService
             .descargarReporteCursosOfertados(this.formatoReporte, payload)
-            .pipe(
-                takeUntil(this.destroy$),
-                finalize(() => {
-                    this.generandoReporte = false;
-                })
-            )
+            .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response) => {
-                    const contentDisposition =
-                        response.headers.get('content-disposition') ??
-                        response.headers.get('Content-Disposition');
-                    const nombreArchivo =
-                        this.obtenerNombreArchivo(contentDisposition) ??
-                        this.nombreArchivoConFecha();
-                    if (!response.body) {
-                        console.error(
-                            'Respuesta vacia al generar reporte',
-                            response
+                    this.aplicarTiempoMinimoSpinner(() => {
+                        const contentDisposition =
+                            response.headers.get('content-disposition') ??
+                            response.headers.get('Content-Disposition');
+                        const nombreArchivo =
+                            this.obtenerNombreArchivo(contentDisposition) ??
+                            this.nombreArchivoConFecha();
+                        if (!response.body) {
+                            console.error(
+                                'Respuesta vacia al generar reporte',
+                                response
+                            );
+                            this.generandoReporte = false;
+                            return;
+                        }
+                        const url = globalThis.URL.createObjectURL(
+                            response.body
                         );
-                        return;
-                    }
-                    const url = globalThis.URL.createObjectURL(response.body);
-                    const enlace = document.createElement('a');
-                    enlace.href = url;
-                    enlace.download = nombreArchivo;
-                    enlace.click();
-                    globalThis.URL.revokeObjectURL(url);
-                    this.cerrarDialogoReporte();
+                        const enlace = document.createElement('a');
+                        enlace.href = url;
+                        enlace.download = nombreArchivo;
+                        enlace.click();
+                        globalThis.URL.revokeObjectURL(url);
+                        this.generandoReporte = false;
+                        this.cerrarDialogoReporte();
+                    }, inicioCarga);
                 },
                 error: (err) => {
-                    console.error('Error generando reporte', err);
+                    this.aplicarTiempoMinimoSpinner(() => {
+                        console.error('Error generando reporte', err);
+                        this.generandoReporte = false;
+                    }, inicioCarga);
                 },
             });
+    }
+
+    private aplicarTiempoMinimoSpinner(
+        accion: () => void,
+        inicioCarga: number
+    ): void {
+        const transcurrido = Date.now() - inicioCarga;
+        const espera = Math.max(0, this.tiempoMinimoSpinnerMs - transcurrido);
+        if (this.spinnerTimeoutId !== null) {
+            clearTimeout(this.spinnerTimeoutId);
+        }
+        this.spinnerTimeoutId = globalThis.setTimeout(() => {
+            this.spinnerTimeoutId = null;
+            accion();
+        }, espera) as unknown as number;
     }
 
     private obtenerNombreArchivo(

@@ -129,13 +129,14 @@
     header="Formato del reporte"
     [(visible)]="mostrarDialogoReporte"
     [modal]="true"
-    [dismissableMask]="true"
+    [dismissableMask]="!generandoReporte"
     [draggable]="false"
     [resizable]="false"
     [closable]="false"
+    [closeOnEscape]="!generandoReporte"
     styleClass="w-30rem"
 >
-    <div class="flex flex-column gap-3">
+    <div class="flex flex-column gap-3" *ngIf="!generandoReporte; else generandoTemplate">
         <div class="flex align-items-center gap-2">
             <p-radioButton
                 name="formatoReporte"
@@ -155,6 +156,12 @@
             <label for="formatoReporteXlsx">XLSX</label>
         </div>
     </div>
+    <ng-template #generandoTemplate>
+        <div class="flex flex-column align-items-center justify-content-center gap-3 py-3">
+            <p-progressSpinner></p-progressSpinner>
+            <span class="text-600">Generando reporte, por favor espera...</span>
+        </div>
+    </ng-template>
 
     <p-footer>
         <div class="flex justify-content-end gap-2">
@@ -177,6 +184,7 @@
                 icon="pi pi-download"
                 (click)="generarReporte()"
                 [loading]="generandoReporte"
+                [disabled]="generandoReporte"
             ></button>
         </div>
     </p-footer>

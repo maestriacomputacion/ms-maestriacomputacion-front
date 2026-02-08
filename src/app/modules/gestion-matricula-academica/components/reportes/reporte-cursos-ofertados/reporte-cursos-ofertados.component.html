@@ -136,7 +136,10 @@
     [closeOnEscape]="!generandoReporte"
     styleClass="w-30rem"
 >
-    <div class="flex flex-column gap-3" *ngIf="!generandoReporte; else generandoTemplate">
+    <div
+        class="flex flex-column gap-3"
+        *ngIf="!generandoReporte; else generandoTemplate"
+    >
         <div class="flex align-items-center gap-2">
             <p-radioButton
                 name="formatoReporte"
@@ -157,7 +160,9 @@
         </div>
     </div>
     <ng-template #generandoTemplate>
-        <div class="flex flex-column align-items-center justify-content-center gap-3 py-3">
+        <div
+            class="flex flex-column align-items-center justify-content-center gap-3 py-3"
+        >
             <p-progressSpinner></p-progressSpinner>
             <span class="text-600">Generando reporte, por favor espera...</span>
         </div>

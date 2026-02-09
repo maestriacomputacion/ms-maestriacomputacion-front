@@ -1,0 +1,51 @@
+<div class="flex flex-column gap-3">
+    <div class="flex align-items-center gap-2">
+        <i class="pi pi-file text-primary text-lg"></i>
+        <div class="text-600">
+            {{ description }}
+        </div>
+    </div>
+
+    <div class="flex flex-column gap-2">
+        <div class="flex align-items-center gap-2">
+            <p-radioButton
+                name="formatoReporte"
+                value="pdf"
+                [(ngModel)]="formatoReporte"
+                inputId="formatoReportePdf"
+            ></p-radioButton>
+            <label for="formatoReportePdf">PDF</label>
+        </div>
+        <div class="flex align-items-center gap-2">
+            <p-radioButton
+                name="formatoReporte"
+                value="xlsx"
+                [(ngModel)]="formatoReporte"
+                inputId="formatoReporteXlsx"
+            ></p-radioButton>
+            <label for="formatoReporteXlsx">XLSX</label>
+        </div>
+    </div>
+
+    <div class="flex justify-content-end gap-2 pt-2">
+        <button
+            type="button"
+            pButton
+            pRipple
+            label="Cancelar"
+            icon="pi pi-times"
+            class="p-button-secondary p-button-outlined"
+            (click)="cancelar()"
+        ></button>
+        <button
+            type="button"
+            pButton
+            pRipple
+            [label]="confirmLabel"
+            icon="pi pi-download"
+            class="p-button-primary"
+            (click)="confirmar()"
+        ></button>
+    </div>
+</div>
+

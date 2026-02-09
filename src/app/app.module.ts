@@ -23,6 +23,7 @@ import { AppConfigComponent } from './core/components/config/app.config.componen
 import { PrimenNgModule } from './modules/primen-ng/primen-ng.module';
 import { HomeComponent } from './core/components/home/home.component';
 import { MessageService, SharedModule } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { GestionEstudiantesModule } from './modules/gestion-estudiantes/gestion-estudiantes.module';
 import { AppBreadcrumbComponent } from './core/components/breadcrumb/app.breadcrumb.component';
 import { BreadcrumbService } from './core/components/breadcrumb/app.breadcrumb.service';
@@ -35,6 +36,7 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { GestionCuestionariosModule } from './modules/gestion-evaluacion-docentes/gestion-cuestionarios/gestion-cuestionarios.module';
 import { GestionPreguntasModule } from './modules/gestion-evaluacion-docentes/gestion-preguntas/gestion-preguntas.module';
+import { ReportFormatDialogHostComponent } from './core/components/report-format-dialog-host/report-format-dialog-host.component';
 
 @NgModule({
     imports: [
@@ -69,12 +71,14 @@ import { GestionPreguntasModule } from './modules/gestion-evaluacion-docentes/ge
         HomeComponent,
         BandejaDocentesComponent,
         CargarDocentesComponent,
+        ReportFormatDialogHostComponent,
 
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         MessageService,
+        DialogService,
         MenuService,
         ConfigService,
         BreadcrumbService,

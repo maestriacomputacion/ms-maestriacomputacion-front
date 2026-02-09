@@ -1,9 +1,15 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AppMainComponent } from '../main/app.main.component';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { menuItems as originalMenuItems } from '../../constants/menu-items';
 import { MenuService } from '../../services/app.menu.service';
 import { AutenticacionService } from 'src/app/modules/gestion-autenticacion/services/autenticacion.service';
+import { ReportFormatDialogService } from '../../services/report-format-dialog.service';
+import {
+    MatriculaReporteFormato,
+    MatriculaReporteService,
+} from 'src/app/modules/gestion-matricula-academica/services/matricula-reporte.service';
+import { take } from 'rxjs/operators';
 
 interface Usuario {
     username: string;
@@ -27,7 +33,10 @@ export class AppTopBarComponent implements OnInit {
     constructor(
         public appMain: AppMainComponent,
         private autenticacion: AutenticacionService,
-        private menuService: MenuService
+        private menuService: MenuService,
+        private readonly reportFormatDialog: ReportFormatDialogService,
+        private readonly matriculaReporteService: MatriculaReporteService,
+        private readonly messageService: MessageService
     ) {}
 
     ngOnInit() {
@@ -67,6 +76,15 @@ export class AppTopBarComponent implements OnInit {
                 item.command = () => this.autenticacion.login();
             }
         });
+
+        // Comandos para items que no deben navegar a una ruta.
+        this.applyToMenuItem(
+            this.items,
+            (it) => it.id === 'reporte-matricula-estudiantes',
+            (it) => {
+                it.command = () => this.abrirReporteMatriculaEstudiantes();
+            }
+        );
 
         if (this.autenticacion.isLoggedIn()) {
             const user = this.autenticacion.getLoggedInUser();
@@ -202,5 +220,166 @@ export class AppTopBarComponent implements OnInit {
         // Cerrar sesión y reinicializar los elementos del menú
         this.autenticacion.logout();
         this.initializeMenuItems();
+    }
+
+    private abrirReporteMatriculaEstudiantes(): void {
+        this.reportFormatDialog
+            .open({
+                title: 'Reporte matricula estudiantes',
+                confirmLabel: 'Generar',
+                defaultFormat: 'pdf',
+            })
+            .pipe(take(1))
+            .subscribe((formato) => {
+                if (!formato) return;
+                this.descargarReporteMatriculaEstudiantes(formato);
+            });
+    }
+
+    private descargarReporteMatriculaEstudiantes(
+        formato: MatriculaReporteFormato
+    ): void {
+        this.matriculaReporteService
+            .descargarReporteMatriculaEstudiantes(formato)
+            .pipe(take(1))
+            .subscribe({
+                next: (response) => {
+                    const contentDisposition =
+                        response.headers.get('content-disposition') ??
+                        response.headers.get('Content-Disposition');
+                    const nombreArchivo =
+                        this.obtenerNombreArchivo(contentDisposition) ??
+                        this.nombreArchivoConFecha(formato);
+                    if (!response.body) {
+                        console.error(
+                            '[reporte-matricula-estudiantes] Respuesta vacia',
+                            response
+                        );
+                        return;
+                    }
+                    const url = globalThis.URL.createObjectURL(response.body);
+                    const enlace = document.createElement('a');
+                    enlace.href = url;
+                    enlace.download = nombreArchivo;
+                    enlace.click();
+                    globalThis.URL.revokeObjectURL(url);
+                },
+                error: (err) => {
+                    void this.mostrarErrorBackend(
+                        'No se pudo generar el reporte',
+                        err
+                    );
+                },
+            });
+    }
+
+    private async mostrarErrorBackend(
+        resumen: string,
+        err: unknown
+    ): Promise<void> {
+        const detail = await this.extraerMensajeError(err);
+        this.messageService.add({
+            key: 'global',
+            severity: 'error',
+            summary: resumen,
+            detail,
+            life: 9000,
+        });
+        console.error('[reporte-matricula-estudiantes] Error', err);
+    }
+
+    private async extraerMensajeError(err: any): Promise<string> {
+        const fallback = 'Ocurrió un error inesperado.';
+        if (!err) return fallback;
+
+        const e = err?.error;
+
+        if (typeof e === 'string' && e.trim().length > 0) {
+            return e;
+        }
+
+        if (e && typeof e === 'object' && !(e instanceof Blob)) {
+            return (
+                e.message ||
+                e.mensaje ||
+                e.error ||
+                e.detail ||
+                err.message ||
+                fallback
+            );
+        }
+
+        if (e instanceof Blob) {
+            try {
+                const text = await e.text();
+                if (!text || text.trim().length === 0) {
+                    return err.message || fallback;
+                }
+                try {
+                    const json = JSON.parse(text);
+                    return (
+                        json.message ||
+                        json.mensaje ||
+                        json.error ||
+                        json.detail ||
+                        text
+                    );
+                } catch {
+                    return text;
+                }
+            } catch {
+                return err.message || fallback;
+            }
+        }
+
+        return err.message || fallback;
+    }
+
+    private obtenerNombreArchivo(
+        contentDisposition?: string | null
+    ): string | null {
+        if (!contentDisposition) return null;
+        // Soporta filename="a.pdf" y filename*=UTF-8''a.pdf
+        const filenameStar = contentDisposition.match(
+            /filename\*=(?:UTF-8'')?([^;]+)/i
+        );
+        const filenameBasic = contentDisposition.match(/filename=([^;]+)/i);
+        const raw = (filenameStar?.[1] ?? filenameBasic?.[1] ?? '').trim();
+        if (!raw) return null;
+        const unquoted = raw.replace(/^"|"$/g, '');
+        try {
+            return decodeURIComponent(unquoted);
+        } catch {
+            return unquoted;
+        }
+    }
+
+    private nombreArchivoConFecha(formato: MatriculaReporteFormato): string {
+        const d = new Date();
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const fecha = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(
+            d.getDate()
+        )}`;
+        const hora = `${pad(d.getHours())}${pad(d.getMinutes())}${pad(
+            d.getSeconds()
+        )}`;
+        const ext = formato === 'xlsx' ? 'xlsx' : 'pdf';
+        return `reporte_matricula_estudiantes_${fecha}_${hora}.${ext}`;
+    }
+
+    private applyToMenuItem(
+        items: MenuItem[] | undefined,
+        predicate: (item: MenuItem) => boolean,
+        apply: (item: MenuItem) => void
+    ): void {
+        if (!items || items.length === 0) return;
+        for (const item of items) {
+            if (predicate(item)) {
+                apply(item);
+            }
+            if (item.items?.length) {
+                this.applyToMenuItem(item.items, predicate, apply);
+            }
+        }
     }
 }

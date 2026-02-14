@@ -1,4 +1,4 @@
-<div class="flex flex-column gap-3">
+<div class="flex flex-column gap-3" *ngIf="!generando; else generandoTemplate">
     <div class="flex align-items-center gap-2">
         <i class="pi pi-file text-primary text-lg"></i>
         <div class="text-600">
@@ -36,6 +36,7 @@
             icon="pi pi-times"
             class="p-button-secondary p-button-outlined"
             (click)="cancelar()"
+            [disabled]="generando"
         ></button>
         <button
             type="button"
@@ -45,7 +46,14 @@
             icon="pi pi-download"
             class="p-button-primary"
             (click)="confirmar()"
+            [disabled]="generando"
         ></button>
     </div>
 </div>
 
+<ng-template #generandoTemplate>
+    <div class="flex flex-column align-items-center justify-content-center gap-3 py-3">
+        <p-progressSpinner></p-progressSpinner>
+        <span class="text-600">{{ loadingText }}</span>
+    </div>
+</ng-template>

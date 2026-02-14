@@ -3,9 +3,18 @@ import { MessageService } from 'primeng/api';
 import { CursoCorreo } from '../../../models/correos.model';
 import { CatalogoOption } from '../../../models/catalogo.model';
 import { BackendCurso } from '../../../models/curso.model';
+import { NotificacionPrematriculaTutor } from '../../../models/notificacion-prematricula.model';
 import { CatalogoAcademicoService } from '../../../services/catalogo-academico.service';
 import { CursoService } from '../../../services/curso.service';
 import { CorreoMatriculaFinalService } from '../../../services/correo-matricula-final.service';
+
+type ResumenEstudiante = {
+    tutorNombre: string;
+    tutorCodigo: string;
+    estudianteNombre: string;
+    estudianteCodigo: string;
+    estudianteCorreo: string;
+};
 
 @Component({
     selector: 'app-enviar-correo-matricula-final',
@@ -20,6 +29,13 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
     cursosFiltrados: CursoCorreo[] = [];
     seleccion: CursoCorreo[] = [];
     enviando = false;
+
+    resumenVisible = false;
+    resumenMessage = '';
+    resumenNotificaciones: NotificacionPrematriculaTutor[] = [];
+    resumenEstudiantes: ResumenEstudiante[] = [];
+    totalTutoresNotificados = 0;
+    totalEstudiantesNotificados = 0;
 
     constructor(
         private readonly cursoService: CursoService,
@@ -65,12 +81,17 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
             .subscribe({
                 next: (response) => {
                     if (response.typeResponse === 'SUCCESS') {
+                        this.actualizarResumenNotificacion(
+                            response.message,
+                            response.data
+                        );
                         this.messageService.add({
                             severity: 'success',
                             summary: 'Éxito',
                             detail: response.message,
                         });
                         this.seleccion = [];
+                        this.resumenVisible = true;
                     } else {
                         this.messageService.add({
                             severity: 'error',
@@ -97,6 +118,53 @@ export class EnviarCorreoMatriculaFinalComponent implements OnInit {
                     this.enviando = false;
                 },
             });
+    }
+
+    cerrarResumen(): void {
+        this.resumenVisible = false;
+    }
+
+    private actualizarResumenNotificacion(
+        message: string,
+        data: NotificacionPrematriculaTutor[] | null | undefined
+    ): void {
+        const listado = data ?? [];
+        const estudiantesListado = listado.reduce<ResumenEstudiante[]>(
+            (acc, item) => {
+                const estudiantes = item.estudiantes ?? [];
+                const mapped = estudiantes.map((estudiante) => {
+                    const nombre = `${estudiante.persona?.nombre ?? ''} ${
+                        estudiante.persona?.apellido ?? ''
+                    }`.trim();
+                    return {
+                        tutorNombre: item.nombre,
+                        tutorCodigo: item.codigo,
+                        estudianteNombre: nombre || 'Sin nombre',
+                        estudianteCodigo: estudiante.codigo ?? '',
+                        estudianteCorreo:
+                            estudiante.correoUniversidad ??
+                            estudiante.persona?.correoElectronico ??
+                            '',
+                    };
+                });
+                return acc.concat(mapped);
+            },
+            []
+        );
+
+        this.resumenMessage = message;
+        this.resumenNotificaciones = listado;
+        this.totalTutoresNotificados = listado.length;
+        this.resumenEstudiantes = estudiantesListado;
+        this.totalEstudiantesNotificados =
+            estudiantesListado.length > 0
+                ? estudiantesListado.length
+                : listado.reduce(
+                      (acc, item) =>
+                          acc +
+                          Number(item.totalEstudiantesConMatriculaActiva ?? 0),
+                      0
+                  );
     }
 
     private cargarCursos(): void {

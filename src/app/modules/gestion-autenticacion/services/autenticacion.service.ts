@@ -1,4 +1,4 @@
-import { gestion_autenticacion } from 'src/environments/environment';
+import { environment, gestion_autenticacion } from 'src/environments/environment';
 import { Injectable, EventEmitter } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
@@ -47,6 +47,9 @@ export class AutenticacionService {
 
         // Suscribirse al estado de autenticación sin sobrescribir loggedInUser
         this.afAuth.authState.subscribe((user) => {
+            if (this.isMockAuthEnabled()) {
+                return;
+            }
             if (user && user.email?.endsWith('@unicauca.edu.co')) {
                 this.isLoggedInStatus = true;
 
@@ -191,5 +194,13 @@ export class AutenticacionService {
 
     getToken(): string | null {
         return localStorage.getItem('token');
+    }
+
+    private isMockAuthEnabled(): boolean {
+        if (environment.production) {
+            return false;
+        }
+        const flag = (localStorage.getItem('mockAuth') || '').toLowerCase();
+        return flag === 'true' || flag === '1';
     }
 }

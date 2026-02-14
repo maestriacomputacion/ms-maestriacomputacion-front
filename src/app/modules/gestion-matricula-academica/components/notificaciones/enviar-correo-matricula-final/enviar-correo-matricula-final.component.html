@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <p-panel>
     <p-header>
         <b>ENVIAR CORREO INFORMADO SOBRE LA MATRÍCULA FINAL</b>
@@ -96,8 +97,123 @@
             label="Enviar correo"
             icon="pi pi-send"
             class="p-button-primary"
-            [disabled]="!seleccion.length"
+            [disabled]="!seleccion.length || enviando"
+            [loading]="enviando"
             (click)="enviarCorreo()"
         ></button>
     </div>
 </p-panel>
+
+<p-dialog
+    header="Resumen de envío"
+    [(visible)]="resumenVisible"
+    [modal]="true"
+    [style]="{ width: '80vw', maxWidth: '70rem' }"
+    [draggable]="false"
+    [resizable]="false"
+    [dismissableMask]="true"
+    (onHide)="cerrarResumen()"
+>
+    <div class="flex flex-column gap-4">
+        <div class="font-semibold text-900">{{ resumenMessage }}</div>
+
+        <div>
+            <div class="flex justify-content-between align-items-center mb-2">
+                <div class="font-semibold text-900">Resumen de tutores</div>
+                <div class="text-600">
+                    Total tutores notificados: {{ totalTutoresNotificados }}
+                </div>
+            </div>
+
+            <p-table
+                *ngIf="resumenNotificaciones.length; else sinNotificaciones"
+                [value]="resumenNotificaciones"
+                [rows]="5"
+                [paginator]="resumenNotificaciones.length > 5"
+                [responsiveLayout]="'scroll'"
+                styleClass="p-datatable-gridlines p-datatable-striped"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col">Tutor</th>
+                        <th scope="col">Código</th>
+                        <th scope="col" class="text-center">
+                            Total estudiantes con matrícula activa
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{ item.nombre }}</td>
+                        <td>{{ item.codigo }}</td>
+                        <td class="text-center">
+                            {{ item.totalEstudiantesConMatriculaActiva ?? 0 }}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <ng-template #sinNotificaciones>
+                <div class="text-600">
+                    No se generó información de notificación para tutores.
+                </div>
+            </ng-template>
+        </div>
+
+        <div>
+            <div class="flex justify-content-between align-items-center mb-2">
+                <div class="font-semibold text-900">
+                    Resumen de estudiantes
+                </div>
+                <div class="text-600">
+                    Total estudiantes notificados:
+                    {{ totalEstudiantesNotificados }}
+                </div>
+            </div>
+
+            <p-table
+                *ngIf="resumenEstudiantes.length; else sinEstudiantes"
+                [value]="resumenEstudiantes"
+                [rows]="5"
+                [paginator]="resumenEstudiantes.length > 5"
+                [responsiveLayout]="'scroll'"
+                styleClass="p-datatable-gridlines p-datatable-striped"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col">Estudiante</th>
+                        <th scope="col">Código estudiante</th>
+                        <th scope="col">Correo</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{ item.estudianteNombre }}</td>
+                        <td>{{ item.estudianteCodigo }}</td>
+                        <td>{{ item.estudianteCorreo }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <ng-template #sinEstudiantes>
+                <div class="text-600">
+                    No se generó detalle de estudiantes para el resumen.
+                </div>
+            </ng-template>
+        </div>
+    </div>
+
+    <p-footer>
+        <div class="flex justify-content-end">
+            <button
+                type="button"
+                pButton
+                pRipple
+                label="Cerrar"
+                icon="pi pi-times"
+                class="p-button-secondary"
+                (click)="cerrarResumen()"
+            ></button>
+        </div>
+    </p-footer>
+</p-dialog>

@@ -3,123 +3,50 @@
         <b>REPORTE PARA EL CENTRO DE POSTGRADOS</b>
     </p-header>
 
-    <form [formGroup]="reporteForm" class="flex flex-column gap-3">
+    <div class="flex flex-column gap-3">
         <div class="flex align-items-center gap-2">
-            <i class="pi pi-file text-primary text-lg"></i>
-            <div class="text-600">
-                Completa los parámetros para generar el reporte solicitado.
-            </div>
+            <i class="pi pi-download text-primary text-lg"></i>
+            <span class="text-600"
+                >Selecciona un período finalizado y descarga el reporte en
+                Excel.</span
+            >
         </div>
 
-        <div class="surface-card border-1 border-200 border-round p-3">
-            <div class="font-bold text-900 mb-3">Parámetros globales</div>
-            <div class="grid">
-                <div class="col-12 md:col-6">
-                    <label
-                        for="consecutivo"
-                        class="font-medium text-900 block mb-2"
-                        >Consecutivo</label
+        <div class="flex align-items-center gap-3">
+            <p-dropdown
+                [options]="periodos"
+                [(ngModel)]="periodoSeleccionado"
+                optionLabel="descripcion"
+                placeholder="Selecciona un período"
+                [disabled]="cargando"
+                styleClass="w-20rem"
+                [style]="{ minWidth: '300px' }"
+            >
+                <ng-template let-periodo pTemplate="item">
+                    <span
+                        >{{ periodo.anio }}-{{ periodo.tagPeriodo }} —
+                        {{ periodo.descripcion }}</span
                     >
-                    <input
-                        id="consecutivo"
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        formControlName="consecutivo"
-                        placeholder="Ej: 2025-001"
-                    />
-                </div>
-                <div class="col-12 md:col-6">
-                    <label for="copia" class="font-medium text-900 block mb-2"
-                        >Copia a</label
+                </ng-template>
+                <ng-template let-periodo pTemplate="selectedItem">
+                    <span
+                        >{{ periodo.anio }}-{{ periodo.tagPeriodo }} —
+                        {{ periodo.descripcion }}</span
                     >
-                    <input
-                        id="copia"
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        formControlName="copia"
-                        placeholder="Ej: correo@uni.edu"
-                    />
-                </div>
-            </div>
-        </div>
+                </ng-template>
+            </p-dropdown>
 
-        <div class="surface-card border-1 border-200 border-round p-3">
-            <div class="font-bold text-900 mb-3">
-                Parámetros director centro de postgrados
-            </div>
-            <div class="grid">
-                <div class="col-12 md:col-6">
-                    <label
-                        for="destinatario"
-                        class="font-medium text-900 block mb-2"
-                        >Nombre de la persona a quien va dirigido el
-                        reporte</label
-                    >
-                    <input
-                        id="destinatario"
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        formControlName="destinatario"
-                        placeholder="Ej: Juan Perez"
-                    />
-                </div>
-                <div class="col-12 md:col-6">
-                    <label for="titulo" class="font-medium text-900 block mb-2"
-                        >Título profesional</label
-                    >
-                    <input
-                        id="titulo"
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        formControlName="titulo"
-                        placeholder="Ej: Ph.D. en Ingeniería"
-                    />
-                </div>
-                <div class="col-12 md:col-6">
-                    <label
-                        for="organizacion"
-                        class="font-medium text-900 block mb-2"
-                        >Organización</label
-                    >
-                    <input
-                        id="organizacion"
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        formControlName="organizacion"
-                        placeholder="Ej: Universidad Nacional"
-                    />
-                </div>
-                <div class="col-12 md:col-6">
-                    <label for="rol" class="font-medium text-900 block mb-2"
-                        >Rol de la organización</label
-                    >
-                    <input
-                        id="rol"
-                        pInputText
-                        type="text"
-                        class="w-full"
-                        formControlName="rol"
-                        placeholder="Ej: Director"
-                    />
-                </div>
-            </div>
-        </div>
-
-        <div class="flex justify-content-end">
             <button
                 pButton
                 pRipple
                 type="button"
-                label="Generar reporte"
-                icon="pi pi-file"
+                label="Descargar reporte"
+                icon="pi pi-download"
                 class="p-button-primary"
-                (click)="generarReporte()"
+                [disabled]="!periodoSeleccionado"
+                [loading]="descargando"
+                (click)="descargarReporte()"
             ></button>
         </div>
-    </form>
+    </div>
 </p-panel>

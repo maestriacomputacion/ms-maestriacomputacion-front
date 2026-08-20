@@ -15,6 +15,7 @@ import { PeriodoAcademico } from '../../../models/periodo-academico.model';
     selector: 'app-gestion-curso',
     templateUrl: './gestion-curso.component.html',
     styleUrls: ['./gestion-curso.component.scss'],
+    providers: [MessageService, ConfirmationService],
 })
 export class GestionCursoComponent implements OnInit, OnDestroy {
     @Input() estado?: string;
@@ -214,9 +215,14 @@ export class GestionCursoComponent implements OnInit, OnDestroy {
 
         if (id === undefined || id === null) return;
 
+        const curso = this.cursos.find((c) => c.id === id);
+        const nombreCurso = curso
+            ? `"${curso.asignatura}" (Grupo ${curso.grupo})`
+            : 'este curso';
+
         this.confirmationService.confirm({
             target,
-            message: '¿Está seguro de que desea eliminar este curso?',
+            message: `¿Está seguro de que desea eliminar el curso ${nombreCurso}?`,
             icon: PrimeIcons.EXCLAMATION_TRIANGLE,
             acceptLabel: 'Sí, eliminar',
             rejectLabel: 'No',

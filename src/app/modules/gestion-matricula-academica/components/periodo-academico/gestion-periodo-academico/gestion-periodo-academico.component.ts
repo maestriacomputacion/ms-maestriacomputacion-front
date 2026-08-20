@@ -21,6 +21,7 @@ import {
     selector: 'app-gestion-periodo-academico',
     templateUrl: './gestion-periodo-academico.component.html',
     styleUrls: ['./gestion-periodo-academico.component.scss'],
+    providers: [MessageService, ConfirmationService],
 })
 export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     periodos: PeriodoAcademico[] = [];
@@ -44,6 +45,7 @@ export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
         { label: 'ACTIVO', value: 'ACTIVO' },
         { label: 'INACTIVO', value: 'INACTIVO' },
         { label: 'FINALIZADO', value: 'FINALIZADO' },
+        { label: 'PROYECCION', value: 'PROYECCION' },
     ];
 
     private readonly destroy$ = new Subject<void>();

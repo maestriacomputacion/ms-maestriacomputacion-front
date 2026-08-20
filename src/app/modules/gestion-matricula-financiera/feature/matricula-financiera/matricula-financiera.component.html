@@ -1,150 +1,173 @@
-<div class="col-12">
-    <p-toast></p-toast>
-    <p-card>
+<div class="surface-0 p-4">
 
-        <!-- Contenido -->
-        <ng-container *ngIf="vm$ | async as vm">
-            <div class="table-container">
+  <!-- Encabezado -->
+  <app-page-header titulo="Gestión de Matrícula Financiera"></app-page-header>
 
-                <!-- Header: Título -->
-                <div class="mb-4 p-4">
-                    <div class="text-center mb-4 border-bottom-1 surface-border pb-3">
-                        <h2 class="m-0 text-700">Gestión de Matrícula Financiera</h2>
-                    </div>
+  <ng-container *ngIf="vm$ | async as vm">
 
-                    <!-- Barra de filtros + buscador -->
-                    <div class="flex flex-column md:flex-row align-items-start md:align-items-end justify-content-between gap-3 border-bottom-1 surface-border pb-3">
+    <!-- Sección: Filtros de Búsqueda (Patrón Presupuesto: Header + Panel Gris) -->
+    <app-uni-card-header titulo="Filtros de Búsqueda" icono="search"></app-uni-card-header>
+    
+    <div class="config-panel mb-4">
+      <div class="config-row">
+        <span class="p-float-label">
+          <p-dropdown
+            inputId="periodo-selector"
+            [options]="vm.periodos"
+            [ngModel]="vm.periodoSeleccionado"
+            [disabled]="vm.loading"
+            optionLabel="descripcion"
+            placeholder=" "
+            styleClass="custom-dropdown"
+            (onChange)="onPeriodoChange($event.value)"
+            aria-label="Selector de período académico">
+            <ng-template pTemplate="selectedItem" let-p>
+              <span *ngIf="p">{{ getPeriodoDropdownLabel(p) }}</span>
+            </ng-template>
+            <ng-template pTemplate="item" let-p>
+              <span>{{ getPeriodoDropdownLabel(p) }}</span>
+            </ng-template>
+          </p-dropdown>
+          <label for="periodo-selector">Período académico</label>
+        </span>
 
-                        <div class="flex flex-column md:flex-row flex-wrap gap-4 w-full">
+        <span class="p-float-label">
+          <i class="pi pi-search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #777680;"></i>
+          <input
+            pInputText
+            id="busqueda"
+            type="text"
+            class="custom-input"
+            style="padding-left: 30px;"
+            (input)="onBusquedaChange($event)"
+            aria-label="Buscar por nombre o código de estudiante">
+          <label for="busqueda" style="left: 30px;">Buscar estudiante</label>
+        </span>
 
-                            <!-- Periodo Académico -->
-                            <span class="p-float-label mt-3 md:mt-0 w-full md:w-auto">
-                                <p-dropdown id="filtro-periodo"
-                                    [options]="vm.periodosDropdown"
-                                    [(ngModel)]="vm.periodoSeleccionado"
-                                    optionLabel="label"
-                                    optionValue="value"
-                                    styleClass="w-full md:w-15rem"
-                                    (onChange)="onPeriodoChange($event.value)">
-                                </p-dropdown>
-                                <label for="filtro-periodo">Período Académico</label>
-                            </span>
+        <span class="p-float-label">
+          <p-dropdown
+            inputId="estado-selector"
+            [options]="estadosMatricula"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="estadoFiltro$ | async"
+            placeholder=" "
+            styleClass="custom-dropdown"
+            (onChange)="onEstadoChange($event.value)"
+            aria-label="Filtrar por estado de matrícula">
+          </p-dropdown>
+          <label for="estado-selector">Estado de matrícula</label>
+        </span>
 
-                            <!-- Semestre Financiero -->
-                            <span class="p-float-label mt-3 md:mt-0 w-full md:w-auto">
-                                <p-dropdown id="filtro-semestre"
-                                    [options]="vm.semestres"
-                                    [(ngModel)]="vm.semestreSeleccionado"
-                                    optionLabel="label"
-                                    optionValue="value"
-                                    styleClass="w-full md:w-15rem"
-                                    placeholder="&nbsp;"
-                                    (onChange)="onFiltroChange($event.value)">
-                                </p-dropdown>
-                                <label for="filtro-semestre">Semestre Financiero</label>
-                            </span>
+        <span class="p-float-label">
+          <p-dropdown
+            inputId="semestre-selector"
+            [options]="vm.semestres"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="semestreFiltro$ | async"
+            placeholder=" "
+            styleClass="custom-dropdown"
+            (onChange)="onSemestreChange($event.value)"
+            aria-label="Filtrar por semestre financiero">
+          </p-dropdown>
+          <label for="semestre-selector">Semestre financiero</label>
+        </span>
+      </div>
+    </div>
 
-                        </div>
+    <!-- Estado: Cargando -->
+    <div *ngIf="vm.loading" class="mb-4">
+      <app-uni-progress-bar label="Cargando matrículas financieras"></app-uni-progress-bar>
+    </div>
 
-                        <!-- Buscador global -->
-                        <span class="p-input-icon-left w-full md:w-auto flex-shrink-0 mt-3 md:mt-0">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" placeholder="Buscar estudiante..."
-                                class="w-full md:w-15rem"
-                                (input)="tableEstudiantes.filterGlobal(getInputValue($event), 'contains')" />
-                        </span>
+    <!-- Estado: Error -->
+    <p-message
+      *ngIf="vm.error && !vm.loading"
+      severity="error"
+      styleClass="uni-message w-full mb-3"
+      [text]="'No fue posible cargar las matrículas. Por favor, intente nuevamente o contacte al administrador.'">
+    </p-message>
 
-                    </div>
-                </div>
+    <!-- Título de sección institucional -->
+    <div class="mb-2 px-1">
+      <h2 class="text-xl font-semibold m-0" style="color: #000066; font-family: 'Titillium Web', sans-serif;">
+        Listado de Estudiantes Matriculados
+      </h2>
+      <span class="total-label" style="font-size: 12px; color: #777680;">
+        Total: {{ (estudiantesFiltrados$ | async)?.length ?? 0 }} registros encontrados
+      </span>
+    </div>
 
-                <!-- Tabla de Estudiantes -->
-                <div style="overflow-x: auto;">
-                    <p-table #tableEstudiantes
-                        [value]="vm.estudiantesFiltrados"
-                        [paginator]="true"
-                        [rows]="10"
-                        [rowsPerPageOptions]="[10, 25, 50]"
-                        paginatorDropdownAppendTo="body"
-                        responsiveLayout="stack"
-                        breakpoint="960px"
-                        class="p-datatable-sm"
-                        [globalFilterFields]="['codigo', 'nombre', 'apellido', 'cohorte', 'periodoIngreso']"
-                        [showCurrentPageReport]="true"
-                        currentPageReportTemplate="{first} - {last} de {totalRecords}"
-                        sortField="semestreFinanciero"
-                        [sortOrder]="-1">
 
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th class="text-center" pSortableColumn="codigo">
-                                    Código <p-sortIcon field="codigo"></p-sortIcon>
-                                </th>
-                                <th pSortableColumn="nombre">
-                                    Nombre Completo <p-sortIcon field="nombre"></p-sortIcon>
-                                </th>
-                                <th class="text-center" pSortableColumn="semestreFinanciero">
-                                    Sem. Financiero <p-sortIcon field="semestreFinanciero"></p-sortIcon>
-                                </th>
-                                <th class="text-center">Estado Pago</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </ng-template>
-     
-                        <ng-template pTemplate="body" let-estudiante>
-                            <tr>
-                                <td class="text-center">
-                                    <span class="p-column-title font-bold">Código</span>
-                                    {{ estudiante.codigo }}
-                                </td>
-                                <td>
-                                    <span class="p-column-title font-bold">Nombre Completo</span>
-                                    {{ estudiante.nombre }} {{ estudiante.apellido }}
-                                </td>
-                                <td class="text-center">
-                                    <span class="p-column-title font-bold">Sem. Financiero</span>
-                                    <p-tag [value]="'Sem. ' + estudiante.semestreFinanciero" severity="info"></p-tag>
-                                </td>
-                                <td class="text-center">
-                                    <span class="p-column-title font-bold">Estado Pago</span>
-                                    <p-tag *ngIf="estudiante.estaPago === true" value="PAGADO" severity="success" icon="pi pi-check"
-                                           pTooltip="Pagado."></p-tag>
-                                    <p-tag *ngIf="estudiante.estaPago === false" value="NO PAGADO" severity="danger" icon="pi pi-times"
-                                           pTooltip="No registra pago."></p-tag>
-                                    <p-tag *ngIf="estudiante.estaPago === null || estudiante.estaPago === undefined" value="PENDIENTE" severity="warning" icon="pi pi-clock"
-                                           pTooltip="Pendiente de pago."></p-tag>
-                                </td>
-                                <td class="text-center">
-                                    <span class="p-column-title font-bold">Acciones</span>
-                                    <button pButton pRipple
-                                        type="button"
-                                        label="Ver detalle"
-                                        icon="pi pi-eye"
-                                        class="p-button-sm p-button-outlined"
-                                        pTooltip="Ver detalle del estudiante"
-                                        tooltipPosition="left"
-                                        (click)="verDetalle(estudiante)">
-                                    </button>
-                                </td>
-                            </tr>
-                        </ng-template>
+    <div class="table-responsive-wrapper border-round-xl overflow-hidden mb-4">
+      <p-table
+        [value]="(estudiantesFiltrados$ | async) ?? []"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped unified-table"
+        [trackBy]="trackByEstudiante"
+        responsiveLayout="stack"
+        breakpoint="960px">
 
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="5" class="text-center">
-                                    <div class="flex flex-column align-items-center justify-content-center py-6 text-400 text-center w-full">
-                                        <i class="pi pi-inbox text-5xl mb-3"></i>
-                                        <span class="text-lg font-medium">No se encontraron estudiantes matriculados</span>
-                                        <span class="text-sm mt-1">Intente ajustar los filtros de búsqueda</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="white-space-nowrap" style="width: 120px">Código</th>
+            <th class="white-space-nowrap">Nombre completo</th>
+            <th class="white-space-nowrap text-center" style="width: 100px">Semestre</th>
+            <th class="white-space-nowrap text-center" style="width: 140px">Estado</th>
+            <th class="text-center" style="width: 60px"></th>
+          </tr>
+        </ng-template>
 
-                    </p-table>
-                </div>
+        <ng-template pTemplate="body" let-estudiante>
+          <tr>
+            <td>
+              <span class="p-column-title font-bold">Código</span>
+              {{ estudiante.codigo }}
+            </td>
+            <td>
+              <span class="p-column-title font-bold">Nombre completo</span>
+              <span>{{ estudiante.nombre }} {{ estudiante.apellido }}</span>
+            </td>
+            <td class="text-center">
+              <span class="p-column-title font-bold">Semestre</span>
+              {{ estudiante.semestreFinanciero }}
+            </td>
+            <td class="text-center">
+              <span class="p-column-title font-bold">Estado</span>
+              <app-uni-status-badge [status]="estudiante.estaPago"></app-uni-status-badge>
+            </td>
+            <td class="text-center">
+              <p-button
+                icon="pi pi-eye"
+                styleClass="p-button-text p-button-rounded institucional-action-btn"
+                [attr.aria-label]="'Ver detalle de ' + estudiante.nombre + ' ' + estudiante.apellido"
+                pTooltip="Ver detalle"
+                tooltipPosition="top"
+                (onClick)="verDetalle(estudiante)">
+              </p-button>
+            </td>
+          </tr>
+        </ng-template>
 
-            </div>
-        </ng-container>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center p-4">
+              <app-estado-vacio
+                icono="person_search"
+                mensaje="No se encontraron estudiantes para los filtros seleccionados.">
+              </app-estado-vacio>
+            </td>
+          </tr>
+        </ng-template>
 
-    </p-card>
+      </p-table>
+    </div>
+
+  </ng-container>
 </div>
+
+<!-- Toast institucional — posición top-right -->
+<p-toast position="top-right" styleClass="uni-toast"></p-toast>

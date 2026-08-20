@@ -1,52 +1,201 @@
-<p-toast></p-toast>
-<div class="col-12">
-    <p-card>
+<div class="surface-0 p-4 border-round-xl min-h-screen">
 
-        <!-- Contenido -->
-        <ng-container *ngIf="vm$ | async as vm">
-            <div>
-                <!-- Header con nombre del estudiante y periodo -->
-                <div class="mb-4 pb-3 border-bottom-1 surface-border flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="m-0 text-700">Mi Matrícula Financiera</h2>
-                        <span class="text-500 text-sm">Consulta el estado y detalle de tu matrícula</span>
-                    </div>
-                    <div *ngIf="vm.periodoActual" class="text-right">
-                        <p-tag severity="info" [value]="getPeriodoLabel(vm.periodoActual)" icon="pi pi-calendar"
-                               pTooltip="Período académico en curso."></p-tag>
-                        <div class="text-500 text-xs mt-1">Periodo Académico en Curso</div>
-                    </div>
-                </div>
+  <ng-container *ngIf="vmResumen$ | async as vm">
 
-                <!-- Datos del estudiante (si existen) -->
-                <div *ngIf="vm.estudiante">
-                    <app-tabla-matricula-estudiante [estudiante]="vm.estudiante"></app-tabla-matricula-estudiante>
-                    <p-divider></p-divider>
-                </div>
+    <!-- Encabezado unificado -->
+    <app-page-header [titulo]="vm.estudiante ? (vm.estudiante.nombre + ' ' + vm.estudiante.apellido) : 'Mi Matrícula Financiera'">
+      <app-periodo-badge
+        *ngIf="vm.periodos?.length"
+        [label]="getPeriodoLabel(vm.periodos)">
+      </app-periodo-badge>
+    </app-page-header>
 
-                <!-- Estado vacío/Error -->
-                <div *ngIf="!vm.estudiante" class="flex flex-column align-items-center justify-content-center py-8 text-400">
-                    <i class="pi pi-exclamation-circle text-5xl mb-3"></i>
-                    <span class="text-lg font-medium text-700">Información no disponible</span>
-                    <span class="text-sm mt-1 text-center">No pudimos cargar los detalles de tu matrícula para este periodo.</span>
-                </div>
+    <!-- Estado: Cargando -->
+    <div *ngIf="vm.loading" class="uni-progress-bar" role="status" aria-label="Cargando información de matrícula">
+      <div class="uni-progress-bar__track"></div>
+    </div>
 
-                <!-- Acción: Solicitar Revisión (Siempre visible si hay error o no hay datos) -->
-                <div class="flex flex-column md:flex-row align-items-center justify-content-between gap-3 mt-3 p-3 bg-blue-50 border-round">
-                    <div class="flex align-items-center gap-2 text-600">
-                        <i class="pi pi-info-circle"></i>
-                        <span class="text-sm">Si tienes dudas sobre tu costo o no aparece tu información, solicita una revisión.</span>
-                    </div>
-                    <button pButton pRipple
-                        type="button"
-                        label="Solicitar Revisión"
-                        icon="pi pi-send"
-                        class="p-button-primary flex-shrink-0"
-                        (click)="solicitarRevision()">
-                    </button>
-                </div>
+    <!-- Estado: Error -->
+    <p-message
+      *ngIf="vm.error && !vm.loading"
+      severity="error"
+      styleClass="uni-message w-full mb-3"
+      text="No fue posible cargar su información de matrícula. Si el error persiste, por favor solicite una revisión.">
+    </p-message>
+
+    <!-- Estado: Vacío (sin matrícula) -->
+    <div *ngIf="vm.isEmpty && !vm.loading" class="mb-4 banner-info">
+      <app-estado-vacio
+        icono="info"
+        mensaje="No se encontró información de matrícula para el período académico actual. Si considera que esto es un error, puede solicitar una revisión.">
+      </app-estado-vacio>
+    </div>
+
+    <!-- Estado: Datos del estudiante -->
+    <ng-container *ngIf="!vm.loading && !vm.isEmpty && vm.estudiante as est">
+
+      <!-- Tarjeta: Información personal -->
+      <p-card styleClass="mb-4 uni-card">
+        <ng-template pTemplate="header">
+          <app-uni-card-header titulo="Información Personal" icono="person"></app-uni-card-header>
+        </ng-template>
+        <div class="grid p-2">
+          <div class="col-12 md:col-4 mb-3">
+            <span class="campo-label">Nombre completo</span>
+            <span class="campo-valor">{{ est.nombre }} {{ est.apellido }}</span>
+          </div>
+          <div class="col-12 md:col-4 mb-3">
+            <span class="campo-label">Identificación</span>
+            <span class="campo-valor">{{ est.identificacion }}</span>
+          </div>
+          <div class="col-12 md:col-4 mb-3">
+            <span class="campo-label">Código</span>
+            <span class="campo-valor">{{ est.codigo }}</span>
+          </div>
+          <div class="col-12 md:col-4 mb-3">
+            <span class="campo-label">Cohorte</span>
+            <span class="campo-valor">{{ est.cohorte }}</span>
+          </div>
+          <div class="col-12 md:col-4 mb-3">
+            <span class="campo-label">Período de ingreso</span>
+            <span class="campo-valor">{{ est.periodoIngreso }}</span>
+          </div>
+          <div class="col-12 md:col-4 mb-3" *ngIf="est.grupoNombre">
+            <span class="campo-label">Grupo</span>
+            <span class="campo-valor">{{ est.grupoNombre }}</span>
+          </div>
+          <div class="col-12 md:col-4 mb-3" *ngIf="est.esEgresadoUnicauca !== undefined">
+            <span class="campo-label">Egresado Unicauca</span>
+            <span class="campo-valor" [class.texto-exito]="est.esEgresadoUnicauca">
+              {{ est.esEgresadoUnicauca ? 'Sí' : 'No' }}
+            </span>
+          </div>
+          <div class="col-12 md:col-4 mb-3" *ngIf="est.aplicaVotacion !== undefined">
+            <span class="campo-label">Aplica votación</span>
+            <span class="campo-valor">{{ est.aplicaVotacion ? 'Sí' : 'No' }}</span>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Tarjeta: Resumen Financiero -->
+      <p-card styleClass="mb-4 uni-card">
+        <ng-template pTemplate="header">
+          <app-uni-card-header titulo="Resumen Financiero" icono="lock"></app-uni-card-header>
+        </ng-template>
+        <div class="grid p-2">
+          <div class="col-12 md:col-3 mb-3">
+            <span class="campo-label">Valor en SMLV</span>
+            <span class="valor-monetario">
+              {{ est.valorEnSMLV | number:'1.2-2' }}
+            </span>
+          </div>
+          <div class="col-12 md:col-3 mb-3">
+            <span class="campo-label">Estado de pago</span>
+            <div class="mt-1">
+              <app-uni-status-badge [status]="est.estaPago"></app-uni-status-badge>
             </div>
-        </ng-container>
+          </div>
+          <div class="col-12 md:col-3 mb-3">
+            <span class="campo-label">Semestre financiero</span>
+            <span class="campo-valor">{{ est.semestreFinanciero }}</span>
+          </div>
+          <div class="col-12 md:col-3 mb-3" *ngIf="est.semestreAcademico !== undefined">
+            <span class="campo-label">Semestre académico</span>
+            <span class="campo-valor">{{ est.semestreAcademico }}</span>
+          </div>
+        </div>
+      </p-card>
 
-    </p-card>
+      <!-- Tarjeta: Becas -->
+      <p-card styleClass="mb-4 uni-card">
+        <ng-template pTemplate="header">
+          <app-uni-card-header titulo="Becas Aplicadas" icono="sell"></app-uni-card-header>
+        </ng-template>
+        
+        <ng-container *ngIf="est.becasDescuentos?.length; else sinBecas">
+          <ng-container *ngFor="let beca of est.becasDescuentos; trackBy: trackByBeca; let i = index">
+            <div class="grid p-2" [class.border-top-separator]="i > 0">
+              <div class="col-12 md:col-3 mb-2">
+                <span class="campo-label">Tipo</span>
+                <span class="campo-valor">{{ beca.tipo }}</span>
+              </div>
+              <div class="col-12 md:col-3 mb-2">
+                <span class="campo-label">Porcentaje</span>
+                <span class="campo-valor">{{ beca.porcentaje }}%</span>
+              </div>
+              <div class="col-12 md:col-3 mb-2">
+                <span class="campo-label">Resolución</span>
+                <span class="campo-valor">{{ beca.resolucion }}</span>
+              </div>
+              <div class="col-12 md:col-3 mb-2">
+                <span class="campo-label">Estado</span>
+                <div class="mt-1">
+                  <app-uni-status-badge 
+                    [labelOverride]="beca.estado"
+                    [status]="beca.estado === 'RESUELTA' || beca.estado === 'FINALIZADA'">
+                  </app-uni-status-badge>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+        
+        <ng-template #sinBecas>
+          <div class="p-3 text-center" style="color: #777680;">
+            <span class="material-symbols-rounded" style="font-size: 36px; vertical-align: middle; margin-right: 8px;">sell</span>
+            <span>No se registran becas aplicadas para este período.</span>
+          </div>
+        </ng-template>
+      </p-card>
+
+      <!-- Tarjeta: Materias matriculadas -->
+      <p-card styleClass="mb-4 uni-card" *ngIf="est.materias?.length">
+        <ng-template pTemplate="header">
+          <app-uni-card-header titulo="Materias Matriculadas" icono="menu_book"></app-uni-card-header>
+        </ng-template>
+        <ng-container *ngFor="let materia of est.materias; trackBy: trackByMateria; let i = index">
+          <div class="grid p-2" [class.border-top-separator]="i > 0">
+            <div class="col-12 md:col-3 mb-2">
+              <span class="campo-label">Código</span>
+              <span class="campo-valor">{{ materia.codigo_oid }}</span>
+            </div>
+            <div class="col-12 md:col-3 mb-2">
+              <span class="campo-label">Materia</span>
+              <span class="campo-valor">{{ materia.materia }}</span>
+            </div>
+            <div class="col-12 md:col-3 mb-2">
+              <span class="campo-label">Docente</span>
+              <span class="campo-valor">{{ materia.objDocente?.nombre }} {{ materia.objDocente?.apellido }}</span>
+            </div>
+            <div class="col-12 md:col-3 mb-2">
+              <span class="campo-label">Grupo</span>
+              <span class="campo-valor">{{ materia.grupoClase }}</span>
+            </div>
+          </div>
+        </ng-container>
+      </p-card>
+
+    </ng-container>
+
+    <!-- Sección de revisión — SIEMPRE visible -->
+    <div class="flex flex-column md:flex-row align-items-center justify-content-between gap-3 mt-3 p-3 banner-revision">
+      <div class="flex align-items-center gap-3">
+        <span class="material-symbols-rounded icon-revision" aria-hidden="true">info</span>
+        <span class="texto-revision">
+          Si tiene dudas sobre su costo de matrícula o no aparece su información, puede solicitar una revisión.
+        </span>
+      </div>
+      <p-button
+        label="Solicitar Revisión"
+        icon="pi pi-send"
+        styleClass="p-button-rounded btn-institucional flex-shrink-0"
+        aria-label="Solicitar revisión de matrícula financiera"
+        (onClick)="solicitarRevision()">
+      </p-button>
+    </div>
+
+  </ng-container>
 </div>
+
+<!-- Toast institucional -->
+<p-toast position="top-right" styleClass="uni-toast"></p-toast>

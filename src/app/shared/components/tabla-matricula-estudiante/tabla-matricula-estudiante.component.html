@@ -6,10 +6,10 @@
     <div class="seccion-header">
         <i class="pi pi-wallet mr-2"></i>
         Matrícula Financiera
-        <p-tag *ngIf="esNuevo" value="NUEVO" severity="info" class="ml-2"></p-tag>
-        <p-tag *ngIf="estudiante.estaPago === true" value="PAGADO" severity="success" icon="pi pi-check" class="ml-2"></p-tag>
-        <p-tag *ngIf="estudiante.estaPago === false" value="NO PAGADO" severity="danger" icon="pi pi-times" class="ml-2"></p-tag>
-        <p-tag *ngIf="estudiante.estaPago === null || estudiante.estaPago === undefined" value="PENDIENTE" severity="warning" icon="pi pi-clock" class="ml-2"></p-tag>
+        <app-uni-status-badge *ngIf="esNuevo" labelOverride="Nuevo" status="info" class="ml-2"></app-uni-status-badge>
+        <app-uni-status-badge *ngIf="estudiante.estaPago === true" [status]="true" class="ml-2"></app-uni-status-badge>
+        <app-uni-status-badge *ngIf="estudiante.estaPago === false" [status]="false" class="ml-2"></app-uni-status-badge>
+        <app-uni-status-badge *ngIf="estudiante.estaPago === null || estudiante.estaPago === undefined" [status]="null" class="ml-2"></app-uni-status-badge>
     </div>
 
     <div class="seccion-contenido">
@@ -28,37 +28,11 @@
                 </div>
             </div>
 
-            <!-- Fila 1b: Código, Cohorte, Período de ingreso y Grupo -->
-            <div class="col-12 md:col-6 lg:col-3">
-                <div class="detalle-campo">
-                    <span class="detalle-label">Código</span>
-                    <span class="detalle-valor">{{ estudiante.codigo }}</span>
-                </div>
-            </div>
-            <div class="col-12 md:col-6 lg:col-3">
-                <div class="detalle-campo">
-                    <span class="detalle-label">Cohorte</span>
-                    <span class="detalle-valor">{{ estudiante.cohorte }}</span>
-                </div>
-            </div>
-            <div class="col-12 md:col-6 lg:col-3">
-                <div class="detalle-campo">
-                    <span class="detalle-label">Período de ingreso</span>
-                    <span class="detalle-valor">{{ estudiante.periodoIngreso }}</span>
-                </div>
-            </div>
-            <div class="col-12 md:col-6 lg:col-3" *ngIf="estudiante.grupoNombre">
-                <div class="detalle-campo">
-                    <span class="detalle-label">Grupo</span>
-                    <span class="detalle-valor">{{ estudiante.grupoNombre }}</span>
-                </div>
-            </div>
-
             <!-- Fila 2: Valor Matrícula y Semestre Financiero -->
             <div class="col-12 md:col-6">
                 <div class="detalle-campo">
                     <span class="detalle-label">Valor de Matrícula en SMMLV</span>
-                    <span class="detalle-valor" *ngIf="estudiante.valorEnSMLV != null">{{ estudiante.valorEnSMLV | number:'1.0-2' }} SMMLV</span>
+                    <span class="detalle-valor" *ngIf="estudiante.valorEnSMLV != null">{{ estudiante.valorEnSMLV }} SMMLV</span>
                     <span class="detalle-valor text-400" *ngIf="estudiante.valorEnSMLV == null">Sin proyección</span>
                 </div>
             </div>
@@ -74,9 +48,9 @@
                 <div class="detalle-campo">
                     <span class="detalle-label">¿Aplica Descuento de Voto?</span>
                     <span class="detalle-valor">
-                        <p-tag [value]="descuentoVoto === 'SI' ? 'Sí' : 'No'"
-                            [severity]="descuentoVoto === 'SI' ? 'success' : 'danger'">
-                        </p-tag>
+                        <app-uni-status-badge [labelOverride]="descuentoVoto === 'SI' ? 'Sí' : 'No'"
+                            [status]="descuentoVoto === 'SI'">
+                        </app-uni-status-badge>
                     </span>
                 </div>
             </div>
@@ -84,9 +58,9 @@
                 <div class="detalle-campo">
                     <span class="detalle-label">Descuento por Egresado (UNICAUCA)</span>
                     <span class="detalle-valor">
-                        <p-tag [value]="descuentoEgresado === 'SI' ? 'Sí' : 'No'"
-                            [severity]="descuentoEgresado === 'SI' ? 'success' : 'danger'">
-                        </p-tag>
+                        <app-uni-status-badge [labelOverride]="descuentoEgresado === 'SI' ? 'Sí' : 'No'"
+                            [status]="descuentoEgresado === 'SI'">
+                        </app-uni-status-badge>
                     </span>
                 </div>
             </div>
@@ -112,10 +86,10 @@
                 <div class="detalle-campo">
                     <span class="detalle-label">Estado Solicitud</span>
                     <span class="detalle-valor">
-                        <p-tag *ngIf="tieneBeca; else noBecaStatus"
-                            [value]="becaEstado"
-                            [severity]="getBecaEstadoSeverity(becaEstado)">
-                        </p-tag>
+                        <app-uni-status-badge *ngIf="tieneBeca; else noBecaStatus" 
+                            [labelOverride]="becaEstado"
+                            [status]="becaEstado === 'RESUELTA' || becaEstado === 'FINALIZADA'">
+                        </app-uni-status-badge>
                         <ng-template #noBecaStatus>—</ng-template>
                     </span>
 
@@ -126,10 +100,12 @@
                     <span class="detalle-label">¿Avalado por Concejo?</span>
                     <span class="detalle-valor">
                         <ng-container *ngIf="tieneBeca; else noBecaAval">
-                            <p-tag *ngIf="becaAvalado === 'SI'" value="Avalada" severity="success"></p-tag>
-                            <p-tag *ngIf="becaAvalado === 'NO'" value="No Avalada" severity="danger"></p-tag>
+                            <app-uni-status-badge *ngIf="becaAvalado === 'SI'" labelOverride="Avalada" [status]="true"></app-uni-status-badge>
+                            <app-uni-status-badge *ngIf="becaAvalado === 'NO'" labelOverride="No Avalada" [status]="false"></app-uni-status-badge>
                             <span *ngIf="becaAvalado === null">—</span>
                         </ng-container>
+
+
                         <ng-template #noBecaAval>—</ng-template>
                     </span>
                 </div>
@@ -159,7 +135,7 @@
 
         <ng-container *ngIf="estudiante.materias?.length; else noMaterias">
             <p-table [value]="estudiante.materias"
-                styleClass="p-datatable-sm"
+                styleClass="p-datatable-sm tabla-materias"
                 responsiveLayout="stack"
                 [breakpoint]="'960px'">
                 <ng-template pTemplate="header">
@@ -182,7 +158,7 @@
                         </td>
                         <td>
                             <span class="p-column-title">Docente</span>
-                            {{ materia.objDocente?.nombre }} {{ materia.objDocente?.apellido }}
+                            {{ materia.objDocente?.nombre || '—' }}
                         </td>
                         <td>
                             <span class="p-column-title">Grupo Clase</span>

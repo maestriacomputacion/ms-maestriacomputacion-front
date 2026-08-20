@@ -1,117 +1,107 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    OnDestroy,
+    OnInit
+} from '@angular/core';
+import { Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { Estudiante, PeriodoAcademico } from '../../models/domain-models';
+import { BecaFinanciera, Materia, PeriodoAcademico } from '../../models/domain-models';
 import { GestionMatriculaFinancieraFacadeService } from '../../data/facade.service';
-import { LoadingService } from 'src/app/shared/services/loading.service';
-
-interface DetalleEstudianteVM {
-    estudiante: Estudiante | null;
-    periodo: PeriodoAcademico | null;
-    periodos: PeriodoAcademico[];
-    loading: boolean;
-    error: any;
-}
+import { RadicarService } from '../../../gestion-solicitudes/services/radicar.service';
+import { getEstadoMatriculaSeverity, getEstadoMatriculaLabel } from '../../utils/estado-matricula.utils';
 
 @Component({
-  selector: 'app-detalle-estudiante',
-  templateUrl: './detalle-estudiante.component.html',
-  styleUrls: ['./detalle-estudiante.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MessageService]
+    selector: 'app-detalle-estudiante',
+    templateUrl: './detalle-estudiante.component.html',
+    styleUrls: ['./detalle-estudiante.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [MessageService]
 })
 export class DetalleEstudianteComponent implements OnInit, OnDestroy {
 
-  private destroy$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
-  vm$: Observable<DetalleEstudianteVM>;
+    /** ViewModel del Facade — contiene loading, error, estudiante, isEmpty */
+    readonly vmDetalle$ = this.facadeService.vmDetalle$;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private facadeService: GestionMatriculaFinancieraFacadeService,
-    private messageService: MessageService,
-    private loadingService: LoadingService
-  ) {
-    this.vm$ = combineLatest({
-      estudiante: this.facadeService.estudianteSeleccionado$,
-      periodo: this.facadeService.periodoSeleccionadoFiltro$,
-      periodos: this.facadeService.periodos$,
-      loading: this.facadeService.loading$,
-      error: this.facadeService.error$
-    });
-  }
+    readonly getEstadoSeverity = getEstadoMatriculaSeverity;
 
-  ngOnInit(): void {
-    // Cargar periodos si no están en el facade (para etiquetar el periodo del detalle)
-    if (!this.facadeService.getPeriodosSync()?.length) {
-      this.facadeService.obtenerPeriodosAcademicos().pipe(takeUntil(this.destroy$)).subscribe();
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private facadeService: GestionMatriculaFinancieraFacadeService,
+        private radicarService: RadicarService,
+        private messageService: MessageService,
+        private cdr: ChangeDetectorRef
+    ) {}
+
+    ngOnInit(): void {
+        // Cargar periodos si no están en el facade
+        const periodosActuales = this.facadeService.getPeriodosSync();
+        if (!periodosActuales || periodosActuales.length === 0) {
+            this.facadeService.obtenerPeriodosAcademicos().pipe(takeUntil(this.destroy$)).subscribe();
+        }
+
+        this.route.paramMap.pipe(
+            switchMap(params => {
+                const id = params.get('id') ?? '';
+                return this.facadeService.obtenerEstudiante(id);
+            }),
+            takeUntil(this.destroy$)
+        ).subscribe({
+            next: () => this.cdr.markForCheck(),
+            error: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error al cargar',
+                    detail: 'No fue posible cargar el detalle del estudiante. Por favor, intente nuevamente.'
+                });
+                this.cdr.markForCheck();
+            }
+        });
     }
 
-    this.route.paramMap
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
-        const id = params.get('id');
-        if (!id || id.trim() === '') {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'El identificador del estudiante no es válido.'
-          });
-          this.router.navigate(['/gestion-matricula-financiera']);
-          return;
-        }
-        this.cargarEstudiante(id);
-      });
-  }
+    volverAlListado(): void {
+        this.router.navigate(['/gestion-matricula-financiera']);
+    }
 
-  cargarEstudiante(id: string): void {
-    this.loadingService.show(`Cargando detalle del estudiante ${id}`);
-    this.facadeService.obtenerEstudiante(id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          if (!data) {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No se encontró información para el estudiante solicitado.'
-            });
-            this.router.navigate(['/gestion-matricula-financiera']);
-            return;
-          }
-          this.loadingService.hide();
-        },
-        error: (_err) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo cargar la información del estudiante. Volviendo a la lista.'
-          });
-          this.loadingService.hide();
-          this.router.navigate(['/gestion-matricula-financiera']);
-        }
-      });
-  }
+    /** Navega al flujo de radicación con RE_MATR preseleccionado */
+    solicitarRevision(): void {
+        this.radicarService.restrablecerValores();
+        this.radicarService.codigoSolicitudPreseleccionado = 'RE_MATR';
+        this.router.navigate(['/gestionsolicitudes/portafolio/radicar']);
+    }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+    trackByBeca(index: number, beca: BecaFinanciera): string {
+        return beca.resolucion + index;
+    }
 
-  volver(): void {
-    this.router.navigate(['/gestion-matricula-financiera']);
-  }
+    trackByMateria(index: number, materia: Materia): string {
+        return materia.codigo_oid + index;
+    }
 
-  /** Etiqueta del periodo al que pertenece el detalle: el seleccionado en el listado,
-   *  o el periodo activo si no hay filtro (mismo criterio que usa el backend). */
-  getPeriodoLabel(periodo: PeriodoAcademico | null, periodos: PeriodoAcademico[]): string {
-    const p = periodo ?? periodos.find(per => per.estado === 'ACTIVO') ?? periodos[0];
-    if (!p) return '';
-    const anio = p.año ?? p.tagPeriodo ?? '';
-    const periodoNum = p.periodo ?? p.tagPeriodo ?? '';
-    return `${anio}-${periodoNum}`;
-  }
+    getEstadoPagoLabel(estaPago: boolean | undefined | null): string {
+        return getEstadoMatriculaLabel(estaPago);
+    }
+
+    getEstadoPagoSeverity(estaPago: boolean | undefined | null): 'success' | 'warning' | 'danger' | 'info' {
+        return getEstadoMatriculaSeverity(estaPago);
+    }
+
+    getPeriodoLabel(periodos: PeriodoAcademico[]): string {
+        if (!periodos || periodos.length === 0) return 'Periodo Académico';
+        // Si hay una lógica de periodo activo, se usaría aquí.
+        // Por ahora tomamos el primero o el que esté marcado como activo.
+        const activo = periodos.find(p => p.estado === 'ACTIVO') || periodos[0];
+        return `${activo.año} - Periodo ${activo.periodo}`;
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
 }

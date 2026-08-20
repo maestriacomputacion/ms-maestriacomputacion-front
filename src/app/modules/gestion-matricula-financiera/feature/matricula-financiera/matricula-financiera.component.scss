@@ -1,35 +1,262 @@
-.table-container {
-    margin: 1rem auto 0 auto;
+.page-content {
     max-width: 1400px;
+    margin: 0 auto;
 }
 
-.py-8 {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+/* Panel de filtros (Gris suave sobre mesa blanca) */
+.config-panel {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #E5E2E1;
+    margin-bottom: 2rem;
+    box-shadow: none !important;
+}
+
+/* Unión perfecta con el encabezado institucional (Patrón Presupuesto) */
+:host ::ng-deep app-uni-card-header + .config-panel {
+    border-top: none !important;
+    border-radius: 0 0 12px 12px !important;
+    margin-top: -1px;
+}
+
+.p-input-icon-left {
+    width: 100%;
+    
+    i {
+      color: #666;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 4px !important;
+      border: 1px solid #ced4da;
+      padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        border-color: #000066;
+        box-shadow: 0 0 0 1px rgba(0, 0, 102, 0.1);
+        outline: none;
+      }
+    }
+}
+
+.config-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0.5rem 0;
+}
+
+.campo-label {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #777680;
+}
+
+.total-label {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #000066;
+    font-weight: 600;
 }
 
 :host ::ng-deep {
-    .p-card .p-card-body {
-        padding: 1.5rem;
-    }
+    // ── Estabilización de p-float-label ──────────────────────────
+    .p-float-label {
+        width: 220px;
+        display: block;
 
-    /* Paginador */
-    .p-paginator .p-dropdown {
-        min-width: 4rem;
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
-    }
+        label {
+            font-family: 'Open Sans', sans-serif !important;
+            font-size: 14px;
+            color: #777680 !important;
+            left: 0.75rem;
+            transition: all 0.2s ease;
+            pointer-events: none;
+        }
 
-    .p-datatable {
-        .p-paginator {
-            justify-content: flex-end;
-            padding: 1rem;
+        // Estilos para el componente base (Input o Dropdown)
+        .custom-input, 
+        .p-dropdown.custom-dropdown {
+            width: 100% !important;
+            font-family: 'Open Sans', sans-serif !important;
+            border: 1px solid #C9C8CC !important;
+            border-radius: 8px !important;
+            color: #454444 !important;
+            height: 42px !important;
+            background-color: #ffffff !important;
+            transition: border-color 0.2s, box-shadow 0.2s;
+
+            &:enabled:hover {
+                border-color: #000066 !important;
+            }
+
+            &:enabled:focus, &.p-focus {
+                border-color: #000066 !important;
+                box-shadow: 0 0 0 1px #000066 !important;
+            }
+        }
+
+        // Evitar el efecto "partido" en Dropdowns
+        .p-dropdown.custom-dropdown {
+            .p-inputtext {
+                border: none !important; // Quitar borde interno
+                background: transparent !important;
+                padding-left: 0.75rem !important;
+                height: 100% !important;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        // Estilo cuando el label flota (animación institucional)
+        input:focus ~ label,
+        input.p-filled ~ label,
+        .p-inputwrapper-focus ~ label,
+        .p-inputwrapper-filled ~ label {
+            font-size: 12px !important;
+            top: -0.5rem !important; // Ajustado para que no se vea "partido"
+            left: 0.5rem !important;
+            font-weight: 700 !important;
+            color: #000066 !important;
+            background-color: #f8f9fa;
+            padding: 0 6px !important;
+            z-index: 10;
         }
     }
 
-    /* Botón de acción en tabla */
-    .p-datatable .p-button-sm {
-        font-size: 0.85rem;
-        white-space: nowrap;
+    .p-input-icon-left > i {
+        color: #777680;
+        z-index: 10;
+    }
+
+    // ── Tabla Unificada (ADN Presupuesto) ─────────────────────────────
+    .unified-table {
+        border: 1px solid #C9C8CC !important;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        margin-top: 0; 
+        background-color: #ffffff;
+
+        .p-datatable-thead > tr > th {
+            background-color: #F8F9FA !important; // Gris tenue de la captura
+            color: #454444 !important; // Texto oscuro institucional
+            font-family: 'Open Sans', sans-serif !important;
+            font-size: 11.5px !important; // Densidad unificada
+            font-weight: 700 !important;
+            border: 1px solid #E0E0E0 !important; // Bordes sutiles
+            padding: 8px 12px !important;
+            white-space: nowrap;
+
+            &:last-child {
+                border-right: 1px solid #E0E0E0 !important;
+            }
+        }
+
+        .p-datatable-tbody > tr > td {
+            font-family: 'Open Sans', sans-serif !important;
+            font-size: 11.5px !important; // Densidad unificada
+            color: #454444 !important;
+            border-bottom: 1px solid #F0F0F0 !important;
+            border-right: 1px solid #F0F0F0 !important;
+            border-left: none !important;
+            padding: 6px 12px !important;
+
+            &:last-child {
+                border-right: none !important;
+            }
+        }
+
+        .p-datatable-tbody > tr:last-child > td {
+            border-bottom: none !important;
+        }
+
+        .p-datatable-tbody > tr:nth-child(even) {
+            background-color: #F8F9FA;
+        }
+    }
+
+    /* Tarjetas Institucionales (Sin Sombra) */
+    .uni-card {
+        border-radius: 12px !important;
+        border: 1px solid #E5E2E1 !important;
+        box-shadow: none !important;
+        overflow: hidden;
+
+        .p-card-body {
+            padding: 1.5rem;
+        }
+    }
+
+    .p-card {
+        box-shadow: none !important;
+    }
+
+    /* Botones de acción institucionales */
+    .institucional-action-btn {
+        width: 32px !important;
+        height: 32px !important;
+        padding: 0 !important;
+        color: #000066 !important; // Azul institucional prominente
+        transition: all 0.2s ease;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        
+        &:hover {
+            background-color: rgba(0, 0, 102, 0.05) !important;
+            color: #000066 !important;
+            transform: scale(1.1);
+        }
+    }
+
+    /* Paginador */
+    .p-paginator {
+        background-color: #ffffff !important;
+        border-top: 1px solid #C9C8CC !important;
+        padding: 0.5rem !important;
+        justify-content: flex-end !important;
+
+        .p-paginator-pages .p-paginator-page.p-highlight {
+            background: #000066 !important;
+            color: #ffffff !important;
+        }
+    }
+
+    /* Estilo de Tags (Píldoras Institucionales TIC v3 2026) */
+    .p-tag {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        padding: 0.3rem 1rem;
+        border-radius: 999px !important;
+        border: none !important;
+        font-family: 'Open Sans', sans-serif !important;
+
+        &.p-tag-success {
+            background-color: #5BAE40 !important;
+            color: #FFFFFF !important;
+        }
+
+        &.p-tag-danger {
+            background-color: #FF6D0A !important; // Naranja oficial para errores
+            color: #FFFFFF !important;
+        }
+
+        &.p-tag-warning {
+            background-color: #FFB000 !important;
+            color: #FFFFFF !important;
+        }
     }
 }

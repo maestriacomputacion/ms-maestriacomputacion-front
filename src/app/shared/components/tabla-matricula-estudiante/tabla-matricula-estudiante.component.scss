@@ -1,19 +1,32 @@
+// ─── Variables Institucionales 2026 (TIC v3) ──────────────────────────────────
+$azul-institucional: #000066;
+$azul-claro: #F6F6F6;
+$rojo-institucional: #DB141C;
+$gris-label: #777680;
+$gris-borde: #C9C8CC;
+
 // ─── Sección Header ──────────────────────────────────────────────────────────
-// Título de sección simple, consistente con el resto de la aplicación
-// (gestión de matrícula financiera e información presupuestaria).
 .seccion-header {
-    font-weight: 700;
+    background-color: $azul-institucional;
+    color: white;
+    font-weight: 600;
     font-size: 1.05rem;
-    color: var(--text-color, #495057);
-    margin-bottom: 1rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 12px 12px 0 0;
     display: flex;
     align-items: center;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
+    font-family: 'Titillium Web', sans-serif;
 }
 
 // ─── Sección Contenido ───────────────────────────────────────────────────────
 .seccion-contenido {
-    margin-bottom: 0.5rem;
+    border: 1px solid $gris-borde;
+    border-top: none;
+    padding: 1.25rem;
+    border-radius: 0 0 12px 12px;
+    background: var(--surface-card, white);
+    font-family: 'Open Sans', sans-serif;
 }
 
 // ─── Campos de detalle (key-value) ───────────────────────────────────────────
@@ -23,35 +36,88 @@
 
 .detalle-label {
     display: block;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-color-secondary, #6c757d);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: $gris-label;
     margin-bottom: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .detalle-valor {
     display: block;
     font-size: 1rem;
-    color: var(--text-color, #495057);
+    color: var(--text-color, #333);
     font-weight: 500;
 
     &--destacado {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         font-weight: 700;
-        color: var(--primary-color, #3b82f6);
+        color: $azul-institucional;
     }
+}
+
+// ─── Badge de semestre académico ─────────────────────────────────────────────
+.semestre-badge {
+    background-color: $azul-claro;
+    border-left: 4px solid $azul-institucional;
+    padding: 0.55rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.92rem;
+    color: $azul-institucional;
+    display: flex;
+    align-items: center;
+    border-radius: 0 4px 4px 0;
+}
+
+// ─── Override PrimeNG Table ──────────────────────────────────────────────────
+:host ::ng-deep {
+    .tabla-materias {
+        margin-bottom: 0;
+
+        .p-datatable-thead > tr > th {
+            background-color: #F8F9FA !important; // Gris tenue de la captura
+            color: #454444 !important;
+            font-family: 'Open Sans', sans-serif !important;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: none; // Match screenshot (not uppercase)
+            letter-spacing: normal;
+            border: 1px solid $gris-borde !important;
+            padding: 12px 15px !important;
+        }
+
+        .p-datatable-tbody > tr {
+            > td {
+                padding: 0.55rem 0.75rem;
+                border-color: $gris-borde;
+                font-size: 0.9rem;
+            }
+
+            &:nth-child(even) {
+                background-color: #fafbfc;
+            }
+        }
+    }
+
+    // Los estilos de p-tag ahora se heredan del styles.scss global (TIC v3 2026)
 }
 
 // ─── Responsive ──────────────────────────────────────────────────────────────
 @media screen and (max-width: 960px) {
     .seccion-header {
         font-size: 0.95rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .seccion-contenido {
+        padding: 1rem 0.75rem;
     }
 
     .detalle-campo {
         margin-bottom: 1rem;
         padding-bottom: 0.75rem;
-        border-bottom: 1px solid var(--surface-border, #dee2e6);
+        border-bottom: 1px solid #f0f0f0;
     }
 
     .detalle-label {
@@ -60,5 +126,9 @@
 
     .detalle-valor {
         font-size: 0.95rem;
+    }
+
+    .semestre-badge {
+        font-size: 0.85rem;
     }
 }

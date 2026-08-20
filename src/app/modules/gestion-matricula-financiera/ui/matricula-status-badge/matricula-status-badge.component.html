@@ -1,8 +1,0 @@
-<!-- MOLÉCULA: MatriculaStatusBadge — Dumb -->
-<span
-  class="status-badge status-badge--{{ estado | lowercase }}"
-  [attr.aria-label]="'Estado: ' + estado"
->
-  <span *ngIf="mostrarIcono" class="status-badge__icon" aria-hidden="true">{{ icono }}</span>
-  <span class="status-badge__label">{{ estado | titlecase }}</span>
-</span>

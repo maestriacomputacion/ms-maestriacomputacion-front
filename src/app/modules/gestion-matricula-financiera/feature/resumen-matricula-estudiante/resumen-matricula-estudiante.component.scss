@@ -1,14 +1,138 @@
-.py-8 {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+.page-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.campo-label {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    color: #777680;
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+
+.campo-valor {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #454444;
+    font-weight: 600;
+    display: block;
+}
+
+.valor-monetario {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    color: #000066;
+    font-weight: 700;
+    display: block;
+}
+
+.texto-exito { color: #5BAE40 !important; }
+.texto-error { color: #DB141C !important; }
+.texto-aviso { color: #FFB000 !important; }
+
+.border-top-separator {
+    border-top: 1px solid #E5E2E1 !important;
+    padding-top: 1rem !important;
+    margin-top: 0.5rem !important;
+}
+
+.banner-info {
+    background-color: #E8F1FB !important;
+    border-radius: 12px !important;
+    border-left: 4px solid #1D72D3 !important;
+}
+
+.banner-revision {
+    background-color: #F8F9FA !important;
+    border-radius: 12px !important;
+    border: 1px solid #E5E2E1 !important;
+    border-left: 4px solid #000066 !important;
+}
+
+.texto-revision {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #454444;
+}
+
+.icon-revision {
+    color: #000066;
+    font-size: 24px;
+}
+
+.periodo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    background-color: #000066; 
+    color: #FFFFFF;
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    .material-symbols-rounded {
+        font-size: 18px;
+        line-height: 1;
+    }
 }
 
 :host ::ng-deep {
-    .p-card .p-card-body {
-        padding: 1.5rem;
+    .uni-card {
+        border-radius: 12px !important;
+        border: 1px solid #E5E2E1 !important;
+        box-shadow: none !important;
+        overflow: hidden;
+
+        .p-card-body {
+            padding: 1.5rem;
+        }
     }
 
-    .p-divider {
-        margin: 1.5rem 0;
+    .p-card {
+        box-shadow: none !important;
+    }
+
+    .btn-institucional {
+        background-color: #000066 !important;
+        border-color: #000066 !important;
+        font-family: 'Open Sans', sans-serif !important;
+        font-weight: 600 !important;
+
+        &:hover {
+            background-color: #5056AC !important;
+            border-color: #5056AC !important;
+        }
+    }
+
+    /* Estilo de Tags (Píldoras Institucionales TIC v3 2026) */
+    .p-tag {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        padding: 0.3rem 1rem;
+        border-radius: 999px !important;
+        border: none !important;
+        font-family: 'Open Sans', sans-serif !important;
+
+        &.p-tag-success {
+            background-color: #5BAE40 !important;
+            color: #FFFFFF !important;
+        }
+
+        &.p-tag-danger {
+            background-color: #FF6D0A !important;
+            color: #FFFFFF !important;
+        }
+
+        &.p-tag-warning {
+            background-color: #FFB000 !important;
+            color: #FFFFFF !important;
+        }
     }
 }

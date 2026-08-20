@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, throwError } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { GestionMatriculaFinancieraApiService } from './api.service';
 import { GestionMatriculaFinancieraMapperService } from './mapper.service';
@@ -32,6 +32,48 @@ export class GestionMatriculaFinancieraFacadeService {
 
     private _fechaSeleccionadaFiltro = new BehaviorSubject<Date | null>(null);
     public fechaSeleccionadaFiltro$ = this._fechaSeleccionadaFiltro.asObservable();
+
+    // ── ViewModels combinados (vm$) ─────────────────────────────────────────
+
+    /** ViewModel para MatriculaFinancieraComponent (listado coordinador) */
+    readonly vm$ = combineLatest({
+        loading: this._loading,
+        error: this._error,
+        estudiantes: this._estudiantes,
+        periodos: this._periodos,
+        periodoSeleccionado: this._periodoSeleccionadoFiltro
+    }).pipe(
+        map(vm => ({
+            ...vm,
+            isEmpty: !vm.loading && vm.estudiantes.length === 0
+        }))
+    );
+
+    /** ViewModel para DetalleEstudianteComponent */
+    readonly vmDetalle$ = combineLatest({
+        loading: this._loading,
+        error: this._error,
+        estudiante: this._estudianteSeleccionado,
+        periodos: this._periodos
+    }).pipe(
+        map(vm => ({
+            ...vm,
+            isEmpty: !vm.loading && vm.estudiante === null
+        }))
+    );
+
+    /** ViewModel para ResumenMatriculaEstudianteComponent (vista estudiante) */
+    readonly vmResumen$ = combineLatest({
+        loading: this._loading,
+        error: this._error,
+        estudiante: this._estudianteSeleccionado,
+        periodos: this._periodos
+    }).pipe(
+        map(vm => ({
+            ...vm,
+            isEmpty: !vm.loading && vm.estudiante === null
+        }))
+    );
 
     constructor(
         private apiService: GestionMatriculaFinancieraApiService,
@@ -97,10 +139,6 @@ export class GestionMatriculaFinancieraFacadeService {
         return this._periodoSeleccionadoFiltro.value;
     }
 
-    getPeriodosSync(): PeriodoAcademico[] {
-        return this._periodos.value;
-    }
-
     setSemestreFiltro(semestre: number | null): void {
         this._semestreSeleccionadoFiltro.next(semestre);
     }
@@ -115,5 +153,9 @@ export class GestionMatriculaFinancieraFacadeService {
 
     getFechaFiltro(): Date | null {
         return this._fechaSeleccionadaFiltro.value;
+    }
+
+    getPeriodosSync(): PeriodoAcademico[] {
+        return this._periodos.value;
     }
 }

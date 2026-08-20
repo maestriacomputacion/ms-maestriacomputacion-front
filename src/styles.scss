@@ -7,16 +7,77 @@
 @import "assets/sass/layout/_variables";
 @import "assets/sass/layout/_layout";
 @import "assets/sass/overrides/_overrides";
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap");
 
 :root {
-    --blue: #1b3357;
+    /* === PALETA INSTITUCIONAL OFICIAL (TIC v3) === */
+    --color-primary: #000066; /* Azul Unicauca (Oficial) */
+    --color-primary-light: #5056AC; /* Azul Unicauca Ligero */
+    --color-primary-dark: #07184A; /* Azul Unicauca Oscuro */
+
+    --color-secondary: #9D0311; /* Rojo Unicauca (Oficial) */
+    --color-secondary-light: #DB141C; /* Rojo Unicauca Ligero (Bordes / Acentuados) */
+
+    /* === ACCESIBILIDAD === */
+    --color-accessibility: #249300; /* Verde Accesibilidad Oficial */
+
+    /* === SEMÁNTICA Y ESTADOS === */
+    --color-tertiary: #1D72D3; /* Azul Informativo */
+    --color-success: #5BAE40; /* Verde Plan de Desarrollo / Pagado */
+    --color-warning: #FFB000; /* Amarillo Plan de Desarrollo / Pendiente */
+    --color-error: #FF6D0A; /* Naranja de Alerta Oficial / No Pagado */
+
+    /* === NEUTROS === */
+    --text-main: #454444;
+    --text-secondary: #777680;
+    --border-light: #E0E0E0;
+    --bg-light: #F4F4F4;
+
+    /* === TIPOGRAFÍAS (Escala Design System TIC v3) === */
+    --font-heading: 'Titillium Web', sans-serif;
+    --font-body: 'Open Sans', sans-serif;
+
+    --text-h1: 32px;
+    --lh-h1: 41px;
+    --text-h2: 22px;
+    --lh-h2: 30px;
+    --text-h3: 18px;
+    --lh-h3: 22.5px;
+    --text-h4: 16px;
+    --lh-h4: 30px;
+    --text-h5: 16px;
+    --lh-h5: 30px;
+    --text-h6: 14px;
+    --lh-h6: 23px;
+
+    --text-body1: 14px;
+    --lh-body1: 26px;
+    --text-body2: 14px;
+    --lh-body2: 26px;
+    --text-body3: 12px;
+    --lh-body3: 21px;
+
+    /* Compatibilidad con estilos existentes que usan --blue */
+    --blue: var(--color-primary);
 }
+
+body {
+    font-family: var(--font-body);
+    font-size: var(--text-body2);
+    line-height: var(--lh-body2);
+    color: var(--text-main);
+}
+
+h1, .h1 { font-family: var(--font-heading); font-size: var(--text-h1); line-height: var(--lh-h1); font-weight: 700; color: var(--color-primary); }
+h2, .h2 { font-family: var(--font-heading); font-size: var(--text-h2); line-height: var(--lh-h2); font-weight: 700; color: var(--color-primary); }
+h3, .h3 { font-family: var(--font-heading); font-size: var(--text-h3); line-height: var(--lh-h3); font-weight: 600; color: var(--color-primary); }
+h4, .h4 { font-family: var(--font-heading); font-size: var(--text-h4); line-height: var(--lh-h4); font-weight: 700; color: var(--color-primary); }
+h5, .h5 { font-family: var(--font-heading); font-size: var(--text-h5); line-height: var(--lh-h5); font-weight: 600; color: var(--color-primary); }
+h6, .h6 { font-family: var(--font-heading); font-size: var(--text-h6); line-height: var(--lh-h6); font-weight: 400; color: var(--color-primary); }
 
 .titulo-logo {
     position: relative;
-    font-family: "Roboto Condensed", sans-serif;
-    color: #1b3357;
+    font-family: 'Titillium Web', sans-serif;
+    color: var(--color-primary);
     font-size: 30px;
     font-weight: bold;
     text-transform: uppercase;
@@ -25,7 +86,7 @@
 
 .titulo-logo::before {
     content: "";
-    border-right: 3px solid #c8161f;
+    border-right: 3px solid var(--color-secondary);
     height: 25px;
     padding-top: 8px;
     padding-bottom: 10px;
@@ -47,7 +108,7 @@ p-menubarsub {
     text-align: center;
     border-top: 1px solid var(--surface-border);
     padding: 20px;
-    background-color: #1b3357;
+    background-color: var(--color-primary);
     color: white;
 }
 
@@ -83,4 +144,187 @@ p-menubarsub {
 
 .topbar-hidden {
     display: none;
+}
+
+// ── Barra de progreso institucional — Design System TIC v3 ──
+// Reemplaza p-progressSpinner. Color primario segun sistema de diseno.
+.uni-progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #E0E0FF;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin: 16px 0;
+
+    &__track {
+        height: 100%;
+        width: 40%;
+        background-color: var(--color-primary);
+        border-radius: 9999px;
+        animation: uni-progress-slide 1.4s ease-in-out infinite;
+    }
+}
+
+@keyframes uni-progress-slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+}
+
+// ── Estilos globales de campo-dato ──
+// Usados por app-campo-dato y directamente en templates existentes.
+.campo-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.campo-valor {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 600;
+    display: block;
+}
+
+// ── Design System TIC v3 — Badge de estado ──
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.25px;
+    white-space: nowrap;
+
+    &--success {
+        background-color: #EFF7EC;
+        color: var(--color-success);
+        border: 1px solid var(--color-success);
+    }
+
+    &--warning {
+        background-color: #FFF7E5;
+        color: var(--color-warning);
+        border: 1px solid var(--color-warning);
+    }
+
+    &--danger {
+        background-color: #FDF2EA;
+        color: var(--color-error);
+        border: 1px solid var(--color-error);
+    }
+}
+
+// ── Design System TIC v3 — Checkbox institucional ──
+.uni-checkbox .p-checkbox-box {
+    border-color: #C9C8CC !important;
+    border-radius: 4px !important;
+
+    &.p-highlight {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+    }
+
+    &:hover { border-color: var(--color-primary-light) !important; }
+
+    .p-checkbox-icon { color: #FFFFFF !important; }
+}
+
+// ── Checkbox dentro de tabla — altura de fila consistente ──
+// El p-checkbox por defecto tiene 20x20px y padding que aumenta la fila.
+// Se reduce a 16x16px para que sea consistente con Body 3 (12px) de la tabla.
+.p-datatable .p-checkbox {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    margin: 0 !important;
+
+    .p-checkbox-box {
+        width: 16px !important;
+        height: 16px !important;
+        margin: 0 !important;
+
+        .p-checkbox-icon { font-size: 10px !important; }
+    }
+}
+
+.p-datatable .uni-checkbox .p-checkbox-box {
+    border-color: #C9C8CC !important;
+    border-radius: 4px !important;
+
+    &.p-highlight {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+    }
+
+    &:hover { border-color: var(--color-primary-light) !important; }
+
+    .p-checkbox-icon { color: #FFFFFF !important; }
+}
+
+// ── Alineamiento de iconos institucionales ──
+// Asegura que los iconos (Material y PrimeIcons) esten siempre centrados verticalmente con el texto.
+.material-symbols-rounded, .pi {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    line-height: 1 !important;
+}
+
+.p-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    .p-button-icon {
+        display: inline-flex !important;
+        align-items: center !important;
+        margin-top: 0 !important;
+    }
+}
+
+// ── Pildoras solidas institucionales (TIC v3) ──
+// Colores solidos, texto blanco bold, sin bordes ni iconos.
+.p-tag, .estado-badge {
+    border-radius: 999px !important;
+    padding: 0.4rem 1.2rem !important;
+    font-family: var(--font-body) !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    border: none !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    color: #FFFFFF !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+
+    .p-tag-icon, i, span.material-symbols-rounded {
+        display: none !important;
+    }
+
+    &.p-tag-success, &--success {
+        background-color: var(--color-success) !important;
+    }
+
+    &.p-tag-danger, &--danger {
+        background-color: var(--color-error) !important;
+    }
+
+    &.p-tag-warning, &--warning {
+        background-color: var(--color-warning) !important;
+    }
+
+    &.p-tag-info, &--info {
+        background-color: #00AAE5 !important;
+    }
 }

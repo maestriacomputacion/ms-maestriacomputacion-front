@@ -1,0 +1,35 @@
+.table-container {
+    margin: 1rem auto 0 auto;
+    max-width: 1400px;
+}
+
+.py-8 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+:host ::ng-deep {
+    .p-card .p-card-body {
+        padding: 1.5rem;
+    }
+
+    /* Paginador */
+    .p-paginator .p-dropdown {
+        min-width: 4rem;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .p-datatable {
+        .p-paginator {
+            justify-content: flex-end;
+            padding: 1rem;
+        }
+    }
+
+    /* Botón de acción en tabla */
+    .p-datatable .p-button-sm {
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+}

@@ -151,6 +151,13 @@ import { HomeComponent } from './core/components/home/home.component';
                                 import(
                                     './modules/gestion-matricula-academica/gestion-matricula-academica.module'
                                 ).then((m) => m.GestionMatriculaAcademicaModule),
+                        },
+                        {
+                            path: 'gestion-matricula-financiera',
+                            loadChildren: () =>
+                                import(
+                                    './modules/gestion-matricula-financiera/gestion-matricula-financiera.module'
+                                ).then((m) => m.GestionMatriculaFinancieraModule),
                         }
                     ],
                 },

@@ -1,0 +1,64 @@
+// ─── Sección Header ──────────────────────────────────────────────────────────
+// Título de sección simple, consistente con el resto de la aplicación
+// (gestión de matrícula financiera e información presupuestaria).
+.seccion-header {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text-color, #495057);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.01em;
+}
+
+// ─── Sección Contenido ───────────────────────────────────────────────────────
+.seccion-contenido {
+    margin-bottom: 0.5rem;
+}
+
+// ─── Campos de detalle (key-value) ───────────────────────────────────────────
+.detalle-campo {
+    margin-bottom: 0.75rem;
+}
+
+.detalle-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-color-secondary, #6c757d);
+    margin-bottom: 0.2rem;
+}
+
+.detalle-valor {
+    display: block;
+    font-size: 1rem;
+    color: var(--text-color, #495057);
+    font-weight: 500;
+
+    &--destacado {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color, #3b82f6);
+    }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+@media screen and (max-width: 960px) {
+    .seccion-header {
+        font-size: 0.95rem;
+    }
+
+    .detalle-campo {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--surface-border, #dee2e6);
+    }
+
+    .detalle-label {
+        font-size: 0.75rem;
+    }
+
+    .detalle-valor {
+        font-size: 0.95rem;
+    }
+}

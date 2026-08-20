@@ -1,0 +1,52 @@
+<p-toast></p-toast>
+<div class="col-12">
+    <p-card>
+
+        <!-- Contenido -->
+        <ng-container *ngIf="vm$ | async as vm">
+            <div>
+                <!-- Header con nombre del estudiante y periodo -->
+                <div class="mb-4 pb-3 border-bottom-1 surface-border flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="m-0 text-700">Mi Matrícula Financiera</h2>
+                        <span class="text-500 text-sm">Consulta el estado y detalle de tu matrícula</span>
+                    </div>
+                    <div *ngIf="vm.periodoActual" class="text-right">
+                        <p-tag severity="info" [value]="getPeriodoLabel(vm.periodoActual)" icon="pi pi-calendar"
+                               pTooltip="Período académico en curso."></p-tag>
+                        <div class="text-500 text-xs mt-1">Periodo Académico en Curso</div>
+                    </div>
+                </div>
+
+                <!-- Datos del estudiante (si existen) -->
+                <div *ngIf="vm.estudiante">
+                    <app-tabla-matricula-estudiante [estudiante]="vm.estudiante"></app-tabla-matricula-estudiante>
+                    <p-divider></p-divider>
+                </div>
+
+                <!-- Estado vacío/Error -->
+                <div *ngIf="!vm.estudiante" class="flex flex-column align-items-center justify-content-center py-8 text-400">
+                    <i class="pi pi-exclamation-circle text-5xl mb-3"></i>
+                    <span class="text-lg font-medium text-700">Información no disponible</span>
+                    <span class="text-sm mt-1 text-center">No pudimos cargar los detalles de tu matrícula para este periodo.</span>
+                </div>
+
+                <!-- Acción: Solicitar Revisión (Siempre visible si hay error o no hay datos) -->
+                <div class="flex flex-column md:flex-row align-items-center justify-content-between gap-3 mt-3 p-3 bg-blue-50 border-round">
+                    <div class="flex align-items-center gap-2 text-600">
+                        <i class="pi pi-info-circle"></i>
+                        <span class="text-sm">Si tienes dudas sobre tu costo o no aparece tu información, solicita una revisión.</span>
+                    </div>
+                    <button pButton pRipple
+                        type="button"
+                        label="Solicitar Revisión"
+                        icon="pi pi-send"
+                        class="p-button-primary flex-shrink-0"
+                        (click)="solicitarRevision()">
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
+    </p-card>
+</div>

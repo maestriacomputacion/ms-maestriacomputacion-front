@@ -1,0 +1,21 @@
+// MOLÉCULA: MatriculaStatusBadge styles
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &--pendiente  { background: #fef7e0; color: #b06000; }
+  &--al_dia     { background: #e6f4ea; color: #137333; }
+  &--mora       { background: #fce8e6; color: #c5221f; }
+  &--exonerado  { background: #e8f0fe; color: #1a73e8; }
+  &--becado     { background: #f3e8fd; color: #7b1fa2; }
+  &--anulado    { background: #f1f3f4; color: #5f6368; }
+
+  &__icon { font-size: 0.85rem; }
+}

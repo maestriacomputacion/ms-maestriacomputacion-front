@@ -85,6 +85,7 @@ import { TreeTableModule } from 'primeng/treetable';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { BlockUIModule } from 'primeng/blockui';
 
 @NgModule({
     declarations: [],
@@ -174,6 +175,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
         VirtualScrollerModule,
         StyleClassModule,
         SpeedDialModule,
+        BlockUIModule,
     ],
 })
 export class PrimenNgModule {}

@@ -6,16 +6,26 @@ import { BuscadorDocentesComponent } from './components/buscador-docentes/buscad
 import { BuscadorEstudiantesComponent } from './components/buscador-estudiantes/buscador-estudiantes.component';
 import { BuscadorExpertosComponent } from './components/buscador-expertos/buscador-expertos.component';
 import { BytesToKbPipe } from './pipes/bytes-to-kb.pipe';
+import { FormatCurrencyPipe } from './pipes/format-currency.pipe';
+import { FormatPercentPipe } from './pipes/format-percent.pipe';
 
+
+
+import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
+import { TablaMatriculaEstudianteComponent } from './components/tabla-matricula-estudiante/tabla-matricula-estudiante.component';
 
 
 @NgModule({
   declarations: [
     EmptyLabelPipe,
     BytesToKbPipe,
+    FormatCurrencyPipe,
+    FormatPercentPipe,
     BuscadorDocentesComponent,
     BuscadorEstudiantesComponent,
-    BuscadorExpertosComponent
+    BuscadorExpertosComponent,
+    LoadingOverlayComponent,
+    TablaMatriculaEstudianteComponent
   ],
   imports: [
     CommonModule,
@@ -24,9 +34,13 @@ import { BytesToKbPipe } from './pipes/bytes-to-kb.pipe';
   exports: [
     EmptyLabelPipe,
     BytesToKbPipe,
+    FormatCurrencyPipe,
+    FormatPercentPipe,
     BuscadorDocentesComponent,
     BuscadorEstudiantesComponent,
-    BuscadorExpertosComponent
+    BuscadorExpertosComponent,
+    LoadingOverlayComponent,
+    TablaMatriculaEstudianteComponent
   ]
 })
 export class SharedModule { }

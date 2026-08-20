@@ -44,6 +44,7 @@ import { InfoPresidenteConsejoComponent } from './components/presentacion-solici
 import { InfoCertificadoVotacionComponent } from './components/presentacion-solicitudes/formularios/complementarios/info-certificado-votacion/info-certificado-votacion.component';
 import { RadicadorComponent } from './pages/radicador/radicador.component';
 import { OtrasolicitudComponent } from './components/presentacion-solicitudes/formularios/complementarios/otrasolicitud/otrasolicitud.component';
+import { RevisionmatriculaComponent } from './components/presentacion-solicitudes/formularios/complementarios/revisionmatricula/revisionmatricula.component';
 
 @NgModule({
     declarations: [
@@ -86,6 +87,7 @@ import { OtrasolicitudComponent } from './components/presentacion-solicitudes/fo
         InfoCertificadoVotacionComponent,
         RadicadorComponent,
         OtrasolicitudComponent,
+        RevisionmatriculaComponent,
     ],
     imports: [CommonModule, ReactiveFormsModule, PrimenNgModule, SharedModule, GestionSolicitudesRoutingModule],
     providers: [DatePipe],

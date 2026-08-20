@@ -27,9 +27,11 @@ export class RadicarService {
     formInfoCoordinador: FormGroup = new FormGroup({});
     formInfoPresidenteConsejo: FormGroup = new FormGroup({});
     formInfoOtraSolicitud: FormGroup = new FormGroup({});
+    formRevisionMatricula: FormGroup = new FormGroup({});
 
     tipoSolicitudEscogida: TipoSolicitud;
     requisitosSolicitudEscogida: RequisitosSolicitud;
+    codigoSolicitudPreseleccionado: string | null = null;
     radicadoAsignado: string = '';
     estadoSolicitud: string = '';
     fechaEnvio: Date = null;
@@ -149,7 +151,9 @@ export class RadicarService {
         this.formInfoCoordinador = new FormGroup({});
         this.formInfoPresidenteConsejo = new FormGroup({});
         this.formInfoOtraSolicitud = new FormGroup({});
+        this.formRevisionMatricula = new FormGroup({});
         this.tipoSolicitudEscogida = null;
+        this.codigoSolicitudPreseleccionado = null;
         this.radicadoAsignado = '';
         this.asignaturasAdicCancel = [];
         this.documentosAdjuntos = [];

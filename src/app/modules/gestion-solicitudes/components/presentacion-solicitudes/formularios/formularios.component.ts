@@ -23,6 +23,7 @@ import { AvalpracticadocenteComponent } from './complementarios/avalpracticadoce
 import { ApyinscripcionComponent } from './complementarios/apyinscripcion/apyinscripcion.component';
 import { OtrasolicitudComponent } from './complementarios/otrasolicitud/otrasolicitud.component';
 import { BecaDescuentoComponent } from './complementarios/becadescuento/becadescuento.component';
+import { RevisionmatriculaComponent } from './complementarios/revisionmatricula/revisionmatricula.component';
 
 @Component({
     selector: 'app-formularios',
@@ -68,6 +69,8 @@ export class FormulariosComponent implements OnInit {
     formOtraSolicitud: OtrasolicitudComponent;
     @ViewChild(BecaDescuentoComponent)
     formBecaDescuento: BecaDescuentoComponent;
+    @ViewChild(RevisionmatriculaComponent)
+    formRevisionMatricula: RevisionmatriculaComponent;
 
     identificadorSolicitante: string = 'ctorres@unicauca.edu.co';
     tiposIdentificacion: string[];
@@ -336,6 +339,9 @@ export class FormulariosComponent implements OnInit {
                     this.formOtraSolicitud.obtenerEstadoFormulario();
 
                 break;
+            case 'RE_MATR':
+                estadoGeneral = this.formRevisionMatricula.obtenerEstadoFormulario();
+                break;
             default:
                 estadoGeneral = this.formListaTutores.obtenerEstadoFormulario();
                 break;
@@ -425,7 +431,7 @@ export class FormulariosComponent implements OnInit {
     navigateToNext() {
         if (this.validarDatosFormulario()) {
             if (
-                ['SO_OTRA', 'AD_ASIG', 'CU_ASIG', 'AV_COMI_PR', 'RE_CRED_PR_DOC', 'SO_BECA'].includes(
+                ['SO_OTRA', 'AD_ASIG', 'CU_ASIG', 'AV_COMI_PR', 'RE_CRED_PR_DOC', 'SO_BECA', 'RE_MATR'].includes(
                     this.radicar.tipoSolicitudEscogida.codigoSolicitud
                 )
             ) {

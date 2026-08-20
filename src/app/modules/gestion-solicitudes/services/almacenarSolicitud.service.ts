@@ -80,6 +80,7 @@ export class AlmacenarSolicitudService {
                 AV_COMI_PR: this.reunirDatosAvalPractDocente,
                 SO_BECA: this.reunirDatosSolBecaDescuento,
                 CER_VOTO: this.reunirDatosCertificadoVoto,
+                RE_MATR: this.reunirDatosRevisionMatricula,
             };
 
             // Obtener el código de solicitud actual
@@ -160,8 +161,14 @@ export class AlmacenarSolicitudService {
     async reunirDatosCertificadoVoto(): Promise<Modelos.SolicitudSave> {
         let certificado: any;
         //captura de datos
-        
+
         return this.construirObjAGuardar('CER_VOTO', certificado);
+    }
+
+    // Reúne los datos para una solicitud de revisión de matrícula.
+    // El contenido de la solicitud va en el oficio PDF generado (no requiere datos estructurados propios).
+    async reunirDatosRevisionMatricula(): Promise<Modelos.SolicitudSave> {
+        return this.construirObjAGuardar('RE_MATR', null);
     }
 
     // Reúne los datos para una solicitud de cursar asignaturas externas.
@@ -556,7 +563,7 @@ export class AlmacenarSolicitudService {
         const infoSolicitud: Modelos.SolicitudSave = {
             idTipoSolicitud: this.radicar.tipoSolicitudEscogida.idSolicitud,
             idEstudiante: this.radicar.formInfoPersonal.get('id').value,
-            idTutor: tipo !== 'CER_VOTO' ? this.radicar.tutor.id : null, // Solo asigna idTutor si el tipo no es CER_VOTO
+            idTutor: !['CER_VOTO', 'RE_MATR'].includes(tipo) ? this.radicar.tutor.id : null, // No requieren tutor
             datosHomologacion: tipo === 'HO_ASIG' ? infoEspecifica : null,
             datosAdicionAsignatura: tipo === 'AD_ASIG' ? infoEspecifica : null,
             datosCancelarAsignatura: tipo === 'CA_ASIG' ? infoEspecifica : null,

@@ -641,7 +641,7 @@ export class TramiteComponent implements OnInit {
                 this.mostrarBtnAprobar = true;
                 this.mostrarBtnRechazar = true;
                 this.habilitarComite = true;
-                this.habilitarTramiteGenerico = this.gestor.solicitudSeleccionada.codigoSolicitud === 'SO_OTRA';
+                this.habilitarTramiteGenerico = ['SO_OTRA', 'RE_MATR'].includes(this.gestor.solicitudSeleccionada.codigoSolicitud);
 
                 break;
 
@@ -667,7 +667,7 @@ export class TramiteComponent implements OnInit {
                     this.deshabilitarEnvioAConsejo = true;
                 }
 
-                this.habilitarTramiteGenerico = this.gestor.solicitudSeleccionada.codigoSolicitud === 'SO_OTRA';
+                this.habilitarTramiteGenerico = ['SO_OTRA', 'RE_MATR'].includes(this.gestor.solicitudSeleccionada.codigoSolicitud);
 
                 this.mostrarBtnRechazar = false;
                 break;

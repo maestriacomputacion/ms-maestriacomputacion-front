@@ -217,8 +217,13 @@
         <app-otrasolicitud></app-otrasolicitud>
     </div>
 
+    <!-- Formulario de Revisión de Matrícula -->
+    <div class="mt-4" *ngIf="['RE_MATR'].includes(radicar.tipoSolicitudEscogida.codigoSolicitud)">
+        <app-revisionmatricula></app-revisionmatricula>
+    </div>
+
     <!-- Formulario Selección de un tutor -->
-    <ng-container *ngIf="(!solicitudEsOtras || radicar.seRequiereTutor) && radicar.tipoSolicitudEscogida.codigoSolicitud !== 'CER_VOTO'">
+    <ng-container *ngIf="(!solicitudEsOtras || radicar.seRequiereTutor) && !['CER_VOTO', 'RE_MATR'].includes(radicar.tipoSolicitudEscogida.codigoSolicitud)">
         <app-listatutores></app-listatutores>
     </ng-container>
 

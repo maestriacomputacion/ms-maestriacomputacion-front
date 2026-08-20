@@ -64,8 +64,12 @@ export class SelectorComponent implements OnInit {
                                     // Asignar un nuevo array en lugar de modificar el existente
                                     this.tiposDeSolicitud = [...this.tiposDeSolicitud, ...solicitudesEstudiante];
                                     this.carga = false;
+                                    this.recuperarTipoEscogido();
                                 },
-                                () => { this.carga = false; }
+                                () => {
+                                    this.carga = false;
+                                    this.recuperarTipoEscogido();
+                                }
                             );
                             break;
                         
@@ -79,9 +83,19 @@ export class SelectorComponent implements OnInit {
         });
     }
 
-    // Verifica en el servicio radicar si ya hay un tipo escogido y lo recupera
+    // Verifica en el servicio radicar si ya hay un tipo escogido y lo recupera.
+    // Si no hay tipo escogido pero sí un código preseleccionado (ej. RE_MATR desde
+    // Matrícula Financiera), busca el tipo correspondiente en la lista y lo preselecciona.
     recuperarTipoEscogido() {
-        this.tipoSolicitudEscogida = this.radicar.tipoSolicitudEscogida || this.tiposDeSolicitud[0];        
+        if (!this.radicar.tipoSolicitudEscogida && this.radicar.codigoSolicitudPreseleccionado) {
+            const preseleccionado = this.tiposDeSolicitud.find(
+                t => t.codigoSolicitud === this.radicar.codigoSolicitudPreseleccionado
+            );
+            if (preseleccionado) {
+                this.radicar.tipoSolicitudEscogida = preseleccionado;
+            }
+        }
+        this.tipoSolicitudEscogida = this.radicar.tipoSolicitudEscogida || this.tiposDeSolicitud[0];
         this.obtenerRequisitosDeSolicitud();
     }
 

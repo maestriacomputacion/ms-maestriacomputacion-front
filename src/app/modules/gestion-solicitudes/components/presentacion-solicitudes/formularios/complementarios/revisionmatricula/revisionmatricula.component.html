@@ -1,0 +1,19 @@
+<form [formGroup]="this.radicar.formRevisionMatricula">
+    <p-fieldset legend="Solicitud de revisión" styleClass="bg-bluegray-50">
+        <div class="grid p-fluid">
+            <div class="col-12">
+                <span class="p-float-label mt-3">
+                    <textarea
+                        formControlName="solicitudRevision"
+                        id="solicitudRevision"
+                        [rows]="10"
+                        pInputTextarea
+                        spellcheck="true"
+                        class="w-full"
+                    ></textarea>
+                    <label for="solicitudRevision">Solicitud de revisión</label>
+                </span>
+            </div>
+        </div>
+    </p-fieldset>
+</form>

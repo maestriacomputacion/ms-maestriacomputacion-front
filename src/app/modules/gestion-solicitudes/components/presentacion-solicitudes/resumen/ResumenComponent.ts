@@ -238,7 +238,7 @@ export class ResumenComponent implements OnInit {
         }
 
         if (
-            ['SO_OTRA', 'AD_ASIG', 'CU_ASIG', 'RE_CRED_PR_DOC', 'AV_COMI_PR', 'SO_BECA'].includes(
+            ['SO_OTRA', 'AD_ASIG', 'CU_ASIG', 'RE_CRED_PR_DOC', 'AV_COMI_PR', 'SO_BECA', 'RE_MATR'].includes(
                 this.radicar.tipoSolicitudEscogida.codigoSolicitud
             )
         ) {

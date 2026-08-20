@@ -21,6 +21,7 @@ import * as StRePu from './rec-cred-publicacion-strategy';
 import * as StBeca from './solicitud-becas-strategy';
 import * as StOtra from './otro-tipo-solicitud-strategy';
 import * as StReVo from './certificado-votacion-strategy';
+import * as StReMa from './revision-matricula-strategy';
 import { GestorService } from '../../../services/gestor.service';
 
 @Injectable({
@@ -166,6 +167,11 @@ export class DocumentoPDFFactory {
         // Estrategias para Solicitud de Certificado de votación
         this.estrategiasPorSolicitud['CER_VOTO'] = {
             'carta-solicitud': StReVo.SolicitudRegistroVoto,
+        };
+
+        // Estrategias para Solicitud de Revisión de Matrícula
+        this.estrategiasPorSolicitud['RE_MATR'] = {
+            'carta-solicitud': StReMa.SolicitudRevisionMatricula,
         };
         // Añadir otras solicitudes...
 

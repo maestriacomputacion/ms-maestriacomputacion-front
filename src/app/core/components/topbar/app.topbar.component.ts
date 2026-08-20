@@ -215,6 +215,11 @@ export class AppTopBarComponent implements OnInit {
                 return user?.role?.includes('ROLE_ESTUDIANTE');
             }
 
+            if (item.label === 'PRESUPUESTO') {
+                // Solo mostrar si el usuario es coordinador
+                return user?.role?.includes('ROLE_COORDINADOR');
+            }
+
             if (item.label === 'MATRÍCULA FINANCIERA') {
                 // Coordinador ve el listado completo; estudiante ve solo su resumen
                 return (

@@ -65,6 +65,11 @@ export const gestion_matricula_financiera = {
     production: false,
     api_url: 'http://localhost:8092/api/v1/gestion-matricula-financiera/',
 };
+
+export const gestion_informacion_presupuestaria = {
+    production: false,
+    api_url: 'http://localhost:8094/api/',
+};
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.

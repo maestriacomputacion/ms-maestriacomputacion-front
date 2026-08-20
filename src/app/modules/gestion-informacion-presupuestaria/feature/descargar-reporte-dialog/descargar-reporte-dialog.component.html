@@ -1,0 +1,69 @@
+<p-dialog header="Descargar Reporte" [(visible)]="display" [modal]="true"
+    [style]="{width: '450px', 'min-width': '320px'}"
+    [draggable]="false" [resizable]="false"
+    (onShow)="onDialogShow()" (onHide)="cerrar()" [closable]="true">
+
+    <div class="grid p-fluid mt-2">
+
+        <!-- Selector de Tipo de Reporte -->
+        <div class="col-12 mb-4">
+            <span class="p-float-label">
+                <p-dropdown
+                    [options]="reportOptions"
+                    [(ngModel)]="selectedReport"
+                    optionLabel="name"
+                    optionValue="value"
+                    appendTo="body"
+                    inputId="dropdown-report"
+                    placeholder="&nbsp;"
+                    (onChange)="onReportChange()">
+                </p-dropdown>
+                <label for="dropdown-report">Tipo de Reporte</label>
+            </span>
+        </div>
+
+        <!-- Selector de Período Académico -->
+        <div class="col-12 mb-2">
+            <span class="p-float-label">
+                <p-dropdown
+                    [options]="periodOptions"
+                    [(ngModel)]="selectedPeriodKey"
+                    optionLabel="name"
+                    optionValue="value"
+                    appendTo="body"
+                    inputId="dropdown-period"
+                    placeholder="&nbsp;"
+                    [disabled]="!selectedReport || periodOptions.length === 0 || (selectedReport === 'proyeccion-reporte' && periodOptions.length <= 1)">
+                </p-dropdown>
+                <label for="dropdown-period">Período Académico</label>
+            </span>
+            <small *ngIf="selectedReport === 'proyeccion-reporte' && periodOptions.length <= 1" class="text-500 mt-1 block">
+                La proyección corresponde al período en curso.
+            </small>
+            <small *ngIf="selectedReport === 'proyeccion-reporte' && periodOptions.length > 1" class="text-500 mt-1 block">
+                Seleccione el período académico activo para la proyección.
+            </small>
+        </div>
+    </div>
+
+    <!-- Footer con botones Cancelar / Descargar -->
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2">
+            <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
+                class="p-button-text p-button-secondary"
+                (click)="cerrar()" [disabled]="loadingDownload">
+            </button>
+            <button pButton pRipple type="button"
+                [label]="loadingDownload ? 'Generando...' : 'Descargar'"
+                [icon]="loadingDownload ? 'pi pi-spin pi-spinner' : 'pi pi-download'"
+                class="p-button-primary"
+                (click)="descargar()"
+                [disabled]="!selectedReport || !selectedPeriodKey || loadingDownload">
+            </button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+
+
+

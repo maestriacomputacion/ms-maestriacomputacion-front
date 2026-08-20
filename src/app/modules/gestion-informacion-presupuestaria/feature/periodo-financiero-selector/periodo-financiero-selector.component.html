@@ -1,0 +1,42 @@
+<!-- Esqueleto mientras carga -->
+<div *ngIf="loading" class="flex justify-content-center align-items-center mb-5">
+    <p-skeleton width="320px" height="60px" borderRadius="8px"></p-skeleton>
+</div>
+
+<!-- Error de carga -->
+<div *ngIf="!loading && errorCarga" class="flex justify-content-center mb-4">
+    <p-message severity="error" [text]="errorCarga"></p-message>
+</div>
+
+<!-- Sin períodos -->
+<div *ngIf="!loading && !errorCarga && periodos.length === 0"
+    class="flex flex-column align-items-center justify-content-center py-8 gap-3 mb-5">
+    <i class="pi pi-calendar-times text-4xl text-400"></i>
+    <span class="text-600 text-lg">{{ mensajeVacio }}</span>
+</div>
+
+<!-- Selector de Período -->
+<div *ngIf="!loading && !errorCarga && periodos.length > 0"
+    class="flex justify-content-center align-items-center mb-5 periodo-selector">
+    <button *ngIf="periodos.length > 1" pButton type="button" icon="pi pi-chevron-left"
+        class="p-button-rounded p-button-text p-button-secondary"
+        pTooltip="Período más antiguo" tooltipPosition="top"
+        (click)="irPeriodoSiguiente()" [disabled]="!haySiguiente">
+    </button>
+
+    <div class="mx-4 text-center periodo-info">
+        <span class="periodo-academico-texto">{{ modo === 'anios-activos-y-finalizados' ? 'Año Académico' : 'Período Académico' }}</span>
+        <br>
+        <span class="periodo-academico-valor">{{ periodoActualTexto }}</span>
+    </div>
+
+    <button *ngIf="periodos.length > 1" pButton type="button" icon="pi pi-chevron-right"
+        class="p-button-rounded p-button-text p-button-secondary"
+        pTooltip="Período más reciente" tooltipPosition="top"
+        (click)="irPeriodoAnterior()" [disabled]="!hayAnterior">
+    </button>
+</div>
+
+
+
+

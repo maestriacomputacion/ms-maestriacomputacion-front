@@ -1,0 +1,47 @@
+<!-- Encabezado con Tabs y Botón Descargar -->
+<div class="flex flex-column md:flex-row align-items-start md:align-items-center justify-content-between gap-3 mb-3">
+    <div class="flex align-items-center">
+        <p-selectButton
+            [options]="tabOptions"
+            [(ngModel)]="selectedTab"
+            optionLabel="label"
+            optionValue="value"
+            (onChange)="onTabChange($event)">
+        </p-selectButton>
+    </div>
+
+    <div class="flex justify-content-start md:justify-content-end gap-2">
+        <button *ngIf="activeTab === 'proyeccion-reporte'"
+            pButton
+            pRipple
+            type="button"
+            label="Nueva Proyección"
+            icon="pi pi-calendar-plus"
+            class="p-button-outlined"
+            pTooltip="Crear una nueva proyección de presupuesto"
+            tooltipPosition="left"
+            (click)="proyectarPresupuesto()">
+        </button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Descargar"
+            icon="pi pi-download"
+            class="p-button-outlined"
+            pTooltip="Descargar reporte en Excel"
+            tooltipPosition="left"
+            (click)="descargar()">
+        </button>
+    </div>
+</div>
+
+<app-descargar-reporte-dialog
+    [(display)]="displayDescargarModal"
+    [activeReportCode]="activeTab"
+    [activePeriod]="currentPeriod">
+</app-descargar-reporte-dialog>
+
+
+
+

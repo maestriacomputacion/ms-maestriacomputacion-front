@@ -1,0 +1,216 @@
+.page-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.table-container {
+    margin: 1rem auto 0 auto;
+    max-width: 1400px;
+}
+
+
+.config-panel {
+    background-color: var(--surface-ground, #f8f9fa);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--surface-border, #dee2e6);
+}
+
+/* Layout del panel de configuración: una sola fila flex */
+.config-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    align-items: flex-end;
+    padding-top: 1.5rem;  /* espacio para el label flotante */
+    justify-content: center;
+}
+
+.config-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;  /* empuja los botones al extremo derecho */
+    flex-shrink: 0;
+}
+
+
+:host ::ng-deep {
+    .config-row .p-float-label {
+        width: 180px;
+        display: inline-block;
+
+        p-inputnumber, 
+        .p-inputnumber {
+            width: 100% !important;
+            display: inline-block;
+        }
+
+        .p-inputnumber-input {
+            width: 100% !important;
+            text-align: right;
+            font-weight: 600;
+            color: var(--text-color, #495057);
+            background-color: var(--surface-card, #ffffff);
+        }
+    }
+}
+
+
+
+.percent-input {
+    width: 70px;
+    text-align: right;
+    border: 1px solid var(--surface-border, #ced4da);
+    border-radius: 4px;
+    padding: 0.4rem 0.5rem;
+}
+
+.percent-suffix {
+    font-weight: 600;
+    color: var(--text-color-secondary, #6c757d);
+    flex-shrink: 0;
+}
+
+/* Badge que marca estudiantes simulados/ficticios para que nunca se confundan con reales */
+.uni-badge-simulado {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    background-color: #FFF1E0;
+    color: #B36B00;
+    border: 1px solid #FFD9A0;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+
+:host ::ng-deep {
+    .p-card .p-card-body {
+        padding: 1.5rem;
+    }
+
+    .p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+        background-color: var(--surface-ground, #f8f9fa);
+    }
+
+    .p-datatable-gridlines .p-datatable-thead > tr > th,
+    .p-datatable-gridlines .p-datatable-tbody > tr > td {
+        border: 1px solid var(--surface-border, #dee2e6) !important;
+    }
+
+    .p-datatable .p-datatable-tbody > tr > td {
+        border-bottom: 1px solid var(--surface-border, #dee2e6);
+    }
+
+    /* Responsive stack mode: ocultar p-column-title en desktop */
+    .p-datatable .p-datatable-tbody > tr > td .p-column-title {
+        display: none;
+    }
+
+    @media screen and (max-width: 960px) {
+        /* Modo stack: cada td se convierte en fila con label a la izquierda y valor a la derecha */
+        .p-datatable.p-datatable-responsive-stack .p-datatable-thead > tr > th,
+        .p-datatable.p-datatable-responsive-stack .p-datatable-tfoot > tr > td {
+            display: none !important;
+        }
+
+        .p-datatable.p-datatable-responsive-stack .p-datatable-tbody > tr > td {
+            display: flex !important;
+            width: 100% !important;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem !important;
+            border: none !important;
+            border-bottom: 1px solid var(--surface-border, #dee2e6) !important;
+        }
+
+        .p-datatable.p-datatable-responsive-stack .p-datatable-tbody > tr {
+            border-bottom: 2px solid var(--primary-color, #3b82f6) !important;
+            margin-bottom: 0.75rem;
+            display: block !important;
+            background: var(--surface-card, #ffffff);
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .p-datatable .p-datatable-tbody > tr > td .p-column-title {
+            display: inline !important;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            color: var(--text-color-secondary, #6c757d);
+        }
+    }
+}
+
+/* Wrapper de tabla: overflow en desktop, stack limpio en mobile */
+.table-responsive-wrapper {
+    overflow-x: auto;
+
+    @media screen and (max-width: 960px) {
+        overflow-x: visible;
+    }
+}
+
+/* Totales siempre visibles, con ajuste en mobile */
+.totales-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface-ground, #f8f9fa);
+    border-radius: 6px;
+    border: 1px solid var(--surface-border, #dee2e6);
+
+    .total-item {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        .total-label {
+            font-weight: 600;
+            color: var(--text-color-secondary, #6c757d);
+        }
+
+        .total-value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-color, #495057);
+            min-width: 160px;
+            text-align: right;
+        }
+
+        &.highlight {
+            padding-top: 0.75rem;
+            border-top: 2px solid var(--surface-border, #dee2e6);
+
+            .total-label {
+                color: var(--primary-color, #3b82f6);
+                font-weight: 700;
+            }
+
+            .total-value {
+                color: var(--primary-color, #3b82f6);
+                font-size: 1.15rem;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            justify-content: space-between;
+            width: 100%;
+
+            .total-value {
+                min-width: unset;
+                text-align: right;
+            }
+        }
+    }
+}
+

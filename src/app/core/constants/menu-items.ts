@@ -202,6 +202,7 @@ export const menuItems: MenuItem[] = [
     {
         label: 'PRESUPUESTO',
         icon: 'pi pi-fw pi-chart-line',
+        routerLink: '/informacion-presupuestaria',
     },
     {
         label: 'TRABAJOS DE GRADO',

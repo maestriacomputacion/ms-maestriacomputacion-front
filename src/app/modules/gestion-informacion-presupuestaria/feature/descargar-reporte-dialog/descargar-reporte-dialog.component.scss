@@ -1,0 +1,15 @@
+:host ::ng-deep {
+    .p-dropdown {
+        width: 100% !important;
+    }
+
+    .p-dialog-content {
+        padding-top: 1.5rem !important;
+        overflow-y: visible !important;
+    }
+
+    .p-float-label {
+        display: block !important;
+        width: 100% !important;
+    }
+}

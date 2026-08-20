@@ -1,0 +1,176 @@
+<p-dialog [header]="readonly ? 'Gastos Generales' : 'Gestión de Gastos Generales'" [(visible)]="display" [modal]="true"
+    [style]="{width: '60vw', 'min-width': '320px'}" [maximizable]="true"
+    [draggable]="false" [resizable]="false"
+    [closable]="!guardandoGastos" (onHide)="cerrar()">
+
+    <!-- Botón Agregar nuevo gasto (Ahora arriba) -->
+    <div class="mb-3 flex justify-content-end" *ngIf="!readonly">
+        <button pButton pRipple type="button" icon="pi pi-plus" label="Agregar Gasto"
+            class="p-button-outlined p-button-secondary"
+            pTooltip="Agregar nuevo gasto general" tooltipPosition="top"
+            (click)="agregarNuevaFilaGasto()"
+            [disabled]="nuevoGasto !== null || editingGastoKey !== null || guardandoGastos">
+        </button>
+    </div>
+
+    <!-- Tabla editable de gastos -->
+    <div style="overflow-x: auto;">
+        <p-table [value]="gastosEditables" dataKey="idGastoGeneral" editMode="row"
+            responsiveLayout="stack" breakpoint="960px"
+            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="white-space-nowrap">Categoría</th>
+                    <th class="white-space-nowrap">Descripción</th>
+                    <th class="text-right white-space-nowrap">Monto</th>
+                    <th *ngIf="!readonly" style="width: 10rem;"></th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-gasto let-editing="editing" let-ri="rowIndex">
+                <tr [pEditableRow]="gasto" [id]="gasto.idGastoGeneral < 0 ? 'nuevo-gasto-row' : null">
+                    <!-- Categoría -->
+                    <td>
+                        <span class="p-column-title font-bold">Categoría</span>
+                        <ng-container *ngIf="readonly">{{ gasto.categoria }}</ng-container>
+                        <ng-container *ngIf="!readonly">
+                            <input *ngIf="gasto.idGastoGeneral < 0" pInputText [(ngModel)]="gasto.categoria"
+                                class="w-full" placeholder="Ej: Administración"
+                                [disabled]="guardandoGastos" />
+                            <p-cellEditor *ngIf="gasto.idGastoGeneral > 0">
+                                <ng-template pTemplate="input">
+                                    <input pInputText [(ngModel)]="gasto.categoria" class="w-full"
+                                        placeholder="Ej: Administración" [disabled]="guardandoGastos" />
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{ gasto.categoria }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </ng-container>
+                    </td>
+
+                    <!-- Descripción -->
+                    <td>
+                        <span class="p-column-title font-bold">Descripción</span>
+                        <ng-container *ngIf="readonly">{{ gasto.descripcion }}</ng-container>
+                        <ng-container *ngIf="!readonly">
+                            <input *ngIf="gasto.idGastoGeneral < 0" pInputText [(ngModel)]="gasto.descripcion"
+                                class="w-full" placeholder="Descripción del gasto"
+                                [disabled]="guardandoGastos" />
+                            <p-cellEditor *ngIf="gasto.idGastoGeneral > 0">
+                                <ng-template pTemplate="input">
+                                    <input pInputText [(ngModel)]="gasto.descripcion" class="w-full"
+                                        placeholder="Descripción del gasto" [disabled]="guardandoGastos" />
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{ gasto.descripcion }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </ng-container>
+                    </td>
+
+                    <!-- Monto -->
+                    <td class="text-right">
+                        <span class="p-column-title font-bold">Monto</span>
+                        <ng-container *ngIf="readonly">{{ formatCurrency(gasto.monto) }}</ng-container>
+                        <ng-container *ngIf="!readonly">
+                            <p-inputNumber *ngIf="gasto.idGastoGeneral < 0" [(ngModel)]="gasto.monto"
+                                prefix="$ " [useGrouping]="true" locale="es-CO"
+                                [min]="0" [minFractionDigits]="0" [maxFractionDigits]="0"
+                                class="w-full" [disabled]="guardandoGastos">
+                            </p-inputNumber>
+                            <p-cellEditor *ngIf="gasto.idGastoGeneral > 0">
+                                <ng-template pTemplate="input">
+                                    <p-inputNumber [(ngModel)]="gasto.monto" mode="currency"
+                                        currency="COP" locale="es-CO" class="w-full"
+                                        [minFractionDigits]="0" [maxFractionDigits]="0"
+                                        [disabled]="guardandoGastos">
+                                    </p-inputNumber>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{ formatCurrency(gasto.monto) }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </ng-container>
+                    </td>
+
+                    <!-- Acciones -->
+                    <td class="text-center" *ngIf="!readonly">
+                        <span class="p-column-title font-bold">Acciones</span>
+
+                        <!-- Botón editar (fila existente, no editando) -->
+                        <button *ngIf="!editing && gasto.idGastoGeneral > 0" pButton pRipple type="button"
+                            pInitEditableRow icon="pi pi-pencil"
+                            (click)="onGastoEditInit(gasto)"
+                            class="p-button-rounded p-button-text p-button-secondary"
+                            pTooltip="Editar" tooltipPosition="top"
+                            [disabled]="editingGastoKey !== null || nuevoGasto !== null || guardandoGastos">
+                        </button>
+
+                        <!-- Botones guardar/cancelar/eliminar (fila existente, editando) -->
+                        <div *ngIf="editing && gasto.idGastoGeneral > 0" class="flex justify-content-center gap-1">
+                            <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                                (click)="onGastoEditSave(gasto)"
+                                class="p-button-rounded p-button-text p-button-success"
+                                pTooltip="Guardar" tooltipPosition="top"
+                                [disabled]="guardandoGastos">
+                            </button>
+                            <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                                (click)="onGastoEditCancel(gasto)"
+                                class="p-button-rounded p-button-text p-button-danger"
+                                pTooltip="Cancelar" tooltipPosition="top"
+                                [disabled]="guardandoGastos">
+                            </button>
+                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                (click)="confirmarEliminarGasto(gasto)"
+                                class="p-button-rounded p-button-text p-button-warning"
+                                pTooltip="Eliminar gasto" tooltipPosition="top"
+                                [disabled]="guardandoGastos">
+                            </button>
+                        </div>
+
+                        <!-- Botones confirmar/cancelar para nueva fila -->
+                        <div *ngIf="gasto.idGastoGeneral < 0" class="flex justify-content-center gap-1">
+                            <button pButton pRipple type="button" icon="pi pi-check"
+                                (click)="guardarNuevoGasto()"
+                                class="p-button-rounded p-button-text p-button-success"
+                                pTooltip="Confirmar" tooltipPosition="top"
+                                [disabled]="guardandoGastos">
+                            </button>
+                            <button pButton pRipple type="button" icon="pi pi-times"
+                                (click)="cancelarNuevoGasto()"
+                                class="p-button-rounded p-button-text p-button-danger"
+                                pTooltip="Cancelar" tooltipPosition="top"
+                                [disabled]="guardandoGastos">
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4" class="text-center p-4 text-600">
+                        <i class="pi pi-inbox mr-2"></i>No hay gastos generales registrados.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+    <!-- Footer con botón cerrar -->
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end">
+            <button pButton pRipple type="button" label="Cerrar" icon="pi pi-times"
+                class="p-button-text p-button-secondary"
+                (click)="cerrar()" [disabled]="guardandoGastos">
+            </button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+
+
+

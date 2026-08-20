@@ -1,0 +1,20 @@
+:host ::ng-deep {
+    .p-dialog-content {
+        padding: 1.5rem;
+    }
+
+    .p-inputtext {
+        width: 100%;
+    }
+
+    .p-datatable .p-datatable-thead > tr > th {
+        background-color: var(--surface-section, #f8f9fa);
+        color: var(--text-color, #495057);
+        font-weight: 700;
+        border-bottom: 2px solid var(--surface-border, #dee2e6);
+    }
+
+    .p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+        background-color: var(--surface-ground, #f8f9fa);
+    }
+}

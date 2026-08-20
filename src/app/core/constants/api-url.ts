@@ -8,6 +8,7 @@ import {
     gestion_docentes_estudiantes,
     evaluacion_docente,
     gestion_matricula_financiera,
+    gestion_informacion_presupuestaria,
 } from 'src/environments/environment';
 
 export function backend(path: string): string {
@@ -44,4 +45,8 @@ export function backendEvalucionDocente(path: string): string {
 
 export function backendGestionMatriculaFinanciera(path: string): string {
     return gestion_matricula_financiera.api_url.concat(path);
+}
+
+export function backendInfoPresupuestaria(path: string): string {
+    return gestion_informacion_presupuestaria.api_url.concat(path);
 }

@@ -1,0 +1,9 @@
+// Evitar wrap de los botones del selectButton
+:host ::ng-deep .p-selectbutton .p-button {
+    white-space: nowrap;
+}
+
+// Borde completo en tab activo
+:host ::ng-deep .p-selectbutton .p-button.p-highlight {
+    border-right: 1px solid var(--surface-border, #d1d5db);
+}

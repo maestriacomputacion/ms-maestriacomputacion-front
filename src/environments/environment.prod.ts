@@ -51,3 +51,8 @@ export const gestion_matricula_financiera = {
     production: true,
     api_url: 'https://apptest.unicauca.edu.co:4421/api/v1/gestion-matricula-financiera/',
 };
+
+export const gestion_informacion_presupuestaria = {
+    production: true,
+    api_url: 'https://apptest.unicauca.edu.co:4422/api/',
+};

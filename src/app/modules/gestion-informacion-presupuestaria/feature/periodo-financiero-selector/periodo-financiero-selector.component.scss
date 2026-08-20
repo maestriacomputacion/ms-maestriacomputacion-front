@@ -1,0 +1,22 @@
+.periodo-selector {
+    padding: 0.5rem;
+    display: inline-flex;
+}
+
+.periodo-info {
+    min-width: 160px;
+}
+
+.periodo-academico-texto {
+    font-size: 0.8rem;
+    color: var(--text-color-secondary, #6c757d);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.periodo-academico-valor {
+    font-size: 1.25rem;
+    color: var(--text-color, #495057);
+    font-weight: 700;
+}

@@ -158,6 +158,13 @@ import { HomeComponent } from './core/components/home/home.component';
                                 import(
                                     './modules/gestion-matricula-financiera/gestion-matricula-financiera.module'
                                 ).then((m) => m.GestionMatriculaFinancieraModule),
+                        },
+                        {
+                            path: 'informacion-presupuestaria',
+                            loadChildren: () =>
+                                import(
+                                    './modules/gestion-informacion-presupuestaria/gestion-informacion-presupuestaria.module'
+                                ).then((m) => m.GestionInformacionPresupuestariaModule),
                         }
                     ],
                 },

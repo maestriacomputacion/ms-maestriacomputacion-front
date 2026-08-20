@@ -1,178 +1,74 @@
-<div class="col-12">
-    <p-toast position="top-right"></p-toast>
-    <p-card>
-        <ng-container *ngIf="vm$ | async as vm">
-            <div class="page-content">
-                <app-opciones-presupuesto [activeTab]="'reporte-final'" [currentPeriod]="vm.periodoSeleccionado" (onDescargar)="descargar()">
-                </app-opciones-presupuesto>
-        
-                <!-- Selector de Periodo Académico -->
-                <app-periodo-financiero-selector [modo]="'finalizados'"
-                    [mensajeVacio]="'No hay períodos académicos finalizados para mostrar.'"
-                    (periodoSeleccionado)="onPeriodoChange($event)"
-                    (sinPeriodosChange)="sinPeriodos = $event"
-                    (errorCargaChange)="errorPeriodos = $event">
-                </app-periodo-financiero-selector>
-            </div>
+<div class="surface-0 p-4">
+    <p-toast position="top-right" styleClass="uni-toast"></p-toast>
+
+    <!-- Navegación por pestañas -->
+    <app-opciones-presupuesto
+        [activeTab]="'reporte-final'"
+        [currentPeriod]="periodoSeleccionado"
+        (onDescargar)="descargar()">
+    </app-opciones-presupuesto>
+
+    <!-- Selector de Período -->
+    <div class="flex justify-content-center mb-4">
+        <app-periodo-financiero-selector
+            [modo]="'finalizados'"
+            [mensajeVacio]="'No hay períodos académicos finalizados para mostrar.'"
+            (periodoSeleccionado)="onPeriodoChange($event)"
+            (sinPeriodosChange)="sinPeriodos = $event"
+            (errorCargaChange)="errorPeriodos = $event">
+        </app-periodo-financiero-selector>
+    </div>
+
+    <!-- Estado: Cargando -->
+    <div *ngIf="cargando" class="mb-4">
+        <app-uni-progress-bar label="Cargando reporte financiero"></app-uni-progress-bar>
+    </div>
+
+    <!-- Estado: Sin datos -->
+    <app-estado-vacio
+        *ngIf="!configuracion && !sinPeriodos && !errorPeriodos && !cargando"
+        icono="inbox"
+        mensaje="Seleccione un período académico para cargar el reporte.">
+    </app-estado-vacio>
+
+    <!-- Contenido del Reporte -->
+    <ng-container *ngIf="configuracion">
+
+        <!-- Sección: Configuración del período -->
+        <app-configuracion-proyeccion-card
+            [configuracion]="configuracion"
+            [isEditable]="false">
+        </app-configuracion-proyeccion-card>
 
 
+        <!-- Título de sección institucional -->
+        <div class="mb-2 px-1">
+            <h2 class="text-xl font-semibold m-0" style="color: #000066; font-family: 'Titillium Web', sans-serif;">
+                Reporte Financiero Final
+            </h2>
+        </div>
 
-            <!-- Sin datos -->
-            <div *ngIf="!vm.configuracion && !sinPeriodos && !errorPeriodos" class="flex flex-column align-items-center justify-content-center py-8 gap-3">
-                <i class="pi pi-inbox text-4xl text-400"></i>
-                <span class="text-600 text-lg">Seleccione un período académico para cargar el reporte.</span>
-            </div>
+        <app-tabla-estudiantes-reporte
+            [estudiantes]="estudiantes"
+            [configuracion]="configuracion"
+            [editable]="false">
+        </app-tabla-estudiantes-reporte>
 
-            <!-- Contenido del Reporte -->
-            <div *ngIf="vm.configuracion" class="table-container">
-
-            <!-- Panel de Configuración -->
-            <div class="config-panel mb-4">
-                <div class="text-center mb-4 border-bottom-1 surface-border pb-3">
-                    <h2 class="m-0 text-700 text-xl">Reporte Financiero</h2>
-                    <span class="text-500 text-sm">Valores de referencia del período seleccionado</span>
-                </div>
-
-                <div class="config-row">
-                    <span class="p-float-label">
-                        <p-inputNumber id="float-biblioteca" [ngModel]="vm.configuracion?.biblioteca"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
-                            [readonly]="true" [disabled]="true" styleClass="config-input">
-                        </p-inputNumber>
-                        <label for="float-biblioteca">Biblioteca</label>
-                    </span>
-
-                    <span class="p-float-label">
-                        <p-inputNumber id="float-recursos" [ngModel]="vm.configuracion?.recursosComputacionales"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
-                            [readonly]="true" [disabled]="true" styleClass="config-input">
-                        </p-inputNumber>
-                        <label for="float-recursos">Recursos Computacionales</label>
-                    </span>
-
-                    <span class="p-float-label">
-                        <p-inputNumber id="float-smlv" [ngModel]="vm.configuracion?.valorSMLV"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
-                            [readonly]="true" [disabled]="true" styleClass="config-input">
-                        </p-inputNumber>
-                        <label for="float-smlv">Valor SMLV</label>
-                    </span>
-                </div>
-
-            </div>
-
-            <!-- Tabla de estudiantes -->
-            <div class="table-responsive-wrapper">
-                <p-table [value]="vm.estudiantes" responsiveLayout="stack" breakpoint="960px"
-                    styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
-
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th class="text-center white-space-nowrap">Pago</th>
-                            <th class="text-center white-space-nowrap">Cédula</th>
-                            <th class="white-space-nowrap">Nombre</th>
-                            <th class="text-right white-space-nowrap">Matrícula</th>
-                            <th class="text-center white-space-nowrap">% Votación</th>
-                            <th class="text-center white-space-nowrap">% Beca</th>
-                            <th class="text-right white-space-nowrap">Valor Beca</th>
-                            <th class="text-center white-space-nowrap">% Egresado</th>
-                            <th class="text-right white-space-nowrap">Rec. Comp.</th>
-                            <th class="text-right white-space-nowrap">Biblioteca</th>
-                            <th class="text-center white-space-nowrap">Grupo Inv.</th>
-                            <th class="text-right white-space-nowrap">Descuentos</th>
-                            <th class="text-right white-space-nowrap">Total Neto</th>
-                        </tr>
-                    </ng-template>
-
-                    <ng-template pTemplate="body" let-estudiante>
-                        <tr>
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">Pago</span>
-                                <p-checkbox [ngModel]="estudiante.estadoMatriculaFinanciera === true" [binary]="true" [disabled]="true"
-                                    [pTooltip]="estudiante.estadoMatriculaFinanciera === true ? 'Pago registrado.' : 'Sin pago registrado.'">
-                                </p-checkbox>
-                            </td>
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">Cédula</span>
-                                {{ estudiante.identificacion }}
-                            </td>
-                            <td>
-                                <span class="p-column-title font-bold">Nombre</span>
-                                {{ estudiante.nombreEstudiante }}
-                            </td>
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Matrícula</span>
-                                {{ estudiante.matricula | formatCurrency }}
-                            </td>
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">% Votación</span>
-                                {{ (estudiante.porcentajeVotacion && estudiante.porcentajeVotacion > 0) ? (estudiante.porcentajeVotacion | formatPercent:0) : '–' }}
-                            </td>
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">% Beca</span>
-                                {{ estudiante.porcentajeBeca | formatPercent:0 }}
-                            </td>
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Valor Beca</span>
-                                {{ estudiante.valorBeca | formatCurrency }}
-                            </td>
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">% Egresado</span>
-                                {{ (estudiante.porcentajeEgresado && estudiante.porcentajeEgresado > 0) ? (estudiante.porcentajeEgresado | formatPercent:0) : '–' }}
-                            </td>
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Rec. Comp.</span>
-                                {{ estudiante.recursosComputacionales | formatCurrency }}
-                            </td>
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Biblioteca</span>
-                                {{ estudiante.biblioteca | formatCurrency }}
-                            </td>
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">Grupo Inv.</span>
-                                {{ estudiante.grupoInvestigacion }}
-                            </td>
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Descuentos</span>
-                                {{ estudiante.grupoDescuentos | formatCurrency }}
-                            </td>
-                            <td class="text-right font-bold">
-                                <span class="p-column-title font-bold">Total Neto</span>
-                                {{ estudiante.totalNeto | formatCurrency }}
-                            </td>
-                        </tr>
-                    </ng-template>
-
-                    <ng-template pTemplate="emptymessage">
-                        <tr>
-                            <td colspan="13" class="text-center p-4 text-600">
-                                <i class="pi pi-inbox mr-2"></i>No hay datos disponibles para el período seleccionado.
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
-
-            <!-- Totales: fuera de la tabla para garantizar visibilidad en mobile -->
+            <!-- Totales -->
             <div class="totales-container mt-3">
                 <div class="total-item">
                     <span class="total-label">Total Bruto:</span>
-                    <span class="total-value">{{ vm.totalBruto | formatCurrency }}</span>
+                    <span class="total-value">{{ totalBruto | formatCurrency }}</span>
                 </div>
                 <div class="total-item">
                     <span class="total-label">Total Descuentos:</span>
-                    <span class="total-value">{{ vm.totalDescuentosCalculado | formatCurrency }}</span>
+                    <span class="total-value">{{ totalDescuentosCalculado | formatCurrency }}</span>
                 </div>
                 <div class="total-item highlight">
-                    <span class="total-label">Total Neto:</span>
-                    <span class="total-value">{{ vm.totalIngresosNetos | formatCurrency }}</span>
+                    <span class="total-label">Ingresos Totales Después de Descuentos:</span>
+                    <span class="total-value">{{ totalIngresosNetos | formatCurrency }}</span>
                 </div>
             </div>
-        </div>
-        </ng-container>
-    </p-card>
+        
+    </ng-container>
 </div>
-
-
-
-

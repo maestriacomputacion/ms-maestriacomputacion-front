@@ -12,6 +12,8 @@ import { DescargarReporteDialogComponent } from './feature/descargar-reporte-dia
 import { ProyectarPresupuestoDialogComponent } from './feature/proyectar-presupuesto-dialog/proyectar-presupuesto-dialog.component';
 
 import { OpcionesPresupuestoComponent } from './ui/opciones-presupuesto/opciones-presupuesto.component';
+import { TablaEstudiantesReporteComponent } from './ui/tabla-estudiantes-reporte/tabla-estudiantes-reporte.component';
+import { ConfiguracionProyeccionCardComponent } from './ui/configuracion-proyeccion-card/configuracion-proyeccion-card.component';
 
 import { GestionInformacionPresupuestariaApiService } from './data/api.service';
 import { GestionInformacionPresupuestariaFacadeService } from './data/facade.service';
@@ -33,6 +35,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
         DescargarReporteDialogComponent,
         ProyectarPresupuestoDialogComponent,
         OpcionesPresupuestoComponent,
+        TablaEstudiantesReporteComponent,
+        ConfiguracionProyeccionCardComponent,
     ],
     imports: [
         CommonModule,

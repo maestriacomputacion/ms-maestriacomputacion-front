@@ -1,0 +1,108 @@
+:host ::ng-deep {
+    .table-responsive-wrapper {
+        overflow-x: auto;
+        border: 1px solid #C9C8CC;
+        border-radius: 12px;
+        overflow: hidden !important;
+        background-color: #FFFFFF;
+        margin-bottom: 1.5rem;
+    }
+
+    .p-datatable {
+        border: none !important;
+        border-collapse: separate;
+        border-spacing: 0;
+        
+        .p-datatable-thead > tr > th {
+            background-color: #F8F9FA !important; // Gris tenue de la captura
+            color: #454444 !important; // Texto oscuro, no azul
+            font-family: 'Open Sans', sans-serif !important; // Usando Open Sans para coincidir con la captura
+            font-size: 10.5px !important;
+            line-height: 1.1 !important;
+            font-weight: 700 !important;
+            border: 1px solid #E0E0E0 !important; // Bordes en todos los lados
+            padding: 6px 2px !important;
+            white-space: normal !important; // Permitir saltos de línea en cabecera
+            vertical-align: middle !important;
+            text-align: center;
+
+            &:last-child {
+                border-right: none !important;
+            }
+        }
+
+        .p-datatable-tbody > tr > td {
+            font-family: 'Open Sans', sans-serif !important;
+            font-size: 11.5px !important;
+            color: #454444 !important;
+            border-bottom: 1px solid #F0F0F0 !important;
+            border-right: 1px solid #F0F0F0 !important;
+            border-left: none !important;
+            padding: 4px 3px !important;
+
+            &:last-child {
+                border-right: none !important;
+            }
+
+            &.total-neto {
+                font-weight: 700 !important;
+                color: #000066 !important;
+                background-color: rgba(0, 0, 102, 0.02);
+                white-space: nowrap;
+            }
+
+            &.col-nombre {
+                white-space: normal !important;
+                word-break: break-word;
+                line-height: 1.2;
+                min-width: 180px;
+            }
+
+            &.col-monetaria {
+                white-space: nowrap;
+                font-variant-numeric: tabular-nums;
+            }
+        }
+
+        .p-datatable-tbody > tr:last-child > td {
+            border-bottom: none !important;
+        }
+
+        // Estilos para el campo de edición de porcentaje
+        .percent-input {
+            width: 60px !important;
+            height: 32px !important;
+            text-align: right;
+            border: 1px solid #C9C8CC !important;
+            border-radius: 4px !important;
+            padding: 0 6px !important;
+            font-family: 'Open Sans', sans-serif !important;
+            font-size: 12px !important;
+            color: #454444 !important;
+            outline: none !important;
+            display: inline-block !important;
+
+            &:focus {
+                border-color: #000066 !important;
+                box-shadow: 0 0 0 1px rgba(0, 0, 102, 0.1) !important;
+            }
+
+            &::-webkit-inner-spin-button, 
+            &::-webkit-outer-spin-button { 
+                -webkit-appearance: none; 
+                margin: 0; 
+            }
+        }
+
+        .percent-suffix {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            color: #777680;
+            font-size: 12px;
+            margin-left: 2px;
+        }
+
+        // Los estilos de .estado-badge ahora se manejan de forma global en styles.scss
+        // para garantizar paridad absoluta con el módulo de Matrícula Financiera.
+    }
+}

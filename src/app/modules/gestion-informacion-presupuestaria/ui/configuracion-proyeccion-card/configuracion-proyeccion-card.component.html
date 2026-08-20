@@ -1,0 +1,78 @@
+<div class="mb-3" *ngIf="configuracion">
+    <app-uni-card-header titulo="Configuración del Reporte" icono="settings" class="no-radius-bottom">
+    </app-uni-card-header>
+    <div class="config-panel">
+        <div class="config-row">
+            <span class="p-float-label">
+                <p-inputNumber id="float-biblioteca"
+                    *ngIf="editando" [(ngModel)]="clonedConfig.biblioteca"
+                    mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
+                    styleClass="config-input">
+                </p-inputNumber>
+                <p-inputNumber *ngIf="!editando"
+                    [ngModel]="configuracion.biblioteca"
+                    mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
+                    [readonly]="true" [disabled]="true" styleClass="config-input">
+                </p-inputNumber>
+                <label for="float-biblioteca">Biblioteca</label>
+            </span>
+
+            <span class="p-float-label">
+                <p-inputNumber id="float-recursos"
+                    *ngIf="editando" [(ngModel)]="clonedConfig.recursosComputacionales"
+                    mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
+                    styleClass="config-input">
+                </p-inputNumber>
+                <p-inputNumber *ngIf="!editando"
+                    [ngModel]="configuracion.recursosComputacionales"
+                    mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
+                    [readonly]="true" [disabled]="true" styleClass="config-input">
+                </p-inputNumber>
+                <label for="float-recursos">Recursos Computacionales</label>
+            </span>
+
+            <span class="p-float-label">
+                <p-inputNumber id="float-smlv"
+                    *ngIf="editando" [(ngModel)]="clonedConfig.valorSMLV"
+                    mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
+                    styleClass="config-input">
+                </p-inputNumber>
+                <p-inputNumber *ngIf="!editando"
+                    [ngModel]="configuracion.valorSMLV"
+                    mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
+                    [readonly]="true" [disabled]="true" styleClass="config-input">
+                </p-inputNumber>
+                <label for="float-smlv">Valor SMLV</label>
+            </span>
+
+            <div class="config-row-actions" *ngIf="isEditable">
+                <button *ngIf="!editando" pButton pRipple type="button"
+                    class="p-button-rounded p-button-text"
+                    style="color: #000066; width:36px; height:36px; padding:0;"
+                    pTooltip="Editar configuración" tooltipPosition="top"
+                    aria-label="Editar configuración"
+                    (click)="onEditInit()" [disabled]="disabled">
+                    <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">edit</span>
+                </button>
+                <ng-container *ngIf="editando">
+                    <button pButton pRipple type="button"
+                        class="p-button-rounded p-button-text"
+                        style="color: #5BAE40; width:36px; height:36px; padding:0;"
+                        pTooltip="Guardar" tooltipPosition="top"
+                        aria-label="Guardar configuración"
+                        (click)="onSave()">
+                        <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">check_circle</span>
+                    </button>
+                    <button pButton pRipple type="button"
+                        class="p-button-rounded p-button-text"
+                        style="color: #FF6D0A; width:36px; height:36px; padding:0;"
+                        pTooltip="Cancelar" tooltipPosition="top"
+                        aria-label="Cancelar edición de configuración"
+                        (click)="onCancel()">
+                        <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">cancel</span>
+                    </button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

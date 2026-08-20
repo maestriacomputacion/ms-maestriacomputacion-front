@@ -1,9 +1,53 @@
-// Evitar wrap de los botones del selectButton
-:host ::ng-deep .p-selectbutton .p-button {
+// ── Design System TIC v3 — Pestañas de navegación ──────────────────────────
+
+.tab-btn {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.25px;
+    padding: 8px 16px;
+    min-height: 40px;
+    border-radius: 9999px;   // --radius-full
+    border: 2px solid #C9C8CC;
+    background-color: transparent;
+    color: #454444;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
     white-space: nowrap;
+
+    &:hover {
+        background-color: rgba(80, 86, 172, 0.10);
+        border-color: #5056AC;
+        color: #5056AC;
+    }
+
+    &--active {
+        background-color: #000066;
+        border-color: #000066;
+        color: #FFFFFF;
+
+        &:hover {
+            background-color: #5056AC;
+            border-color: #5056AC;
+            color: #FFFFFF;
+        }
+    }
 }
 
-// Borde completo en tab activo
-:host ::ng-deep .p-selectbutton .p-button.p-highlight {
-    border-right: 1px solid var(--surface-border, #d1d5db);
+// ── Botón Descargar ─────────────────────────────────────────────────────────
+:host ::ng-deep .descargar-btn {
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 1.25px !important;
+    border-color: #000066 !important;
+    color: #000066 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+
+    &:hover {
+        background-color: rgba(80, 86, 172, 0.10) !important;
+        border-color: #5056AC !important;
+        color: #5056AC !important;
+    }
 }

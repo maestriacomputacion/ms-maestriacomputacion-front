@@ -40,11 +40,7 @@ export class ExcelService {
         workbook.created = new Date();
         const periodo = data.periodo;
         const config = data.objConfiguracion;
-        this._crearHojaResumenEjecutivo(workbook, periodo, config, data.estudiantes, false, {
-            totalIngresos: data.totalIngresos,
-            totalDescuentos: data.totalDescuentos,
-            totalNeto: data.totalNeto
-        });
+        this._crearHojaResumenEjecutivo(workbook, periodo, config, data.estudiantes, false);
         this._crearHojaEstudiantes(workbook, data.estudiantes, config, false);
         this._crearHojaAnalisisDescuentos(workbook, data.estudiantes, config);
         this._crearHojaDatosGraficas(workbook, data.estudiantes, false);
@@ -58,11 +54,7 @@ export class ExcelService {
         workbook.created = new Date();
         const periodo = data.periodo;
         const config = data.objConfiguracion;
-        this._crearHojaResumenEjecutivo(workbook, periodo, config, data.estudiantes, true, {
-            totalIngresos: data.totalIngresos,
-            totalDescuentos: data.totalDescuentos,
-            totalNeto: data.totalNeto
-        });
+        this._crearHojaResumenEjecutivo(workbook, periodo, config, data.estudiantes, true);
         this._crearHojaEstudiantes(workbook, data.estudiantes, config, true);
         this._crearHojaAnalisisDescuentos(workbook, data.estudiantes, config);
         this._crearHojaDatosGraficas(workbook, data.estudiantes, true);
@@ -91,8 +83,7 @@ export class ExcelService {
         periodo: PeriodoFinanciero,
         config: ConfiguracionReporteFinanciero,
         estudiantes: ProyeccionEstudiante[],
-        esProyeccion: boolean,
-        totales: { totalIngresos?: number; totalDescuentos?: number; totalNeto?: number }
+        esProyeccion: boolean
     ): void {
         const titulo = esProyeccion
             ? 'PROYECCIÓN DE INGRESOS - MAESTRÍA EN COMPUTACIÓN'
@@ -118,9 +109,9 @@ export class ExcelService {
         ws.addRow([]);
         this._agregarEncabezadoSeccion(ws, esProyeccion ? 'RESUMEN PROYECTADO' : 'RESUMEN DE INGRESOS', numCols);
         const kpiRows: [string, number][] = [
-            ['Total Ingresos Brutos', totales.totalIngresos ?? 0],
-            ['Total Descuentos', totales.totalDescuentos ?? 0],
-            ['Total Neto', totales.totalNeto ?? 0],
+            ['Total Ingresos Brutos', config.totalIngresos ?? 0],
+            ['Total Descuentos', config.totalDescuentos ?? 0],
+            ['Total Neto', config.totalNeto ?? 0],
         ];
         kpiRows.forEach(([label, value]) => {
             const row = ws.addRow([label, this._formatCurrency(value)]);
@@ -128,16 +119,17 @@ export class ExcelService {
         });
         ws.addRow([]);
         this._agregarEncabezadoSeccion(ws, 'ESTADÍSTICAS DE ESTUDIANTES', numCols);
-        const totalEst   = estudiantes.length;
-        const pagados    = estudiantes.filter(e => e.estaPago).length;
-        const pendientes = totalEst - pagados;
+        const totalEst    = estudiantes.length;
+        const pagados     = estudiantes.filter(e => e.estaPago === true).length;
+        const faltantes   = totalEst - pagados; // En Proyección son 'Pendientes', en Reporte son 'No Pagaron'
         const labelFaltante = esProyeccion ? 'Estudiantes Pendientes' : 'Estudiantes No Pagaron';
         const colorFaltante = esProyeccion ? COLOR.AMARILLO_ADV : 'FFEF5350';
+
         const pctCumplimiento = totalEst > 0 ? ((pagados / totalEst) * 100).toFixed(1) : '0.0';
         const estRows: [string, string | number][] = [
             ['Total Estudiantes', totalEst],
             ['Estudiantes Pagados', pagados],
-            [labelFaltante, pendientes],
+            [labelFaltante, faltantes],
             ['% Cumplimiento', `${pctCumplimiento}%`],
         ];
         estRows.forEach(([label, value], i) => {
@@ -214,7 +206,7 @@ export class ExcelService {
                 this._formatPercent(est.porcentajeBeca),
                 this._formatPercent(est.aplicaEgresado ? (config.porcentajeEgresadoFijo ?? 0.05) : 0),
                 this._formatCurrency(est.totalDescuentos ?? 0),
-                est.estaPago ? 'Pagado' : (esProyeccion ? 'Pendiente' : 'No pago'),
+                est.estaPago === true ? 'Pagado' : (esProyeccion ? 'Pendiente' : 'No pago'),
             ];
             if (esProyeccion) {
                 rowValues.push(this._formatCurrency(est.totalNetoConDerechos ?? 0));
@@ -223,7 +215,7 @@ export class ExcelService {
             const bgColor = idx % 2 === 0 ? COLOR.BLANCO : COLOR.FILA_ALTERNA;
             this._estilizarFilaDatosCompleta(dataRow, bgColor, numCols);
             const estadoCell = dataRow.getCell(9);
-            if (est.estaPago) {
+            if (est.estaPago === true) {
                 estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.VERDE_CLARO } };
                 estadoCell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: COLOR.VERDE_EXITO } };
                 pagados++;
@@ -236,7 +228,7 @@ export class ExcelService {
         });
         const totalRowValues: (string | number)[] = [
             'TOTALES', '', '', '', '', '', '', '',
-            `Pagados: ${pagados} | ${esProyeccion ? 'Pendientes' : 'No pagados'}: ${pendientes}`,
+            `Pagados: ${pagados} | Pendientes: ${pendientes}`,
         ];
         if (esProyeccion) totalRowValues.push('');
         const totalRow = ws.addRow(totalRowValues);
@@ -291,13 +283,14 @@ export class ExcelService {
             this._estilizarCeldaHeader(hRow.getCell(i + 1), h);
         });
         hRow.height = 22;
-        const pagados    = estudiantes.filter(e => e.estaPago).length;
-        const pendientes = estudiantes.length - pagados;
+        const pagados    = estudiantes.filter(e => e.estaPago === true).length;
+        const faltantes  = estudiantes.length - pagados;
+        const labelFaltante = 'No Pagados / Pendientes'; // Etiqueta genérica para gráficas si se desea, o condicional
         const total      = estudiantes.length;
         const grafData: (string | number)[][] = [
-            ['Pagados',    pagados,    total ? `${((pagados / total) * 100).toFixed(1)}%`    : '0%'],
-            [esProyeccion ? 'Pendientes' : 'No Pagaron', pendientes, total ? `${((pendientes / total) * 100).toFixed(1)}%` : '0%'],
-            ['Total',      total,      '100%'],
+            ['Pagados', pagados, total ? `${((pagados / total) * 100).toFixed(1)}%` : '0%'],
+            [esProyeccion ? 'Pendientes' : 'No Pagaron', faltantes, total ? `${((faltantes / total) * 100).toFixed(1)}%` : '0%'],
+            ['Total',   total,   '100%'],
         ];
         grafData.forEach((rowData, i) => {
             const row = ws.addRow(rowData);

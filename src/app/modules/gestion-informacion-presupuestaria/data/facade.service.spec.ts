@@ -104,8 +104,8 @@ describe('GestionInformacionPresupuestariaFacadeService', () => {
     apiSpy = jasmine.createSpyObj<GestionInformacionPresupuestariaApiService>(
       'GestionInformacionPresupuestariaApiService',
       [
-        'obtenerPeriodos', 'obtenerPeriodosActivos', 'obtenerPeriodosInactivos',
-        'obtenerPeriodosActivosYCerrados', 'obtenerPeriodoProyeccion',
+        'obtenerPeriodos', 'obtenerPeriodosActivos', 'obtenerPeriodosFinalizados',
+        'obtenerPeriodosActivosYFinalizados', 'obtenerPeriodoProyeccion',
         'obtenerProyeccionEstudiantes', 'actualizarProyeccionEstudiante',
         'obtenerReporteFinanciero', 'obtenerIdConfiguracionReporteFinanciero',
         'actualizarConfiguracionReporteFinanciero', 'obtenerReportePorGrupos',

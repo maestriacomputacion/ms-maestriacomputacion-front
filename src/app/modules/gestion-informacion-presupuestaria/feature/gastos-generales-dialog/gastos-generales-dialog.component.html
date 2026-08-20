@@ -1,35 +1,36 @@
-<p-dialog [header]="readonly ? 'Gastos Generales' : 'Gestión de Gastos Generales'" [(visible)]="display" [modal]="true"
-    [style]="{width: '60vw', 'min-width': '320px'}" [maximizable]="true"
-    [draggable]="false" [resizable]="false"
-    [closable]="!guardandoGastos" (onHide)="cerrar()">
+<p-dialog
+  [(visible)]="display"
+  [header]="'Gestionar Gastos Generales'"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '900px', 'max-width': '95vw', 'border-radius': '28px' }"
+  (onHide)="cerrar()">
 
-    <!-- Botón Agregar nuevo gasto (Ahora arriba) -->
-    <div class="mb-3 flex justify-content-end" *ngIf="!readonly">
-        <button pButton pRipple type="button" icon="pi pi-plus" label="Agregar Gasto"
-            class="p-button-outlined p-button-secondary"
-            pTooltip="Agregar nuevo gasto general" tooltipPosition="top"
+    <div class="mb-3 flex justify-content-between align-items-center">
+        <p class="text-600 m-0">Agregue, edite o elimine los gastos generales del periodo.</p>
+        <button *ngIf="!readonly" pButton pRipple type="button"
+            class="p-button-rounded" style="background-color: #000066; border: none; padding: 0.5rem 1.5rem;" 
             (click)="agregarNuevaFilaGasto()"
-            [disabled]="nuevoGasto !== null || editingGastoKey !== null || guardandoGastos">
+            [disabled]="editingGastoKey !== null || nuevoGasto !== null || guardandoGastos">
+            <span class="material-symbols-rounded mr-2" style="font-size: 18px; color: white;" aria-hidden="true">add</span>
+            <span style="font-family: 'Open Sans', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.25px; color: white;">Agregar Gasto</span>
         </button>
     </div>
 
-    <!-- Tabla editable de gastos -->
-    <div style="overflow-x: auto;">
+    <div class="table-responsive-wrapper" style="max-height: 500px; overflow-y: auto;">
         <p-table [value]="gastosEditables" dataKey="idGastoGeneral" editMode="row"
-            responsiveLayout="stack" breakpoint="960px"
-            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
-
+            styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped unified-table">
             <ng-template pTemplate="header">
                 <tr>
-                    <th class="white-space-nowrap">Categoría</th>
-                    <th class="white-space-nowrap">Descripción</th>
-                    <th class="text-right white-space-nowrap">Monto</th>
-                    <th *ngIf="!readonly" style="width: 10rem;"></th>
+                    <th style="width:25%">Categoría</th>
+                    <th style="width:40%">Descripción</th>
+                    <th style="width:20%" class="text-right">Monto</th>
+                    <th style="width:15%" class="text-center" *ngIf="!readonly">Acciones</th>
                 </tr>
             </ng-template>
-
             <ng-template pTemplate="body" let-gasto let-editing="editing" let-ri="rowIndex">
-                <tr [pEditableRow]="gasto" [id]="gasto.idGastoGeneral < 0 ? 'nuevo-gasto-row' : null">
+                <tr [pEditableRow]="gasto" [id]="gasto.idGastoGeneral === -1 ? 'nuevo-gasto-row' : ''">
                     <!-- Categoría -->
                     <td>
                         <span class="p-column-title font-bold">Categoría</span>
@@ -101,48 +102,60 @@
 
                         <!-- Botón editar (fila existente, no editando) -->
                         <button *ngIf="!editing && gasto.idGastoGeneral > 0" pButton pRipple type="button"
-                            pInitEditableRow icon="pi pi-pencil"
+                            pInitEditableRow
                             (click)="onGastoEditInit(gasto)"
-                            class="p-button-rounded p-button-text p-button-secondary"
+                            class="p-button-rounded p-button-text"
+                            style="color: #000066; width:36px; height:36px; padding:0;"
                             pTooltip="Editar" tooltipPosition="top"
                             [disabled]="editingGastoKey !== null || nuevoGasto !== null || guardandoGastos">
+                            <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">edit</span>
                         </button>
 
                         <!-- Botones guardar/cancelar/eliminar (fila existente, editando) -->
                         <div *ngIf="editing && gasto.idGastoGeneral > 0" class="flex justify-content-center gap-1">
-                            <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            <button pButton pRipple type="button" pSaveEditableRow
                                 (click)="onGastoEditSave(gasto)"
-                                class="p-button-rounded p-button-text p-button-success"
+                                class="p-button-rounded p-button-text"
+                                style="color: #5BAE40; width:36px; height:36px; padding:0;"
                                 pTooltip="Guardar" tooltipPosition="top"
                                 [disabled]="guardandoGastos">
+                                <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">check_circle</span>
                             </button>
-                            <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            <button pButton pRipple type="button" pCancelEditableRow
                                 (click)="onGastoEditCancel(gasto)"
-                                class="p-button-rounded p-button-text p-button-danger"
+                                class="p-button-rounded p-button-text"
+                                style="color: #FF6D0A; width:36px; height:36px; padding:0;"
                                 pTooltip="Cancelar" tooltipPosition="top"
                                 [disabled]="guardandoGastos">
+                                <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">cancel</span>
                             </button>
-                            <button pButton pRipple type="button" icon="pi pi-trash"
+                            <button pButton pRipple type="button"
                                 (click)="confirmarEliminarGasto(gasto)"
-                                class="p-button-rounded p-button-text p-button-warning"
+                                class="p-button-rounded p-button-text"
+                                style="color: #DB141C; width:36px; height:36px; padding:0;"
                                 pTooltip="Eliminar gasto" tooltipPosition="top"
                                 [disabled]="guardandoGastos">
+                                <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">delete</span>
                             </button>
                         </div>
 
                         <!-- Botones confirmar/cancelar para nueva fila -->
                         <div *ngIf="gasto.idGastoGeneral < 0" class="flex justify-content-center gap-1">
-                            <button pButton pRipple type="button" icon="pi pi-check"
+                            <button pButton pRipple type="button"
                                 (click)="guardarNuevoGasto()"
-                                class="p-button-rounded p-button-text p-button-success"
+                                class="p-button-rounded p-button-text"
+                                style="color: #5BAE40; width:36px; height:36px; padding:0;"
                                 pTooltip="Confirmar" tooltipPosition="top"
                                 [disabled]="guardandoGastos">
+                                <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">check_circle</span>
                             </button>
-                            <button pButton pRipple type="button" icon="pi pi-times"
+                            <button pButton pRipple type="button"
                                 (click)="cancelarNuevoGasto()"
-                                class="p-button-rounded p-button-text p-button-danger"
+                                class="p-button-rounded p-button-text"
+                                style="color: #FF6D0A; width:36px; height:36px; padding:0;"
                                 pTooltip="Cancelar" tooltipPosition="top"
                                 [disabled]="guardandoGastos">
+                                <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">cancel</span>
                             </button>
                         </div>
                     </td>
@@ -151,7 +164,7 @@
 
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td colspan="4" class="text-center p-4 text-600">
+                    <td [attr.colspan]="readonly ? 3 : 4" class="text-center p-4 text-600">
                         <i class="pi pi-inbox mr-2"></i>No hay gastos generales registrados.
                     </td>
                 </tr>
@@ -159,18 +172,8 @@
         </p-table>
     </div>
 
-
-    <!-- Footer con botón cerrar -->
+    <!-- Footer para cierre visual y balance de radio de 28px -->
     <ng-template pTemplate="footer">
-        <div class="flex justify-content-end">
-            <button pButton pRipple type="button" label="Cerrar" icon="pi pi-times"
-                class="p-button-text p-button-secondary"
-                (click)="cerrar()" [disabled]="guardandoGastos">
-            </button>
-        </div>
+        <div class="py-2"></div>
     </ng-template>
 </p-dialog>
-
-
-
-

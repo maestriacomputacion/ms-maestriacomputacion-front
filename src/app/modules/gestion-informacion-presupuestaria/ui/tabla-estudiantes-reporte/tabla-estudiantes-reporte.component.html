@@ -1,0 +1,221 @@
+<div class="table-responsive-wrapper">
+    <p-table
+        [value]="estudiantes"
+        [dataKey]="editable ? 'codigoEstudiante' : ''"
+        [editMode]="editable ? 'row' : ''"
+        responsiveLayout="scroll"
+        styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-center" style="width: 85px; min-width: 85px;">Pago</th>
+                <th style="width: 95px; min-width: 95px;">Cédula</th>
+                <th style="min-width: 160px;">Nombre</th>
+                <th class="text-center" style="width: 80px; min-width: 80px;">Grupo Inv.</th>
+                <th class="text-right" style="width: 95px; min-width: 95px;">Matrícula</th>
+                <th class="text-center" style="width: 75px; min-width: 75px;">Votación</th>
+                <th class="text-center" style="width: 70px; min-width: 70px;">% Beca</th>
+                <th class="text-right" style="width: 95px; min-width: 95px;">Valor Beca</th>
+                <th class="text-center" style="width: 75px; min-width: 75px;">Egresado</th>
+                <th class="text-right" style="width: 95px; min-width: 95px;">Rec. Comp.</th>
+                <th class="text-right" style="width: 85px; min-width: 85px;">Biblioteca</th>
+                <th class="text-right" style="width: 95px; min-width: 95px;">Descuentos</th>
+                <th class="text-right" style="width: 100px; min-width: 100px;">Total Neto</th>
+                <th *ngIf="editable" style="width: 80px; min-width: 80px;" class="text-center">Acciones</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-estudiante let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="editable ? estudiante : null">
+
+                <!-- Pago (Triple Estado: True=Pagado, False=No Pagado, Null=Simulable) -->
+                <td class="text-center">
+                    <ng-container *ngIf="editable; else pagoReadonly">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <!-- ESTADO 3: NULL/UNDEFINED (Simulable mediante Checkbox) -->
+                                <p-checkbox *ngIf="estudiante.estadoMatriculaFinanciera === null || estudiante.estadoMatriculaFinanciera === undefined"
+                                    [(ngModel)]="estudiante.estaPago" [binary]="true"
+                                    styleClass="uni-checkbox">
+                                </p-checkbox>
+
+                                <!-- ESTADO 1 y 2: TRUE o FALSE (Fijos desde MF) -->
+                                <app-uni-status-badge *ngIf="estudiante.estadoMatriculaFinanciera === true || estudiante.estadoMatriculaFinanciera === false"
+                                    [status]="estudiante.estadoMatriculaFinanciera">
+                                </app-uni-status-badge>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <ng-container *ngTemplateOutlet="pagoReadonly"></ng-container>
+                            </ng-template>
+                        </p-cellEditor>
+                    </ng-container>
+                    <ng-template #pagoReadonly>
+                        <!-- Visualización de prioridad: Real (MF) > Simulado (estaPago) -->
+                        <ng-container [ngSwitch]="estudiante.estadoMatriculaFinanciera">
+                            <!-- Si es True o False (Real), mostramos ese valor institucional fijo -->
+                            <app-uni-status-badge *ngSwitchCase="true" [status]="true"></app-uni-status-badge>
+                            <app-uni-status-badge *ngSwitchCase="false" [status]="false"></app-uni-status-badge>
+                            
+                            <!-- Si es Null/Undefined, mostramos el checkbox simulado (deshabilitado en modo lectura) -->
+                            <p-checkbox *ngSwitchDefault 
+                                [ngModel]="estudiante.estaPago" 
+                                [binary]="true" 
+                                [disabled]="true" 
+                                styleClass="uni-checkbox">
+                            </p-checkbox>
+                        </ng-container>
+                    </ng-template>
+
+                </td>
+
+
+
+                <!-- Cédula -->
+                <td class="col-monetaria">{{ estudiante.identificacion }}</td>
+
+                <!-- Nombre -->
+                <td class="col-nombre">{{ estudiante.nombreEstudiante }}</td>
+
+                <!-- Grupo -->
+                <td class="text-center">{{ estudiante.grupoInvestigacion }}</td>
+
+                <!-- Matrícula -->
+                <td class="text-right col-monetaria">{{ estudiante.matricula | formatCurrency }}</td>
+
+                <!-- Votación -->
+                <td class="text-center">
+                    <ng-container *ngIf="editable; else votacionReadonly">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <p-checkbox [(ngModel)]="estudiante.aplicaVotacion" [binary]="true"
+                                        styleClass="uni-checkbox">
+                                    </p-checkbox>
+                                    <span style="font-family:'Open Sans',sans-serif;font-size:12px;color:#454444;">
+                                        {{ estudiante.aplicaVotacion ? getPorcentajeVotacion() : '0%' }}
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <ng-container *ngTemplateOutlet="votacionReadonly"></ng-container>
+                            </ng-template>
+                        </p-cellEditor>
+                    </ng-container>
+                    <ng-template #votacionReadonly>
+                        <div class="text-center" style="font-family:'Open Sans',sans-serif;font-size:12px;color:#454444;">
+                            {{ estudiante.aplicaVotacion ? getPorcentajeVotacion() : '0%' }}
+                        </div>
+                    </ng-template>
+                </td>
+
+                <!-- % Beca -->
+                <td class="text-center">
+                    <ng-container *ngIf="editable; else becaReadonly">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <div class="flex align-items-center gap-1">
+                                    <input pInputText type="number"
+                                        [ngModel]="estudiante.porcentajeBeca"
+                                        min="0" step="0.01" class="percent-input"
+                                        (input)="percentInput.emit({ event: $event, estudiante: estudiante, campo: 'porcentajeBeca' })">
+                                    <span class="percent-suffix">%</span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <ng-container *ngTemplateOutlet="becaReadonly"></ng-container>
+                            </ng-template>
+                        </p-cellEditor>
+                    </ng-container>
+                    <ng-template #becaReadonly>
+                        {{ estudiante.porcentajeBeca | formatPercent:0 }}
+                    </ng-template>
+                </td>
+
+                <!-- Valor Beca -->
+                <td class="text-right col-monetaria">{{ estudiante.valorBeca | formatCurrency }}</td>
+
+                <!-- Egresado -->
+                <td class="text-center">
+                    <ng-container *ngIf="editable; else egresadoReadonly">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <p-checkbox [(ngModel)]="estudiante.aplicaEgresado" [binary]="true"
+                                        styleClass="uni-checkbox">
+                                    </p-checkbox>
+                                    <span style="font-family:'Open Sans',sans-serif;font-size:12px;color:#454444;">
+                                        {{ estudiante.aplicaEgresado ? getPorcentajeEgresado() : '0%' }}
+                                    </span>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <ng-container *ngTemplateOutlet="egresadoReadonly"></ng-container>
+                            </ng-template>
+                        </p-cellEditor>
+                    </ng-container>
+                    <ng-template #egresadoReadonly>
+                        <div class="text-center" style="font-family:'Open Sans',sans-serif;font-size:12px;color:#454444;">
+                            {{ estudiante.aplicaEgresado ? getPorcentajeEgresado() : '0%' }}
+                        </div>
+                    </ng-template>
+                </td>
+
+                <!-- Rec. Comp. -->
+                <td class="text-right col-monetaria">{{ estudiante.recursosComputacionales | formatCurrency }}</td>
+
+                <!-- Biblioteca -->
+                <td class="text-right col-monetaria">{{ estudiante.biblioteca | formatCurrency }}</td>
+
+                <!-- Descuentos -->
+                <td class="text-right col-monetaria">{{ estudiante.grupoDescuentos | formatCurrency }}</td>
+
+                <!-- Total Neto -->
+                <td class="text-right total-neto col-monetaria">{{ estudiante.totalNeto | formatCurrency }}</td>
+
+                <!-- Acciones (solo si editable) -->
+                <td *ngIf="editable" class="text-center">
+                    <button *ngIf="!editing" pButton pRipple type="button"
+                        pInitEditableRow
+                        (click)="rowEditInit.emit(estudiante)"
+                        class="p-button-rounded p-button-text"
+                        style="color: #000066; width:36px; height:36px; padding:0;"
+                        [pTooltip]="(estudiante.estadoMatriculaFinanciera === null || estudiante.estadoMatriculaFinanciera === undefined) ? 'Editar fila' : 'Editar fila (El estado de pago no se puede modificar)'" 
+                        tooltipPosition="top"
+                        [attr.aria-label]="'Editar ' + estudiante.nombreEstudiante">
+                        <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">edit</span>
+                    </button>
+
+                    <div *ngIf="editing" class="flex justify-content-center gap-1">
+                        <button pButton pRipple type="button" pSaveEditableRow
+                            (click)="rowEditSave.emit(estudiante)"
+                            class="p-button-rounded p-button-text"
+                            style="color: #5BAE40; width:36px; height:36px; padding:0;"
+                            pTooltip="Guardar" tooltipPosition="top"
+                            aria-label="Guardar cambios">
+                            <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">check_circle</span>
+                        </button>
+                        <button pButton pRipple type="button" pCancelEditableRow
+                            (click)="rowEditCancel.emit({ estudiante: estudiante, index: ri })"
+                            class="p-button-rounded p-button-text"
+                            style="color: #FF6D0A; width:36px; height:36px; padding:0;"
+                            pTooltip="Cancelar" tooltipPosition="top"
+                            aria-label="Cancelar edición">
+                            <span class="material-symbols-rounded" style="font-size:20px;" aria-hidden="true">cancel</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="editable ? 14 : 13">
+                    <app-estado-vacio
+                        icono="inbox"
+                        mensaje="No hay datos disponibles para el período seleccionado.">
+                    </app-estado-vacio>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

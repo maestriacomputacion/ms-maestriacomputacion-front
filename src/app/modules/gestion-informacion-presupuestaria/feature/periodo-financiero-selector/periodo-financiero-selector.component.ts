@@ -77,7 +77,7 @@ export class PeriodoFinancieroSelectorComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error loading periods', err);
-        this.errorCarga = 'No se pudo cargar los períodos. Verifique la conexión con el servidor.';
+        this.errorCarga = 'No fue posible cargar los períodos académicos. Por favor, verifique su conexión e intente nuevamente.';
         this.sinPeriodosChange.emit(false);
         this.errorCargaChange.emit(true);
         this.loading = false;

@@ -1,22 +1,70 @@
+// ── Design System TIC v3 — Selector de Período ─────────────────────────────
+
 .periodo-selector {
-    padding: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #F1EFFF; // primary-95 del sistema tonal M3
+    border-radius: 9999px;     // --radius-full
     display: inline-flex;
+    align-items: center;
+    gap: 0;
 }
 
 .periodo-info {
     min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
 }
 
 .periodo-academico-texto {
-    font-size: 0.8rem;
-    color: var(--text-color-secondary, #6c757d);
-    font-weight: 500;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    color: #777680;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.periodo-icono {
+    font-size: 14px;
+    color: #5056AC;
 }
 
 .periodo-academico-valor {
-    font-size: 1.25rem;
-    color: var(--text-color, #495057);
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 22px;
+    color: #000066;
     font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.25px;
+}
+
+.periodo-nav-btn {
+    color: #5056AC !important;
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+
+    .material-symbols-rounded {
+        font-size: 24px;
+    }
+
+    &:enabled:hover {
+        background-color: rgba(80, 86, 172, 0.12) !important;
+    }
+
+    &:disabled {
+        color: #C9C8CC !important;
+        cursor: not-allowed;
+    }
+}
+
+:host ::ng-deep .p-button.periodo-nav-btn {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }

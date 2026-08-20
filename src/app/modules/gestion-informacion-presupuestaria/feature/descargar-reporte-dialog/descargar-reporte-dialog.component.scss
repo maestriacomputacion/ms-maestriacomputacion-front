@@ -1,15 +1,98 @@
 :host ::ng-deep {
+    // ── Diálogo — Design System TIC v3 ─────────────────────────────────────
+    .p-dialog {
+        border-radius: 28px !important;
+
+        .p-dialog-header {
+            background: #ffffff;
+            color: #000066;
+            font-family: 'Titillium Web', sans-serif;
+            font-weight: 700;
+            border-bottom: 1px solid #E5E2E1;
+            padding: 1.5rem;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+
+            .p-dialog-header-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                color: #777680;
+                transition: background-color 0.2s;
+
+                &:hover {
+                    background-color: #F8F9FA;
+                    color: #DB141C;
+                }
+            }
+        }
+
+        .p-dialog-content {
+            padding: 2rem;
+            background: #ffffff;
+        }
+
+        .p-dialog-footer {
+            border-top: 1px solid #E5E2E1;
+            padding: 1.25rem 1.5rem;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+        }
+    }
+
+    // ── Etiquetas y Formulario ──────────────────────────────────────────────
+    .campo-label {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: #454444;
+    }
+
+    // ── Dropdowns ──────────────────────────────────────────────────────────
     .p-dropdown {
         width: 100% !important;
+        border-radius: 8px !important;
+        border: 1px solid #C9C8CC !important;
+        font-family: 'Open Sans', sans-serif !important;
+
+        &.p-focus {
+            border-color: #000066 !important;
+            box-shadow: 0 0 0 1px #000066 !important;
+        }
+
+        .p-dropdown-label {
+            padding: 0.75rem 1rem !important;
+            color: #454444 !important;
+        }
     }
 
-    .p-dialog-content {
-        padding-top: 1.5rem !important;
-        overflow-y: visible !important;
+    // ── Botones ─────────────────────────────────────────────────────────────
+    .btn-cancelar {
+        border-color: #000066 !important;
+        color: #000066 !important;
+        font-family: 'Open Sans', sans-serif !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        letter-spacing: 1.25px !important;
+
+        &:enabled:hover {
+            background-color: rgba(0, 0, 102, 0.05) !important;
+            border-color: #000066 !important;
+            color: #000066 !important;
+        }
     }
 
-    .p-float-label {
-        display: block !important;
-        width: 100% !important;
+    .btn-descargar {
+        background-color: #000066 !important;
+        border-color: #000066 !important;
+        font-family: 'Open Sans', sans-serif !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        letter-spacing: 1.25px !important;
+
+        &:enabled:hover {
+            background-color: #5056AC !important;
+            border-color: #5056AC !important;
+        }
     }
 }

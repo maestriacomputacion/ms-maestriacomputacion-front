@@ -1,42 +1,44 @@
-<!-- Esqueleto mientras carga -->
-<div *ngIf="loading" class="flex justify-content-center align-items-center mb-5">
-    <p-skeleton width="320px" height="60px" borderRadius="8px"></p-skeleton>
+<div *ngIf="loading" class="flex justify-content-center align-items-center mb-4" style="width: 320px; margin: 0 auto;">
+    <app-uni-progress-bar label="Cargando períodos..."></app-uni-progress-bar>
 </div>
 
 <!-- Error de carga -->
-<div *ngIf="!loading && errorCarga" class="flex justify-content-center mb-4">
-    <p-message severity="error" [text]="errorCarga"></p-message>
+<div *ngIf="!loading && errorCarga" class="flex justify-content-center mb-3">
+    <p-message severity="error" [text]="errorCarga" styleClass="uni-message w-full"></p-message>
 </div>
 
 <!-- Sin períodos -->
 <div *ngIf="!loading && !errorCarga && periodos.length === 0"
-    class="flex flex-column align-items-center justify-content-center py-8 gap-3 mb-5">
-    <i class="pi pi-calendar-times text-4xl text-400"></i>
-    <span class="text-600 text-lg">{{ mensajeVacio }}</span>
+    class="flex flex-column align-items-center justify-content-center py-5 gap-2 mb-4">
+    <span class="material-symbols-rounded" style="font-size: 40px; color: #777680;" aria-hidden="true">calendar_month</span>
+    <span style="font-family: 'Open Sans', sans-serif; font-size: 14px; color: #777680;">{{ mensajeVacio }}</span>
 </div>
 
 <!-- Selector de Período -->
 <div *ngIf="!loading && !errorCarga && periodos.length > 0"
-    class="flex justify-content-center align-items-center mb-5 periodo-selector">
-    <button *ngIf="periodos.length > 1" pButton type="button" icon="pi pi-chevron-left"
-        class="p-button-rounded p-button-text p-button-secondary"
+    class="flex justify-content-center align-items-center mb-4 periodo-selector">
+
+    <button pButton type="button"
+        class="p-button-rounded p-button-text periodo-nav-btn"
         pTooltip="Período más antiguo" tooltipPosition="top"
-        (click)="irPeriodoSiguiente()" [disabled]="!haySiguiente">
+        (click)="irPeriodoSiguiente()" [disabled]="!haySiguiente"
+        aria-label="Ir al período más antiguo">
+        <span class="material-symbols-rounded" aria-hidden="true">chevron_left</span>
     </button>
 
-    <div class="mx-4 text-center periodo-info">
-        <span class="periodo-academico-texto">{{ modo === 'anios-activos-y-finalizados' ? 'Año Académico' : 'Período Académico' }}</span>
-        <br>
-        <span class="periodo-academico-valor">{{ periodoActualTexto }}</span>
+    <div class="mx-3 text-center periodo-info">
+        <span class="periodo-academico-texto">
+            <span class="material-symbols-rounded periodo-icono" aria-hidden="true">calendar_month</span>
+            {{ modo === 'anios-activos-y-finalizados' ? 'Año Académico' : 'Período Académico' }}
+        </span>
+        <div class="periodo-academico-valor">{{ periodoActualTexto }}</div>
     </div>
 
-    <button *ngIf="periodos.length > 1" pButton type="button" icon="pi pi-chevron-right"
-        class="p-button-rounded p-button-text p-button-secondary"
+    <button pButton type="button"
+        class="p-button-rounded p-button-text periodo-nav-btn"
         pTooltip="Período más reciente" tooltipPosition="top"
-        (click)="irPeriodoAnterior()" [disabled]="!hayAnterior">
+        (click)="irPeriodoAnterior()" [disabled]="!hayAnterior"
+        aria-label="Ir al período más reciente">
+        <span class="material-symbols-rounded" aria-hidden="true">chevron_right</span>
     </button>
 </div>
-
-
-
-

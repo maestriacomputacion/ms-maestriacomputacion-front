@@ -1,20 +1,90 @@
 :host ::ng-deep {
-    .p-dialog-content {
-        padding: 1.5rem;
+    .p-dialog {
+        .p-dialog-header {
+            background: #ffffff;
+            color: #000066;
+            font-family: 'Titillium Web', sans-serif;
+            font-weight: 700;
+            border-bottom: 1px solid #E5E2E1;
+            padding: 1.5rem;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+
+            .p-dialog-header-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                color: #777680;
+                transition: background-color 0.2s;
+
+                &:hover {
+                    background-color: #F8F9FA;
+                    color: #DB141C; // Rojo institucional al cerrar
+                }
+                
+                &:focus {
+                    box-shadow: 0 0 0 2px #E5E2E1;
+                }
+            }
+        }
+
+        .p-dialog-content {
+            padding: 2rem;
+            background: #ffffff;
+        }
+
+        .p-dialog-footer {
+            border-top: 1px solid #E5E2E1;
+            padding: 1.25rem 1.5rem;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+        }
     }
 
-    .p-inputtext {
-        width: 100%;
+    .unified-table {
+        border: 1px solid #C9C8CC !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+
+        .p-datatable-thead > tr > th {
+            background-color: #F8F9FA !important;
+            color: #000066 !important;
+            font-family: 'Titillium Web', sans-serif !important;
+            font-weight: 700 !important;
+            border-bottom: 1px solid #C9C8CC !important;
+            padding: 1rem !important;
+        }
+
+        .p-datatable-tbody > tr {
+            background-color: #ffffff !important;
+            color: #454444 !important;
+            font-family: 'Open Sans', sans-serif !important;
+
+            &.p-datatable-dragpoint-bottom > td {
+                box-shadow: none !important;
+            }
+        }
+        
+        .p-datatable-tbody > tr > td {
+            border-bottom: 1px solid #E5E2E1 !important;
+            padding: 0.75rem 1rem !important;
+        }
     }
 
-    .p-datatable .p-datatable-thead > tr > th {
-        background-color: var(--surface-section, #f8f9fa);
-        color: var(--text-color, #495057);
-        font-weight: 700;
-        border-bottom: 2px solid var(--surface-border, #dee2e6);
-    }
+    // Estilos para los botones de acción dentro de la tabla
+    .p-button.p-button-success.p-button-text { color: #5BAE40 !important; }
+    .p-button.p-button-danger.p-button-text { color: #FF6D0A !important; }
+    .p-button.p-button-warning.p-button-text { color: #FFB000 !important; }
+    .p-button.p-button-secondary.p-button-text { color: #777680 !important; }
 
-    .p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
-        background-color: var(--surface-ground, #f8f9fa);
+    .p-inputtext, .p-inputnumber-input {
+        font-family: 'Open Sans', sans-serif !important;
+        border-radius: 8px !important;
+        border: 1px solid #C9C8CC !important;
+        
+        &:focus {
+            border-color: #000066 !important;
+            box-shadow: 0 0 0 1px #000066 !important;
+        }
     }
 }

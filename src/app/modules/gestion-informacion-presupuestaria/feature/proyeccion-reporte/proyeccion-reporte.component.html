@@ -1,354 +1,84 @@
-<div class="col-12">
-    <p-toast position="top-right"></p-toast>
-    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
-    <p-card>
-        <ng-container *ngIf="vm$ | async as vm">
-            <div class="page-content">
-                <app-opciones-presupuesto [activeTab]="'proyeccion-reporte'" [currentPeriod]="vm.periodoSeleccionado" (onDescargar)="descargar()" (onProyectarPresupuesto)="abrirDialogoProyectar()">
-                </app-opciones-presupuesto>
-        
-                <!-- Selector de Periodo Académico -->
-                <app-periodo-financiero-selector [modo]="'activos-y-proyeccion'"
-                    [mensajeVacio]="'No hay períodos académicos activos para mostrar.'"
-                    (periodoSeleccionado)="onPeriodoChange($event)"
-                    (sinPeriodosChange)="sinPeriodos = $event"
-                    (errorCargaChange)="errorPeriodos = $event">
-                </app-periodo-financiero-selector>
-            </div>
+<div class="surface-0 p-4">
+    <p-toast position="top-right" styleClass="uni-toast"></p-toast>
+
+    <!-- Navegación por pestañas -->
+    <app-opciones-presupuesto
+        [activeTab]="'proyeccion-reporte'"
+        [currentPeriod]="periodoSeleccionado"
+        (onDescargar)="descargar()"
+        (onProyectarPresupuesto)="abrirDialogoProyectar()">
+    </app-opciones-presupuesto>
+
+    <!-- Selector de Período -->
+    <div class="flex justify-content-center mb-4">
+        <app-periodo-financiero-selector
+            [modo]="'activos'"
+            [mensajeVacio]="'No hay períodos académicos activos para mostrar.'"
+            (periodoSeleccionado)="onPeriodoChange($event)"
+            (sinPeriodosChange)="sinPeriodos = $event"
+            (errorCargaChange)="errorPeriodos = $event">
+        </app-periodo-financiero-selector>
+    </div>
+
+    <!-- Estado: Cargando -->
+    <div *ngIf="cargando" class="mb-4">
+        <app-uni-progress-bar label="Cargando proyección de estudiantes..."></app-uni-progress-bar>
+    </div>
+
+    <!-- Estado: Sin datos -->
+    <app-estado-vacio
+        *ngIf="!configuracion && !sinPeriodos && !errorPeriodos && !cargando"
+        icono="inbox"
+        mensaje="Seleccione un período académico para cargar la proyección.">
+    </app-estado-vacio>
+
+    <!-- Contenido -->
+    <ng-container *ngIf="configuracion">
+
+        <!-- Sección: Configuración editable -->
+        <app-configuracion-proyeccion-card
+            [configuracion]="configuracion"
+            [isEditable]="esEditable"
+            [disabled]="editingRowKey !== null"
+            (save)="onConfigSave($event)">
+        </app-configuracion-proyeccion-card>
 
 
-            <!-- Sin datos -->
-            <div *ngIf="!vm.configuracion && !sinPeriodos && !errorPeriodos" class="flex flex-column align-items-center justify-content-center py-8 gap-3">
-                <i class="pi pi-inbox text-4xl text-400"></i>
-                <span class="text-600 text-lg">Seleccione un período académico para cargar la proyección.</span>
-            </div>
+        <!-- Título de sección institucional -->
+        <div class="mb-2 px-1">
+            <h2 class="text-xl font-semibold m-0" style="color: #000066; font-family: 'Titillium Web', sans-serif;">
+                Proyección de Estudiantes
+            </h2>
+        </div>
 
-            <!-- Contenido del Reporte -->
-            <div *ngIf="vm.configuracion" class="table-container">
+        <app-tabla-estudiantes-reporte
+            [estudiantes]="estudiantes"
+            [configuracion]="configuracion"
+            [editable]="true"
+            [editingRowKey]="editingRowKey"
+            (rowEditInit)="onRowEditInit($event)"
+            (rowEditSave)="onRowEditSave($event)"
+            (rowEditCancel)="onRowEditCancel($event.estudiante, $event.index)"
+            (percentInput)="onPercentInput($event.event, $event.estudiante, $event.campo)">
+        </app-tabla-estudiantes-reporte>
 
-            <!-- Panel de Configuración -->
-            <div class="config-panel mb-4">
-                <div class="text-center mb-4 border-bottom-1 surface-border pb-3">
-                    <h2 class="m-0 text-700 text-xl">{{ tituloProyeccion(vm.periodoSeleccionado) }}</h2>
-                    <span class="text-500 text-sm">Configure los valores del período en curso</span>
-                </div>
-                <div class="config-row">
-
-                    <span class="p-float-label">
-                        <p-inputNumber id="float-biblioteca" *ngIf="vm.editandoCabecera" [(ngModel)]="clonedCabecera.biblioteca"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0" styleClass="config-input">
-                        </p-inputNumber>
-                        <p-inputNumber *ngIf="!vm.editandoCabecera" [ngModel]="vm.configuracion?.biblioteca"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
-                            [readonly]="true" [disabled]="true" styleClass="config-input">
-                        </p-inputNumber>
-                        <label for="float-biblioteca">Biblioteca</label>
-                    </span>
-
-                    <span class="p-float-label">
-                        <p-inputNumber id="float-recursos" *ngIf="vm.editandoCabecera" [(ngModel)]="clonedCabecera.recursosComputacionales"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0" styleClass="config-input">
-                        </p-inputNumber>
-                        <p-inputNumber *ngIf="!vm.editandoCabecera" [ngModel]="vm.configuracion?.recursosComputacionales"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
-                            [readonly]="true" [disabled]="true" styleClass="config-input">
-                        </p-inputNumber>
-                        <label for="float-recursos">Recursos Computacionales</label>
-                    </span>
-
-                    <span class="p-float-label">
-                        <p-inputNumber id="float-smlv" *ngIf="vm.editandoCabecera" [(ngModel)]="clonedCabecera.valorSMLV"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0" styleClass="config-input">
-                        </p-inputNumber>
-                        <p-inputNumber *ngIf="!vm.editandoCabecera" [ngModel]="vm.configuracion?.valorSMLV"
-                            mode="currency" currency="COP" locale="es-CO" [minFractionDigits]="0"
-                            [readonly]="true" [disabled]="true" styleClass="config-input">
-                        </p-inputNumber>
-                        <label for="float-smlv">Valor SMLV</label>
-                    </span>
-
-
-                    <!-- Controles de Edición de Cabecera -->
-                    <div class="config-row-actions">
-                        <button *ngIf="!vm.editandoCabecera" pButton pRipple type="button" icon="pi pi-pencil"
-                            class="p-button-rounded p-button-text p-button-secondary"
-                            pTooltip="Editar configuración" tooltipPosition="top"
-                            (click)="onHeaderEditInit()" [disabled]="isAnyEditActive">
-                        </button>
-                        <ng-container *ngIf="vm.editandoCabecera">
-                            <button pButton pRipple type="button" icon="pi pi-check"
-                                class="p-button-rounded p-button-text p-button-success"
-                                pTooltip="Guardar cambios" tooltipPosition="top"
-                                (click)="onHeaderEditSave()">
-                            </button>
-                            <button pButton pRipple type="button" icon="pi pi-times"
-                                class="p-button-rounded p-button-text p-button-danger"
-                                pTooltip="Cancelar" tooltipPosition="top"
-                                (click)="onHeaderEditCancel()">
-                            </button>
-                        </ng-container>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Encabezado de tabla + botón para agregar estudiante simulado -->
-            <div class="flex justify-content-between align-items-center mb-2">
-                <span class="text-700 font-semibold">Estudiantes de la Proyección</span>
-                <button *ngIf="vm.periodoSeleccionado?.estado !== 'ACTIVO'" pButton pRipple type="button"
-                    label="Agregar Estudiante Simulado"
-                    icon="pi pi-plus"
-                    class="p-button-outlined"
-                    (click)="agregarFilaSimulado()"
-                    [disabled]="isAnyEditActive || creandoSimulado"
-                    pTooltip="Agregar un estudiante simulado (ficticio) a la proyección">
-                </button>
-            </div>
-
-            <!-- Tabla de estudiantes editable -->
-            <div class="table-responsive-wrapper">
-                <p-table [value]="vm.estudiantes" dataKey="codigoEstudiante" editMode="row"
-                    responsiveLayout="stack" breakpoint="960px"
-                    styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
-
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th class="text-center white-space-nowrap">Pago</th>
-                            <th class="text-center white-space-nowrap">Cédula</th>
-                            <th class="white-space-nowrap">Nombre</th>
-                            <th class="text-right white-space-nowrap">Matrícula</th>
-                            <th class="text-center white-space-nowrap">% Votación</th>
-                            <th class="text-center white-space-nowrap">% Beca</th>
-                            <th class="text-right white-space-nowrap">Valor Beca</th>
-                            <th class="text-center white-space-nowrap">% Egresado</th>
-                            <th class="text-right white-space-nowrap">Rec. Comp.</th>
-                            <th class="text-right white-space-nowrap">Biblioteca</th>
-                            <th class="text-center white-space-nowrap">Grupo Inv.</th>
-                            <th class="text-center white-space-nowrap">SMLV</th>
-                            <th class="text-right white-space-nowrap">Descuentos</th>
-                            <th class="text-right white-space-nowrap">Total Neto</th>
-                            <th style="width:8rem"></th>
-                        </tr>
-                    </ng-template>
-
-                    <ng-template pTemplate="body" let-estudiante let-editing="editing" let-ri="rowIndex">
-                        <tr [pEditableRow]="estudiante">
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">Pago</span>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <p-checkbox *ngIf="estudiante.estadoMatriculaFinanciera !== true" [(ngModel)]="estudiante.estaPago" [binary]="true"
-                                            pTooltip="No registra pago. Márquelo para simular que pagó."></p-checkbox>
-                                        <p-tag *ngIf="estudiante.estadoMatriculaFinanciera === true" value="PAGADO" severity="success" icon="pi pi-check"
-                                            pTooltip="Pago registrado. No editable."></p-tag>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        <p-checkbox *ngIf="estudiante.estadoMatriculaFinanciera !== true" [(ngModel)]="estudiante.estaPago" [binary]="true" [disabled]="true"
-                                            pTooltip="No registra pago."></p-checkbox>
-                                        <p-tag *ngIf="estudiante.estadoMatriculaFinanciera === true" value="PAGADO" severity="success" icon="pi pi-check"
-                                            pTooltip="Pago registrado."></p-tag>
-                                    </ng-template>
-                                </p-cellEditor>
-                            </td>
-
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">Cédula</span>
-                                <p-cellEditor *ngIf="estudiante.esSimulado; else cedulaSoloLectura">
-                                    <ng-template pTemplate="input">
-                                        <input pInputText type="number" [(ngModel)]="estudiante.identificacion" placeholder="Cédula">
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{ estudiante.identificacion || estudiante.codigoEstudiante }}
-                                    </ng-template>
-                                </p-cellEditor>
-                                <ng-template #cedulaSoloLectura>{{ estudiante.codigoEstudiante }}</ng-template>
-                            </td>
-
-                            <td>
-                                <span class="p-column-title font-bold">Nombre</span>
-                                <p-cellEditor *ngIf="estudiante.esSimulado; else nombreSoloLectura">
-                                    <ng-template pTemplate="input">
-                                        <div class="flex flex-column gap-1">
-                                            <input pInputText type="text" [(ngModel)]="estudiante.nombre" placeholder="Nombre">
-                                            <input pInputText type="text" [(ngModel)]="estudiante.apellido" placeholder="Apellido">
-                                        </div>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{ estudiante.nombreEstudiante }}
-                                        <span class="uni-badge-simulado">Simulado</span>
-                                    </ng-template>
-                                </p-cellEditor>
-                                <ng-template #nombreSoloLectura>{{ estudiante.nombreEstudiante }}</ng-template>
-                            </td>
-
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Matrícula</span>
-                                {{ estudiante.matricula | formatCurrency }}
-                            </td>
-
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">% Votación</span>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <div class="flex align-items-center justify-content-center gap-2">
-                                            <p-checkbox [(ngModel)]="estudiante.aplicaVotacion" [binary]="true">
-                                            </p-checkbox>
-                                            <span>{{ vm.configuracion ? (vm.configuracion.porcentajeVotacionFijo * 100 | number:'1.0-0') + '%' : '10%' }}</span>
-                                        </div>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{ estudiante.aplicaVotacion ? (vm.configuracion ? (vm.configuracion.porcentajeVotacionFijo * 100 | number:'1.0-0') + '%' : '10%') : '–' }}
-                                    </ng-template>
-                                </p-cellEditor>
-                            </td>
-
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">% Beca</span>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <div class="flex align-items-center gap-1">
-                                            <input pInputText type="number" [ngModel]="estudiante.porcentajeBeca"
-                                                min="0" step="0.01" class="percent-input"
-                                                (input)="onPercentInput($event, estudiante, 'porcentajeBeca')">
-                                            <span class="percent-suffix">%</span>
-                                        </div>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{ estudiante.porcentajeBeca | formatPercent:1 }}
-                                    </ng-template>
-                                </p-cellEditor>
-                            </td>
-
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Valor Beca</span>
-                                {{ estudiante.valorBeca | formatCurrency }}
-                            </td>
-
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">% Egresado</span>
-                                <p-cellEditor>
-                                    <ng-template pTemplate="input">
-                                        <div class="flex align-items-center justify-content-center gap-2">
-                                            <p-checkbox [(ngModel)]="estudiante.aplicaEgresado" [binary]="true">
-                                            </p-checkbox>
-                                            <span>{{ vm.configuracion ? (vm.configuracion.porcentajeEgresadoFijo * 100 | number:'1.0-0') + '%' : '5%' }}</span>
-                                        </div>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{ estudiante.aplicaEgresado ? (vm.configuracion ? (vm.configuracion.porcentajeEgresadoFijo * 100 | number:'1.0-0') + '%' : '5%') : '–' }}
-                                    </ng-template>
-                                </p-cellEditor>
-                            </td>
-
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Rec. Comp.</span>
-                                {{ estudiante.recursosComputacionales | formatCurrency }}
-                            </td>
-
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Biblioteca</span>
-                                {{ estudiante.biblioteca | formatCurrency }}
-                            </td>
-
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">Grupo Inv.</span>
-                                <p-cellEditor *ngIf="estudiante.esSimulado; else grupoSoloLectura">
-                                    <ng-template pTemplate="input">
-                                        <p-dropdown [options]="gruposDisponibles" [(ngModel)]="estudiante.grupoInvestigacion"
-                                            placeholder="Grupo" styleClass="w-full">
-                                        </p-dropdown>
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{ estudiante.grupoInvestigacion }}
-                                    </ng-template>
-                                </p-cellEditor>
-                                <ng-template #grupoSoloLectura>{{ estudiante.grupoInvestigacion }}</ng-template>
-                            </td>
-
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">SMLV</span>
-                                <p-cellEditor *ngIf="vm.periodoSeleccionado?.estado === 'PROYECCION'; else smlvSoloLectura">
-                                    <ng-template pTemplate="input">
-                                        <input pInputText type="number" min="1" step="1"
-                                            [(ngModel)]="estudiante.valorEnSMLV" style="width: 100%;">
-                                    </ng-template>
-                                    <ng-template pTemplate="output">
-                                        {{ estudiante.valorEnSMLV }}
-                                    </ng-template>
-                                </p-cellEditor>
-                                <ng-template #smlvSoloLectura>{{ estudiante.valorEnSMLV }}</ng-template>
-                            </td>
-
-                            <td class="text-right">
-                                <span class="p-column-title font-bold">Descuentos</span>
-                                {{ estudiante.grupoDescuentos | formatCurrency }}
-                            </td>
-
-                            <td class="text-right font-bold">
-                                <span class="p-column-title font-bold">Total Neto</span>
-                                {{ estudiante.totalNeto | formatCurrency }}
-                            </td>
-
-                            <td class="text-center">
-                                <span class="p-column-title font-bold">Acciones</span>
-                                <div *ngIf="!editing" class="flex justify-content-center gap-1">
-                                    <button pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
-                                        (click)="onRowEditInit(estudiante)"
-                                        class="p-button-rounded p-button-text p-button-secondary"
-                                        pTooltip="Editar fila" tooltipPosition="top"
-                                        [disabled]="isAnyEditActive">
-                                    </button>
-                                    <button *ngIf="estudiante.esSimulado" pButton pRipple type="button" icon="pi pi-trash"
-                                        (click)="confirmarEliminarSimulado(estudiante)"
-                                        class="p-button-rounded p-button-text p-button-danger"
-                                        pTooltip="Eliminar estudiante simulado" tooltipPosition="top"
-                                        [disabled]="isAnyEditActive">
-                                    </button>
-                                </div>
-                                <div *ngIf="editing" class="flex justify-content-center gap-1">
-                                    <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-                                        (click)="onRowEditSave(estudiante)"
-                                        class="p-button-rounded p-button-text p-button-success"
-                                        pTooltip="Guardar" tooltipPosition="top">
-                                    </button>
-                                    <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-                                        (click)="onRowEditCancel(estudiante, ri)"
-                                        class="p-button-rounded p-button-text p-button-danger"
-                                        pTooltip="Cancelar" tooltipPosition="top">
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-template>
-
-                    <ng-template pTemplate="emptymessage">
-                        <tr>
-                            <td colspan="15" class="text-center p-4 text-600">
-                                <i class="pi pi-inbox mr-2"></i>No hay datos disponibles para el período seleccionado.
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
-
-            <!-- Totales: fuera de la tabla para garantizar visibilidad en mobile -->
+            <!-- Totales -->
             <div class="totales-container mt-3">
                 <div class="total-item">
-                    <span class="total-label">Total Bruto:</span>
-                    <span class="total-value">{{ vm.totalNetoCalculado | formatCurrency }}</span>
+                    <span class="total-label">Total Neto:</span>
+                    <span class="total-value">{{ totalNetoCalculado | formatCurrency }}</span>
                 </div>
                 <div class="total-item">
                     <span class="total-label">Total Descuentos:</span>
-                    <span class="total-value">{{ vm.totalDescuentosCalculado | formatCurrency }}</span>
+                    <span class="total-value">{{ totalDescuentosCalculado | formatCurrency }}</span>
                 </div>
                 <div class="total-item highlight">
-                    <span class="total-label">Total Neto:</span>
-                    <span class="total-value">{{ vm.totalIngresosCalculado | formatCurrency }}</span>
+                    <span class="total-label">Ingresos Totales Después de Descuentos:</span>
+                    <span class="total-value">{{ totalIngresosCalculado | formatCurrency }}</span>
                 </div>
             </div>
-        </div>
-        </ng-container>
-    </p-card>
+        
+    </ng-container>
 
     <app-proyectar-presupuesto-dialog
         [(visible)]="displayProyectarDialog"

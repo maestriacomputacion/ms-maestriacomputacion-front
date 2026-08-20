@@ -59,6 +59,10 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
   clonedCabecera: Partial<ConfiguracionReporteGrupos> = {};
   guardandoCabecera: boolean = false;
 
+  editandoIngresos: boolean = false;
+  clonedIngresos: number = 0;
+  guardandoIngresos: boolean = false;
+
   displayGastosModal: boolean = false;
   guardandoGastos: boolean = false;
 
@@ -71,7 +75,8 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
   guardandoImprevistos: boolean = false;
 
   get isAnyEditActive(): boolean {
-    return this.editandoCabecera ||
+    return this.editandoIngresos ||
+           this.editandoCabecera ||
            this.editandoItems ||
            this.editandoImprevistos ||
            this.editingRowKey !== null ||
@@ -79,21 +84,9 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
   }
 
   get totalGastosGenerales(): number {
-    if (!this.configuracion || !this.configuracion.objConfiguracionReporteGrupos.gastosGenerales) return 0;
-    return this.configuracion.objConfiguracionReporteGrupos.gastosGenerales.reduce((sum, g) => sum + g.monto, 0);
+    return this.configuracion?.objConfiguracionReporteGrupos.totalGastosGenerales ?? 0;
   }
 
-  // Item 1 y Item 2 deben sumar máximo 100%: el tope de cada uno se reduce dinámicamente
-  // según el valor actual del otro (ej. si item2 quedó en 40, item1 solo llega a 60).
-  // onConfigPercentInput ya recorta el valor al guardarlo; estos getters solo alimentan
-  // el atributo [max] del input para que el tope se vea reflejado mientras se escribe.
-  get maxItem1(): number {
-    return Math.round((100 - (this.clonedItems.item2 ?? 0)) * 100) / 100;
-  }
-
-  get maxItem2(): number {
-    return Math.round((100 - (this.clonedItems.item1 ?? 0)) * 100) / 100;
-  }
 
   constructor(
     private facadeService: GestionInformacionPresupuestariaFacadeService,
@@ -109,11 +102,11 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
       .subscribe(data => {
         if (data) {
           this.configuracion = data;
-          this.normalizarPorcentajesParaDisplay(this.configuracion);
           this.procesarDatosTabla(this.configuracion);
           this.procesarDistribucion(this.configuracion);
           this.cdr.markForCheck();
         }
+
       });
   }
 
@@ -129,7 +122,6 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     this.facadeService.obtenerReporteGrupos(anio!).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.configuracion = data;
-        this.normalizarPorcentajesParaDisplay(this.configuracion);
         this.procesarDatosTabla(this.configuracion);
         this.procesarDistribucion(this.configuracion);
         this.loadingService.hide();
@@ -140,7 +132,7 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'error',
           summary: 'Error al cargar',
-          detail: `No se pudo cargar el reporte por grupos ${anioTexto}. Intente nuevamente.`
+          detail: `No fue posible cargar el reporte por grupos ${anioTexto}. Por favor, intente nuevamente.`
         });
         this.loadingService.hide();
         this.cdr.markForCheck();
@@ -148,10 +140,6 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     });
   }
 
-  private toRatio(value: number | null | undefined): number {
-    if (value == null) return 0;
-    return Math.round((value / 100) * 10000) / 10000;
-  }
 
   get aUIPorcentajeDisplay(): number | null {
     const c = this.configuracion?.objConfiguracionReporteGrupos as unknown as Record<string, unknown> | undefined;
@@ -161,43 +149,30 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     return v > 1 ? v : v * 100;
   }
 
-  private normalizarPorcentajesParaDisplay(data: ReportePorGrupos): void {
-    const config = data.objConfiguracionReporteGrupos;
-    if (config.aUIPorcentaje != null && config.aUIPorcentaje <= 1) config.aUIPorcentaje = config.aUIPorcentaje * 100;
-    if (config.item1 != null && config.item1 <= 1) config.item1 = config.item1 * 100;
-    if (config.item2 != null && config.item2 <= 1) config.item2 = config.item2 * 100;
-    if (config.imprevistos != null && config.imprevistos <= 1) config.imprevistos = config.imprevistos * 100;
-
-    if (data.porcentajePrimerSemestre != null && data.porcentajePrimerSemestre <= 1) {
-      data.porcentajePrimerSemestre = Math.round(data.porcentajePrimerSemestre * 10000) / 100;
-    }
-    if (data.porcentajeSegundoSemestre != null && data.porcentajeSegundoSemestre <= 1) {
-      data.porcentajeSegundoSemestre = Math.round(data.porcentajeSegundoSemestre * 10000) / 100;
-    }
-    if (data.participacionPrimerSemestre != null && data.participacionPrimerSemestre <= 1) {
-      data.participacionPrimerSemestre = Math.round(data.participacionPrimerSemestre * 10000) / 100;
-    }
-    if (data.participacionSegundoSemestre != null && data.participacionSegundoSemestre <= 1) {
-      data.participacionSegundoSemestre = Math.round(data.participacionSegundoSemestre * 10000) / 100;
-    }
-    if (data.participacionPorAnio != null && data.participacionPorAnio <= 1) {
-      data.participacionPorAnio = Math.round(data.participacionPorAnio * 10000) / 100;
-    }
-
-    if (data.filasPorGrupo) {
-      for (const fila of data.filasPorGrupo) {
-        if (fila.porcentajePrimerSemestre != null && fila.porcentajePrimerSemestre <= 1) {
-          fila.porcentajePrimerSemestre = Math.round(fila.porcentajePrimerSemestre * 10000) / 100;
-        }
-        if (fila.porcentajeSegundoSemestre != null && fila.porcentajeSegundoSemestre <= 1) {
-          fila.porcentajeSegundoSemestre = Math.round(fila.porcentajeSegundoSemestre * 10000) / 100;
-        }
-        if (fila.participacionPorAnio != null && fila.participacionPorAnio <= 1) {
-          fila.participacionPorAnio = Math.round(fila.participacionPorAnio * 10000) / 100;
-        }
-      }
-    }
+  get item1Display(): number | null {
+    const c = this.configuracion?.objConfiguracionReporteGrupos;
+    if (!c) return null;
+    const v = c.item1;
+    if (typeof v !== 'number') return null;
+    return v > 1 ? v : v * 100;
   }
+
+  get item2Display(): number | null {
+    const c = this.configuracion?.objConfiguracionReporteGrupos;
+    if (!c) return null;
+    const v = c.item2;
+    if (typeof v !== 'number') return null;
+    return v > 1 ? v : v * 100;
+  }
+
+  get imprevistosDisplay(): number | null {
+    const c = this.configuracion?.objConfiguracionReporteGrupos;
+    if (!c) return null;
+    const v = c.imprevistos;
+    if (typeof v !== 'number') return null;
+    return v > 1 ? v : v * 100;
+  }
+
 
   procesarDatosTabla(data: ReportePorGrupos): void {
     const grupos = data.filasPorGrupo ?? [];
@@ -248,7 +223,7 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     const auiValor = (configAny['aUIValor'] ?? configAny['auivalor']) as number | undefined;
     this.distributionSummary = [
       { label: 'AUI Universidad', value: auiValor ?? 0 },
-      { label: 'Ingresos Netos', value: config.ingresosNetos },
+      { label: 'Ingresos Matrículas', value: data.totalIngresos },
       { label: 'Transferencia Unicauca', value: data.transferenciaUnicauca ?? 0 },
       { label: 'Excedentes Maestria', value: config.excedentesMaestria },
       { label: 'Valor a Distribuir (Ingresos-Gastos)', value: config.valorADistribuir, isBold: true }
@@ -286,13 +261,24 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
   }
 
   private actualizarGrafica(porAñoRow: TableRow): void {
-    const colors = ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+    // Colores del Plan de Desarrollo Institucional — Design System TIC v3
+    const colors = [
+      '#000066', // Primario institucional
+      '#5056AC', // Primario light
+      '#1D72D3', // Terciario (azul información)
+      '#5BAE40', // Verde confirmación
+      '#FFB000', // Amarillo advertencia
+      '#DB141C', // Secundario light (rojo institucional)
+    ];
     this.basicData = {
       labels: this.groupColumns.map(g => g.nombre),
       datasets: [
         {
           label: 'Participación por Año (%)',
           backgroundColor: this.groupColumns.map((_, i) => colors[i % colors.length]),
+          borderColor: this.groupColumns.map((_, i) => colors[i % colors.length]),
+          borderWidth: 1,
+          borderRadius: 4,
           data: this.groupColumns.map(g => porAñoRow.values[g.nombre] ?? 0)
         }
       ]
@@ -301,40 +287,70 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
       responsive: true,
       maintainAspectRatio: true,
       plugins: {
-        legend: { display: false, labels: { color: '#495057' } },
+        legend: {
+          display: false,
+          labels: {
+            color: '#454444',
+            font: { family: "'Open Sans', sans-serif", size: 12 }
+          }
+        },
         tooltip: {
+          backgroundColor: '#000066',
+          titleColor: '#FFFFFF',
+          bodyColor: '#FFFFFF',
+          titleFont: { family: "'Titillium Web', sans-serif", size: 14, weight: '600' },
+          bodyFont: { family: "'Open Sans', sans-serif", size: 12 },
+          padding: 10,
+          cornerRadius: 8,
           callbacks: {
             label: (ctx: { parsed: { y: number } }) => `${ctx.parsed.y.toFixed(2)} %`
           }
         }
       },
       scales: {
-        x: { ticks: { color: '#495057' }, grid: { color: '#ebedef', display: false } },
+        x: {
+          ticks: {
+            color: '#454444',
+            font: { family: "'Open Sans', sans-serif", size: 12 }
+          },
+          grid: { color: '#E5E2E1', display: false }
+        },
         y: {
           ticks: {
-            color: '#495057',
+            color: '#454444',
+            font: { family: "'Open Sans', sans-serif", size: 12 },
             callback: (value: number) => `${value} %`
           },
-          grid: { color: '#ebedef' }
+          grid: { color: '#E5E2E1' }
         }
       }
     };
   }
 
-  // No se manipula input.value directamente: escribir el DOM a mano (como se hacía
-  // antes para truncar decimales o forzar el tope de 100) desincroniza el estado interno
-  // de NgModel del valor real de clonedItems, y en ediciones posteriores dentro de la
-  // misma sesión Angular puede "creer" que el DOM ya refleja el valor y no repintarlo —
-  // por eso el ajuste dinámico (onItemBlur) solo se veía la primera vez. Ahora todo pasa
-  // por [(ngModel)], que es quien sincroniza el DOM de forma confiable en cada cambio.
   onConfigPercentInput(event: Event, field: string): void {
     const input = event.target as HTMLInputElement;
-    const parsed = parseFloat(input.value);
+    let raw = input.value;
+
+    const dot = raw.indexOf('.');
+    if (dot !== -1 && raw.length - dot - 1 > 2) {
+      raw = raw.substring(0, dot + 3);
+      input.value = raw;
+    }
+
+    let maxAllowed = 100;
+    if (field === 'item1') {
+      maxAllowed = Math.round((100 - (this.clonedItems.item2 ?? 0)) * 100) / 100;
+    } else if (field === 'item2') {
+      maxAllowed = Math.round((100 - (this.clonedItems.item1 ?? 0)) * 100) / 100;
+    }
+
+    const parsed = parseFloat(raw);
     let v = 0;
     if (!isNaN(parsed) && parsed > 0) {
       v = Math.round(parsed * 100) / 100;
-      if (v > 100) {
-        v = 100;
+      if (v > maxAllowed) {
+        v = Math.round(maxAllowed * 100) / 100;
+        input.value = String(v);
       }
     }
 
@@ -343,20 +359,6 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
       case 'item1': this.clonedItems.item1 = v; break;
       case 'item2': this.clonedItems.item2 = v; break;
       case 'imprevistos': this.clonedImprevistos = v; break;
-    }
-  }
-
-  /**
-   * Al salir de Item 1 o Item 2, el OTRO item siempre se ajusta al complemento
-   * exacto para que la suma de ambos sea 100% (ej. si Item 1 = 30, Item 2 = 70).
-   */
-  onItemBlur(field: 'item1' | 'item2'): void {
-    if (field === 'item1') {
-      const item1 = this.clonedItems.item1 ?? 0;
-      this.clonedItems.item2 = Math.round(Math.max(0, 100 - item1) * 100) / 100;
-    } else {
-      const item2 = this.clonedItems.item2 ?? 0;
-      this.clonedItems.item1 = Math.round(Math.max(0, 100 - item2) * 100) / 100;
     }
   }
 
@@ -404,9 +406,8 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
       }
       row.values[groupName] = v;
     }
-
-    row.total = this.groupColumns.reduce((acc, g) => acc + (row.values[g.nombre] ?? 0), 0);
   }
+
 
   onRowEditInit(row: TableRow) {
     if (this.isAnyEditActive) return;
@@ -415,9 +416,8 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
   }
 
   onRowEditSave(row: TableRow) {
-    row.total = Object.values(row.values).reduce((a, b) => a + b, 0);
-
     this.editingRowKey = null;
+
     this.clonedRow = {};
 
     if (row.key !== 'porcentajePrimerSemestre' && row.key !== 'porcentajeSegundoSemestre') return;
@@ -426,9 +426,10 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
 
     const valoresPorGrupo = this.groupColumns.map(grupo => ({
       grupoId: grupo.grupoId,
-      porcentaje: this.toRatio(row.values[grupo.nombre] ?? 0),
+      porcentaje: row.values[grupo.nombre] ?? 0,
       semestre
     }));
+
 
     this.loadingService.show('Actualizando porcentajes de participación');
     const ejecutarSecuencial = (index: number) => {
@@ -447,7 +448,7 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
             }
           },
           error: () => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar la participación.' });
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No fue posible actualizar la participación. Por favor, intente nuevamente.' });
             this.loadingService.hide();
           }
         });
@@ -467,8 +468,7 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     this.editandoCabecera = true;
     this.clonedCabecera = {
       ...this.configuracion?.objConfiguracionReporteGrupos,
-      aUIPorcentaje: this.aUIPorcentajeDisplay ?? 0,
-      excedentesMaestria: this.configuracion?.objConfiguracionReporteGrupos?.excedentesMaestria ?? 0
+      aUIPorcentaje: this.aUIPorcentajeDisplay ?? 0
     };
   }
 
@@ -480,7 +480,7 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
 
     const finish = (data: ReportePorGrupos) => {
       this.configuracion = data;
-      this.normalizarPorcentajesParaDisplay(this.configuracion);
+
       this.procesarDatosTabla(this.configuracion);
       this.procesarDistribucion(this.configuracion);
       this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Distribución actualizada correctamente.' });
@@ -494,8 +494,8 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     };
 
     if (aui !== undefined) {
-      this.configuracion!.objConfiguracionReporteGrupos.aUIPorcentaje = this.toRatio(aui);
-      this.facadeService.actualizarPorcentajeAUIUniversidad(this.periodoAcademicoId, this.toRatio(aui)).pipe(takeUntil(this.destroy$)).subscribe({
+      this.configuracion!.objConfiguracionReporteGrupos.aUIPorcentaje = aui;
+      this.facadeService.actualizarPorcentajeAUIUniversidad(this.periodoAcademicoId, aui).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
           if (excedentes !== undefined) {
             this.configuracion!.objConfiguracionReporteGrupos.excedentesMaestria = excedentes;
@@ -513,12 +513,11 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
       this.configuracion!.objConfiguracionReporteGrupos.excedentesMaestria = excedentes;
       this.facadeService.actualizarValorExcedentesMaestria(this.periodoAcademicoId, excedentes).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => finish(data),
-        error: () => onError('No fue posible actualizar los excedentes. Por favor, verifique su conexión.')
+        error: () => onError('No se pudo actualizar excedentes.')
       });
     } else {
       this.guardandoCabecera = false;
       this.clonedCabecera = {};
-      this.loadingService.hide();
     }
   }
 
@@ -527,12 +526,30 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     this.clonedCabecera = {};
   }
 
+  onIngresosEditInit() {
+    if (this.isAnyEditActive) return;
+    this.editandoIngresos = true;
+    this.clonedIngresos = this.configuracion!.totalIngresos;
+  }
+
+  onIngresosEditSave() {
+    this.guardandoIngresos = true;
+    this.editandoIngresos = false;
+    this.configuracion!.totalIngresos = this.clonedIngresos;
+    this.guardandoIngresos = false;
+  }
+
+  onIngresosEditCancel() {
+    this.editandoIngresos = false;
+    this.clonedIngresos = 0;
+  }
+
   onItemsEditInit() {
     if (this.isAnyEditActive) return;
     this.editandoItems = true;
     this.clonedItems = {
-      item1: this.configuracion!.objConfiguracionReporteGrupos.item1,
-      item2: this.configuracion!.objConfiguracionReporteGrupos.item2
+      item1: this.item1Display ?? 0,
+      item2: this.item2Display ?? 0
     };
   }
 
@@ -542,12 +559,12 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
     const item1 = this.clonedItems.item1 ?? 0;
     const item2 = this.clonedItems.item2 ?? 0;
     this.facadeService.actualizarPorcentajeItems({
-      item1: this.toRatio(item1),
-      item2: this.toRatio(item2)
+      item1: item1,
+      item2: item2
     }, this.periodoAcademicoId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.configuracion = data;
-        this.normalizarPorcentajesParaDisplay(this.configuracion);
+  
         this.procesarDatosTabla(this.configuracion);
         this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Items actualizados correctamente.' });
         this.loadingService.hide();
@@ -568,6 +585,7 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
 
   abrirModalGastos() {
     this.displayGastosModal = true;
+    this.cdr.markForCheck();
   }
 
   onGastosChange() {
@@ -593,17 +611,17 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
   onImprevistosEditInit() {
     if (this.isAnyEditActive) return;
     this.editandoImprevistos = true;
-    this.clonedImprevistos = this.configuracion!.objConfiguracionReporteGrupos.imprevistos;
+    this.clonedImprevistos = this.imprevistosDisplay ?? 0;
   }
 
   onImprevistosEditSave() {
     this.loadingService.show('Actualizando imprevistos');
     this.editandoImprevistos = false;
     const valor = this.clonedImprevistos;
-    this.facadeService.actualizarPorcentajeImprevistos(this.periodoAcademicoId, this.toRatio(valor)).pipe(takeUntil(this.destroy$)).subscribe({
+    this.facadeService.actualizarPorcentajeImprevistos(this.periodoAcademicoId, valor).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.configuracion = data;
-        this.normalizarPorcentajesParaDisplay(this.configuracion);
+  
         this.procesarDatosTabla(this.configuracion);
         this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Imprevistos actualizados correctamente.' });
         this.loadingService.hide();
@@ -651,7 +669,7 @@ export class ReportePorGruposComponent implements OnInit, OnDestroy {
           next: (data) => {
             if (index === valoresPorGrupo.length - 1) {
               this.configuracion = data;
-              this.normalizarPorcentajesParaDisplay(this.configuracion);
+        
               this.procesarDatosTabla(data);
               delete this.clonedBudgetRow[row.key];
               this.editingBudgetRowKey = null;

@@ -1,47 +1,50 @@
-<!-- Encabezado con Tabs y Botón Descargar -->
-<div class="flex flex-column md:flex-row align-items-start md:align-items-center justify-content-between gap-3 mb-3">
-    <div class="flex align-items-center">
-        <p-selectButton
-            [options]="tabOptions"
-            [(ngModel)]="selectedTab"
-            optionLabel="label"
-            optionValue="value"
-            (onChange)="onTabChange($event)">
-        </p-selectButton>
+<!-- Encabezado con Tabs y Botón Descargar — Design System TIC v3 -->
+<div class="flex flex-column md:flex-row align-items-start md:align-items-center justify-content-between gap-3 mb-4 pb-3"
+     style="border-bottom: 2px solid #DB141C;">
+
+    <!-- Pestañas de navegación -->
+    <div class="flex align-items-center gap-2 flex-wrap">
+        <button *ngFor="let tab of tabOptions; trackBy: trackByTabOption"
+            type="button"
+            class="tab-btn"
+            [class.tab-btn--active]="selectedTab === tab.value"
+            (click)="onTabChange({ value: tab.value })"
+            [attr.aria-current]="selectedTab === tab.value ? 'page' : null">
+            {{ tab.label }}
+        </button>
     </div>
 
-    <div class="flex justify-content-start md:justify-content-end gap-2">
+    <!-- Botones de acción -->
+    <div class="flex align-items-center gap-2">
         <button *ngIf="activeTab === 'proyeccion-reporte'"
-            pButton
-            pRipple
+            pButton pRipple
             type="button"
             label="Nueva Proyección"
-            icon="pi pi-calendar-plus"
-            class="p-button-outlined"
+            class="p-button-rounded p-button-outlined descargar-btn"
             pTooltip="Crear una nueva proyección de presupuesto"
             tooltipPosition="left"
+            aria-label="Crear una nueva proyección de presupuesto"
             (click)="proyectarPresupuesto()">
+            <span class="material-symbols-rounded mr-2" aria-hidden="true" style="font-size: 18px;">event_upcoming</span>
         </button>
+
+        <!-- Botón Descargar -->
         <button
-            pButton
-            pRipple
+            pButton pRipple
             type="button"
             label="Descargar"
-            icon="pi pi-download"
-            class="p-button-outlined"
+            class="p-button-rounded p-button-outlined descargar-btn"
             pTooltip="Descargar reporte en Excel"
             tooltipPosition="left"
+            aria-label="Descargar reporte en Excel"
             (click)="descargar()">
+            <span class="material-symbols-rounded mr-2" aria-hidden="true" style="font-size: 18px;">download</span>
         </button>
     </div>
 </div>
 
 <app-descargar-reporte-dialog
     [(display)]="displayDescargarModal"
-    [activeReportCode]="activeTab"
-    [activePeriod]="currentPeriod">
+    [reporteActual]="activeTab"
+    [periodoActual]="currentPeriod">
 </app-descargar-reporte-dialog>
-
-
-
-

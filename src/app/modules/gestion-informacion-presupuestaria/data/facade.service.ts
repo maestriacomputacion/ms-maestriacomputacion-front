@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
+import { Observable, throwError, BehaviorSubject, combineLatest } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { GestionInformacionPresupuestariaApiService } from './api.service';
 import { GestionInformacionPresupuestariaMapperService } from './mapper.service';
@@ -26,6 +26,32 @@ export class GestionInformacionPresupuestariaFacadeService {
 
     private _reporteGrupos = new BehaviorSubject<ReportePorGrupos | null>(null);
     public reporteGrupos$ = this._reporteGrupos.asObservable();
+
+    // ── ViewModels combinados (vm$) ─────────────────────────────────────────
+
+    /** ViewModel para ProyeccionReporteComponent y ReporteFinalComponent */
+    readonly vmProyeccion$ = combineLatest({
+        loading: this._loading,
+        error: this._error,
+        reporte: this._reporteProyeccionEstudiantes
+    }).pipe(
+        map(vm => ({
+            ...vm,
+            isEmpty: !vm.loading && vm.reporte === null
+        }))
+    );
+
+    /** ViewModel para ReportePorGruposComponent */
+    readonly vmGrupos$ = combineLatest({
+        loading: this._loading,
+        error: this._error,
+        reporte: this._reporteGrupos
+    }).pipe(
+        map(vm => ({
+            ...vm,
+            isEmpty: !vm.loading && vm.reporte === null
+        }))
+    );
 
     constructor(
         private apiService: GestionInformacionPresupuestariaApiService,

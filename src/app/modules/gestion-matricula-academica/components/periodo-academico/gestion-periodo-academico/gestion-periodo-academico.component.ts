@@ -21,7 +21,6 @@ import {
     selector: 'app-gestion-periodo-academico',
     templateUrl: './gestion-periodo-academico.component.html',
     styleUrls: ['./gestion-periodo-academico.component.scss'],
-    providers: [MessageService, ConfirmationService],
 })
 export class GestionPeriodoAcademicoComponent implements OnInit, OnDestroy {
     periodos: PeriodoAcademico[] = [];

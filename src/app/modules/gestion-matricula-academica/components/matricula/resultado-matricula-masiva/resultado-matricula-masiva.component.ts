@@ -54,7 +54,8 @@ export class ResultadoMatriculaMasivaComponent implements OnInit {
         const navigation = this.router.getCurrentNavigation();
         const state =
             (navigation?.extras?.state as
-                MatriculaResultadoState | undefined) ??
+                | MatriculaResultadoState
+                | undefined) ??
             (history as { state?: MatriculaResultadoState }).state;
 
         if (state) {

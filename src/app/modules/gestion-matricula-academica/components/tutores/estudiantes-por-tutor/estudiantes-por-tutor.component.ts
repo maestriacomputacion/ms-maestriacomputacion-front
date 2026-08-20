@@ -20,11 +20,7 @@ interface EstudianteListado {
 }
 
 type AccionMasiva =
-    | 'aceptar'
-    | 'rechazar'
-    | 'avalar'
-    | 'no-avalar'
-    | 'aprobar-eleccion-tutor';
+    'aceptar' | 'rechazar' | 'avalar' | 'no-avalar' | 'aprobar-eleccion-tutor';
 
 @Component({
     selector: 'app-estudiantes-por-tutor',

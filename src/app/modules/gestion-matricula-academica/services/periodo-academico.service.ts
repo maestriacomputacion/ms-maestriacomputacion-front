@@ -19,9 +19,9 @@ export class PeriodoAcademicoService {
     // Endpoint: listar periodos academicos
     getPeriodos(): Observable<ApiResponse<PeriodoAcademico[]>> {
         return this.http
-            .get<
-                ApiResponse<PeriodoAcademicoBackend[]>
-            >(backendPeriodoAcademico())
+            .get<ApiResponse<PeriodoAcademicoBackend[]>>(
+                backendPeriodoAcademico()
+            )
             .pipe(
                 map((resp) => ({
                     typeResponse: resp.typeResponse,
